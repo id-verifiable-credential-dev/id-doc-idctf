@@ -150,6 +150,24 @@
 }
 
 @media screen and (min-width: 60em) {
+  /* Nama situs dipatahkan menjadi dua baris. Tema menahannya di satu baris
+     dan memotongnya dengan elipsis; di slot di kiri pil pencarian "Indonesia
+     Digital Credential Trust Framework" tidak pernah muat dalam satu baris.
+     Lebar 11rem memaksa patahannya jatuh setelah "Credential": rangkaian itu
+     10,5rem, dan kata berikutnya sudah melewati 12,7rem. Hanya topik pertama
+     yang dipatahkan — topik kedua memuat judul halaman, yang panjangnya
+     berubah-ubah dan tetap dipotong dengan elipsis. */
+  .md-header__topic {
+    align-items: center;
+    height: 100%;
+  }
+
+  .md-header__topic:first-child > .md-ellipsis {
+    line-height: 1.25;
+    max-width: 11rem;
+    white-space: normal;
+  }
+
   /* Pil pencarian dibuat lebih lebar dari bawaan tema (11,7rem) supaya
      sebanding dengan kotak pencarian GitBook, dan melebar lagi saat fokus.
      Bawaan tema mengambangkan isi kotak ke kanan; di sini dibuat memenuhi
@@ -165,11 +183,11 @@
   }
 
   .md-search {
-    width: 20rem;
+    width: 18rem;
   }
 
   [data-md-toggle="search"]:checked ~ .md-header .md-search {
-    width: 26rem;
+    width: 24rem;
   }
 
   .md-search__form {
@@ -306,29 +324,42 @@
     top: 0;
     bottom: 0;
     left: 50%;
-    margin-left: -10rem;
+    margin-left: -9rem;
     display: flex;
     align-items: center;
     transition: width 250ms, margin-left 250ms;
   }
 
   [data-md-toggle="search"]:checked ~ .md-header .md-search {
-    margin-left: -13rem;
+    margin-left: -12rem;
   }
 
   /* Karena pencariannya keluar dari aliran flex, judul situs tidak lagi
      terdorong olehnya dan boleh memanjang sampai ke bawah pil. Lebarnya
      dibatasi sampai tepi kiri pil dalam keadaan fokus (setengah lebar bilah
-     dikurangi 13rem), dikurangi lagi 5rem untuk lambang di kiri judul dan
+     dikurangi 12rem), dikurangi lagi 4rem untuk lambang di kiri judul dan
      satu jarak antara. Lewat dari itu judulnya dipotong dengan elipsis —
-     pemotongannya sendiri sudah disiapkan tema di `.md-ellipsis`. */
+     pemotongannya sendiri sudah disiapkan tema di `.md-ellipsis`.
      Judul yang berhenti lebih awal tidak lagi mengisi sisa baris, sehingga
      toggle bahasa, toggle tema, dan tautan repo merapat ke judul. Sisa ruang
      itu dikembalikan lewat `margin-right: auto` supaya ketiganya tetap di
      ujung kanan. */
   .md-header__title {
+    max-width: calc(50% - 16rem);
+  }
+
+  /* Sisa ruang itu harus ditulis dengan awalan arah. Tema memasang
+     `[dir=ltr] .md-header__title { margin-right: .4rem }` — dua kelas, satu
+     kelas lebih kuat dari `.md-header__title` saja — sehingga margin otomatis
+     tanpa awalan kalah dan tidak pernah berlaku. Tanpa margin itu toggle tema
+     dan blok repo merapat ke judul, dan blok repo berakhir persis di bawah
+     pil pencarian yang dipaku ke tengah. */
+  [dir="ltr"] .md-header__title {
     margin-right: auto;
-    max-width: calc(50% - 18rem);
+  }
+
+  [dir="rtl"] .md-header__title {
+    margin-left: auto;
   }
 }
 

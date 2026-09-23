@@ -60,10 +60,10 @@ from `nav:` in `mkdocs.yml`.
 
 `vercel.json` holds the whole deployment: no framework preset, a `.venv` built
 in the container with `requirements.txt` installed into it, and
-`.venv/bin/python scripts/build_versions.py` as the build step, so the deployed
-tree carries every version plus the `latest` alias and the root redirect. The
-output directory is `site/`, and `trailingSlash` is on to match the directory
-URLs MkDocs writes.
+`.venv/bin/python -m mkdocs build --strict` as the build step. The output
+directory is `site/`, served at the root — the site is not versioned, so there
+are no version subdirectories and no redirect. `trailingSlash` is on to match
+the directory URLs MkDocs writes.
 
 The install step has to go through a virtualenv: the build container's
 interpreter is uv-managed and marked externally managed, so a plain
