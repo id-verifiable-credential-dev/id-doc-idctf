@@ -1,13 +1,13 @@
 ---
-title: "Architecture on the device: Mobile Wallet and Verifier Application"
+title: "Architecture on the device: Mobile Wallet and Mobile Verifier"
 description: The layout both applications share, the one-way dependency that keeps an SDK extractable, and where the two differ.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3.4 -->
 
-# 7. Architecture on the device: Mobile Wallet and Verifier Application
+# 7. Architecture on the device: Mobile Wallet and Mobile Verifier
 
-Mobile Wallet and Verifier Application have the same shape. Each is an
+Mobile Wallet and Mobile Verifier have the same shape. Each is an
 interface layer over a protocol layer, with encrypted storage and a secure
 element beside them, all on a device the ecosystem does not own.
 
@@ -29,7 +29,7 @@ secure element, through a Keystore Manager, and the Credential Store.
 |---|---|
 | CONNECTIDN | The citizen's OIDC login |
 | Issuer Core | Issuance over OpenID4VCI |
-| Verifier Core, Verifier Application | Presentation over OpenID4VP, or ISO 18013-5 in proximity |
+| Verifier Core, Mobile Verifier | Presentation over OpenID4VP, or ISO 18013-5 in proximity |
 | Wallet Backend Service | Key Attestation, device binding, recovery, push notification |
 | Trust Registry | Trusted list, Credential Rulebook, and VICAL, read from cache |
 | Secure element, Credential Store | Keys and stored credentials, without leaving the device |
@@ -55,7 +55,7 @@ affordable.
 Both applications have the layout above. They differ on who vouches for them,
 what their secure element holds, and which side of a presentation they play.
 
-| | Mobile Wallet | Verifier Application |
+| | Mobile Wallet | Mobile Verifier |
 |---|---|---|
 | Backed by | Wallet Backend Service (Wallet Provider) | Verifier Core (RP Intermediary) |
 | What vouches for the device | Key Attestation, daily | Verifier Device Certificate, limited lifetime plus a CRL |
@@ -79,10 +79,10 @@ operates both ends.
 | Interface | Standard | Set by the Governance Profile |
 |---|---|---|
 | Issuer Core to Mobile Wallet | OpenID4VCI 1.0 | Yes |
-| Mobile Wallet to Verifier Core or Verifier Application | OpenID4VP 1.0, ISO 18013-5 | Yes |
-| Mobile Wallet and Verifier Application to Trust Registry | LoTE JSON, TRQP, Credential Rulebook, VICAL | Yes |
+| Mobile Wallet to Verifier Core or Mobile Verifier | OpenID4VP 1.0, ISO 18013-5 | Yes |
+| Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, TRQP, Credential Rulebook, VICAL | Yes |
 | Mobile Wallet to Wallet Backend Service | Key Attestation format yes (OpenID4VCI Appendix D.1); the Wallet Provider's own registration and recovery protocol no | Partly |
-| Verifier Application to Verifier Core | Verifier Device Certificate format yes (ISO 18013-5 Annex B); the intermediary's own provisioning protocol no | Partly |
+| Mobile Verifier to Verifier Core | Verifier Device Certificate format yes (ISO 18013-5 Annex B); the intermediary's own provisioning protocol no | Partly |
 | Mobile Wallet to CONNECTIDN | OpenID Connect | Set by BSSN |
 | Application to secure element | Google and Apple platform APIs | No |
 

@@ -76,7 +76,7 @@ a Relying Party.
 
 |  | Relying Party | RP Intermediary | Merchant |
 |---|---|---|---|
-| Runs Verifier Core | For itself | For itself and its merchants | Runs nothing but the Verifier Application |
+| Runs Verifier Core | For itself | For itself and its merchants | Runs nothing but the Mobile Verifier |
 | Accreditation | Yes | Yes | No; registered by an RP Intermediary |
 | Trusted list | Listed | Listed, together with the authority it issues merchant certificates from | Never listed |
 | Authority | Its accreditation scope, up to `restricted` | The same, up to `restricted` | A subset of the intermediary's, never `restricted`, written into the certificate it is given |

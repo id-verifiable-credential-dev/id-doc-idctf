@@ -14,7 +14,7 @@ Service contains Modules.
 |---|---|---|---|---|
 | **Issuer Services** | Identity Issuer, Attribute Issuer | None; every issuer runs its own | Many | Issuer Core, Issuer Console |
 | **Wallet Services** | Wallet Provider; the Mobile Wallet is installed by the citizen | None | Many | Mobile Wallet, Wallet Backend Service |
-| **Verifier Services** | Relying Party, RP Intermediary | Merchants, registered by an RP Intermediary, using the Verifier Application | Many | Verifier Core, Verifier Console, Verifier Application |
+| **Verifier Services** | Relying Party, RP Intermediary | Merchants, registered by an RP Intermediary, using the Mobile Verifier | Many | Verifier Core, Verifier Console, Mobile Verifier |
 | **Trust Infrastructure** | Root Authority; its portal is used by entities applying and by accredited ones | None | One | Trust Authority, Trust Registry, DID Service, KMS |
 
 ## 2.1 Trust Infrastructure is not a role

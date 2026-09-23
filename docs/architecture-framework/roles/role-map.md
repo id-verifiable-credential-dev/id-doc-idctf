@@ -216,7 +216,7 @@ and hands the result to its own service system over OpenID Connect or SAML. It r
 verifying infrastructure of its own and appears in the trusted list.
 
 *Relying Party* is the organizational role. *Verifier* is the name of the
-software it runs: Verifier Core, Verifier Console, Verifier Application. The
+software it runs: Verifier Core, Verifier Console, Mobile Verifier. The
 split is deliberate. The relying party is the party that answers for the
 request, and the verifier is the infrastructure that carries it to a wallet,
 so one institution can replace its software without its accreditation

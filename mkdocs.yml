@@ -229,7 +229,7 @@ nav:
       - architecture-framework/module-guides/wallet-backend-service.md
       - architecture-framework/module-guides/verifier-core.md
       - architecture-framework/module-guides/verifier-console.md
-      - architecture-framework/module-guides/verifier-application.md
+      - architecture-framework/module-guides/mobile-verifier.md
       - architecture-framework/module-guides/trust-authority.md
       - architecture-framework/module-guides/trust-registry.md
       - architecture-framework/module-guides/did-service.md

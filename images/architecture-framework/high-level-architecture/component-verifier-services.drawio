@@ -34,7 +34,7 @@ secure element" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0
 local cache" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="752.0" width="186" height="54" as="geometry"/></mxCell>
         <mxCell id="n24" value="Activity Repository
 no citizen attribute" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="818.0" width="186" height="54" as="geometry"/></mxCell>
-        <mxCell id="t25" value="Verifier Application carries no ldp_vc path and verifies entirely from cache." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="914.0" width="220" height="20" as="geometry"/></mxCell>
+        <mxCell id="t25" value="Mobile Verifier carries no ldp_vc path and verifies entirely from cache." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="914.0" width="220" height="20" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

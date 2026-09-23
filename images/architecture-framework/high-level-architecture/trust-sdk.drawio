@@ -36,7 +36,7 @@ Go" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12
 Go" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="198" y="240" width="186" height="58" as="geometry"/></mxCell>
         <mxCell id="n29" value="Mobile Wallet
 Dart" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="396" y="240" width="186" height="58" as="geometry"/></mxCell>
-        <mxCell id="n30" value="Verifier Application
+        <mxCell id="n30" value="Mobile Verifier
 Dart" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="594" y="240" width="186" height="58" as="geometry"/></mxCell>
         <mxCell id="t31" value="and in no other Module" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#16242f;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="0" y="322" width="220" height="20" as="geometry"/></mxCell>
         <mxCell id="n32" value="Issuer Console" style="rounded=1;arcSize=8;fillColor=#e9ecef;strokeColor=#6c757d;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="0" y="344" width="186" height="34" as="geometry"/></mxCell>

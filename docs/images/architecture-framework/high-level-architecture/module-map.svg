@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1112 454" width="1112" height="454" role="img" aria-labelledby="t d">
-<title id="t">The eleven Modules, grouped by Service</title><desc id="d">Four Service columns. Issuer Services holds Issuer Core and Issuer Console, both run many times. Wallet Services holds one Mobile Wallet with millions of installations and a single Wallet Backend Service. Verifier Services holds Verifier Core, Verifier Console and Verifier Application. Trust Infrastructure holds Trust Authority, Trust Registry, DID Service and KMS, one of each.</desc>
+<title id="t">The eleven Modules, grouped by Service</title><desc id="d">Four Service columns. Issuer Services holds Issuer Core and Issuer Console, both run many times. Wallet Services holds one Mobile Wallet with millions of installations and a single Wallet Backend Service. Verifier Services holds Verifier Core, Verifier Console and Mobile Verifier. Trust Infrastructure holds Trust Authority, Trust Registry, DID Service and KMS, one of each.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
 <rect x="0.5" y="0.5" width="1111" height="453" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
 <g transform="translate(36,36)">
@@ -28,7 +28,7 @@
 <text x="652.0" y="137.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Console</text>
 <text x="652.0" y="151.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">many</text>
 <rect x="542" y="186" width="220" height="66" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
-<text x="652.0" y="215.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Application</text>
+<text x="652.0" y="215.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Verifier</text>
 <text x="652.0" y="229.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">millions installed</text>
 <rect x="792" y="0" width="248" height="356" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
 <text x="806" y="21" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">TRUST INFRASTRUCTURE</text>

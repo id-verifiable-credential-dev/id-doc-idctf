@@ -21,7 +21,7 @@ verifying anything themselves. They are the operations layer.
 
 | Plane | Modules | What it does |
 |---|---|---|
-| Transaction path (data plane) | Issuer Core, Mobile Wallet, Verifier Core, Verifier Application | Issues and presents credentials |
+| Transaction path (data plane) | Issuer Core, Mobile Wallet, Verifier Core, Mobile Verifier | Issues and presents credentials |
 | Trust path (control plane) | Trust Authority, Trust Registry, DID Service, KMS | Decides who is trusted, and publishes the answer |
 | Operations layer | Issuer Console, Verifier Console, Wallet Backend Service | Configures an entity's own Module, and vouches for its devices |
 
@@ -34,7 +34,7 @@ no others.
 |---|---|---|
 | Issuer Core | Mobile Wallet | OpenID4VCI |
 | Mobile Wallet | Verifier Core | OpenID4VP for online, ISO 18013-5 for proximity |
-| Mobile Wallet | Verifier Application | OpenID4VP for online, ISO 18013-5 for proximity |
+| Mobile Wallet | Mobile Verifier | OpenID4VP for online, ISO 18013-5 for proximity |
 
 The wallet is the only Module that appears on both sides. It receives from an
 issuer and presents to a verifier, and nothing moves between an issuer and a
@@ -43,7 +43,7 @@ statements in [Section 3.4](#34-the-only-thing-that-crosses-is-a-static-file).
 
 Both verifier Modules appear because they are alternatives, not stages. An
 accredited relying party runs Verifier Core and receives presentations at its own
-endpoint. A merchant has no server and runs Verifier Application on a device
+endpoint. A merchant has no server and runs Mobile Verifier on a device
 instead. The credential and the protocol are the same in both cases; what
 differs is who holds the reader.
 
@@ -78,7 +78,7 @@ Wallet Backend Service does something different. It vouches. It issues a Key
 Attestation to each Mobile Wallet daily, binds the installation to its
 device, and can revoke that device. It holds no credentials, which is the point:
 it can disown a wallet without being able to read what the wallet carries.
-Verifier Core plays the same vouching role toward Verifier Application, issuing
+Verifier Core plays the same vouching role toward Mobile Verifier, issuing
 each merchant device a Verifier Device Certificate whose lifetime the
 Governance Profile sets.
 
@@ -96,9 +96,9 @@ nothing else.
 
 | Artifact | Published by | Read by |
 |---|---|---|
-| Trusted list, Credential Rulebook, VICAL | Trust Registry, through a CDN | Issuer Core, Mobile Wallet, Verifier Core, Verifier Application |
+| Trusted list, Credential Rulebook, VICAL | Trust Registry, through a CDN | Issuer Core, Mobile Wallet, Verifier Core, Mobile Verifier |
 | DID Documents | DID Service, through a CDN | The same four |
-| Status list | Each issuer, hosted by that issuer | Verifier Core, Verifier Application |
+| Status list | Each issuer, hosted by that issuer | Verifier Core, Mobile Verifier |
 
 Two properties follow, and they are the first two of the three statements the
 architecture makes about this split.

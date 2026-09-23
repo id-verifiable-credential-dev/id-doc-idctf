@@ -14,7 +14,7 @@ title: "Module Guides"
 4. [Wallet Backend Service](wallet-backend-service.md)
 5. [Verifier Core](verifier-core.md)
 6. [Verifier Console](verifier-console.md)
-7. [Verifier Application](verifier-application.md)
+7. [Mobile Verifier](mobile-verifier.md)
 8. [Trust Authority](trust-authority.md)
 9. [Trust Registry](trust-registry.md)
 10. [DID Service](did-service.md)

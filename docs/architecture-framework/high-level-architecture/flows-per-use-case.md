@@ -112,7 +112,7 @@ application's responsibility.
 ## 6.4 Offline verification
 
 This flow verifies a credential over ISO 18013-5, in proximity, between a
-reader, which is either Verifier Core or Verifier Application, and Wallet
+reader, which is either Verifier Core or Mobile Verifier, and Wallet
 Application. No network is reachable during it at all.
 
 1. The reader engages Mobile Wallet by QR code or NFC tap.
@@ -136,25 +136,25 @@ prove to a third party that the citizen presented.
 
 ## 6.5 Verification by a merchant
 
-This flow lets a merchant verify a credential through Verifier Application,
+This flow lets a merchant verify a credential through Mobile Verifier,
 standing in for the Verifier Core it does not run itself. Verifier
 Application, on the merchant's own device, Verifier Core, run by the
 RP Intermediary that registered the merchant, and Mobile Wallet all
 take part.
 
-1. Verifier Application sends Verifier Core proof of possession of its
+1. Mobile Verifier sends Verifier Core proof of possession of its
    device key and an integrity token, at provisioning and at every renewal.
 2. Verifier Core returns a Verifier Device Certificate carrying the
    `ReaderAuthRole` extension and the device key. Its lifetime is set by the
    Governance Profile, and the RP Intermediary withdraws it early through a
    CRL.
-3. Verifier Application sends a Request Object to Mobile Wallet, signed
+3. Mobile Verifier sends a Request Object to Mobile Wallet, signed
    with the device key and carrying that certificate as `x5c`.
 4. Mobile Wallet checks whether the chain reaches Verifier Root CA,
    whether the issuing CA is on the trusted list, whether the certificate
    hash matches the `client_id`, and whether the requested attributes are a
    subset of `ReaderAuthRole`.
-5. Mobile Wallet sends the presentation to Verifier Application,
+5. Mobile Wallet sends the presentation to Mobile Verifier,
    encrypted to the merchant's device key.
 
 The key is born on the merchant's own device and signs there too. The RP

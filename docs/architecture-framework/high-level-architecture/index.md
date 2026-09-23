@@ -16,4 +16,4 @@ title: "High-Level Architecture"
 4. [Module map, components, and dependencies](module-map.md)
 5. [Network zones and placement](network-zones-and-placement.md)
 6. [Flows per use case](flows-per-use-case.md)
-7. [Architecture on the device: Mobile Wallet and Verifier Application](architecture-on-the-device.md)
+7. [Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md)

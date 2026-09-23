@@ -26,7 +26,7 @@ Module sits on is on
 | Wallet Backend Service | Wallet | REST API, PostgreSQL | One |
 | Verifier Core | Verifier | REST API, Redis, PostgreSQL, companion BLE and NFC reader | Many |
 | Verifier Console | Verifier | Web application (React) | Many |
-| Verifier Application | Verifier | Android and iOS (Flutter), secure element | Millions of installations |
+| Mobile Verifier | Verifier | Android and iOS (Flutter), secure element | Millions of installations |
 | Trust Authority | Trust | Web application (React), REST API, PostgreSQL, offline HSM | One |
 | Trust Registry | Trust | REST API, PostgreSQL, object storage, CDN | One |
 | DID Service | Trust | REST API, PostgreSQL, object storage, CDN | One |
@@ -71,11 +71,11 @@ them.
 |---|---|---|
 | Issuer Core | The source system, through Claims Provider; Trust Registry; DID Service; its local keystore | Wallet Backend Service, Verifier Core, KMS during a transaction |
 | Issuer Console | Issuer Core's Admin API | Any database, any other Module |
-| Mobile Wallet | Issuer Core, Verifier Core, Verifier Application, Wallet Backend Service, Trust Registry (cache), DID Service (cache), CONNECTIDN | Trust Authority, KMS |
+| Mobile Wallet | Issuer Core, Verifier Core, Mobile Verifier, Wallet Backend Service, Trust Registry (cache), DID Service (cache), CONNECTIDN | Trust Authority, KMS |
 | Wallet Backend Service | CONNECTIDN, Trust Registry, DID Service, the device platform | Issuer Core, Verifier Core |
 | Verifier Core | Trust Registry, DID Service, the issuer's status list (a static file), the Relying Party application, its local keystore | Issuer Core, KMS during a transaction |
 | Verifier Console | Verifier Core's Admin API | Any database, any other Module |
-| Verifier Application | Verifier Core, for attestation; Trust Registry (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
+| Mobile Verifier | Verifier Core, for attestation; Trust Registry (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
 | Trust Authority | Trust Registry, DID Service, KMS | Any Module outside Trust Infrastructure |
 | Trust Registry, DID Service, KMS | Nothing | Any Module outside Trust Infrastructure; none of them ever calls an entity back |
 
@@ -224,8 +224,8 @@ the Console its staff work in, and the application a merchant carries on a
 phone instead of running a server.
 
 <figure markdown="1" id="figure-4-5">
-  ![Components inside Verifier Core, Verifier Console and Verifier Application](../../images/architecture-framework/high-level-architecture/component-verifier-services.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 4.5</span> All three verifying Modules. Verifier Application repeats Verifier Core's Credential Verifier with one path removed, and adds no repository that could hold an attribute.</figcaption>
+  ![Components inside Verifier Core, Verifier Console and Mobile Verifier](../../images/architecture-framework/high-level-architecture/component-verifier-services.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum">Figure 4.5</span> All three verifying Modules. Mobile Verifier repeats Verifier Core's Credential Verifier with one path removed, and adds no repository that could hold an attribute.</figcaption>
 </figure>
 
 ### 4.5.1 Verifier Core
@@ -273,15 +273,15 @@ Verifier Core's database directly.
 | Reporting View | View | Consent receipt archive, verification reports | None |
 | Core API Client | Client | Calls the Admin Controller. Opens no database connection of its own | None |
 
-### 4.5.3 Verifier Application
+### 4.5.3 Mobile Verifier
 
-Verifier Application lets a merchant verify without running a server at all.
+Mobile Verifier lets a merchant verify without running a server at all.
 Keys stay on the device, the result appears on the screen, and there is no web
 version, because a browser cannot hold the keys this design requires. It
 supports `dc+sd-jwt` and `mso_mdoc` and not `ldp_vc`, for the reasons set out in
 [Section 4.8, Credential formats per role](#48-credential-formats-per-role).
 
-Verifier Application's Credential Verifier carries the restriction already
+Mobile Verifier's Credential Verifier carries the restriction already
 named above at the code level: it verifies SD-JWT VC and mdoc, and nothing
 verifies `ldp_vc` on this Module. It works from cache rather than reaching
 Trust Infrastructure at the moment of verification, checking both trust
@@ -397,7 +397,7 @@ Trust SDK is not on the Module list in the table at the top of this page,
 and [Section 4.1](#41-what-is-not-a-module) already says why: it does not
 ship as its own container image. It exists in two implementations instead,
 Go for Issuer Core and Verifier Core, Dart for Mobile Wallet and
-Verifier Application, embedded in each as a Provider-layer component. Neither
+Mobile Verifier, embedded in each as a Provider-layer component. Neither
 Console carries it, Wallet Backend Service does not carry it, and no Module
 inside Trust Infrastructure carries it either: the
 four Modules that read published trust artifacts are the only four that

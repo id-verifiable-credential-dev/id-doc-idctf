@@ -17,8 +17,8 @@ zone is defined by who is let in rather than by where the hardware is.
 
 | Zone | What is in it | Who reaches it |
 |---|---|---|
-| Internet | Mobile Wallet, Verifier Application | Citizens, merchants |
-| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Verifier Application, other Core Modules |
+| Internet | Mobile Wallet, Mobile Verifier | Citizens, merchants |
+| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules |
 | Internal | Issuer Console, Verifier Console, Admin API, Trust Authority (back office and portal), PostgreSQL, Redis, Claims Provider | An operator, over VPN or the office network |
 | Secure | KMS, HSM, both offline CA roots | Trust Authority only |
 | Closed agency network | Source systems | Claims Provider only, and read-only |

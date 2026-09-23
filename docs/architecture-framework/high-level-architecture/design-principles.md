@@ -26,7 +26,7 @@ something specific. The seventh is different, and it is marked as such.
 
 Two planes run through this ecosystem and they do not meet at runtime. On the
 transaction path, Issuer Core issues to Mobile Wallet over OpenID4VCI, and
-Mobile Wallet presents to Verifier Core or Verifier Application over
+Mobile Wallet presents to Verifier Core or Mobile Verifier over
 OpenID4VP and ISO 18013-5. On the trust path, Trust Authority drives Trust
 Registry, DID Service, and KMS. No message crosses from one to the other while
 a credential is being issued or verified.
@@ -173,7 +173,7 @@ and the retention rules belong to the
 ## 1.7 Accessibility
 
 Every surface a person touches has to be usable by people with disabilities:
-the Mobile Wallet, the Verifier Application, both Consoles, and the Trust
+the Mobile Wallet, the Mobile Verifier, both Consoles, and the Trust
 Authority portal. In Indonesia this is not a preference. UU No. 8 Tahun 2016
 tentang Penyandang Disabilitas obliges state administration and public services
 to provide accessibility and reasonable accommodation, and a national credential

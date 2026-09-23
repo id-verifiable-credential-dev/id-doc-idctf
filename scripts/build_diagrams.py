@@ -249,16 +249,16 @@ def fig_module_map():
     c = Canvas(
         "The eleven Modules, grouped by Service",
         "Four Service columns. Issuer Services holds Issuer Core and Issuer Console, "
-        "both run many times. Wallet Services holds one Wallet Application with millions "
+        "both run many times. Wallet Services holds one Mobile Wallet with millions "
         "of installations and a single Wallet Backend Service. Verifier Services holds "
-        "Verifier Core, Verifier Console and Verifier Application. Trust Infrastructure "
+        "Verifier Core, Verifier Console and Mobile Verifier. Trust Infrastructure "
         "holds Trust Authority, Trust Registry, DID Service and KMS, one of each.")
     cols = [
         ("ISSUER SERVICES", "issuer", [("Issuer Core", "many"), ("Issuer Console", "many")]),
-        ("WALLET SERVICES", "wallet", [("Wallet Application", "one app, millions installed"),
+        ("WALLET SERVICES", "wallet", [("Mobile Wallet", "one app, millions installed"),
                                        ("Wallet Backend Service", "one")]),
         ("VERIFIER SERVICES", "verifier", [("Verifier Core", "many"), ("Verifier Console", "many"),
-                                           ("Verifier Application", "millions installed")]),
+                                           ("Mobile Verifier", "millions installed")]),
         ("TRUST INFRASTRUCTURE", "trust", [("Trust Authority", "one"), ("Trust Registry", "one"),
                                            ("DID Service", "one"), ("KMS", "one")]),
     ]
@@ -291,11 +291,11 @@ def fig_call_matrix():
     rows = [
         ("Issuer Core", {"WBS": "X", "VC": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "o", "DB": "@"}),
         ("Issuer Console", {"IC": "@", "WBS": "x", "VC": "x", "TA": "x", "TR": "x", "DID": "x", "KMS": "x", "DB": "X"}),
-        ("Wallet Application", {"IC": "@", "WBS": "@", "VC": "@", "VA": "@", "TA": "x", "TR": "c", "DID": "c", "KMS": "x"}),
+        ("Mobile Wallet", {"IC": "@", "WBS": "@", "VC": "@", "VA": "@", "TA": "x", "TR": "c", "DID": "c", "KMS": "x"}),
         ("Wallet Backend Service", {"IC": "x", "VC": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "x", "DB": "@"}),
         ("Verifier Core", {"IC": "X", "WBS": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "o", "DB": "@"}),
         ("Verifier Console", {"IC": "x", "VC": "@", "WBS": "x", "TA": "x", "TR": "x", "DID": "x", "KMS": "x", "DB": "X"}),
-        ("Verifier Application", {"IC": "x", "VC": "@", "TA": "x", "TR": "c", "KMS": "x"}),
+        ("Mobile Verifier", {"IC": "x", "VC": "@", "TA": "x", "TR": "c", "KMS": "x"}),
         ("Trust Authority", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X",
                              "TR": "@", "DID": "@", "KMS": "@", "DB": "@"}),
         ("Trust Registry", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X", "DB": "@"}),
@@ -385,7 +385,7 @@ def fig_wallet_components():
     return component_figure(
         "component-wallet-services",
         "Components inside Wallet Services",
-        "Wallet Application in four layers: four protocol clients, five domain components "
+        "Mobile Wallet in four layers: four protocol clients, five domain components "
         "including Trust Display and Consent UI, two providers, and the encrypted Credential "
         "Store. Wallet Backend Service below it issues Key Attestations and keeps a device "
         "registry that holds no credential data.",
@@ -411,7 +411,7 @@ def fig_verifier_components():
         "Components inside Verifier Services",
         "Verifier Core with four controllers, three domain services including Trust "
         "Evaluator, two providers and a repository. Verifier Console with three views and "
-        "a client. Verifier Application, which runs on a merchant device with no server "
+        "a client. Mobile Verifier, which runs on a merchant device with no server "
         "and whose Activity Repository holds no citizen attribute.",
         [("VERIFIER CORE", "verifier", [
             ("Controller", ["Presentation Controller", "Proximity Reader", "RP Controller",
@@ -429,7 +429,7 @@ def fig_verifier_components():
              ("View", ["Result View"]),
              ("Provider", [("Keystore Manager", "secure element"), ("Trust SDK", "local cache")]),
              ("Repository", [("Activity Repository", "no citizen attribute")])])],
-        "Verifier Application carries no ldp_vc path and verifies entirely from cache.")
+        "Mobile Verifier carries no ldp_vc path and verifies entirely from cache.")
 
 
 # ---------------------------------------------------------------- figure 4.6
@@ -474,7 +474,7 @@ def fig_trust_sdk():
         "The Trust SDK is a library rather than a Module. Six parts, of which the DID "
         "Resolver Client and the X.509 Validator carry the highest risk of the Go and Dart "
         "implementations drifting apart. It is embedded as a Provider-layer component in "
-        "Issuer Core, Verifier Core, Wallet Application and Verifier Application, and in no "
+        "Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier, and in no "
         "other Module.")
     parts = [("Trust Client", "TRQP", ""), ("Artifact Consumer", "trusted list, rulebook", "!"),
              ("DID Resolver Client", "did:webvh, did:key", "!!"),
@@ -498,7 +498,7 @@ def fig_trust_sdk():
     ey = top + 48
     for i, (name, lang, kind) in enumerate([
             ("Issuer Core", "Go", "issuer"), ("Verifier Core", "Go", "verifier"),
-            ("Wallet Application", "Dart", "wallet"), ("Verifier Application", "Dart", "verifier")]):
+            ("Mobile Wallet", "Dart", "wallet"), ("Mobile Verifier", "Dart", "verifier")]):
         ex = i * (BOX_W + GAP)
         c.box(ex, ey, BOX_W, 58, name, (lang,), kind)
     c.text(0, ey + 92, "and in no other Module", 11, "600", INK)
