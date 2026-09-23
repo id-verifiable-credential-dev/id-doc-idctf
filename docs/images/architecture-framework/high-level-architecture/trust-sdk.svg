@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 852 526" width="852" height="526" role="img" aria-labelledby="t d">
+<title id="t">Trust SDK: six parts, and the four Modules that embed it</title><desc id="d">The Trust SDK is a library rather than a Module. Six parts, of which the DID Resolver Client and the X.509 Validator carry the highest risk of the Go and Dart implementations drifting apart. It is embedded as a Provider-layer component in Issuer Core, Verifier Core, Mobile Wallet and Verifier Application, and in no other Module.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
+<rect x="0.5" y="0.5" width="851" height="525" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
+<g transform="translate(36,36)">
+<rect x="0" y="0" width="610" height="192" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="14" y="21" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">TRUST SDK  ·  LIBRARY, NOT A MODULE</text>
+<rect x="14" y="30" width="186" height="68" rx="4" fill="#e9ecef" stroke="#6c757d" stroke-width="1"/>
+<text x="107.0" y="55" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trust Client</text>
+<text x="107.0" y="70" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">TRQP</text>
+<text x="107.0" y="86" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#6c757d">drift risk: low</text>
+<rect x="212" y="30" width="186" height="68" rx="4" fill="#fff3cd" stroke="#d4a017" stroke-width="1"/>
+<text x="305.0" y="55" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Artifact Consumer</text>
+<text x="305.0" y="70" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">trusted list, rulebook</text>
+<text x="305.0" y="86" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#d4a017">drift risk: medium</text>
+<rect x="410" y="30" width="186" height="68" rx="4" fill="#ffe0cc" stroke="#d2691e" stroke-width="1"/>
+<text x="503.0" y="55" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">DID Resolver Client</text>
+<text x="503.0" y="70" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">did:webvh, did:key</text>
+<text x="503.0" y="86" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#d2691e">drift risk: high</text>
+<rect x="14" y="110" width="186" height="68" rx="4" fill="#fff3cd" stroke="#d4a017" stroke-width="1"/>
+<text x="107.0" y="135" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Status Checker</text>
+<text x="107.0" y="150" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">status list, bitstring</text>
+<text x="107.0" y="166" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#d4a017">drift risk: medium</text>
+<rect x="212" y="110" width="186" height="68" rx="4" fill="#f8d7da" stroke="#c0392b" stroke-width="1"/>
+<text x="305.0" y="135" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">X.509 Validator</text>
+<text x="305.0" y="150" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">DSC, VDC, CRL, VICAL</text>
+<text x="305.0" y="166" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#c0392b">drift risk: highest</text>
+<rect x="410" y="110" width="186" height="68" rx="4" fill="#e9ecef" stroke="#6c757d" stroke-width="1"/>
+<text x="503.0" y="135" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Cache Store</text>
+<text x="503.0" y="150" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">TTL, last known good</text>
+<text x="503.0" y="166" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="9.5" font-weight="600" fill="#6c757d">drift risk: low</text>
+<text x="0" y="224" text-anchor="start" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#16242f">embedded as a Provider-layer component in</text>
+<rect x="0" y="240" width="186" height="58" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="93.0" y="265.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Issuer Core</text>
+<text x="93.0" y="279.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">Go</text>
+<rect x="198" y="240" width="186" height="58" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="291.0" y="265.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Core</text>
+<text x="291.0" y="279.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">Go</text>
+<rect x="396" y="240" width="186" height="58" rx="7" fill="#e2d9f3" stroke="#7d5ba6" stroke-width="1.3"/>
+<text x="489.0" y="265.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Wallet</text>
+<text x="489.0" y="279.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">Dart</text>
+<rect x="594" y="240" width="186" height="58" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="687.0" y="265.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Application</text>
+<text x="687.0" y="279.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">Dart</text>
+<text x="0" y="332" text-anchor="start" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#16242f">and in no other Module</text>
+<rect x="0" y="344" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="93.0" y="364.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Issuer Console</text>
+<rect x="198" y="344" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="291.0" y="364.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Console</text>
+<rect x="396" y="344" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="489.0" y="364.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Wallet Backend Service</text>
+<rect x="594" y="344" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="687.0" y="364.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trust Authority</text>
+<rect x="0" y="388" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="93.0" y="408.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trust Registry</text>
+<rect x="198" y="388" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="291.0" y="408.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">DID Service</text>
+<rect x="396" y="388" width="186" height="34" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="489.0" y="408.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">KMS</text>
+<text x="0" y="454" text-anchor="start" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" font-weight="400" fill="#4a5f6f">One interface, two implementations, held together by shared test vectors run on every pipeline build.</text>
+</g>
+</svg>

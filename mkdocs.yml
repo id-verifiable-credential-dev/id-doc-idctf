@@ -1,0 +1,249 @@
+# Project information
+site_name: Indonesia Digital Credential Trust Framework
+site_description: Indonesia Digital Credential Trust Framework
+repo_url: https://github.com/id-verifiable-credential-dev/id-doc-idctf
+repo_name: id-doc-idctf
+# Read by the `content.action.edit` and `content.action.view` features in
+# theme.features; without these the Edit / View source buttons never render.
+edit_uri: edit/main/docs/
+
+# Configuration
+theme:
+  name: material
+  language: en
+  # Holds only the `outdated` block — the outdated-version banner.
+  custom_dir: overrides
+  features:
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.tabs.link
+    - content.tooltips
+    - navigation.footer
+    - navigation.indexes
+    # navigation.instant is NOT compatible with the i18n plugin's language
+    # switcher — do not switch it back on while the toggle is in use.
+    - navigation.path
+    # navigation.sections is deliberately unused: chapters now hold section
+    # pages, and always-open sections make the left rail far too long.
+    # Without it, each chapter opens and closes on its own.
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+  # Brand mark: the round BLPID fingerprint. `theme.logo` overrides
+  # `theme.icon.logo`, so the icon key for the logo is gone — the file is the
+  # logo now. The same file serves as the favicon.
+  logo: assets/logo-blpid.png
+  favicon: assets/logo-blpid.png
+  # Lucide icon set (files in `overrides/.icons/lucide/`, taken from the
+  # `lucide-static` package — the same artwork as `lucide-react`).
+  icon:
+    menu: lucide/menu
+    search: lucide/search
+    close: lucide/x
+    share: lucide/share-2
+    previous: lucide/arrow-left
+    next: lucide/arrow-right
+    top: lucide/arrow-up
+    alternate: lucide/languages
+    admonition:
+      note: lucide/info
+      info: lucide/info
+  palette:
+    - media: "(prefers-color-scheme)"
+      primary: custom
+      accent: custom
+      toggle:
+        icon: lucide/sun-moon
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: lucide/sun
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: lucide/moon
+        name: Switch to system preference
+  font:
+    text: Inter
+    code: IBM Plex Mono
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: Copyright &copy; 2026 Indonesia Digital Credential Trust Framework
+
+# Plugins
+plugins:
+  # English is the default locale and its files carry no suffix. The plugin
+  # stays configured so a second language can come back without rebuilding
+  # this block, but Indonesian is switched off: `build: false` emits no /id/
+  # directory, so every Indonesian URL returns 404 and the language toggle
+  # does not render. Bringing it back means flipping that flag, adding
+  # `*.id.md` files, and filling in `nav_translations` for the id locale.
+  - i18n:
+      docs_structure: suffix
+      languages:
+        - locale: en
+          name: English
+          default: true
+          build: true
+        - locale: id
+          name: Bahasa Indonesia
+          build: false
+          site_name: IDCTF
+          site_description: Indonesia Digital Credential Trust Framework
+          copyright: Copyright &copy; 2026 Indonesia Digital Credential Trust Framework
+  - search:
+      separator: '[\s​\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - minify:
+      minify_html: true
+
+# Additional configuration
+extra:
+  generator: false
+  status:
+    new: Newly added
+    deprecated: Deprecated
+  # Documentation version combobox (navbar dropdown). The version list is in
+  # `versions.json` at the project root, and the versioned site is built with
+  # `python3 scripts/build_versions.py`. `default` marks which version counts
+  # as current — any other version raises the "outdated version" banner.
+  version:
+    provider: mike
+    default: latest
+
+# Extensions
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      # Registers the Lucide icon set so it can be called from Markdown
+      # as `:lucide-<name>:`.
+      options:
+        custom_icons:
+          - overrides/.icons
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
+
+# Page tree
+nav:
+  - Introduction: index.md
+  - Architecture Framework:
+    - architecture-framework/index.md
+    - "Roles":
+      - architecture-framework/roles/index.md
+      - architecture-framework/roles/role-map.md
+      - architecture-framework/roles/three-stages-of-authority.md
+      - architecture-framework/roles/rp-intermediary-and-merchant.md
+    - "High-Level Architecture":
+      - architecture-framework/high-level-architecture/index.md
+      - architecture-framework/high-level-architecture/design-principles.md
+      - architecture-framework/high-level-architecture/the-four-services.md
+      - architecture-framework/high-level-architecture/transaction-path-and-trust-path.md
+      - architecture-framework/high-level-architecture/module-map.md
+      - architecture-framework/high-level-architecture/network-zones-and-placement.md
+      - architecture-framework/high-level-architecture/flows-per-use-case.md
+      - architecture-framework/high-level-architecture/architecture-on-the-device.md
+    - "Data Model and Protocols (Overview)":
+      - architecture-framework/data-model-and-protocols/index.md
+      - architecture-framework/data-model-and-protocols/technology-map.md
+      - architecture-framework/data-model-and-protocols/three-credential-formats.md
+      - architecture-framework/data-model-and-protocols/identifier.md
+      - architecture-framework/data-model-and-protocols/three-levels-of-rules.md
+      - architecture-framework/data-model-and-protocols/protocols-per-interaction.md
+      - architecture-framework/data-model-and-protocols/artifacts-exchanged.md
+      - architecture-framework/data-model-and-protocols/online-and-offline-modes.md
+    - "Trust Model (Conceptual)":
+      - architecture-framework/trust-model/index.md
+      - architecture-framework/trust-model/chain-of-trust.md
+      - architecture-framework/trust-model/two-trust-anchor-paths.md
+      - architecture-framework/trust-model/entity-chain-and-transaction-chain.md
+      - architecture-framework/trust-model/trusted-list-and-cache.md
+      - architecture-framework/trust-model/short-lived-attestations.md
+      - architecture-framework/trust-model/two-assurance-levels.md
+      - architecture-framework/trust-model/keys-who-creates-who-signs.md
+      - architecture-framework/trust-model/trust-model-scope.md
+    - "Software Architecture":
+      - architecture-framework/software-architecture/index.md
+      - architecture-framework/software-architecture/three-level-vocabulary.md
+      - architecture-framework/software-architecture/layers-inside-a-module.md
+      - architecture-framework/software-architecture/constraints-binding-implementations.md
+      - architecture-framework/software-architecture/typical-software-decisions.md
+      - architecture-framework/software-architecture/storage-sessions-and-archive.md
+      - architecture-framework/software-architecture/scale-and-resilience.md
+      - architecture-framework/software-architecture/quality-targets.md
+    - "Tech Stack and Deployment":
+      - architecture-framework/tech-stack-and-deployment/index.md
+      - architecture-framework/tech-stack-and-deployment/technology-choices-per-layer.md
+      - architecture-framework/tech-stack-and-deployment/repository-and-package-structure.md
+      - architecture-framework/tech-stack-and-deployment/packaging-and-deployment.md
+      - architecture-framework/tech-stack-and-deployment/technology-risks-and-mitigation.md
+    - "Module Guides":
+      - architecture-framework/module-guides/index.md
+      - architecture-framework/module-guides/issuer-core.md
+      - architecture-framework/module-guides/issuer-console.md
+      - architecture-framework/module-guides/mobile-wallet.md
+      - architecture-framework/module-guides/wallet-backend-service.md
+      - architecture-framework/module-guides/verifier-core.md
+      - architecture-framework/module-guides/verifier-console.md
+      - architecture-framework/module-guides/verifier-application.md
+      - architecture-framework/module-guides/trust-authority.md
+      - architecture-framework/module-guides/trust-registry.md
+      - architecture-framework/module-guides/did-service.md
+      - architecture-framework/module-guides/kms.md
+      - architecture-framework/module-guides/trust-sdk.md
+    - architecture-framework/open-decisions-and-technical-debt.md
+    - architecture-framework/references.md
+  # The four documents below are parked: each is one page carrying its title
+  # and a `(soon)` marker, so the tab is visible and says what it will hold.
+  - Technical Specifications:
+    - technical-specifications/index.md
+  - Governance Framework:
+    - governance-framework/index.md
+  - Credential Rulebook Catalog:
+    - credential-rulebook/index.md
+  - Decision Log:
+    - decision-log/index.md

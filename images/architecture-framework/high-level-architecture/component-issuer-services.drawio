@@ -1,0 +1,29 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Components inside Issuer Services">
+    <mxGraphModel dx="772" dy="602" grid="1" gridSize="10" page="1" pageWidth="772" pageHeight="602" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="band1" value="ISSUER CORE" style="rounded=1;arcSize=6;fillColor=none;strokeColor=#b8c4ce;dashed=1;dashPattern=5 4;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=11;fontStyle=1;fontColor=#4a5f6f;html=1;" vertex="1" parent="1"><mxGeometry x="0" y="0.0" width="700" height="308" as="geometry"/></mxCell>
+        <mxCell id="n2" value="Issuance Controller" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n3" value="Authorization Controller" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n4" value="Admin Controller" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n5" value="Credential Builder" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n6" value="Status Manager" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n7" value="Key Attestation Validator" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n8" value="Claims Provider
+the only one that differs per install" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="162.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n9" value="Signing Provider" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="162.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n10" value="Trust SDK" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="162.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n11" value="Issuance Repository" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="228.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="band12" value="ISSUER CONSOLE" style="rounded=1;arcSize=6;fillColor=none;strokeColor=#b8c4ce;dashed=1;dashPattern=5 4;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=11;fontStyle=1;fontColor=#4a5f6f;html=1;" vertex="1" parent="1"><mxGeometry x="0" y="328.0" width="700" height="176" as="geometry"/></mxCell>
+        <mxCell id="n13" value="Configuration View" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="358.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n14" value="Operations View" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="358.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n15" value="Reporting View" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="358.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n16" value="Core API Client
+no database connection" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="424.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="t17" value="Claims Provider is the only component whose contents differ at every installation." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="520.0" width="220" height="20" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

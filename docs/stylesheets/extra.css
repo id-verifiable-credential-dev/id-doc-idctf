@@ -1,0 +1,1302 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* ==========================================================================
+   Sistem visual EKDN — palet dan tata letaknya diturunkan dari desain situs
+   BLPID, sedangkan tipografi dan bentuk bilah atasnya mengikuti situs
+   dokumentasi GitBook: Inter, skala 16/20/24/30 piksel, dan jarak huruf
+   normal untuk teks isi.
+   Ciri yang dipertahankan dari sumber: latar putih bersih, garis rambut 1px
+   sebagai satu-satunya pemisah, sudut membulat hanya pada dua ukuran
+   (pil 999px dan panel 14px), serta tautan
+   yang garis bawahnya tumbuh dari kiri ke kanan saat disentuh kursor.
+   Tidak ada gradasi di area konten; gradasi biru hanya dipakai pada bilah
+   atas agar header dan bilah tab terbaca sebagai dua lapis yang berbeda.
+   ========================================================================== */
+
+:root > * {
+  /* Token merek BLPID. Nilai biru yang sama mengisi peran primary dan accent
+     supaya tautan, tombol, dan status aktif berasal dari satu sumber warna. */
+  --md-primary-fg-color: #0281ff;
+  --md-primary-fg-color--light: #4aa8ff;
+  --md-primary-fg-color--dark: #0b6fd8;
+  --md-primary-bg-color: #ffffff;
+  --md-primary-bg-color--light: rgba(255, 255, 255, 0.72);
+
+  --md-accent-fg-color: #0281ff;
+  --md-accent-fg-color--transparent: rgba(2, 129, 255, 0.1);
+  --md-accent-bg-color: #ffffff;
+  --md-accent-bg-color--light: rgba(255, 255, 255, 0.72);
+
+  /* Skala ink/abu kebiruan BLPID: dari judul paling pekat sampai label. */
+  --ekdn-ink: #0b1a26;
+  --ekdn-ink-soft: #12202c;
+  --ekdn-body: #243746;
+  --ekdn-muted: #4a5f6f;
+  --ekdn-faint: #7b8b98;
+  --ekdn-label: #9fb0bd;
+  --ekdn-rule: #e8eef4;
+  --ekdn-rule-strong: #e2e9f0;
+  --ekdn-tint: #f2faff;
+  --ekdn-tint-line: #e2f1fd;
+  --ekdn-surface: #ffffff;
+
+
+  --md-default-fg-color: var(--ekdn-ink);
+  --md-default-fg-color--light: var(--ekdn-muted);
+  --md-default-fg-color--lighter: var(--ekdn-faint);
+  --md-default-fg-color--lightest: var(--ekdn-rule);
+  --md-typeset-color: var(--ekdn-body);
+  --md-typeset-a-color: #0281ff;
+
+  --md-code-fg-color: #0b6fd8;
+  --md-code-bg-color: var(--ekdn-tint);
+
+  --md-mermaid-font-family: "Inter", system-ui, sans-serif;
+  --md-mermaid-edge-color: var(--ekdn-label);
+  --md-mermaid-node-bg-color: var(--ekdn-tint);
+  --md-mermaid-node-fg-color: var(--md-primary-fg-color);
+  --md-mermaid-label-bg-color: var(--ekdn-surface);
+  --md-mermaid-label-fg-color: var(--ekdn-ink);
+
+  /* Footer mengikuti badan halaman — putih dengan garis rambut, bukan blok
+     gelap bawaan tema, sama seperti footer situs BLPID. */
+  --md-footer-bg-color: #ffffff;
+  --md-footer-bg-color--dark: #ffffff;
+  --md-footer-fg-color: var(--ekdn-ink);
+  --md-footer-fg-color--light: var(--ekdn-muted);
+  --md-footer-fg-color--lighter: var(--ekdn-faint);
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #4aa8ff;
+  --md-primary-fg-color--light: #8cc9ff;
+  --md-primary-fg-color--dark: #0281ff;
+  --md-accent-fg-color: #8cc9ff;
+  --md-accent-fg-color--transparent: rgba(74, 168, 255, 0.16);
+
+  --ekdn-ink: #eef4f9;
+  --ekdn-ink-soft: #dbe7f1;
+  --ekdn-body: #c2d2de;
+  --ekdn-muted: #9fb0bd;
+  --ekdn-faint: #7b8b98;
+  --ekdn-label: #5c7180;
+  --ekdn-rule: rgba(255, 255, 255, 0.11);
+  --ekdn-rule-strong: rgba(255, 255, 255, 0.16);
+  --ekdn-tint: rgba(74, 168, 255, 0.1);
+  --ekdn-tint-line: rgba(74, 168, 255, 0.22);
+  --ekdn-surface: #12202c;
+
+  --md-default-bg-color: #0b1a26;
+  --md-default-fg-color: var(--ekdn-ink);
+  --md-default-fg-color--light: var(--ekdn-muted);
+  --md-default-fg-color--lighter: var(--ekdn-faint);
+  --md-default-fg-color--lightest: var(--ekdn-rule);
+  --md-typeset-color: var(--ekdn-body);
+  --md-typeset-a-color: #4aa8ff;
+
+  --md-code-fg-color: #8cc9ff;
+  --md-code-bg-color: rgba(255, 255, 255, 0.04);
+
+  --md-mermaid-edge-color: var(--ekdn-label);
+  --md-mermaid-node-bg-color: var(--ekdn-tint);
+  --md-mermaid-node-fg-color: var(--md-primary-fg-color);
+  --md-mermaid-label-bg-color: var(--ekdn-surface);
+  --md-mermaid-label-fg-color: var(--ekdn-ink);
+
+  --md-footer-bg-color: #0b1a26;
+  --md-footer-bg-color--dark: #0b1a26;
+}
+
+/* ==========================================================================
+   Bilah atas — mengikuti pola header dokumentasi GitBook: satu unit putih
+   berisi dua baris (identitas + pencarian, lalu bilah tab), tanpa blok warna
+   dan tanpa bayangan; pemisahnya cuma satu garis rambut di tepi bawah unit.
+   Warna merek tidak dipakai sebagai latar, melainkan sebagai penanda: tab
+   aktif dan status fokus. Kotak pencarian berbentuk pil bergaris rambut,
+   sejajar dengan tombol dan panel lain di situs ini.
+   ========================================================================== */
+
+.md-header {
+  background-color: var(--md-default-bg-color);
+  background-image: none;
+  color: var(--ekdn-ink);
+  box-shadow: 0 1px 0 var(--ekdn-rule);
+}
+
+.md-header__inner {
+  height: 4rem;
+}
+
+.md-header__title {
+  color: var(--ekdn-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: -0.0125em;
+}
+
+/* Ikon header (menu, tema, bahasa, repo) diredam supaya judul dan pencarian
+   yang memimpin; warna merek muncul hanya saat disentuh kursor. */
+.md-header__button {
+  color: var(--ekdn-muted);
+}
+
+.md-header__button:hover {
+  color: var(--md-primary-fg-color);
+  opacity: 1;
+}
+
+.md-header__button.md-logo {
+  color: var(--md-primary-fg-color);
+}
+
+@media screen and (min-width: 60em) {
+  /* Pil pencarian dibuat lebih lebar dari bawaan tema (11,7rem) supaya
+     sebanding dengan kotak pencarian GitBook, dan melebar lagi saat fokus.
+     Bawaan tema mengambangkan isi kotak ke kanan; di sini dibuat memenuhi
+     wadahnya agar pertumbuhan saat fokus terjadi ke dua sisi. */
+  .md-search__inner {
+    float: none;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  [data-md-toggle="search"]:checked ~ .md-header .md-search__inner {
+    width: 100%;
+  }
+
+  .md-search {
+    width: 20rem;
+  }
+
+  [data-md-toggle="search"]:checked ~ .md-header .md-search {
+    width: 26rem;
+  }
+
+  .md-search__form {
+    background-color: var(--ekdn-surface);
+    border: 1px solid var(--ekdn-rule-strong);
+    border-radius: 999px;
+    box-shadow: none;
+    height: 1.9rem;
+    transition: border-color 200ms ease;
+  }
+
+  /* Ikon kaca pembesar dan tombol di kanan dipasang tema dengan jarak tetap
+     dari tepi atas (0,3rem), yang hanya pas untuk pil setinggi bawaannya.
+     Di sini keduanya ditengahkan terhadap tinggi pil berapa pun, dan jarak
+     tepinya dilebarkan mengikuti pil yang lebih tinggi. */
+  .md-search__icon[for="__search"],
+  .md-search__options {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  /* Aturan ukuran ikon di bawah memberi `.md-search__icon` `display: block`,
+     dan itu ikut kena dua tombol di ujung kanan pil (bagikan dan hapus):
+     keduanya jadi bertumpuk ke bawah dan menyembul ke luar pil. Wadahnya
+     dijadikan baris flex supaya tetap sebaris. */
+  .md-search__options {
+    align-items: center;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  [dir="ltr"] .md-search__icon[for="__search"] {
+    left: 0.75rem;
+  }
+
+  [dir="rtl"] .md-search__icon[for="__search"] {
+    right: 0.75rem;
+  }
+
+  [dir="ltr"] .md-search__options {
+    right: 0.75rem;
+  }
+
+  [dir="rtl"] .md-search__options {
+    left: 0.75rem;
+  }
+
+  [dir="ltr"] .md-search__input {
+    padding-left: 2.2rem;
+  }
+
+  [dir="rtl"] .md-search__input {
+    padding-right: 2.2rem;
+  }
+
+  .md-search__form:hover {
+    background-color: var(--ekdn-surface);
+    border-color: var(--md-primary-fg-color);
+  }
+
+  [data-md-toggle="search"]:checked ~ .md-header .md-search__form {
+    background-color: var(--ekdn-surface);
+    border-color: var(--md-primary-fg-color);
+    border-radius: 0.95rem 0.95rem 0 0;
+    box-shadow: none;
+    color: var(--ekdn-ink);
+  }
+
+  .md-search__output {
+    border: 1px solid var(--ekdn-rule-strong);
+    border-top: 0;
+    border-radius: 0 0 0.95rem 0.95rem;
+    /* Harus persis setinggi kotak pencarian di atas: panel hasil menempel
+       di bawahnya, bukan mengambang. */
+    top: 1.9rem;
+    /* Aturan bawaan tema memasang `bottom: 0`; begitu kotak pencarian dipaku
+       ke tengah, panel hasil jadi memanjang sampai dasar layar. Tingginya
+       dikembalikan mengikuti isi. */
+    bottom: auto;
+  }
+
+  /* Tema memaku lebar daftar hasil ke 34,4rem — lebar kotak pencarian
+     bawaannya. Pil di sini 26rem saat fokus, jadi daftarnya menyembul ke
+     kanan dan barisnya terpotong. Lebarnya diikutkan ke panelnya. */
+  .md-search__scrollwrap {
+    width: 100%;
+  }
+
+  [data-md-toggle="search"]:checked ~ .md-header .md-search__output {
+    box-shadow: 0 10px 24px -14px rgba(11, 26, 38, 0.2);
+  }
+}
+
+.md-search__input {
+  color: var(--ekdn-ink);
+  font-size: 0.7rem;
+}
+
+/* Tebakan kata yang dipasang tema di belakang kotak ketik memakai ukuran
+   hurufnya sendiri (0,8rem). Begitu kotak ketiknya dikecilkan, kedua teks
+   tidak lagi saling menutup dan yang terbaca jadi dua lapis huruf bergeser.
+   Ukurannya harus sama persis dengan `.md-search__input`. */
+.md-search__suggest {
+  font-size: 0.7rem;
+}
+
+/* Tema memberi ikon kaca pembesar warna latar primary — tak terlihat di atas
+   header putih — jadi ketiga ikon pencarian disamakan ke abu redup. */
+.md-search__input::placeholder,
+.md-search__input ~ .md-search__icon,
+.md-search__input + .md-search__icon {
+  color: var(--ekdn-faint);
+}
+
+.md-search__options .md-icon {
+  color: var(--ekdn-faint);
+}
+
+/* Pencarian dipaku ke tengah bilah — dikeluarkan dari aliran flex supaya
+   titik tengahnya mengikuti lebar grid, bukan sisa ruang di antara judul dan
+   ikon. Baru dinyalakan di layar selebar 80rem ke atas; di bawah itu ruangnya
+   tidak cukup dan judul situs bisa tertimpa. */
+@media screen and (min-width: 80em) {
+  .md-header__inner {
+    position: relative;
+  }
+
+  /* Penengahan sengaja memakai `margin-left` negatif, bukan `transform`:
+     elemen ber-transform menjadi containing block bagi keturunannya yang
+     `position: fixed`, dan itu membuat lapisan peredup hasil pencarian
+     menciut selebar kotak ini alih-alih menutup layar. */
+  .md-search {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -10rem;
+    display: flex;
+    align-items: center;
+    transition: width 250ms, margin-left 250ms;
+  }
+
+  [data-md-toggle="search"]:checked ~ .md-header .md-search {
+    margin-left: -13rem;
+  }
+
+  /* Karena pencariannya keluar dari aliran flex, judul situs tidak lagi
+     terdorong olehnya dan boleh memanjang sampai ke bawah pil. Lebarnya
+     dibatasi sampai tepi kiri pil dalam keadaan fokus (setengah lebar bilah
+     dikurangi 13rem), dikurangi lagi 5rem untuk lambang di kiri judul dan
+     satu jarak antara. Lewat dari itu judulnya dipotong dengan elipsis —
+     pemotongannya sendiri sudah disiapkan tema di `.md-ellipsis`. */
+     Judul yang berhenti lebih awal tidak lagi mengisi sisa baris, sehingga
+     toggle bahasa, toggle tema, dan tautan repo merapat ke judul. Sisa ruang
+     itu dikembalikan lewat `margin-right: auto` supaya ketiganya tetap di
+     ujung kanan. */
+  .md-header__title {
+    margin-right: auto;
+    max-width: calc(50% - 18rem);
+  }
+}
+
+/* Jarak henti lompatan anchor. Tema memakai nilai tetap (3,6rem, dan 6rem
+   saat bilah tab ikut menempel) yang dihitung untuk baris identitas setinggi
+   2,4rem. Baris di sini 4rem, sehingga seluruh unit header menjadi 6,4rem dan
+   nilainya perlu naik — kalau tidak, garis rambut pembuka bagian tersembunyi
+   di balik header setiap kali sebuah judul dituju. */
+.md-typeset :target {
+  --md-scroll-margin: 5rem;
+}
+
+.md-header--lifted ~ .md-container .md-typeset :target {
+  --md-scroll-margin: 7.4rem;
+}
+
+/* Urutan ujung kanan dari kiri ke kanan: pencarian, bahasa, tema, repo.
+   Urutan DOM tema memasang palet sebelum bahasa dan repo sebelum keduanya,
+   jadi keempatnya diberi `order` eksplisit. Toggle bahasa dan toggle tema
+   sama-sama berkelas `.md-header__option`; yang palet berupa `form`, yang
+   bahasa berupa `div`. */
+.md-header__inner > .md-search {
+  order: 1;
+}
+
+.md-header__inner > div.md-header__option {
+  order: 2;
+}
+
+.md-header__inner > form.md-header__option {
+  order: 3;
+}
+
+.md-header__inner > .md-header__source {
+  order: 4;
+}
+
+/* Di layar sempit bilah tab disembunyikan dan navigasi pindah ke laci.
+   Kepala laci bawaan tema memakai blok warna merek; di sini disamakan dengan
+   header — latar halaman, teks ink, satu garis rambut. */
+.md-nav--primary .md-nav__title[for="__drawer"] {
+  background-color: var(--md-default-bg-color);
+  color: var(--ekdn-ink);
+  box-shadow: 0 1px 0 var(--ekdn-rule);
+  font-weight: 600;
+  letter-spacing: -0.0125em;
+}
+
+/* Bilah tab berbagi latar putih dengan baris di atasnya; garis rambut pemisah
+   sudah dipegang oleh `.md-header`, jadi di sini tidak ada garis lagi. */
+.md-tabs {
+  background-color: transparent;
+  color: var(--ekdn-muted);
+  box-shadow: none;
+}
+
+.md-tabs__item {
+  position: relative;
+}
+
+.md-tabs__link {
+  color: var(--ekdn-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  line-height: 1.5;
+  opacity: 1;
+  transition: color 200ms ease;
+}
+
+.md-tabs__link:focus,
+.md-tabs__link:hover {
+  color: var(--md-primary-fg-color);
+  opacity: 1;
+}
+
+.md-tabs__item--active .md-tabs__link {
+  color: var(--md-primary-fg-color);
+  font-weight: 600;
+}
+
+.md-tabs__item--active::after {
+  content: "";
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0;
+  height: 2px;
+  background: var(--md-primary-fg-color);
+}
+
+/* ==========================================================================
+   Combobox versi dan spanduk versi lama. Panel dropdown mengikuti menu bahasa
+   di situs BLPID: kartu putih bersudut 14px, bayangan lembut ber-spread
+   negatif, dan tiap barisnya berbentuk pil yang menyala tint biru saat
+   disentuh kursor. Spanduk memakai tint yang sama, bukan kuning peringatan
+   bawaan tema.
+   ========================================================================== */
+
+.md-version__current {
+  color: var(--ekdn-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: normal;
+  opacity: 1;
+}
+
+.md-version__list {
+  background: var(--ekdn-surface);
+  border: 1px solid var(--ekdn-tint-line);
+  border-radius: 14px;
+  box-shadow: 0 10px 24px -14px rgba(11, 26, 38, 0.2);
+  padding: 0.3rem;
+  margin: 0.4rem 0 0;
+}
+
+.md-version__item {
+  margin: 0;
+}
+
+.md-version__link {
+  border-radius: 999px;
+  color: var(--ekdn-body);
+  font-size: 0.7rem;
+  font-weight: 500;
+  /* Tema mematok tinggi baris ke 1.8rem; di sini tinggi mengikuti isinya
+     supaya daftar versi rapat seperti menu bahasa di situs BLPID. */
+  height: auto;
+  letter-spacing: normal;
+  line-height: 1.5;
+  margin: 0;
+  min-width: 5.5rem;
+  opacity: 1;
+  padding: 0.4rem 0.8rem;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.md-version__link:focus,
+.md-version__link:hover {
+  background: var(--ekdn-tint);
+  color: var(--md-primary-fg-color);
+  opacity: 1;
+}
+
+.md-banner,
+.md-banner--warning {
+  background: var(--ekdn-tint);
+  color: var(--ekdn-muted);
+  border-bottom: 1px solid var(--ekdn-tint-line);
+  font-size: 0.7rem;
+}
+
+.md-banner a,
+.md-banner strong {
+  color: var(--ekdn-ink);
+}
+
+/* ==========================================================================
+   Ukuran ikon — 0,9rem (18 piksel) di mana pun, mengikuti GitBook. Tema
+   memakai 1,2rem (24 piksel) untuk ikon antarmuka dan lambang situs sempat
+   1,4rem, sehingga ketiganya tampak beda besar di satu baris. Satu nilai
+   dipakai bersama: lambang, tombol bilah atas, ikon repo, navigasi kiri,
+   bilah tab, dan penunjuk halaman sebelumnya/berikutnya.
+   ========================================================================== */
+
+.md-header__button.md-icon svg,
+.md-search__icon svg,
+.md-nav__icon svg,
+.md-tabs__link svg,
+.md-pagination__link svg {
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
+/* Wadah ikon kaca pembesar ikut dikecilkan. Tema memberinya kotak 1,2rem dan
+   memasang SVG sebagai elemen sebaris di dalamnya: begitu SVG-nya mengecil
+   sendiri, ia menempel ke tepi atas kotak dan penengahan di bawah menengahkan
+   kotak, bukan gambarnya — ikon jadi naik 3 piksel dari sumbu pil. */
+.md-search__icon {
+  display: block;
+  height: 0.9rem;
+  line-height: 0;
+  width: 0.9rem;
+}
+
+/* Lambang situs berdiri sendiri: ia penanda merek, bukan tombol, jadi
+   ukurannya lebih besar daripada ikon antarmuka di sebelahnya. */
+/* Pemilih tema untuk lambang memakai dua kelas (`.md-header__button.md-logo`)
+   dan memasang `width: auto`, jadi pemilih di sini harus sama spesifiknya —
+   kalau tidak, tingginya tetap 1,2rem bawaan. */
+.md-header__button.md-logo img,
+.md-header__button.md-logo svg,
+.md-nav__title .md-nav__button.md-logo img,
+.md-nav__title .md-nav__button.md-logo svg {
+  height: 1.4rem;
+  width: 1.4rem;
+}
+
+/* Kotak ikon repo tetap 2rem × 2,4rem dan tetap `inline-block` — teks nama
+   repo di sebelahnya bergantung pada itu. Yang dihitung ulang cuma jarak
+   tepinya: setengah dari sisa ruang kotak, supaya ikon yang mengecil duduk
+   di tengah, sebaris dengan toggle bahasa dan tema. */
+.md-source__icon svg {
+  height: 0.9rem;
+  width: 0.9rem;
+  margin-top: 0.75rem;
+  margin-left: 0.55rem;
+}
+
+/* Ikon di dalam teks halaman (`:lucide-…:`) ikut turun: tema memasang
+   1,125em, yang membuatnya menonjol dari baris tempatnya berdiri. */
+.md-typeset .twemoji,
+.md-typeset .twemoji svg {
+  height: 1em;
+  width: 1em;
+}
+
+/* ==========================================================================
+   Ikon — set Lucide (`overrides/.icons/lucide/`). Ikon bawaan Material berupa
+   bidang isi, sedangkan Lucide berupa garis, jadi `fill` tema harus dilepas
+   dan warnanya dipindah ke `stroke`.
+   ========================================================================== */
+
+svg.lucide,
+.md-icon svg.lucide,
+.md-nav__link svg.lucide,
+.md-tabs__link svg.lucide,
+.md-pagination__link svg.lucide,
+.md-header__button.md-logo svg.lucide,
+.md-nav__title .md-nav__button.md-logo svg.lucide,
+.md-typeset .twemoji svg.lucide {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Tema menaikkan ukuran huruf akar menjadi 137,5% di layar ≥100rem dan 150%
+   di ≥125rem. GitBook tidak melakukan itu, jadi skalanya dipatok di 125%
+   supaya 0,8rem tetap 16 piksel di lebar layar mana pun. */
+html {
+  font-size: 125%;
+}
+
+/* ==========================================================================
+   Tipografi — satu keluarga huruf (Inter) dengan skala GitBook: teks isi
+   16px/26px bobot 400, dan judul 30/24/20/16px bobot 600 dengan jarak huruf
+   -0,0125em. Teks antarmuka (tab, navigasi, tabel) seragam 14px.
+   ========================================================================== */
+
+.md-typeset {
+  font-size: 0.8rem;
+  line-height: 1.625;
+  letter-spacing: normal;
+}
+
+.md-typeset h1 {
+  color: var(--ekdn-ink);
+  font-weight: 600;
+  font-size: 1.5rem;
+  line-height: 1.25;
+  letter-spacing: -0.0125em;
+}
+
+.md-typeset h2 {
+  color: var(--ekdn-ink);
+  font-weight: 600;
+  font-size: 1.2rem;
+  line-height: 1.375;
+  letter-spacing: -0.0125em;
+  /* Garis rambut di atas setiap bagian meneruskan pola pemisah kolom BLPID:
+     satu garis 1px yang menandai batas isi, bukan hiasan. */
+  border-top: 1px solid var(--ekdn-rule);
+  margin-top: 3rem;
+  padding-top: 2.1rem;
+}
+
+.md-typeset h3 {
+  color: var(--ekdn-ink-soft);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.375;
+  letter-spacing: -0.0125em;
+}
+
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  color: var(--ekdn-ink-soft);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.0125em;
+}
+
+.md-typeset strong {
+  color: var(--ekdn-ink);
+  font-weight: 600;
+}
+
+/* Bawaan tema membatasi seluruh grid ke 61rem, sehingga kolom teks berhenti
+   jauh di bawah 38,4rem. Lebar grid dinaikkan agar ukuran kolom baca benar
+   benar 768 piksel seperti di GitBook, dengan kedua bilah sisi tetap utuh.
+   65rem adalah batas bawahnya: 65 - 2 x 12,1 (bilah sisi) menyisakan tepat
+   cukup untuk kolom 38,4rem plus padding-nya. Turun lagi dan kolom bacanya
+   yang menyempit, bukan ruang kosongnya. */
+.md-grid {
+  max-width: 65rem;
+}
+
+.md-content__inner {
+  max-width: 38.4rem;
+}
+
+/* Gambar tetap di dalam kolom baca seperti di GitBook: tidak ada bleed ke
+   bilah sisi. Yang membuatnya terbaca adalah ruang di dalam bingkainya, bukan
+   lebar halaman, dan ruang itu digambar di dalam berkas .svg-nya sendiri
+   (konstanta PAD di generatornya) supaya bingkai dan isinya selalu sejalan. */
+.md-typeset figure {
+  margin-inline: 0;
+  width: auto;
+  max-width: 100%;
+}
+
+.md-typeset figure > p {
+  margin: 0;
+}
+
+/* Image width. The size class narrows the image only: the figure itself keeps
+   the full reading column, so the caption and its rule always span the column
+   whatever size the image is. Default (no class) is the full width, so an
+   untagged figure renders as before. The two narrower sizes are for diagrams
+   that hold only a few boxes and look stretched at full width. The image is
+   centred; max-width keeps it inside the column on a phone. */
+.md-typeset figure.ekdn-fig-wide img {
+  width: 100%;
+}
+
+.md-typeset figure.ekdn-fig-medium img {
+  width: 25rem;
+}
+
+.md-typeset figure.ekdn-fig-small img {
+  width: 16rem;
+}
+
+.md-typeset figure.ekdn-fig-wide img,
+.md-typeset figure.ekdn-fig-medium img,
+.md-typeset figure.ekdn-fig-small img {
+  max-width: 100%;
+  margin-inline: auto;
+}
+
+.md-typeset figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.md-typeset figure figcaption {
+  max-width: none;
+  margin: 0.9em 0 0;
+  padding-top: 0.75em;
+  border-top: 1px solid var(--ekdn-rule);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--ekdn-muted);
+}
+
+/* Nomor gambar: dirujuk dari naskah, jadi ditulis tebal dan tidak ikut
+   diredam seperti sisa keterangannya. */
+.ekdn-fignum {
+  font-weight: 600;
+  color: var(--ekdn-ink);
+}
+
+/* Paragraf pembuka: satu tingkat di atas body text, warna diredam supaya
+   judul di atasnya tetap yang paling menonjol. */
+.ekdn-lead {
+  font-size: 0.8rem;
+  line-height: 1.625;
+  color: var(--ekdn-muted);
+  margin: 0.75em 0 1.75em;
+  max-width: 62ch;
+}
+
+/* Pengenal spesifikasi (TS-00 dan seterusnya) di atas judul halaman. Nomornya
+   dikeluarkan dari judul supaya nama bab terbaca sebagai nama, bukan kode;
+   di sini nomornya ditulis dengan huruf mono karena memang kode yang dirujuk
+   dokumen lain. */
+.md-typeset .ekdn-docid {
+  /* `--ekdn-faint` cuma 3,51:1 di atas putih, di bawah ambang AA untuk teks
+     sekecil ini; `--ekdn-muted` 6,65:1. */
+  color: var(--ekdn-muted);
+  font-family: var(--md-code-font-family, "IBM Plex Mono", monospace);
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  margin: 0 0 -0.4em;
+}
+
+/* Penanda bagian yang kerangkanya sudah ada tapi naskahnya belum ditulis.
+   Dibuat redup dan kecil supaya daftar judul tetap yang terbaca, bukan
+   penandanya. Kontras teks tetap di atas 4,5:1 terhadap latar. */
+.md-typeset .ekdn-soon {
+  color: var(--ekdn-muted);
+  font-size: 0.68rem;
+  font-style: italic;
+  margin: 0.4em 0 1.6em;
+}
+
+/* Tautan dalam isi: garis bawah 1,5px tumbuh dari kiri ke kanan saat kursor
+   menyentuh. Ini penanda khas situs BLPID dan satu-satunya gerak non-interaktif
+   yang dipakai di seluruh dokumen. */
+.md-typeset a:not(.md-button):not(.headerlink):not(.md-annotation__index) {
+  text-decoration: none;
+  background-image: linear-gradient(var(--md-primary-fg-color), var(--md-primary-fg-color));
+  background-repeat: no-repeat;
+  background-position: left calc(100% - 1px);
+  background-size: 0 1.5px;
+  transition: background-size 320ms cubic-bezier(0.4, 0, 0.2, 1), color 200ms ease;
+}
+
+.md-typeset a:not(.md-button):not(.headerlink):not(.md-annotation__index):focus,
+.md-typeset a:not(.md-button):not(.headerlink):not(.md-annotation__index):hover {
+  color: var(--md-primary-fg-color);
+  background-size: 100% 1.5px;
+}
+
+/* ==========================================================================
+   Tombol — pil 999px. Versi utama biru penuh yang menjadi ink saat disentuh
+   (perilaku tombol "Hubungi Kami" di situs BLPID); versi sekunder hanya
+   bergaris rambut.
+   ========================================================================== */
+
+.md-typeset .md-button {
+  border-radius: 999px;
+  border: 1px solid var(--ekdn-rule-strong);
+  color: var(--ekdn-ink);
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: normal;
+  padding: 0.4rem 0.8rem;
+  transition: background-color 200ms ease, border-color 200ms ease, color 200ms ease;
+}
+
+.md-typeset .md-button:focus,
+.md-typeset .md-button:hover {
+  background-color: transparent;
+  border-color: var(--md-primary-fg-color);
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset .md-button--primary {
+  background-color: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+  color: #fff;
+}
+
+.md-typeset .md-button--primary:focus,
+.md-typeset .md-button--primary:hover {
+  background-color: var(--ekdn-ink);
+  border-color: var(--ekdn-ink);
+  color: #fff;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary {
+  color: #0b1a26;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary:focus,
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary:hover {
+  background-color: #8cc9ff;
+  border-color: #8cc9ff;
+  color: #0b1a26;
+}
+
+/* ==========================================================================
+   Hero halaman depan (`.ekdn-hero`, hanya dipakai di `docs/index.md`).
+   Tidak ada blok warna: judul, paragraf, dan tombol berdiri di atas latar
+   putih, dibatasi satu garis rambut di bawahnya.
+   ========================================================================== */
+
+.md-typeset .ekdn-hero {
+  margin: 0 0 1.2rem;
+  padding: 0;
+}
+
+.md-typeset .ekdn-hero h1 {
+  font-size: 1.5rem;
+  max-width: 24ch;
+  margin: 0 0 0.7rem;
+}
+
+.md-typeset .ekdn-hero p {
+  color: var(--ekdn-muted);
+  font-size: 0.8rem;
+  line-height: 1.625;
+  max-width: 60ch;
+  margin: 0 0 1.6rem;
+}
+
+.md-typeset .ekdn-hero .md-button {
+  margin: 0.2rem 0.5rem 0.2rem 0;
+}
+
+/* Strip status versi — mengikuti bilah pengumuman BLPID: tint biru sangat
+   muda, garis rambut sewarna, dan satu titik penanda status di depan. */
+.md-typeset .ekdn-verstrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.9rem;
+  background: var(--ekdn-tint);
+  border: 1px solid var(--ekdn-tint-line);
+  border-radius: 999px;
+  padding: 0.5rem 1.1rem;
+  margin: 0 0 1rem;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 0.7rem;
+  color: var(--ekdn-muted);
+}
+
+.md-typeset .ekdn-verstrip strong {
+  color: var(--ekdn-ink);
+}
+
+.ekdn-verstrip .dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #f2a900;
+  display: inline-block;
+  margin-right: 0.35rem;
+}
+
+/* ==========================================================================
+   Beranda satu halaman penuh (`docs/index.md`). Front matter halaman itu
+   mematikan `navigation` dan `toc`, jadi yang tersisa hanya kolom isi. Kolom
+   itu dilepas dari lebar baca 38,4rem supaya spanduk bisa melebar sampai tepi
+   layar. Tema tidak memberi kelas per halaman, jadi sasarannya dikenali dari
+   isinya lewat `:has()`; peramban tanpa `:has()` tetap mendapat halaman yang
+   benar, hanya selebar kolom baca.
+   ========================================================================== */
+
+.md-content__inner:has(> .ekdn-home) {
+  max-width: none;
+  padding-top: 0;
+}
+
+/* Tombol "sunting" dan "lihat sumber" melayang di pojok kanan atas kolom isi.
+   Di halaman depan keduanya jatuh tepat di atas spanduk, dan beranda bukan
+   halaman yang disunting orang lewat tombol itu. */
+.md-content__inner:has(> .ekdn-home) .md-content__button {
+  display: none;
+}
+
+/* Spanduk melebar dengan `50vw`, yang menghitung bilah gulir sebagai bagian
+   lebar layar; tanpa penjepit ini halaman ikut bisa digulir ke samping. */
+.md-main:has(.ekdn-home) {
+  overflow-x: clip;
+}
+
+.md-typeset .ekdn-banner {
+  align-items: center;
+  display: grid;
+  gap: 1.6rem;
+  grid-template-columns: 1fr;
+  margin: 0 0 2.2rem;
+  padding: 2.4rem 0 2.6rem;
+  position: relative;
+}
+
+/* Garis rambut penutup spanduk berjalan sampai tepi layar, sementara isinya
+   tetap di dalam grid halaman. Garisnya digambar elemen semu selebar layar,
+   bukan dengan menarik spanduk keluar lewat margin negatif: margin negatif
+   berpasangan dengan `display: grid` tidak menggeser kotaknya. */
+.md-typeset .ekdn-banner::after {
+  border-bottom: 1px solid var(--ekdn-rule);
+  bottom: 0;
+  content: "";
+  left: 50%;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100vw;
+}
+
+.md-typeset .ekdn-banner .ekdn-hero {
+  margin: 0;
+}
+
+.md-typeset .ekdn-banner .ekdn-verstrip {
+  margin: 0;
+}
+
+.ekdn-sections {
+  margin: 0 auto;
+  max-width: 62rem;
+}
+
+/* Judul bagian di situs ini selalu dibuka garis rambut. Di beranda garis itu
+   jatuh sejengkal di bawah garis penutup spanduk, jadi yang di sini dilepas
+   dan pemisahnya cukup satu. */
+.md-typeset .ekdn-sections > h2:first-child {
+  border-top: 0;
+  margin-top: 0.6rem;
+  padding-top: 0;
+}
+
+@media screen and (min-width: 60em) {
+  .md-typeset .ekdn-banner {
+    gap: 3rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.8fr);
+    padding-bottom: 2.8rem;
+    padding-top: 2.4rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Grafik kepercayaan di spanduk — delapan simpul tanpa pusat, tersambung
+   garis rambut. Satu gelombang berjalan dari kiri ke kanan: tiap garis dan
+   simpul memegang nomor urutnya sendiri di `--i`, dan jeda animasinya
+   dihitung dari nomor itu, sehingga jumlah simpul bisa berubah tanpa menulis
+   ulang aturan di sini. Gambarnya hiasan, bukan diagram: `aria-hidden` di
+   halaman menyembunyikannya dari pembaca layar.
+   -------------------------------------------------------------------------- */
+
+.ekdn-banner__art {
+  display: flex;
+  justify-content: center;
+}
+
+.md-typeset .ekdn-graph {
+  height: auto;
+  max-width: 22rem;
+  width: 100%;
+}
+
+.ekdn-graph__edge {
+  animation: ekdn-graph-edge 4.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+  stroke: var(--ekdn-rule-strong);
+  stroke-width: 1;
+}
+
+.ekdn-graph__node {
+  animation: ekdn-graph-node 4.4s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.3s);
+  fill: var(--md-default-bg-color);
+  stroke: var(--ekdn-rule-strong);
+  stroke-width: 1.5;
+}
+
+@keyframes ekdn-graph-edge {
+  0%,
+  55%,
+  100% {
+    stroke: var(--ekdn-rule-strong);
+  }
+
+  12%,
+  24% {
+    stroke: var(--md-primary-fg-color);
+  }
+}
+
+@keyframes ekdn-graph-node {
+  0%,
+  55%,
+  100% {
+    fill: var(--md-default-bg-color);
+    stroke: var(--ekdn-rule-strong);
+  }
+
+  12%,
+  24% {
+    fill: var(--ekdn-tint);
+    stroke: var(--md-primary-fg-color);
+  }
+}
+
+/* ==========================================================================
+   Trio peran (`.grid.cards`) — bukan kotak, melainkan tiga kolom yang hanya
+   dipisahkan garis rambut, meneruskan pola kolom footer dan menu BLPID.
+   Isinya bukan tautan, jadi tidak diberi umpan balik hover sama sekali.
+   ========================================================================== */
+
+.md-typeset .grid.cards {
+  grid-gap: 0;
+  grid-template-columns: 1fr;
+  margin: 1.6rem 0 0;
+}
+
+.md-typeset .grid.cards > ul > li,
+.md-typeset .grid.cards > ul > li:focus-within,
+.md-typeset .grid.cards > ul > li:hover {
+  background: none;
+  border: 0;
+  border-top: 1px solid var(--ekdn-rule);
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+  padding: 1.15rem 0 1.3rem;
+  transition: none;
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child {
+  color: var(--ekdn-ink);
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.0125em;
+  margin-bottom: 0.5rem;
+}
+
+.md-typeset .grid.cards > ul > li > p:last-child {
+  color: var(--ekdn-muted);
+  margin-bottom: 0;
+}
+
+.md-typeset .grid.cards > ul > li > hr {
+  display: none;
+}
+
+.md-typeset .grid.cards > ul > li .twemoji {
+  color: var(--md-primary-fg-color);
+}
+
+@media screen and (min-width: 60em) {
+  .md-typeset .grid.cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset .grid.cards > ul > li:focus-within,
+  .md-typeset .grid.cards > ul > li:hover {
+    border-top: 0;
+    border-left: 1px solid var(--ekdn-rule);
+    padding: 0.1rem 1.4rem 0.2rem;
+  }
+
+  .md-typeset .grid.cards > ul > li:first-child {
+    border-left: 0;
+    padding-left: 0;
+  }
+
+  .md-typeset .grid.cards > ul > li:last-child {
+    padding-right: 0;
+  }
+}
+
+/* ==========================================================================
+   Tabel — tanpa bingkai luar dan tanpa baris berselang. Kepala kolom memakai
+   perlakuan label BLPID: 10px, tebal, jarak huruf lebar, warna paling redup.
+   ========================================================================== */
+
+.md-typeset table:not([class]) {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.7rem;
+}
+
+.md-typeset table:not([class]) th {
+  background: transparent;
+  border-bottom: 1px solid var(--ekdn-rule-strong);
+  color: var(--ekdn-label);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0 1.1rem 0.7rem 0;
+  min-width: 0;
+}
+
+.md-typeset table:not([class]) td {
+  border-bottom: 1px solid var(--ekdn-rule);
+  padding: 0.85rem 1.1rem 0.85rem 0;
+  vertical-align: top;
+}
+
+.md-typeset table:not([class]) th:first-child,
+.md-typeset table:not([class]) td:first-child {
+  width: 28%;
+}
+
+.md-typeset table:not([class]) th:last-child,
+.md-typeset table:not([class]) td:last-child {
+  padding-right: 0;
+}
+
+.md-typeset table:not([class]) tr:last-child td {
+  border-bottom: 0;
+}
+
+.md-typeset table:not([class]) tr:hover {
+  background: transparent;
+}
+
+/* ==========================================================================
+   Kode, admonition, dan daftar tugas.
+   ========================================================================== */
+
+.md-typeset code {
+  border-radius: 2px;
+  padding: 0.1em 0.35em;
+}
+
+.md-typeset pre > code {
+  border-radius: 14px;
+}
+
+.md-typeset .highlight {
+  border-radius: 14px;
+}
+
+.md-typeset .admonition,
+.md-typeset details {
+  background: var(--ekdn-surface);
+  border: 1px solid var(--ekdn-rule);
+  border-left-width: 1px;
+  border-radius: 14px;
+  box-shadow: none;
+  font-size: 0.8rem;
+}
+
+.md-typeset .admonition-title,
+.md-typeset summary {
+  background: transparent;
+  border: 0;
+  color: var(--ekdn-ink);
+  font-weight: 600;
+  letter-spacing: -0.0125em;
+}
+
+/* Baris peta jalan dibaca sebagai daftar rencana, bukan potongan kode
+   tercoret — jadi diberi jarak antar baris. */
+.md-typeset .task-list-item {
+  margin-bottom: 0.5em;
+}
+
+/* ==========================================================================
+   Tab konten (`pymdownx.tabbed`) — label redup, label aktif ink dengan
+   penanda biru, sama seperti bilah tab di bagian atas halaman.
+   ========================================================================== */
+
+.md-typeset .tabbed-labels > label {
+  color: var(--ekdn-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+
+.md-typeset .tabbed-labels > label:hover {
+  color: var(--md-primary-fg-color);
+}
+
+.md-typeset .tabbed-set > input:checked + label {
+  color: var(--ekdn-ink);
+  font-weight: 600;
+}
+
+.js .md-typeset .tabbed-labels::before {
+  background: var(--md-primary-fg-color);
+}
+
+/* ==========================================================================
+   Navigasi samping dan daftar isi — label bagian memakai perlakuan yang sama
+   dengan kepala kolom tabel, dan tautan aktif ditandai warna biru merek.
+   ========================================================================== */
+
+.md-nav {
+  font-size: 0.7rem;
+  line-height: 1.45;
+}
+
+.md-nav__title {
+  color: var(--ekdn-label);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.md-nav__link {
+  color: var(--ekdn-muted);
+  letter-spacing: normal;
+  transition: color 200ms ease;
+}
+
+.md-nav__link:focus,
+.md-nav__link:hover {
+  color: var(--md-primary-fg-color);
+}
+
+.md-nav__item .md-nav__link--active,
+.md-nav__item .md-nav__link--active code {
+  color: var(--md-primary-fg-color);
+  font-weight: 600;
+}
+
+.md-sidebar--secondary .md-nav__list .md-nav__list {
+  border-left: 1px solid var(--ekdn-rule);
+  padding-left: 0.5rem;
+}
+
+/* ==========================================================================
+   Footer — putih dengan garis rambut pemisah, meneruskan pola bawah halaman
+   BLPID; blok gelap bawaan tema dilepas.
+   ========================================================================== */
+
+.md-footer {
+  border-top: 1px solid var(--ekdn-rule);
+}
+
+.md-footer-meta {
+  border-top: 1px solid var(--ekdn-rule);
+}
+
+.md-footer__link {
+  opacity: 1;
+}
+
+.md-footer__title {
+  color: var(--ekdn-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: normal;
+}
+
+.md-footer__direction {
+  color: var(--ekdn-label);
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  opacity: 1;
+  text-transform: uppercase;
+}
+
+.md-copyright,
+.md-copyright__highlight {
+  color: var(--ekdn-faint);
+}
+
+/* ==========================================================================
+   Aksesibilitas — fokus papan ketik selalu terlihat, dan seluruh transisi
+   dimatikan bila sistem meminta gerak dikurangi.
+   ========================================================================== */
+
+:where(a, button, .md-button, .md-nav__link, .md-tabs__link):focus-visible {
+  outline: 2px solid var(--md-primary-fg-color);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset a,
+  .md-typeset .md-button,
+  .md-typeset .grid.cards > ul > li,
+  .md-tabs__link,
+  .md-nav__link {
+    transition: none;
+  }
+
+  .ekdn-graph__edge,
+  .ekdn-graph__node {
+    animation: none;
+  }
+}

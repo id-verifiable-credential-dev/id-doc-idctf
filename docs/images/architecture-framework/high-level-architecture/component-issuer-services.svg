@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 772 602" width="772" height="602" role="img" aria-labelledby="t d">
+<title id="t">Components inside Issuer Services</title><desc id="d">Issuer Core in four layers: three controllers, three domain services, three providers including Claims Provider, and one repository. Issuer Console below it has three views and a single client that reaches the Admin Controller.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
+<rect x="0.5" y="0.5" width="771" height="601" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
+<g transform="translate(36,36)">
+<rect x="0" y="0.0" width="700" height="308" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="14" y="21.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">ISSUER CORE</text>
+<text x="14" y="61.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">Controller</text>
+<rect x="104" y="30.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="60.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Issuance Controller</text>
+<rect x="302" y="30.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="395.0" y="60.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Authorization Controller</text>
+<rect x="500" y="30.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="593.0" y="60.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Admin Controller</text>
+<text x="14" y="127.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">Domain</text>
+<rect x="104" y="96.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="126.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Credential Builder</text>
+<rect x="302" y="96.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="395.0" y="126.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Status Manager</text>
+<rect x="500" y="96.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="593.0" y="126.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Key Attestation Validator</text>
+<text x="14" y="193.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">Provider</text>
+<rect x="104" y="162.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="185.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Claims Provider</text>
+<text x="197.0" y="199.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">the only one that differs per install</text>
+<rect x="302" y="162.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="395.0" y="192.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Signing Provider</text>
+<rect x="500" y="162.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="593.0" y="192.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trust SDK</text>
+<text x="14" y="259.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">Repository</text>
+<rect x="104" y="228.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="258.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Issuance Repository</text>
+<rect x="0" y="328.0" width="700" height="176" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="14" y="349.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">ISSUER CONSOLE</text>
+<text x="14" y="389.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">View</text>
+<rect x="104" y="358.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="388.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Configuration View</text>
+<rect x="302" y="358.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="395.0" y="388.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Operations View</text>
+<rect x="500" y="358.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="593.0" y="388.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Reporting View</text>
+<text x="14" y="455.0" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#4a5f6f">Client</text>
+<rect x="104" y="424.0" width="186" height="54" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="197.0" y="447.6" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Core API Client</text>
+<text x="197.0" y="461.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10" font-weight="400" fill="#4a5f6f">no database connection</text>
+<text x="0" y="530.0" text-anchor="start" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" font-weight="400" fill="#4a5f6f">Claims Provider is the only component whose contents differ at every installation.</text>
+</g>
+</svg>

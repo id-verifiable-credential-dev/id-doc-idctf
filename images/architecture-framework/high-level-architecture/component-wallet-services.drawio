@@ -1,0 +1,36 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="Components inside Wallet Services">
+    <mxGraphModel dx="970" dy="800" grid="1" gridSize="10" page="1" pageWidth="970" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="band1" value="WALLET APPLICATION" style="rounded=1;arcSize=6;fillColor=none;strokeColor=#b8c4ce;dashed=1;dashPattern=5 4;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=11;fontStyle=1;fontColor=#4a5f6f;html=1;" vertex="1" parent="1"><mxGeometry x="0" y="0.0" width="898" height="374" as="geometry"/></mxCell>
+        <mxCell id="n2" value="Auth Client" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n3" value="Issuance Client" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n4" value="Presentation Client" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n5" value="Attestation Client" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="698" y="30.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n6" value="Trust Display" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n7" value="Consent UI" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n8" value="App Lock" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n9" value="Credential Renderer" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="698" y="96.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n10" value="Credential Codec" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="162.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n11" value="Keystore Manager
+secure element" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="228.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n12" value="Trust SDK
+local cache" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="228.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n13" value="Credential Store
+SQLCipher, encrypted" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="294.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="band14" value="WALLET BACKEND SERVICE" style="rounded=1;arcSize=6;fillColor=none;strokeColor=#b8c4ce;dashed=1;dashPattern=5 4;verticalAlign=top;align=left;spacingLeft=12;spacingTop=6;fontSize=11;fontStyle=1;fontColor=#4a5f6f;html=1;" vertex="1" parent="1"><mxGeometry x="0" y="394.0" width="898" height="308" as="geometry"/></mxCell>
+        <mxCell id="n15" value="Key Attestation Issuer" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="424.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n16" value="Account Service" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="490.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n17" value="Notification Service" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="490.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n18" value="Recovery Service" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="490.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n19" value="Signing Provider
+Wallet Provider key in HSM" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="556.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="n20" value="Device Repository
+no credential data" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="622.0" width="186" height="54" as="geometry"/></mxCell>
+        <mxCell id="t21" value="Wallet Backend Service knows the account and the device, never the credential." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="718.0" width="220" height="20" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

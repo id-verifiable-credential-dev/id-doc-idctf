@@ -1,0 +1,7 @@
+site/
+.venv/
+__pycache__/
+tracks/
+debt/
+source-data/
+CLAUDE.md

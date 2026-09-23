@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+<!--
+  Spanduk "versi lama". Material hanya merendernya bila blok `outdated` diisi
+  sendiri; isinya di sini mengikuti bahasa build yang sedang berjalan (plugin
+  i18n menyetel `config.theme.language` per bahasa). Tautannya menunjuk ke
+  alias `latest` — satu tingkat di atas direktori versi yang sedang dibuka.
+-->
+{% block outdated %}
+  {% if config.theme.language == "en" %}
+    You are reading an older version of this documentation.
+    <a href="{{ '../' ~ base_url }}"><strong>Go to the latest version.</strong></a>
+  {% else %}
+    Anda sedang membaca versi lama dokumentasi ini.
+    <a href="{{ '../' ~ base_url }}"><strong>Buka versi terbaru.</strong></a>
+  {% endif %}
+{% endblock %}
