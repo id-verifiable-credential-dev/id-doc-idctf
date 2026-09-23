@@ -58,11 +58,18 @@ from `nav:` in `mkdocs.yml`.
 
 ## Hosting on Vercel
 
-`vercel.json` holds the whole deployment: no framework preset, dependencies
-from `requirements.txt`, and `scripts/build_versions.py` as the build step, so
-the deployed tree carries every version plus the `latest` alias and the root
-redirect. The output directory is `site/`, and `trailingSlash` is on to match
-the directory URLs MkDocs writes.
+`vercel.json` holds the whole deployment: no framework preset, a `.venv` built
+in the container with `requirements.txt` installed into it, and
+`.venv/bin/python scripts/build_versions.py` as the build step, so the deployed
+tree carries every version plus the `latest` alias and the root redirect. The
+output directory is `site/`, and `trailingSlash` is on to match the directory
+URLs MkDocs writes.
+
+The install step has to go through a virtualenv: the build container's
+interpreter is uv-managed and marked externally managed, so a plain
+`pip install` into it fails with `error: externally-managed-environment`
+(PEP 668). The local `.venv/` is covered by `.gitignore`, so the macOS copy
+never ships, and cannot collide with the one the container builds.
 
 Import the repository at <https://vercel.com/new> and accept the settings from
 `vercel.json`, or deploy from this folder with `npx vercel --prod`.
