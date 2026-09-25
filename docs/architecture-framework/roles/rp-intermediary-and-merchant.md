@@ -1,6 +1,6 @@
 ---
 title: "RP Intermediary and merchant"
-description: How an accredited relying party registers merchants that are too small to be accredited, what it may ask for, and what it answers for.
+description: How an accredited Relying Party registers merchants that are too small to be accredited, what it may ask for, and what it answers for.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.6, §5.5 (sertifikat berumur pendek sebagai mekanisme pencabutan); Peta Alur Penerbitan dan Presentasi, §1, §3.2, §5.1 (batas cakupan merchant) -->
@@ -21,10 +21,10 @@ intermediary answers for what its merchants do.
 
 **Both are roles, and both sit in the verifier group.** The verifier group in
 [Figure 1.2](role-map.md#figure-1-2) holds three boxes, and each is a primary
-role in its own right: Relying Party, RP Intermediary, and Merchant. An RP
+role in its own right: Relying Party, RP Intermediary, and merchant. An RP
 Intermediary is not a bigger Relying Party, and a merchant is not a smaller
 one. What separates the three is who runs the infrastructure and who answers
-for the result, which is why they are described together on this page rather
+for the result. That is why they are described together on this page rather
 than one by one in
 [Section 1.2, Primary roles](role-map.md#12-primary-roles).
 
@@ -47,9 +47,9 @@ not need to assess a corner shop, because it has already assessed the party
 that vouched for it and will answer for it.
 
 **The cap falls on the merchant, not on the intermediary.** An RP Intermediary
-is accredited on exactly the terms an ordinary Relying Party is, and reaches
-`restricted` attributes through the same Approval Tier C review if its work
-needs them. Serving merchants adds the power to register them and withdraws
+is accredited on exactly the terms an ordinary Relying Party is. If its work
+needs `restricted` attributes, it reaches them through the same Approval Tier C
+review. Serving merchants adds the power to register them and withdraws
 nothing, so an institution that was already a Relying Party keeps every
 attribute it could ask for before.
 
@@ -58,7 +58,7 @@ merchant's scope from carrying `restricted` attributes, whatever the
 intermediary itself was accredited for, because that class should not reach a
 party nobody assessed. The three classes, `open`, `normal` and `restricted`,
 are set per attribute in the Credential Rulebook, described in
-[Credential Rulebook](../data-model-and-protocols/three-levels-of-rules.md),
+[Section 1.6, The Credential Rulebook](../data-model-and-protocols/credential-formats.md#16-the-credential-rulebook),
 and the review each one triggers is in
 [Section 2.3, Authorization](three-stages-of-authority.md#23-authorization).
 
@@ -73,6 +73,9 @@ runs a verifier for parties other than itself, and in what it may ask for it is
 a Relying Party.
 
 ## 3.2 Three parties, side by side
+
+The merchant is the only one of the three trusted through somebody else, and
+the table below shows what follows from that.
 
 |  | Relying Party | RP Intermediary | Merchant |
 |---|---|---|---|
@@ -137,11 +140,12 @@ that device and never leaves it. The device then presents its public
 half to the intermediary, together with evidence from the platform about the
 state it is in.
 
-What the intermediary checks is threefold and all of it is about the device
-rather than the business. That the evidence traces back to the manufacturer, so
-the key really is held in hardware. That the application asking is the official
-build rather than a modified copy. And that the device has not been tampered
-with to remove the protections the rest of this depends on. The evidence comes
+What the intermediary checks is threefold, and all of it is about the device
+rather than the business. The first check follows the evidence back to the
+manufacturer, which is what shows the key really is held in hardware. The
+second confirms that the application asking is the official build rather than a
+modified copy. The third confirms that the device has not been tampered with to
+remove the protections the rest of this depends on. The evidence comes
 from the device platform, which is an external system the ecosystem depends on
 and does not govern, described in
 [Section 1.3.1, External systems](role-map.md#131-external-systems).
@@ -187,7 +191,7 @@ face to face, so a merchant is provisioned once rather than twice. The scope
 set at registration travels inside it, which is what lets a wallet enforce the
 limit itself at the moment it reads the certificate, with nobody to consult and
 no list to fetch. The sequence a merchant runs at the counter is in
-[Section 6.5, Verification by a merchant](../high-level-architecture/flows-per-use-case.md#65-verification-by-a-merchant).
+[Section 5.5, Verification by a merchant](../high-level-architecture/flows-per-use-case.md#55-verification-by-a-merchant).
 
 What is left open is the numbers: how long a merchant certificate lives, how
 often the withdrawal list is published, and how stale that list may be before
@@ -205,15 +209,15 @@ whose needs have nothing in common.
 - A shop selling age-restricted goods needs one answer: whether the person in
   front of it is old enough. It never needs a name.
 - A small practice needs to confirm that a visiting practitioner holds a
-  current professional licence.
+  current professional license.
 - A delivery depot needs to confirm an address before handing a parcel over.
 
 Four things follow, and together they are the whole arrangement in miniature.
 
 **Each merchant gets its own scope, and none of them gets the intermediary's.**
-The shop is granted the age check alone, so a request for a name from that
-device is refused by the wallet before the person is ever asked. The depot is
-granted the address and not the licence. Each scope is a subset of what the
+The shop is granted the age check alone, so the wallet refuses a request for a
+name from that device before the person is ever asked. The depot is
+granted the address and not the license. Each scope is a subset of what the
 terminal provider was accredited for, and the provider cannot grant what it
 does not hold.
 

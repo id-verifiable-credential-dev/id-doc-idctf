@@ -554,8 +554,21 @@
 .md-header__button.md-logo svg,
 .md-nav__title .md-nav__button.md-logo img,
 .md-nav__title .md-nav__button.md-logo svg {
-  height: 1.4rem;
-  width: 1.4rem;
+  height: 2.2rem;
+  width: 2.2rem;
+}
+
+/* Berkas lambang sudah dipangkas sampai tepi gambarnya, jadi bantalan tombol
+   bawaan — 0,4rem di keempat sisi, warisan dari tombol ikon di sebelahnya —
+   tinggal menyisakan ruang kosong.
+
+   Baris header tingginya 2,4rem dan itu batas kerasnya: lambang 2,2rem hanya
+   muat kalau bantalannya nol dan margin tegaknya 0,1rem. Margin datarnya
+   dipertahankan 0,2rem supaya jarak ke nama situs tidak ikut menyempit. */
+.md-header__button.md-logo {
+  padding: 0;
+  margin-block: 0.1rem;
+  margin-inline: 0.2rem;
 }
 
 /* Kotak ikon repo tetap 2rem × 2,4rem dan tetap `inline-block` — teks nama

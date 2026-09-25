@@ -9,7 +9,7 @@ description: What authority means in this ecosystem, and the three stages an ent
 
 Authority here means permission to act: to issue a particular credential, or to
 ask for a particular attribute. Nobody holds it by virtue of being large, or
-official, or obviously legitimate. It is held because a decision was recorded
+official, or looking legitimate. It is held because a decision was recorded
 about that party, and it reaches exactly as far as the decision says.
 
 That authority is never granted in one act. Being known, being judged capable,
@@ -29,6 +29,8 @@ All three stages are decided by the Root Authority, with nothing between it and
 the entity, and all three run outside any citizen's transaction. Nothing
 described on this page happens while somebody is waiting to be served.
 
+The three stages in brief, before each gets a section of its own.
+
 | Stage | Question | What it means |
 |---|---|---|
 | **Registration** | Who are you? | The party becomes known and its file is opened, but it may still do nothing. Everyone passes through this stage, merchants included |
@@ -43,12 +45,12 @@ entity holds.
 ## 2.1 Registration
 
 Registration answers who a party is. The applicant approaches the Root
-Authority with the documents that establish it as a legal body, naming the
-person answerable for it, and attaches whatever licence the body that already
-regulates its sector has issued. That licence is evidence and never authority:
-it is read as part of the file, not treated as a decision the Root Authority
-has to honour. This is also why an institution in a sector with no regulator
-still has a way in, since nothing in the process depends on a licence existing.
+Authority with the documents that establish it as a legal body, and names the
+person answerable for it. It also attaches whatever license the body that
+already regulates its sector has issued. That license is evidence and never
+authority: it is read as part of the file, not treated as a decision the Root
+Authority has to honor. This is also why an institution in a sector with no regulator
+still has a way in, since nothing in the process depends on a license existing.
 
 What registration produces is a file and an entry that is pending. The party is
 known and can be found, and it can do nothing. No keys exist yet, and nothing
@@ -82,7 +84,7 @@ unless the accreditation is withdrawn.
 
 The Root Authority decides it, and decides it directly. There is no sectoral
 body in between with the power to admit entities in its own field. What the
-Root Authority reads is the report of an assessment body, which tests the
+Root Authority reads is the report of an Assessment Body, which tests the
 party's implementation against the Governance Profile and audits its security
 without deciding anything itself. That separation is deliberate, and is
 described in
@@ -102,7 +104,7 @@ infrastructure of its own and is answerable for it.
 
 **The two sides are judged on different questions.** On the issuing side, what
 matters is what a party issues. Both issuer roles run their own issuing
-infrastructure and hold their own signing key, and they are told apart by what
+infrastructure and hold their own signing key. What tells them apart is what
 they are permitted to put their name to: the Identity Issuer to basic identity
 and nothing else, through Approval Tier C, and an Attribute Issuer to the
 credential types it was specifically granted. Neither is measured by size.
@@ -117,14 +119,14 @@ The two questions are unrelated, and they are not meant to line up. A party can
 be an issuer and a verifier at once, accredited once, listed once, and granted
 on both sides separately.
 
-**No participant carries a tier.** What separates one relying party from
+**No participant carries a tier.** What separates one Relying Party from
 another is the scope it was granted, not a class it belongs to. The approval
 tiers in [Section 2.3, Authorization](#23-authorization) grade a single request
-and attach to nobody. A bank permitted to ask for a national identity number
-and a shop permitted only to ask whether someone is old enough are both
+and attach to nobody. A bank may be permitted to ask for a national identity
+number and a shop only to ask whether someone is old enough. Both are
 accredited participants in good standing, differing in what they may request
-and in nothing else. How deeply any particular request is
-reviewed is settled in the next stage rather than by the party's standing.
+and in nothing else. How deeply any particular request is reviewed is settled
+in the next stage rather than by the party's standing.
 
 One detail is worth separating from the rest, because the words look alike. The
 assurance recorded against an issuer grades that issuer's own signing key. It
@@ -138,16 +140,17 @@ Authorization answers what an accredited party may actually do. It is the only
 stage that repeats, and it is where nearly all the ongoing work of governance
 happens.
 
-Each permission is recorded separately in an **Authority Statement**, naming
-what the party may do and what it may do it to. The statement is not handed to
-the party and not published as a file. It is answered over TRQP when a
-participant asks, so any participant can check it at the moment it matters. A
+The Root Authority records each permission separately in an **Authority
+Statement**, naming what the party may do and what it may do it to. The
+statement is not handed to the party and not published as a file. It is
+answered over TRQP when a participant asks, so any participant can check it at
+the moment it matters. A
 wallet asked for an attribute does not take the request on trust because the
 asker is accredited; it checks that this particular request falls inside what
 that party was granted. In the participant model this
 is the role layer, the one that changes most often. How a participant queries
 those records is covered in
-[Protocols per interaction](../data-model-and-protocols/protocols-per-interaction.md).
+[Section 3.1, Protocols per interaction](../data-model-and-protocols/protocols-and-modes.md#31-protocols-per-interaction).
 
 Because accreditation is already done, adding a permission is cheap. A party
 that has been taking part for years can be granted a new credential type or a
@@ -157,13 +160,19 @@ way, leaving the rest of its standing untouched.
 **How deeply a request is reviewed depends on what is being asked for, not on
 who is asking.** Every attribute carries a sensitivity class set in its
 Credential Rulebook, described in
-[Credential Rulebook](../data-model-and-protocols/three-levels-of-rules.md).
+[Section 1.6, The Credential Rulebook](../data-model-and-protocols/credential-formats.md#16-the-credential-rulebook).
 The three classes are `open`, `normal` and `restricted`, and the class decides
-which of three approval tiers the request takes. The tiers are named A, B and
-C, and they grade the request rather than the party that made it.
+which of three approval tiers the request takes.
+
+!!! note "Tiers grade requests, not parties"
+
+    The three depths of review an authorization request can receive are called
+    **Approval Tier A**, **B** and **C**. A tier grades one request and not the
+    party that made it. Nobody is a tier A or a tier C participant, and what a
+    participant may ask for is set by its accreditation scope alone.
 
 **Approval Tier A is automatic.** An already accredited verifier asking only
-for `open` attributes is granted them immediately, with nobody reviewing
+for `open` attributes receives them immediately, with nobody reviewing
 anything, because the data involved is not sensitive enough to justify the
 delay.
 
@@ -173,7 +182,7 @@ asking to change the scope it holds. There is a person in the loop, but only
 one, because the question is narrow.
 
 **Approval Tier C is a committee, working over weeks,** and it requires an
-assessment body's report alongside the application. It covers `restricted`
+Assessment Body's report alongside the application. It covers `restricted`
 attributes, and it also covers two situations that have nothing to do with
 sensitivity: a party applying for the first time, and a credential type nobody
 has issued before. Both are cases where there is no track record to lean on, so

@@ -1,0 +1,17 @@
+<mxfile host="app.diagrams.net" type="device">
+  <diagram name="The protocol behind each interaction">
+    <mxGraphModel dx="892" dy="512" grid="1" gridSize="10" page="1" pageWidth="892" pageHeight="512" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="n1" value="Wallet Backend Service" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="310" y="0" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n2" value="Issuer Core" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="0" y="120" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n3" value="Mobile Wallet" style="rounded=1;arcSize=8;fillColor=#e2d9f3;strokeColor=#7d5ba6;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="310" y="120" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n4" value="Mobile Verifier" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="620" y="120" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n5" value="Trust Registry" style="rounded=1;arcSize=8;fillColor=#d4edda;strokeColor=#3c8d5a;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="0" y="270" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n6" value="Verifier Core" style="rounded=1;arcSize=8;fillColor=#cfe2ff;strokeColor=#2f6fd0;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="310" y="270" width="200" height="50" as="geometry"/></mxCell>
+        <mxCell id="n7" value="Relying Party application" style="rounded=1;arcSize=8;fillColor=#e9ecef;strokeColor=#6c757d;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="310" y="390" width="200" height="50" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

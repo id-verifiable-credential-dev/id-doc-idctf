@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 892 512" width="892" height="512" role="img" aria-labelledby="t d">
+<title id="t">The protocol behind each interaction</title><desc id="d">Seven interactions and the standard carrying each. Issuer Core issues to Mobile Wallet over OpenID4VCI. Mobile Wallet presents to Verifier Core over OpenID4VP and to Mobile Verifier over ISO/IEC 18013-5, and exchanges a platform attestation with Wallet Backend Service for a Key Attestation. Issuer Core and Verifier Core query Trust Registry over ToIP TRQP. Mobile Verifier carries a Verifier Device Certificate from Verifier Core. Verifier Core hands its result to the Relying Party application over OIDC or SAML.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
+<rect x="0.5" y="0.5" width="891" height="511" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
+<g transform="translate(36,36)">
+<rect x="310" y="0" width="200" height="50" rx="7" fill="#e2d9f3" stroke="#7d5ba6" stroke-width="1.3"/>
+<text x="410.0" y="28.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Wallet Backend Service</text>
+<rect x="0" y="120" width="200" height="50" rx="7" fill="#fff3cd" stroke="#d4a017" stroke-width="1.3"/>
+<text x="100.0" y="148.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Issuer Core</text>
+<rect x="310" y="120" width="200" height="50" rx="7" fill="#e2d9f3" stroke="#7d5ba6" stroke-width="1.3"/>
+<text x="410.0" y="148.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Wallet</text>
+<rect x="620" y="120" width="200" height="50" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="720.0" y="148.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Verifier</text>
+<rect x="0" y="270" width="200" height="50" rx="7" fill="#d4edda" stroke="#3c8d5a" stroke-width="1.3"/>
+<text x="100.0" y="298.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trust Registry</text>
+<rect x="310" y="270" width="200" height="50" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="410.0" y="298.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Core</text>
+<rect x="310" y="390" width="200" height="50" rx="7" fill="#e9ecef" stroke="#6c757d" stroke-width="1.3"/>
+<text x="410.0" y="418.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Relying Party application</text>
+<polyline points="200,145 255,145 310,145" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="221.0" y="136.0" width="68.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="255.0" y="149.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OpenID4VCI</text>
+<polyline points="410,120 410,85 410,50" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="362.0" y="76.0" width="96.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="410.0" y="89.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">Key Attestation</text>
+<polyline points="510,145 565,145 620,145" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="517.0" y="136.0" width="96.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="565.0" y="149.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">ISO/IEC 18013-5</text>
+<polyline points="410,170 410,200 410,270" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="378.8" y="191.0" width="62.4" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="410.0" y="204.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OpenID4VP</text>
+<polyline points="100,170 100,220 100,270" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="68.8" y="211.0" width="62.4" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="100.0" y="224.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">ToIP TRQP</text>
+<polyline points="310,295 255,295 200,295" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="223.8" y="286.0" width="62.4" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="255.0" y="299.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">ToIP TRQP</text>
+<polyline points="720,170 720,305 615,305 510,305" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="533.4" y="296.0" width="163.2" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="615.0" y="309.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">Verifier Device Certificate</text>
+<polyline points="410,320 410,355 410,390" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="373.2" y="346.0" width="73.6" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="410.0" y="359.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OIDC / SAML</text>
+</g>
+</svg>

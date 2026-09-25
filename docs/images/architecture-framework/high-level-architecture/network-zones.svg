@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 996 652" width="996" height="652" role="img" aria-labelledby="t d">
+<title id="t">The five network zones and what sits in each</title><desc id="d">Five bands ordered by exposure. Internet holds Mobile Wallet and Mobile Verifier. Public holds only protocol endpoints and static files. Internal holds the consoles, the Admin API, Trust Authority, the databases and caches, and Claims Provider. Secure holds KMS, the HSM, and both offline CA roots, and admits Trust Authority alone. The closed agency network is drawn detached because it belongs to the agency rather than to the ecosystem, and Claims Provider enters it read-only. Two dotted risers run from the OpenID4VCI and OpenID4VP endpoints down to the Admin API, which is the same application answering on two ingresses.</desc>
+<defs><marker id="zarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
+<rect x="0.5" y="0.5" width="995" height="651" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
+<g transform="translate(36,36)">
+<rect x="0" y="0" width="924" height="84" rx="10" fill="#f4f6f8" stroke="#dbe4ec"/>
+<text x="16" y="24" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="600" fill="#16242f">Internet</text>
+<text x="908" y="24" text-anchor="end" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#5c7180">reached by: citizens, merchants</text>
+<rect x="16" y="38" width="440" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="236.0" y="60" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Mobile Wallet</text>
+<rect x="468" y="38" width="440" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="688.0" y="60" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Mobile Verifier</text>
+<rect x="0" y="104" width="924" height="132" rx="10" fill="#f4f6f8" stroke="#dbe4ec"/>
+<text x="16" y="128" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="600" fill="#16242f">Public</text>
+<text x="908" y="128" text-anchor="end" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#5c7180">reached by: Mobile Wallet, Mobile Verifier, other Core Modules</text>
+<rect x="16" y="142" width="196" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="114.0" y="164" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">OpenID4VCI endpoint</text>
+<rect x="224" y="142" width="196" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="322.0" y="164" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">OpenID4VP endpoint</text>
+<rect x="432" y="142" width="176" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="520.0" y="164" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">TRQP endpoint</text>
+<rect x="620" y="142" width="288" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="764.0" y="164" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Wallet Backend Service endpoint</text>
+<rect x="432" y="188" width="220" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="542.0" y="210" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">CDN, static artifacts</text>
+<rect x="664" y="188" width="244" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="786.0" y="210" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">status list, one per issuer</text>
+<rect x="0" y="276" width="924" height="176" rx="10" fill="#f4f6f8" stroke="#dbe4ec"/>
+<text x="16" y="300" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="600" fill="#16242f">Internal</text>
+<text x="908" y="300" text-anchor="end" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#5c7180">reached by: an operator, over VPN or the office network</text>
+<rect x="16" y="314" width="440" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="236.0" y="336" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Admin API</text>
+<rect x="468" y="314" width="214" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="575.0" y="336" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Issuer Console</text>
+<rect x="694" y="314" width="214" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="801.0" y="336" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Verifier Console</text>
+<rect x="16" y="360" width="440" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="236.0" y="382" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Trust Authority, back office and portal</text>
+<rect x="468" y="360" width="440" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="688.0" y="382" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">Claims Provider</text>
+<rect x="16" y="406" width="200" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="116.0" y="428" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">databases</text>
+<rect x="228" y="406" width="200" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="328.0" y="428" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">caches</text>
+<rect x="0" y="484" width="470" height="96" rx="10" fill="#f4f6f8" stroke="#dbe4ec"/>
+<text x="16" y="508" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="600" fill="#16242f">Secure</text>
+<text x="454" y="508" text-anchor="end" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#5c7180">reached by: Trust Authority only</text>
+<rect x="16" y="522" width="110" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="71.0" y="544" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">KMS</text>
+<rect x="138" y="522" width="110" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="193.0" y="544" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">HSM</text>
+<rect x="260" y="522" width="194" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="357.0" y="544" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">both CA roots, offline</text>
+<rect x="494" y="484" width="430" height="96" rx="10" fill="#f4f6f8" stroke="#dbe4ec" stroke-dasharray="6 4"/>
+<text x="510" y="508" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12.5" font-weight="600" fill="#16242f">Closed agency network</text>
+<text x="908" y="508" text-anchor="end" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" fill="#5c7180">reached by: Claims Provider only</text>
+<rect x="530" y="522" width="316" height="34" rx="6" fill="#ffffff" stroke="#b9c6d2"/>
+<text x="688.0" y="544" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" fill="#16242f">source systems</text>
+<path d="M114,176 L114,314" stroke="#5c7180" stroke-width="1.2" stroke-dasharray="4 4" fill="none"/>
+<path d="M322,176 L322,314" stroke="#5c7180" stroke-width="1.2" stroke-dasharray="4 4" fill="none"/>
+<text x="218" y="262" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-style="italic" fill="#5c7180">one application, two doors</text>
+<path d="M222,394 L222,488" stroke="#5c7180" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#zarrow)"/>
+<text x="232" y="470" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-style="italic" fill="#5c7180">only caller</text>
+<path d="M688,394 L688,522" stroke="#5c7180" stroke-width="1.2" stroke-dasharray="4 4" fill="none" marker-end="url(#zarrow)"/>
+<text x="698" y="470" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-style="italic" fill="#5c7180">read-only</text>
+</g></svg>

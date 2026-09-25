@@ -1,10 +1,10 @@
 ---
-title: "Trust Model (Conceptual)"
+title: "Trust Model"
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5 -->
 
-# Trust Model (Conceptual)
+# Trust Model
 
 <p class="ekdn-soon">(soon)</p>
 

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 912 402" width="912" height="402" role="img" aria-labelledby="t d">
+<title id="t">Online and offline: where the network calls go</title><desc id="d">Two columns. Online, Mobile Wallet presents to Verifier Core over OpenID4VP on HTTPS, and Verifier Core fetches the trusted list, the status list and a TRQP answer fresh over the network. Offline, Mobile Wallet presents to Mobile Verifier over ISO/IEC 18013-5 on BLE, and Mobile Verifier reads the same artifacts from its own cache, making no network call at all.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="#5c7180"/></marker></defs>
+<rect x="0.5" y="0.5" width="911" height="401" rx="12" fill="#ffffff" stroke="#e2e9f0"/>
+<g transform="translate(36,36)">
+<rect x="0" y="0" width="400" height="330" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="14" y="21" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">ONLINE</text>
+<rect x="440" y="0" width="400" height="330" rx="10" fill="none" stroke="#b8c4ce" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="454" y="21" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" letter-spacing="0.4" fill="#4a5f6f">OFFLINE  ·  PROXIMITY</text>
+<rect x="115" y="44" width="170" height="46" rx="7" fill="#e2d9f3" stroke="#7d5ba6" stroke-width="1.3"/>
+<text x="200.0" y="70.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Wallet</text>
+<polyline points="200,90 200,115 200,140" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="138.0" y="106.0" width="124.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="200.0" y="119.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OpenID4VP over HTTPS</text>
+<rect x="115" y="140" width="170" height="46" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="200.0" y="166.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Verifier Core</text>
+<polyline points="200,186 200,213 200,240" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="157.6" y="204.0" width="84.8" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="200.0" y="217.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">fetched fresh</text>
+<rect x="55" y="240" width="290" height="50" rx="7" fill="#d4edda" stroke="#3c8d5a" stroke-width="1.3"/>
+<text x="200.0" y="268.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trusted list, status list, TRQP</text>
+<text x="200" y="314" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#16242f">network calls: yes</text>
+<rect x="555" y="44" width="170" height="46" rx="7" fill="#e2d9f3" stroke="#7d5ba6" stroke-width="1.3"/>
+<text x="640.0" y="70.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Wallet</text>
+<polyline points="640,90 640,115 640,140" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="566.8" y="106.0" width="146.4" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="640.0" y="119.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">ISO/IEC 18013-5 over BLE</text>
+<rect x="555" y="140" width="170" height="46" rx="7" fill="#cfe2ff" stroke="#2f6fd0" stroke-width="1.3"/>
+<text x="640.0" y="166.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Mobile Verifier</text>
+<polyline points="640,186 640,213 640,240" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="592.0" y="204.0" width="96.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="640.0" y="217.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">read from cache</text>
+<rect x="495" y="240" width="290" height="50" rx="7" fill="#d4edda" stroke="#3c8d5a" stroke-width="1.3"/>
+<text x="640.0" y="268.3" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11.5" font-weight="600" fill="#16242f">Trusted list, status list, VICAL</text>
+<text x="640" y="314" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11" font-weight="600" fill="#16242f">network calls: zero</text>
+</g>
+</svg>

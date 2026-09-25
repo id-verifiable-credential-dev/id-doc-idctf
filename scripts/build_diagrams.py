@@ -25,7 +25,7 @@ BAND = "#b8c4ce"
 LINE = "#5c7180"
 CARD_STROKE = "#e2e9f0"
 
-# One colour per Service, held constant across every figure on the page, so a
+# One color per Service, held constant across every figure on the page, so a
 # reader who learns the mapping once carries it through the whole chapter.
 PALETTE = {
     "issuer": ("#fff3cd", "#d4a017"),
@@ -184,7 +184,7 @@ class Canvas:
 
     # -- emit ----------------------------------------------------------------
 
-    def render(self, stem: pathlib.Path) -> tuple[int, int]:
+    def render(self, stem: str, chapter: str = "high-level-architecture") -> tuple[int, int]:
         w, h = int(self.w + PAD * 2), int(self.h + PAD * 2)
         body = "\n".join(self.svg)
         svg = (
@@ -208,8 +208,8 @@ class Canvas:
             + "\n".join("        " + c for c in self.cells)
             + "\n      </root>\n    </mxGraphModel>\n  </diagram>\n</mxfile>\n"
         )
-        svg_path = SVG_DIR / f"{stem}.svg"
-        dio_path = DIO_DIR / f"{stem}.drawio"
+        svg_path = SVG_ROOT / chapter / f"{stem}.svg"
+        dio_path = DIO_ROOT / chapter / f"{stem}.drawio"
         svg_path.parent.mkdir(parents=True, exist_ok=True)
         dio_path.parent.mkdir(parents=True, exist_ok=True)
         svg_path.write_text(svg)
@@ -239,8 +239,13 @@ def module_band(c: Canvas, x, y, width, module, kind, layers) -> float:
 
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-DIO_DIR = ROOT / "images/architecture-framework/high-level-architecture"
-SVG_DIR = ROOT / "docs/images/architecture-framework/high-level-architecture"
+
+# Each figure is written into the chapter that publishes it, in both trees at
+# once (CLAUDE.md section 9). The component figures belong to Software
+# Architecture; the Module map and the call matrix belong to High-Level
+# Architecture.
+DIO_ROOT = ROOT / "images/architecture-framework"
+SVG_ROOT = ROOT / "docs/images/architecture-framework"
 
 
 # ---------------------------------------------------------------- figure 4.1
@@ -272,7 +277,7 @@ def fig_module_map():
             c.box(bx + BAND_PAD, cy, bw - BAND_PAD * 2, 66, name, (sub,), kind)
             cy += 66 + GAP
         bx += bw + 16
-    c.text(0, bh + 26, "Colour marks the Service. Every later figure on this page keeps the same mapping.", 10.5)
+    c.text(0, bh + 26, "Color marks the Service. Every later figure on this page keeps the same mapping.", 10.5)
     return c.render("module-map")
 
 
@@ -348,14 +353,14 @@ def band_width(layers) -> int:
     return GUTTER + n * BOX_W + (n - 1) * GAP + BAND_PAD
 
 
-def component_figure(stem, title, desc, modules, note):
+def component_figure(stem, title, desc, modules, note, chapter="software-architecture"):
     c = Canvas(title, desc)
     width = max(band_width(layers) for _, _, layers in modules)
     y = 0.0
     for module, kind, layers in modules:
         y = module_band(c, 0, y, width, module, kind, layers) + 20
     c.text(0, y + 6, note, 10.5)
-    return c.render(stem)
+    return c.render(stem, chapter)
 
 
 # ---------------------------------------------------------------- figure 4.3
@@ -409,27 +414,28 @@ def fig_verifier_components():
     return component_figure(
         "component-verifier-services",
         "Components inside Verifier Services",
-        "Verifier Core with four controllers, three domain services including Trust "
+        "Verifier Core with three controllers, three domain services including Trust "
         "Evaluator, two providers and a repository. Verifier Console with three views and "
-        "a client. Mobile Verifier, which runs on a merchant device with no server "
-        "and whose Activity Repository holds no citizen attribute.",
+        "a client. Mobile Verifier, which runs on a merchant or counter device with no "
+        "server, is the only proximity reader, and whose Activity Repository holds no "
+        "citizen attribute.",
         [("VERIFIER CORE", "verifier", [
-            ("Controller", ["Presentation Controller", "Proximity Reader", "RP Controller",
-                            "Admin Controller"]),
-            ("Domain", ["Credential Verifier", ("Trust Evaluator", "entity chain, transaction chain"),
+            ("Controller", ["Presentation Controller", "RP Controller", "Admin Controller"]),
+            ("Domain", [("Credential Verifier", "SD-JWT VC and ldp_vc"),
+                        ("Trust Evaluator", "entity chain, transaction chain"),
                         "Verifier Device Certificate Issuer"]),
             ("Provider", ["Signing Provider", "Trust SDK"]),
             ("Repository", ["Verification Repository"])]),
          ("VERIFIER CONSOLE", "verifier", [
              ("View", ["Template View", "Merchant View", "Reporting View"]),
              ("Client", [("Core API Client", "no database connection")])]),
-         ("VERIFIER APPLICATION", "verifier", [
+         ("MOBILE VERIFIER", "verifier", [
              ("Client", ["Presentation Client", "Attestation Client"]),
              ("Domain", [("Credential Verifier", "SD-JWT VC and mdoc only")]),
              ("View", ["Result View"]),
              ("Provider", [("Keystore Manager", "secure element"), ("Trust SDK", "local cache")]),
              ("Repository", [("Activity Repository", "no citizen attribute")])])],
-        "Mobile Verifier carries no ldp_vc path and verifies entirely from cache.")
+        "Verifier Core reads nothing in proximity. Mobile Verifier carries no ldp_vc path and verifies entirely from cache.")
 
 
 # ---------------------------------------------------------------- figure 4.6
@@ -510,11 +516,185 @@ def fig_trust_sdk():
     c.text(0, ey + 104 + 2 * 44 + 22,
            "One interface, two implementations, held together by shared test vectors run on "
            "every pipeline build.", 10.5)
-    return c.render("trust-sdk")
+    return c.render("trust-sdk", "software-architecture")
+
+
+
+# ---------------------------------------------------------------- figure 1.1
+
+DMP = "data-model-and-protocols"
+
+
+def fig_credential_anatomy():
+    c = Canvas(
+        "What one credential carries",
+        "A credential drawn as a signed envelope. Four things sit inside it: the claims, the "
+        "type identifier, the holder binding and the status pointer. Across the bottom, "
+        "inside the same envelope, runs the issuer's signature, which covers all four.")
+    c.band(0, 0, 536, 236, "CREDENTIAL")
+    for title, x, y in (("Claims", 20, 40), ("Type identifier", 276, 40),
+                        ("Holder binding", 20, 114), ("Status pointer", 276, 114)):
+        c.box(x, y, 240, 58, title, (), "off")
+    c.box(20, 188, 496, 38, "Issuer signature", (), "issuer")
+    return c.render("credential-anatomy", DMP)
+
+
+# ---------------------------------------------------------------- figure 1.2
+
+def fig_two_representations():
+    c = Canvas(
+        "One credential, two representations",
+        "One credential key at the top. Below it the same credential exists twice, once as "
+        "SD-JWT VC and once as ISO mdoc, both bound to that one key. Each representation "
+        "serves one mode: SD-JWT VC online, ISO mdoc in proximity.")
+    c.box(160, 0, 200, 50, "Credential key", (), "wallet")
+    c.edge([(260, 50), (260, 65), (260, 80)], arrow=False)
+    c.edge([(140, 80), (260, 80), (380, 80)], arrow=False)
+    c.edge([(140, 80), (140, 95), (140, 110)])
+    c.edge([(380, 80), (380, 95), (380, 110)])
+    c.box(40, 110, 200, 54, "SD-JWT VC", (), "wallet")
+    c.box(280, 110, 200, 54, "ISO mdoc", (), "wallet")
+    c.edge([(140, 164), (140, 182), (140, 200)])
+    c.edge([(380, 164), (380, 182), (380, 200)])
+    c.box(40, 200, 200, 46, "Online", (), "verifier")
+    c.box(280, 200, 200, 46, "Proximity", (), "verifier")
+    return c.render("one-credential-two-representations", DMP)
+
+
+# ---------------------------------------------------------------- figure 2.1
+
+def fig_holder_identifier():
+    c = Canvas(
+        "A fresh holder identifier for every credential",
+        "One citizen holds three credentials, and each carries a different did:key. Each "
+        "credential goes to a different verifier. Because no identifier is shared between "
+        "them, two verifiers comparing what they received find nothing in common.")
+    c.box(220, 0, 200, 46, "One citizen", (), "wallet")
+    c.edge([(320, 46), (320, 62), (320, 76)], arrow=False)
+    c.edge([(100, 76), (320, 76), (540, 76)], arrow=False)
+    for title, key, x in (("KTP Digital", "did:key A", 0),
+                          ("Driving license", "did:key B", 220),
+                          ("Diploma", "did:key C", 440)):
+        c.edge([(x + 100, 76), (x + 100, 91), (x + 100, 106)])
+        c.box(x, 106, 200, 58, title, (key,), "wallet")
+        c.edge([(x + 100, 164), (x + 100, 182), (x + 100, 200)])
+    for i, x in enumerate((0, 220, 440)):
+        c.box(x, 200, 200, 46, f"Verifier {i + 1}", (), "verifier")
+    c.text(320, 288,
+           "no identifier in common, so two verifiers cannot tell these are one citizen",
+           10.5, "600", MUTED, "middle")
+    return c.render("holder-identifier-per-credential", DMP)
+
+
+# ---------------------------------------------------------------- figure 3.1
+
+def fig_protocol_per_interaction():
+    c = Canvas(
+        "The protocol behind each interaction",
+        "Seven interactions and the standard carrying each. Issuer Core issues to Mobile "
+        "Wallet over OpenID4VCI. Mobile Wallet presents to Verifier Core over OpenID4VP and "
+        "to Mobile Verifier over ISO/IEC 18013-5, and exchanges a platform attestation with "
+        "Wallet Backend Service for a Key Attestation. Issuer Core and Verifier Core query "
+        "Trust Registry over ToIP TRQP. Mobile Verifier carries a Verifier Device "
+        "Certificate from Verifier Core. Verifier Core hands its result to the Relying "
+        "Party application over OIDC or SAML.")
+    c.box(310, 0, 200, 50, "Wallet Backend Service", (), "wallet")
+    c.box(0, 120, 200, 50, "Issuer Core", (), "issuer")
+    c.box(310, 120, 200, 50, "Mobile Wallet", (), "wallet")
+    c.box(620, 120, 200, 50, "Mobile Verifier", (), "verifier")
+    c.box(0, 270, 200, 50, "Trust Registry", (), "trust")
+    c.box(310, 270, 200, 50, "Verifier Core", (), "verifier")
+    c.box(310, 390, 200, 50, "Relying Party application", (), "off")
+    c.edge([(200, 145), (255, 145), (310, 145)], "OpenID4VCI")
+    c.edge([(410, 120), (410, 85), (410, 50)], "Key Attestation")
+    c.edge([(510, 145), (565, 145), (620, 145)], "ISO/IEC 18013-5")
+    c.edge([(410, 170), (410, 200), (410, 270)], "OpenID4VP")
+    c.edge([(100, 170), (100, 220), (100, 270)], "ToIP TRQP")
+    c.edge([(310, 295), (255, 295), (200, 295)], "ToIP TRQP")
+    c.edge([(720, 170), (720, 305), (615, 305), (510, 305)], "Verifier Device Certificate")
+    c.edge([(410, 320), (410, 355), (410, 390)], "OIDC / SAML")
+    return c.render("protocol-per-interaction", DMP)
+
+
+# ---------------------------------------------------------------- figure 3.2
+
+def fig_online_and_offline():
+    c = Canvas(
+        "Online and offline: where the network calls go",
+        "Two columns. Online, Mobile Wallet presents to Verifier Core over OpenID4VP on "
+        "HTTPS, and Verifier Core fetches the trusted list, the status list and a TRQP "
+        "answer fresh over the network. Offline, Mobile Wallet presents to Mobile Verifier "
+        "over ISO/IEC 18013-5 on BLE, and Mobile Verifier reads the same artifacts from its "
+        "own cache, making no network call at all.")
+    for ox, label in ((0, "ONLINE"), (440, "OFFLINE  ·  PROXIMITY")):
+        c.band(ox, 0, 400, 330, label)
+    for ox, who, proto, how, artifacts, foot in (
+            (0, "Verifier Core", "OpenID4VP over HTTPS", "fetched fresh",
+             "Trusted list, status list, TRQP", "network calls: yes"),
+            (440, "Mobile Verifier", "ISO/IEC 18013-5 over BLE", "read from cache",
+             "Trusted list, status list, VICAL", "network calls: zero")):
+        cx = ox + 200
+        c.box(ox + 115, 44, 170, 46, "Mobile Wallet", (), "wallet")
+        c.edge([(cx, 90), (cx, 115), (cx, 140)], proto)
+        c.box(ox + 115, 140, 170, 46, who, (), "verifier")
+        c.edge([(cx, 186), (cx, 213), (cx, 240)], how)
+        c.box(ox + 55, 240, 290, 50, artifacts, (), "trust")
+        c.text(cx, 314, foot, 11, "600", INK, "middle")
+    return c.render("online-and-offline", DMP)
+
+
+# ---------------------------------------------------------------- figure 4.1
+
+def fig_where_artifacts_live():
+    c = Canvas(
+        "Where each artifact lives",
+        "Four columns, one per place an artifact can sit. On the central CDN: the trusted "
+        "list, the Credential Rulebook and VICAL. On the entity's own domain: the DID "
+        "Document and the status list. Answered on request rather than published: the "
+        "Authority Statement. Carried in the exchange itself: the Accreditation Credential, "
+        "the Key Attestation, the Verifier Device Certificate, the credential, the "
+        "presentation and the Document Signer Certificate. Box color marks the Service that "
+        "issues the artifact.")
+    rows = [
+        ("CENTRAL CDN",
+         [("Trusted list", "trust"), ("Credential Rulebook", "trust"), ("VICAL", "trust")]),
+        ("ENTITY'S OWN DOMAIN",
+         [("DID Document", "trust"), ("Status list", "issuer")]),
+        ("ANSWERED ON REQUEST",
+         [("Authority Statement", "trust")]),
+        ("CARRIED IN THE EXCHANGE",
+         [("Accreditation Credential", "trust"), ("Key Attestation", "wallet"),
+          ("Verifier Device Certificate", "verifier"), ("Credential", "issuer"),
+          ("Presentation", "wallet"), ("Document Signer Certificate", "trust")]),
+    ]
+    BW, BH, G, PER = 172, 44, 10, 3
+    width = 14 * 2 + PER * BW + (PER - 1) * G
+    y = 0
+    for label, items in rows:
+        nrows = (len(items) + PER - 1) // PER
+        height = 30 + nrows * BH + (nrows - 1) * G + 14
+        c.band(0, y, width, height, label)
+        for j, (name, kind) in enumerate(items):
+            c.box(14 + (j % PER) * (BW + G), y + 30 + (j // PER) * (BH + G),
+                  BW, BH, name, (), kind)
+        y += height + 12
+    for i, (kind, name) in enumerate((("issuer", "Issuer Services"),
+                                      ("wallet", "Wallet Services"),
+                                      ("verifier", "Verifier Services"),
+                                      ("trust", "Trust Infrastructure"))):
+        lx = (i % 2) * 280
+        ly = y + 12 + (i // 2) * 26
+        fill, stroke = PALETTE[kind]
+        c.cell(lx, ly, 26, 18, "", fill, stroke)
+        c.text(lx + 34, ly + 13, name, 10.5)
+    return c.render("where-artifacts-live", DMP)
 
 
 if __name__ == "__main__":
     for fn in (fig_module_map, fig_call_matrix, fig_issuer_components, fig_wallet_components,
-               fig_verifier_components, fig_trust_components, fig_trust_sdk):
+               fig_verifier_components, fig_trust_components, fig_trust_sdk,
+               fig_credential_anatomy, fig_two_representations, fig_holder_identifier,
+               fig_protocol_per_interaction, fig_online_and_offline,
+               fig_where_artifacts_live):
         w, h = fn()
         print(f"{fn.__name__:28} {w} x {h}")

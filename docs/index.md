@@ -39,16 +39,12 @@ specification.
 
 ## Names already settled
 
-Four names are fixed and used consistently across all five documents.
+Three names are fixed and used consistently across all five documents.
 
 - The wallet on the citizen's phone is a Module called **Mobile Wallet**.
 - Credential types are named in the `id.go.credential.<Type>.v<N>` namespace.
 - The technical profile that applies across credential types is called the
   **Governance Profile**.
-- The three depths of review an authorization request can receive are called
-  **Approval Tier A**, **B** and **C**. A tier grades one request and not the
-  party that made it. Nobody is a tier A or a tier C participant, and what a
-  participant may ask for is set by its accreditation scope alone.
 
 ## What is written so far
 

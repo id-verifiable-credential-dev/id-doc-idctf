@@ -19,23 +19,25 @@ The chapter runs on three words that are easy to mistake for one another.
 ecosystem. **Entity** is what accreditation produces: a DID, keys and
 certificates, a status, and a row in the trusted list. **Role** is the
 authority granted to that entity, and one entity may hold several at once.
-Section 1 opens with them, because most questions about who may do what turn
-out to be questions about which of the three is meant.
+[Section 1, Role map](role-map.md) opens with them, because most questions
+about who may do what turn out to be questions about which of the three is
+meant.
 
 There are ten roles. Three of them govern: they decide who may take part and
 what they may then do, and they never touch a citizen's transaction. Seven sit
-on the path a credential travels, and one of those seven, the Holder, is held
+on the path a credential travels, and one of those seven, the holder, is held
 by a person rather than an institution. Two kinds of box are drawn beside them
 without being roles at all: four external systems the ecosystem depends on and
 does not govern, and one Module, the wallet a citizen installs.
 
-Three questions separate the pages below, and mixing them causes most of the
-confusion about this ecosystem. *What is this party responsible for* is the
-role. *What may it issue or request* is the scope of its accreditation. *Does
-it answer for itself, or does someone answer for it* is the difference between
-an accredited entity and a registered merchant. A single bank can be a Relying
-Party, an RP Intermediary for the merchants it acquires, and an Attribute
-Issuer for its account credentials at the same time without any contradiction.
+Three questions separate the three pages of this chapter, and mixing them
+causes most of the confusion about this ecosystem. *What is this party
+responsible for* is the role. *What may it issue or request* is the scope of
+its accreditation. *Does it answer for itself, or does someone answer for it*
+is the difference between an accredited entity and a registered merchant. A
+single bank can be a Relying Party, an RP Intermediary for the merchants it
+acquires, and an Attribute Issuer for its account credentials. Holding all
+three at once is no contradiction.
 
 The Services that group these responsibilities, and the software that
 implements them, are described in

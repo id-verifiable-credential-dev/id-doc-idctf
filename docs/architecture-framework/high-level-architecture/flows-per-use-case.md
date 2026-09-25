@@ -5,7 +5,7 @@ description: The minimum path through each use case, from entity onboarding to k
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §7; siklus hidup kredensial belum ada di draft -->
 
-# 6. Flows per use case
+# 5. Flows per use case
 
 Each flow below is the minimum path, not a complete protocol trace. The steps
 name who acts and what they send, and stop where the
@@ -15,10 +15,10 @@ with the wire format.
 Three of them run without reaching Trust Infrastructure at all: credential
 issuance, online verification, and offline verification each read what they
 need from cache. That is
-[Section 1.1](design-principles.md#11-the-transaction-path-and-the-trust-path-never-cross)
+[Principle 1, The two paths never cross](index.md#1-the-two-paths-never-cross)
 in operation rather than in principle.
 
-## 6.1 Entity onboarding
+## 5.1 Entity onboarding
 
 Onboarding brings a new entity into the control plane, the step that has to
 happen before the entity can sign anything on the transaction path. Trust
@@ -39,11 +39,11 @@ it, and the entity itself takes part only at the start and the end.
 After onboarding, the entity signs with its own local keystore. KMS and Trust
 Authority are not called again once transactions start.
 
-## 6.2 Credential issuance
+## 5.2 Credential issuance
 
 This flow issues a credential to a citizen's wallet over OpenID4VCI, online.
-Mobile Wallet, Wallet Backend Service, Issuer Core, and Claims Provider
-each take part, and the trusted list is read from cache throughout.
+Mobile Wallet, Wallet Backend Service, Issuer Core, and Claims Provider each
+take part, and the trusted list is read from cache throughout.
 
 1. Issuer Core sends a credential offer to Mobile Wallet, by QR code or
    deeplink.
@@ -78,16 +78,16 @@ verifying that credential (a KTP Digital) first. When the source system
 answers slowly, issuance is deferred and Issuer Core returns a
 `transaction_id` instead of the credential.
 
-## 6.3 Online verification
+## 5.3 Online verification
 
-This flow lets a relying party's own application verify a credential over
+This flow lets a Relying Party's own application verify a credential over
 OpenID4VP, with Verifier Core mediating between it and Mobile Wallet.
 The trusted list and the status list are both read from cache.
 
 1. The RP application asks Verifier Core to run a verification, using a
    template.
-2. Verifier Core sends an authorization request carrying DCQL to Wallet
-   Application, with `client_id` set to the verifier's `did:webvh`, by QR
+2. Verifier Core sends an authorization request carrying DCQL to Mobile
+   Wallet, with `client_id` set to the verifier's `did:webvh`, by QR
    code or deeplink.
 3. Mobile Wallet resolves the `client_id` against the trusted list and
    checks the requested scope through TRQP, both from cache.
@@ -103,17 +103,18 @@ The trusted list and the status list are both read from cache.
    T5 the scope.
 8. Verifier Core records the transaction ID and the consent receipt as T6,
    storing only the `vp_digest`.
-9. Verifier Core returns an OIDC or SAML session, carrying the attributes, to
-   the RP application.
+9. Verifier Core returns an OpenID Connect or SAML session, carrying the
+   attributes, to the RP application.
 
 Verifier Core does not store the resulting attributes. Keeping them is the RP
 application's responsibility.
 
-## 6.4 Offline verification
+## 5.4 Offline verification
 
-This flow verifies a credential over ISO 18013-5, in proximity, between a
-reader, which is either Verifier Core or Mobile Verifier, and Wallet
-Application. No network is reachable during it at all.
+This flow verifies a credential over ISO/IEC 18013-5, in proximity, between a
+reader and Mobile Wallet. The reader is always Mobile Verifier, on a merchant's
+device or on a Relying Party's counter device. No network is reachable during
+it at all.
 
 1. The reader engages Mobile Wallet by QR code or NFC tap.
 2. The reader and Mobile Wallet establish a session over BLE, using
@@ -134,13 +135,12 @@ for example, is set by the Governance Framework. DeviceAuth is a
 consequence is that a presentation cannot be denied afterward: a verifier can
 prove to a third party that the citizen presented.
 
-## 6.5 Verification by a merchant
+## 5.5 Verification by a merchant
 
 This flow lets a merchant verify a credential through Mobile Verifier,
-standing in for the Verifier Core it does not run itself. Verifier
-Application, on the merchant's own device, Verifier Core, run by the
-RP Intermediary that registered the merchant, and Mobile Wallet all
-take part.
+standing in for the Verifier Core it does not run itself. Three parties take
+part: Mobile Verifier on the merchant's own device, Verifier Core run by the
+RP Intermediary that registered the merchant, and Mobile Wallet.
 
 1. Mobile Verifier sends Verifier Core proof of possession of its
    device key and an integrity token, at provisioning and at every renewal.
@@ -161,13 +161,13 @@ The key is born on the merchant's own device and signs there too. The RP
 Intermediary vouches for the merchant but never sees the citizen's data. A
 merchant is registered, not accredited.
 
-## 6.6 Wallet registration and attestation
+## 5.6 Wallet registration and attestation
 
 This flow registers a wallet installation with Wallet Backend Service and
 keeps it supplied with a Key Attestation, drawing on the device's own OS or
 chip and on CONNECTIDN.
 
-1. Mobile Wallet logs into CONNECTIDN over OIDC.
+1. Mobile Wallet logs into CONNECTIDN over OpenID Connect.
 2. CONNECTIDN returns an `id_token`.
 3. Mobile Wallet asks the OS to create a device key, produce a platform
    attestation, and return an integrity verdict.
@@ -175,11 +175,9 @@ chip and on CONNECTIDN.
    sending the public key, the platform attestation, and the CONNECTIDN
    token.
 5. Wallet Backend Service confirms the instance is active.
-
-For every issuance after that, and at least once a day:
-
-6. Mobile Wallet sends Wallet Backend Service proof of possession of
-   the device key, an integrity token, and the issuer's nonce.
+6. For every issuance after that, and at least once a day, Mobile Wallet sends
+   Wallet Backend Service proof of possession of the device key, an integrity
+   token, and the issuer's nonce.
 7. Wallet Backend Service returns a new Key Attestation, or refuses if the
    device has been revoked.
 
@@ -187,7 +185,7 @@ Wallet Backend Service knows the account and the device. It knows neither the
 credential, the issuer, nor the verifier. Replacing the phone means
 re-issuance, because a hardware key cannot be backed up.
 
-## 6.7 Entity key revocation
+## 5.7 Entity key revocation
 
 This flow runs when an entity's signing key is compromised, moving through
 five phases from the freeze to the post-mortem.
@@ -207,6 +205,6 @@ rotation, a DSC valid at most 457 days for an mDL, decides how many
 credentials get caught up when one key leaks: the more often a key rotates,
 the fewer credentials need reissuing.
 
-## 6.8 Credential lifecycle: expiry, reissuance, device change
+## 5.8 Credential lifecycle: expiry, reissuance, device change
 
 <p class="ekdn-soon">(soon)</p>

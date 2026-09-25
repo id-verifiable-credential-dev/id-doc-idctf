@@ -37,10 +37,12 @@ theme:
     - search.share
     - search.suggest
     - toc.follow
-  # Brand mark: the round BLPID fingerprint. `theme.logo` overrides
-  # `theme.icon.logo`, so the icon key for the logo is gone — the file is the
-  # logo now. The same file serves as the favicon.
-  logo: assets/logo-blpid.png
+  # Brand mark: the IDCTF logo. `theme.logo` overrides `theme.icon.logo`, so
+  # the icon key for the logo is gone — the file is the logo now. Its viewBox
+  # is cropped to the artwork, so the mark reaches the edge of the file and the
+  # only spacing around it is the one set in `extra.css`. The favicon is still
+  # the BLPID fingerprint.
+  logo: assets/logo-idctf.svg
   favicon: assets/logo-blpid.png
   # Lucide icon set (files in `overrides/.icons/lucide/`, taken from the
   # `lucide-static` package — the same artwork as `lucide-react`).
@@ -173,23 +175,31 @@ nav:
       - architecture-framework/roles/rp-intermediary-and-merchant.md
     - "High-Level Architecture":
       - architecture-framework/high-level-architecture/index.md
-      - architecture-framework/high-level-architecture/design-principles.md
-      - architecture-framework/high-level-architecture/the-four-services.md
+      - architecture-framework/high-level-architecture/system-models.md
       - architecture-framework/high-level-architecture/transaction-path-and-trust-path.md
       - architecture-framework/high-level-architecture/module-map.md
-      - architecture-framework/high-level-architecture/network-zones-and-placement.md
-      - architecture-framework/high-level-architecture/flows-per-use-case.md
       - architecture-framework/high-level-architecture/architecture-on-the-device.md
-    - "Data Model and Protocols (Overview)":
+      - architecture-framework/high-level-architecture/flows-per-use-case.md
+    - "Software Architecture":
+      - architecture-framework/software-architecture/index.md
+      - architecture-framework/software-architecture/layers-inside-a-module.md
+      - architecture-framework/software-architecture/components-inside-a-module.md
+      - architecture-framework/software-architecture/constraints-binding-implementations.md
+      - architecture-framework/software-architecture/typical-software-decisions.md
+      - architecture-framework/software-architecture/storage-sessions-and-archive.md
+      - architecture-framework/software-architecture/scale-and-resilience.md
+      - architecture-framework/software-architecture/quality-targets.md
+      - architecture-framework/software-architecture/technology-choices-per-layer.md
+      - architecture-framework/software-architecture/repository-and-package-structure.md
+      - architecture-framework/software-architecture/packaging-and-deployment.md
+      - architecture-framework/software-architecture/technology-risks-and-mitigation.md
+    - "Data Model and Protocols":
       - architecture-framework/data-model-and-protocols/index.md
-      - architecture-framework/data-model-and-protocols/technology-map.md
-      - architecture-framework/data-model-and-protocols/three-credential-formats.md
+      - architecture-framework/data-model-and-protocols/credential-formats.md
       - architecture-framework/data-model-and-protocols/identifier.md
-      - architecture-framework/data-model-and-protocols/three-levels-of-rules.md
-      - architecture-framework/data-model-and-protocols/protocols-per-interaction.md
+      - architecture-framework/data-model-and-protocols/protocols-and-modes.md
       - architecture-framework/data-model-and-protocols/artifacts-exchanged.md
-      - architecture-framework/data-model-and-protocols/online-and-offline-modes.md
-    - "Trust Model (Conceptual)":
+    - "Trust Model":
       - architecture-framework/trust-model/index.md
       - architecture-framework/trust-model/chain-of-trust.md
       - architecture-framework/trust-model/two-trust-anchor-paths.md
@@ -199,21 +209,6 @@ nav:
       - architecture-framework/trust-model/two-assurance-levels.md
       - architecture-framework/trust-model/keys-who-creates-who-signs.md
       - architecture-framework/trust-model/trust-model-scope.md
-    - "Software Architecture":
-      - architecture-framework/software-architecture/index.md
-      - architecture-framework/software-architecture/three-level-vocabulary.md
-      - architecture-framework/software-architecture/layers-inside-a-module.md
-      - architecture-framework/software-architecture/constraints-binding-implementations.md
-      - architecture-framework/software-architecture/typical-software-decisions.md
-      - architecture-framework/software-architecture/storage-sessions-and-archive.md
-      - architecture-framework/software-architecture/scale-and-resilience.md
-      - architecture-framework/software-architecture/quality-targets.md
-    - "Tech Stack and Deployment":
-      - architecture-framework/tech-stack-and-deployment/index.md
-      - architecture-framework/tech-stack-and-deployment/technology-choices-per-layer.md
-      - architecture-framework/tech-stack-and-deployment/repository-and-package-structure.md
-      - architecture-framework/tech-stack-and-deployment/packaging-and-deployment.md
-      - architecture-framework/tech-stack-and-deployment/technology-risks-and-mitigation.md
     - "Module Guides":
       - architecture-framework/module-guides/index.md
       - architecture-framework/module-guides/issuer-core.md
