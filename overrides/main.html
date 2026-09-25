@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{#
+  The landing page carries `title: Indonesia Digital Credential Trust
+  Framework` so the header topic beside the logo reads the full name rather
+  than the short tab label. Material's own `htmltitle` block then writes
+  "<page title> - <site name>", which on that page is the same name twice.
+  On the home page the site name alone is the whole title; every other page
+  keeps Material's default.
+#}
+{% block htmltitle %}
+  {% if page.is_homepage %}
+    <title>{{ config.site_name }}</title>
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}

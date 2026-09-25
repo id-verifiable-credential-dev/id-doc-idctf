@@ -168,6 +168,18 @@
     white-space: normal;
   }
 
+  /* Beranda memakai nama situs sebagai judul halamannya, jadi kedua topik
+     memuat teks yang sama. Spanduknya `position: relative`, dan tema membaca
+     itu sebagai judul yang sudah tergulir lewat, sehingga yang tampil di sana
+     justru topik kedua. Patahan yang sama dipasang padanya supaya bilah atas
+     beranda terbaca persis seperti di halaman lain, bukan terpotong elipsis
+     dalam satu baris. */
+  body:has(.ekdn-home) .md-header__topic > .md-ellipsis {
+    line-height: 1.25;
+    max-width: 11rem;
+    white-space: normal;
+  }
+
   /* Pil pencarian dibuat lebih lebar dari bawaan tema (11,7rem) supaya
      sebanding dengan kotak pencarian GitBook, dan melebar lagi saat fokus.
      Bawaan tema mengambangkan isi kotak ke kanan; di sini dibuat memenuhi
@@ -943,9 +955,14 @@ html {
   display: grid;
   gap: 1.6rem;
   grid-template-columns: 1fr;
-  margin: 0 0 2.2rem;
+  margin: 0 auto 2.2rem;
+  /* Lebar yang sama dengan `.ekdn-sections` di bawahnya, supaya judul spanduk
+     dan judul bagian berdiri di garis kiri yang sama. Garis rambut penutupnya
+     tetap selebar layar lewat elemen semu di bawah ini. */
+  max-width: 62rem;
   padding: 2.4rem 0 2.6rem;
   position: relative;
+  width: 100%;
 }
 
 /* Garis rambut penutup spanduk berjalan sampai tepi layar, sementara isinya
@@ -967,7 +984,7 @@ html {
 }
 
 .md-typeset .ekdn-banner .ekdn-verstrip {
-  margin: 0;
+  margin: 1.4rem 0 0;
 }
 
 .ekdn-sections {
@@ -984,6 +1001,40 @@ html {
   padding-top: 0;
 }
 
+/* Kolom isi beranda dilepas dari 38,4rem supaya spanduk dan tabel bisa
+   melebar. Prosanya tidak ikut melebar: baris sepanjang 62rem terlalu jauh
+   untuk mata, jadi paragraf dan daftar tetap selebar kolom baca situs. */
+.md-typeset .ekdn-sections > p,
+.md-typeset .ekdn-sections > ul,
+.md-typeset .ekdn-sections > ol {
+  max-width: 38.4rem;
+}
+
+/* Tabel yang mengisi lebar bagian. Bawaan tema membungkus tabel dalam kotak
+   `inline-block` yang menyusut mengikuti isinya, dan di kolom selebar ini
+   hasilnya tabel sempit yang terdampar di kiri. Lebar 28% untuk kolom pertama
+   juga dilepas: di sini kolom itu hanya memuat kode dokumen.
+   Hanya di layar lebar. Di bawah 60em bawaan tema dikembalikan, supaya tabel
+   bisa digulir ke samping alih-alih memeras kolomnya. */
+@media screen and (min-width: 60em) {
+  .md-typeset .ekdn-sections .md-typeset__table {
+    display: block;
+  }
+
+  .md-typeset .ekdn-sections table:not([class]) {
+    /* Tema memasang `inline-block` pada tabel; kotaknya memang ikut melebar
+       dengan `width: 100%`, tapi kolomnya tetap menyusut mengikuti isi. Hanya
+       `display: table` yang membagi sisa ruang ke kolom. */
+    display: table;
+    width: 100%;
+  }
+
+  .md-typeset .ekdn-sections table:not([class]) th:first-child,
+  .md-typeset .ekdn-sections table:not([class]) td:first-child {
+    width: 14%;
+  }
+}
+
 @media screen and (min-width: 60em) {
   .md-typeset .ekdn-banner {
     gap: 3rem;
@@ -994,12 +1045,13 @@ html {
 }
 
 /* --------------------------------------------------------------------------
-   Grafik kepercayaan di spanduk — delapan simpul tanpa pusat, tersambung
-   garis rambut. Satu gelombang berjalan dari kiri ke kanan: tiap garis dan
-   simpul memegang nomor urutnya sendiri di `--i`, dan jeda animasinya
-   dihitung dari nomor itu, sehingga jumlah simpul bisa berubah tanpa menulis
-   ulang aturan di sini. Gambarnya hiasan, bukan diagram: `aria-hidden` di
-   halaman menyembunyikannya dari pembaca layar.
+   Grafik di spanduk — satu kredensial berjalan dari Identity Issuer, mampir
+   di Mobile Wallet, lalu sampai di Relying Party. Satu gelombang berjalan
+   dari kiri ke kanan: tiap garis dan simpul memegang nomor urutnya sendiri
+   di `--i`, dan jeda animasinya dihitung dari nomor itu, sehingga jumlah
+   simpul bisa berubah tanpa menulis ulang aturan di sini. Gambarnya hiasan,
+   bukan diagram: `aria-hidden` di halaman menyembunyikannya dari pembaca
+   layar.
    -------------------------------------------------------------------------- */
 
 .ekdn-banner__art {
@@ -1054,6 +1106,126 @@ html {
     fill: var(--ekdn-tint);
     stroke: var(--md-primary-fg-color);
   }
+}
+
+/* Isi tiap simpul: berkas yang diterbitkan, telepon warga, dan centang
+   pemeriksaan. Garis rambut saja, tanpa isian, supaya simpul yang menyala
+   tetap yang terbaca lebih dulu. */
+.ekdn-graph__glyph {
+  fill: none;
+  stroke: var(--ekdn-muted);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+/* Kartu kredensial yang berjalan di atas garis. Waktunya disetel mengikuti
+   gelombang di atas, jadi kartu tiba di sebuah simpul kira-kira saat simpul
+   itu menyala. Geserannya dihitung dari titik tengah kartu di `viewBox`:
+   88 ke 200 (112) lalu ke 340 (252). Kartu padam tepat saat sampai di sebuah
+   simpul dan menyala lagi setelah meninggalkannya, supaya ia tidak pernah
+   menutupi gambar di dalam simpul. */
+.ekdn-graph__card {
+  animation: ekdn-graph-card 4.4s ease-in-out infinite;
+  opacity: 0;
+}
+
+.ekdn-graph__card rect {
+  fill: var(--md-primary-fg-color);
+}
+
+.ekdn-graph__card path {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-width: 1.2;
+}
+
+@keyframes ekdn-graph-card {
+  0%,
+  8% {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  14% {
+    opacity: 1;
+  }
+
+  24% {
+    opacity: 1;
+    transform: translateX(87px);
+  }
+
+  29%,
+  36% {
+    opacity: 0;
+    transform: translateX(112px);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateX(137px);
+  }
+
+  48% {
+    opacity: 1;
+    transform: translateX(227px);
+  }
+
+  53%,
+  100% {
+    opacity: 0;
+    transform: translateX(252px);
+  }
+}
+
+.ekdn-graph__label {
+  fill: var(--ekdn-muted);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.0125em;
+  text-anchor: middle;
+}
+
+/* ==========================================================================
+   Penanda status di tabel kemajuan beranda. Warnanya hanya ada di titik:
+   biru merek untuk bab yang naskahnya penuh, kuning strip versi untuk yang
+   sedang ditulis, dan abu label untuk yang belum disentuh. Tulisannya tetap
+   warna teks tabel, jadi statusnya terbaca juga tanpa warna.
+   ========================================================================== */
+
+.md-typeset .ekdn-status {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.ekdn-status .dot {
+  border-radius: 50%;
+  display: inline-block;
+  flex: none;
+  height: 0.4rem;
+  width: 0.4rem;
+}
+
+.ekdn-status--written .dot {
+  background: var(--md-primary-fg-color);
+}
+
+.ekdn-status--drafting .dot {
+  background: #f2a900;
+}
+
+.ekdn-status--todo .dot {
+  background: var(--ekdn-label);
+}
+
+.md-typeset .ekdn-legend {
+  color: var(--ekdn-muted);
+  font-size: 0.68rem;
+  margin-top: 1rem;
 }
 
 /* ==========================================================================
@@ -1339,8 +1511,14 @@ html {
     transition: none;
   }
 
+  .ekdn-graph__card,
   .ekdn-graph__edge,
   .ekdn-graph__node {
     animation: none;
+  }
+
+  .ekdn-graph__card {
+    opacity: 1;
+    transform: translateX(60px);
   }
 }

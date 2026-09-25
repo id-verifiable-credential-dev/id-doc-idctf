@@ -165,7 +165,7 @@ markdown_extensions:
 
 # Page tree
 nav:
-  - Introduction: index.md
+  - IDCTF: index.md
   - Architecture Framework:
     - architecture-framework/index.md
     - "Roles":
