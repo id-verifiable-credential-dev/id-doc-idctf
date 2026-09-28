@@ -3,7 +3,7 @@ title: Flows per use case
 description: The minimum path through each use case, from entity onboarding to key revocation, and which of them run without reaching Trust Infrastructure.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §7; siklus hidup kredensial belum ada di draft -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §7, Kep. 5, 9, 28; siklus hidup kredensial belum ada di draft -->
 
 # 5. Flows per use case
 
@@ -21,27 +21,34 @@ in operation rather than in principle.
 ## 5.1 Entity onboarding
 
 Onboarding brings a new entity into the control plane, the step that has to
-happen before the entity can sign anything on the transaction path. Trust
-Authority, KMS, DID Service, and Trust Registry each play a distinct part in
-it, and the entity itself takes part only at the start and the end.
+happen before the entity can sign anything on the transaction path. The entity
+generates its own keys, and Trust Authority, DID Service, and Trust Registry
+each play a distinct part in accepting them.
 
 1. The entity sends `POST /entities` to Trust Authority, with its legal-entity
    documentation and a conformance test.
-2. Trust Authority asks KMS to run `createKey(issuance-jose, issuance-cose)`.
-3. KMS returns an encrypted private key to the entity, for one-time use.
-4. KMS publishes the public key to DID Service, into `did.jsonl`.
-5. KMS sends a CSR to Trust Authority, which issues a DSC for the mdoc path.
-6. Trust Authority sends an Authority Statement, naming an action and a
-   resource, to Trust Registry.
+2. The entity's Key Manager generates `issuance-jose`, `issuance-cose`, and an
+   Ed25519 update key, in whichever driver the entity uses: an encrypted
+   software keystore by default, a cloud KMS, or an HSM.
+3. The entity sends DID Service its genesis `did.jsonl`, a proof of possession
+   for each key, and the `keyStorage` of the driver.
+4. DID Service returns a witness proof signed with `eddsa-jcs-2022`.
+5. The entity sends Trust Authority a CSR from the `issuance-cose` key, and
+   Trust Authority returns a DSC for the mdoc path.
+6. Trust Authority sends Trust Registry an Authority Statement, naming an
+   action and a resource, together with the public keys and their
+   `keyStorage`.
 7. Trust Registry returns a new trusted list and an Accreditation Credential
-   to the entity.
+   to the entity, and the entity publishes `did.jsonl` on its own domain.
 
-After onboarding, the entity signs with its own local keystore. KMS and Trust
-Authority are not called again once transactions start.
+Rotation follows the same path: a new log entry, signed with the current update
+key and matching the pre-rotation hash, is witnessed before it counts. After
+onboarding, the entity signs through its own Key Manager, and Trust
+Infrastructure is not called once transactions start.
 
 ## 5.2 Credential issuance
 
-This flow issues a credential to a citizen's wallet over OpenID4VCI, online.
+This flow issues a credential to a citizen's wallet over [OpenID4VCI](../references.md#exchange-protocols), online.
 Mobile Wallet, Wallet Backend Service, Issuer Core, and Claims Provider each
 take part, and the trusted list is read from cache throughout.
 
@@ -53,8 +60,9 @@ take part, and the trusted list is read from cache throughout.
 3. Mobile Wallet sends PAR and PKCE to Issuer Core, then requests a
    token with the pre-authorized code, `tx_code`, and DPoP.
 4. Mobile Wallet sends `POST /nonce` to Issuer Core.
-5. Mobile Wallet creates a credential key inside the secure element and
-   obtains a platform attestation.
+5. Mobile Wallet takes its credential key, created inside the secure element
+   at its first issuance and reused for every credential after, and obtains a
+   platform attestation.
 6. Mobile Wallet exchanges the platform attestation and the issuer's
    nonce with Wallet Backend Service.
 7. Wallet Backend Service returns a Key Attestation, carrying `attested_keys`
@@ -81,8 +89,8 @@ answers slowly, issuance is deferred and Issuer Core returns a
 ## 5.3 Online verification
 
 This flow lets a Relying Party's own application verify a credential over
-OpenID4VP, with Verifier Core mediating between it and Mobile Wallet.
-The trusted list and the status list are both read from cache.
+[OpenID4VP](../references.md#exchange-protocols), with Verifier Core mediating between it and Mobile Wallet. The
+trusted list and the status list are both read from cache.
 
 1. The RP application asks Verifier Core to run a verification, using a
    template.
@@ -111,10 +119,11 @@ application's responsibility.
 
 ## 5.4 Offline verification
 
-This flow verifies a credential over ISO/IEC 18013-5, in proximity, between a
-reader and Mobile Wallet. The reader is always Mobile Verifier, on a merchant's
-device or on a Relying Party's counter device. No network is reachable during
-it at all.
+This flow verifies a credential over [ISO/IEC 18013-5](../references.md#exchange-protocols), in proximity, between a
+reader and Mobile Wallet. The reader is always a device: Mobile Verifier on a
+merchant's phone or a Relying Party's counter device, or a Relying Party's own
+app built on the Reader SDK. It is never Verifier Core. No network is reachable
+during it at all.
 
 1. The reader engages Mobile Wallet by QR code or NFC tap.
 2. The reader and Mobile Wallet establish a session over BLE, using
@@ -148,18 +157,23 @@ RP Intermediary that registered the merchant, and Mobile Wallet.
    `ReaderAuthRole` extension and the device key. Its lifetime is set by the
    Governance Profile, and the RP Intermediary withdraws it early through a
    CRL.
-3. Mobile Verifier sends a Request Object to Mobile Wallet, signed
-   with the device key and carrying that certificate as `x5c`.
-4. Mobile Wallet checks whether the chain reaches Verifier Root CA,
-   whether the issuing CA is on the trusted list, whether the certificate
-   hash matches the `client_id`, and whether the requested attributes are a
-   subset of `ReaderAuthRole`.
-5. Mobile Wallet sends the presentation to Mobile Verifier,
+3. Mobile Verifier leaves a Request Object with Verifier Core, signed with
+   the device key and carrying that certificate as `x5c`, and shows Mobile
+   Wallet a QR code whose `request_uri` points at Verifier Core.
+4. Mobile Wallet fetches the Request Object and checks whether the chain
+   reaches Verifier Root CA, whether the issuing CA is on the trusted list,
+   whether the certificate hash matches the `client_id`, and whether the
+   requested attributes are a subset of `ReaderAuthRole`.
+5. Mobile Wallet sends the presentation to Verifier Core by `direct_post.jwt`,
    encrypted to the merchant's device key.
+6. Verifier Core passes the ciphertext to Mobile Verifier and deletes it;
+   Mobile Verifier decrypts and verifies on the device.
 
 The key is born on the merchant's own device and signs there too. The RP
-Intermediary vouches for the merchant but never sees the citizen's data. A
-merchant is registered, not accredited.
+Intermediary's Verifier Core holds only the Request Object and the encrypted
+response, for a short time and without logging them; it vouches for the
+merchant but never sees the citizen's data. A merchant is registered, not
+accredited.
 
 ## 5.6 Wallet registration and attestation
 
@@ -193,10 +207,10 @@ five phases from the freeze to the post-mortem.
 | Phase | Target | Action |
 |---|---|---|
 | 1. Freeze | Under 1 hour | Trust Registry sets the entity's status to suspended and issues an emergency trusted list; Issuer Core stops issuing; verifiers are notified directly. |
-| 2. Key revocation | Same day | KMS runs `KMS.revoke`; the DSC is added to the CRL; DID Service removes the key from `assertionMethod` without deleting the entry. |
+| 2. Key revocation | Same day | The entity rotates the key at once through its Key Manager, with pre-rotation in `did:webvh` and Trust Authority's witness; the DSC is added to the CRL; the old key leaves `assertionMethod` without the entry being deleted; the witness refuses any new entry signed by the revoked key. |
 | 3. Fate of credentials | No fixed target | Every credential signed with the compromised key is revoked: `issuance_record` points to that credential's index in the status list, and Status Manager sets the bit and republishes the Status List Token. Periodic key rotation limits how many credentials this reaches. |
 | 4. Recovery | No fixed target | A new key and a new DSC are issued, status is set to granted, and affected credentials are reissued; the wallet can receive a push notice to update its credential. |
-| 5. Afterward | No fixed target | A post-mortem is filed to the transparency log; whether to move to self-generated keys is evaluated. |
+| 5. Afterward | No fixed target | A post-mortem is filed to the transparency log; the issuer's Key Manager driver is reviewed. |
 
 Two things have to exist from phase 1 for this flow to run at all: an
 `issuance_record` that records a `signing_key_ref` per credential, and a DID

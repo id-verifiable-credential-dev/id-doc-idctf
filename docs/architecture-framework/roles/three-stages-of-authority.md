@@ -143,13 +143,12 @@ happens.
 The Root Authority records each permission separately in an **Authority
 Statement**, naming what the party may do and what it may do it to. The
 statement is not handed to the party and not published as a file. It is
-answered over TRQP when a participant asks, so any participant can check it at
-the moment it matters. A
-wallet asked for an attribute does not take the request on trust because the
-asker is accredited; it checks that this particular request falls inside what
-that party was granted. In the participant model this
-is the role layer, the one that changes most often. How a participant queries
-those records is covered in
+answered over [TRQP](../references.md#exchange-protocols) when a participant asks, so any participant can check it at
+the moment it matters. A wallet asked for an attribute does not take the
+request on trust because the asker is accredited; it checks that this
+particular request falls inside what that party was granted. In the participant
+model this is the role layer, the one that changes most often. How a
+participant queries those records is covered in
 [Section 3.1, Protocols per interaction](../data-model-and-protocols/protocols-and-modes.md#31-protocols-per-interaction).
 
 Because accreditation is already done, adding a permission is cheap. A party

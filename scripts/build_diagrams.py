@@ -242,43 +242,9 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # Each figure is written into the chapter that publishes it, in both trees at
 # once (CLAUDE.md section 9). The component figures belong to Software
-# Architecture; the Module map and the call matrix belong to High-Level
-# Architecture.
+# Architecture; the call matrix belongs to High-Level Architecture.
 DIO_ROOT = ROOT / "images/architecture-framework"
 SVG_ROOT = ROOT / "docs/images/architecture-framework"
-
-
-# ---------------------------------------------------------------- figure 4.1
-
-def fig_module_map():
-    c = Canvas(
-        "The eleven Modules, grouped by Service",
-        "Four Service columns. Issuer Services holds Issuer Core and Issuer Console, "
-        "both run many times. Wallet Services holds one Mobile Wallet with millions "
-        "of installations and a single Wallet Backend Service. Verifier Services holds "
-        "Verifier Core, Verifier Console and Mobile Verifier. Trust Infrastructure "
-        "holds Trust Authority, Trust Registry, DID Service and KMS, one of each.")
-    cols = [
-        ("ISSUER SERVICES", "issuer", [("Issuer Core", "many"), ("Issuer Console", "many")]),
-        ("WALLET SERVICES", "wallet", [("Mobile Wallet", "one app, millions installed"),
-                                       ("Wallet Backend Service", "one")]),
-        ("VERIFIER SERVICES", "verifier", [("Verifier Core", "many"), ("Verifier Console", "many"),
-                                           ("Mobile Verifier", "millions installed")]),
-        ("TRUST INFRASTRUCTURE", "trust", [("Trust Authority", "one"), ("Trust Registry", "one"),
-                                           ("DID Service", "one"), ("KMS", "one")]),
-    ]
-    bw, bx = 248, 0
-    tallest = max(len(m) for _, _, m in cols)
-    bh = BAND_LABEL + tallest * (66 + GAP) + BAND_PAD
-    for label, kind, mods in cols:
-        c.band(bx, 0, bw, bh, label)
-        cy = BAND_LABEL
-        for name, sub in mods:
-            c.box(bx + BAND_PAD, cy, bw - BAND_PAD * 2, 66, name, (sub,), kind)
-            cy += 66 + GAP
-        bx += bw + 16
-    c.text(0, bh + 26, "Color marks the Service. Every later figure on this page keeps the same mapping.", 10.5)
-    return c.render("module-map")
 
 
 # ---------------------------------------------------------------- figure 4.2
@@ -286,26 +252,25 @@ def fig_module_map():
 def fig_call_matrix():
     c = Canvas(
         "Which Module may call which",
-        "A matrix of caller against callee for all eleven Modules plus a database column. "
+        "A matrix of caller against callee for all ten Modules plus a database column. "
         "Filled cells mark a permitted call, hollow cells a read from cache or a static file, "
         "crossed cells a prohibited call, and the barred cells the four prohibitions the "
-        "pipeline tests on every build. The last four rows are empty of permitted calls "
+        "pipeline tests on every build. The last three rows are empty of permitted calls "
         "outside Trust Infrastructure, which is how the figure shows that Trust "
         "Infrastructure never calls outward.")
-    mods = ["IC", "ICn", "WA", "WBS", "VC", "VCn", "VA", "TA", "TR", "DID", "KMS", "DB"]
+    mods = ["IC", "ICn", "WA", "WBS", "VC", "VCn", "VA", "TA", "TR", "DID", "DB"]
     rows = [
-        ("Issuer Core", {"WBS": "X", "VC": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "o", "DB": "@"}),
-        ("Issuer Console", {"IC": "@", "WBS": "x", "VC": "x", "TA": "x", "TR": "x", "DID": "x", "KMS": "x", "DB": "X"}),
-        ("Mobile Wallet", {"IC": "@", "WBS": "@", "VC": "@", "VA": "@", "TA": "x", "TR": "c", "DID": "c", "KMS": "x"}),
-        ("Wallet Backend Service", {"IC": "x", "VC": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "x", "DB": "@"}),
-        ("Verifier Core", {"IC": "X", "WBS": "x", "TA": "x", "TR": "@", "DID": "@", "KMS": "o", "DB": "@"}),
-        ("Verifier Console", {"IC": "x", "VC": "@", "WBS": "x", "TA": "x", "TR": "x", "DID": "x", "KMS": "x", "DB": "X"}),
-        ("Mobile Verifier", {"IC": "x", "VC": "@", "TA": "x", "TR": "c", "KMS": "x"}),
+        ("Issuer Core", {"WBS": "X", "VC": "x", "TA": "o", "TR": "@", "DID": "@", "DB": "@"}),
+        ("Issuer Console", {"IC": "@", "WBS": "x", "VC": "x", "TA": "x", "TR": "x", "DID": "x", "DB": "X"}),
+        ("Mobile Wallet", {"IC": "@", "WBS": "@", "VC": "@", "VA": "@", "TA": "x", "TR": "c", "DID": "c"}),
+        ("Wallet Backend Service", {"IC": "x", "VC": "x", "TA": "o", "TR": "@", "DID": "@", "DB": "@"}),
+        ("Verifier Core", {"IC": "X", "WBS": "x", "TA": "o", "TR": "@", "DID": "@", "DB": "@"}),
+        ("Verifier Console", {"IC": "x", "VC": "@", "WBS": "x", "TA": "x", "TR": "x", "DID": "x", "DB": "X"}),
+        ("Mobile Verifier", {"IC": "x", "VC": "@", "TA": "x", "TR": "c"}),
         ("Trust Authority", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X",
-                             "TR": "@", "DID": "@", "KMS": "@", "DB": "@"}),
+                             "TR": "@", "DID": "@", "DB": "@"}),
         ("Trust Registry", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X", "DB": "@"}),
         ("DID Service", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X", "DB": "@"}),
-        ("KMS", {"IC": "X", "ICn": "X", "WA": "X", "WBS": "X", "VC": "X", "VCn": "X", "VA": "X", "DB": "@"}),
     ]
     style = {
         "@": ("●", "#d4edda", "#3c8d5a", "#1e5b38"),
@@ -335,7 +300,7 @@ def fig_call_matrix():
     c.text(lw + len(mods) * cw + 8, top + 7 * ch + 4, "", 10)
     ly = top + len(rows) * ch + 34
     legend = [("@", "may call"), ("c", "may read, from cache or a static file"),
-              ("o", "may call, never during a transaction"), ("x", "must not call"),
+              ("o", "may call to register or rotate keys, never during a transaction"), ("x", "must not call"),
               ("X", "must not call, and the pipeline fails the build")]
     for i, (key, desc) in enumerate(legend):
         gy = ly + i * 24
@@ -369,12 +334,14 @@ def fig_issuer_components():
     return component_figure(
         "component-issuer-services",
         "Components inside Issuer Services",
-        "Issuer Core in four layers: three controllers, three domain services, three "
-        "providers including Claims Provider, and one repository. Issuer Console below it "
+        "Issuer Core in four layers: three controllers, four domain services including Key "
+        "Manager, three providers including Claims Provider, and one repository. Issuer "
+        "Console below it "
         "has three views and a single client that reaches the Admin Controller.",
         [("ISSUER CORE", "issuer", [
             ("Controller", ["Issuance Controller", "Authorization Controller", "Admin Controller"]),
-            ("Domain", ["Credential Builder", "Status Manager", "Key Attestation Validator"]),
+            ("Domain", ["Credential Builder", "Status Manager", "Key Attestation Validator",
+                        ("Key Manager", "entity keys, three drivers")]),
             ("Provider", [("Claims Provider", "the only one that differs per install"),
                           "Signing Provider", "Trust SDK"]),
             ("Repository", ["Issuance Repository"])]),
@@ -394,16 +361,17 @@ def fig_wallet_components():
         "including Trust Display and Consent UI, two providers, and the encrypted Credential "
         "Store. Wallet Backend Service below it issues Key Attestations and keeps a device "
         "registry that holds no credential data.",
-        [("WALLET APPLICATION", "wallet", [
+        [("MOBILE WALLET", "wallet", [
             ("Client", ["Auth Client", "Issuance Client", "Presentation Client", "Attestation Client"]),
             ("Domain", ["Trust Display", "Consent UI", "App Lock", "Credential Renderer",
                         "Credential Codec"]),
-            ("Provider", [("Keystore Manager", "secure element"), ("Trust SDK", "local cache")]),
+            ("Provider", [("Keystore Manager", "device key, one credential key"), ("Trust SDK", "local cache")]),
             ("Repository", [("Credential Store", "SQLCipher, encrypted")])]),
          ("WALLET BACKEND SERVICE", "wallet", [
              ("Controller", ["Key Attestation Issuer"]),
-             ("Domain", ["Account Service", "Notification Service", "Recovery Service"]),
-             ("Provider", [("Signing Provider", "Wallet Provider key in HSM")]),
+             ("Domain", ["Account Service", "Notification Service", "Recovery Service",
+                         ("Key Manager", "Wallet Provider keys")]),
+             ("Provider", [("Signing Provider", "through Key Manager")]),
              ("Repository", [("Device Repository", "no credential data")])])],
         "Wallet Backend Service knows the account and the device, never the credential.")
 
@@ -414,16 +382,17 @@ def fig_verifier_components():
     return component_figure(
         "component-verifier-services",
         "Components inside Verifier Services",
-        "Verifier Core with three controllers, three domain services including Trust "
-        "Evaluator, two providers and a repository. Verifier Console with three views and "
-        "a client. Mobile Verifier, which runs on a merchant or counter device with no "
-        "server, is the only proximity reader, and whose Activity Repository holds no "
-        "citizen attribute.",
+        "Verifier Core with three controllers, four domain services including Trust "
+        "Evaluator and Key Manager, two providers and a repository. Verifier Console with "
+        "three views and a client. Mobile Verifier, which runs on a merchant or counter "
+        "device, reads in proximity through the Reader SDK, and whose Activity Repository "
+        "holds no citizen attribute.",
         [("VERIFIER CORE", "verifier", [
-            ("Controller", ["Presentation Controller", "RP Controller", "Admin Controller"]),
+            ("Controller", [("Presentation Controller", "also relays for merchants"), "RP Controller", "Admin Controller"]),
             ("Domain", [("Credential Verifier", "SD-JWT VC and ldp_vc"),
                         ("Trust Evaluator", "entity chain, transaction chain"),
-                        "Verifier Device Certificate Issuer"]),
+                        "Verifier Device Certificate Issuer",
+                        ("Key Manager", "entity keys, three drivers")]),
             ("Provider", ["Signing Provider", "Trust SDK"]),
             ("Repository", ["Verification Repository"])]),
          ("VERIFIER CONSOLE", "verifier", [
@@ -431,11 +400,12 @@ def fig_verifier_components():
              ("Client", [("Core API Client", "no database connection")])]),
          ("MOBILE VERIFIER", "verifier", [
              ("Client", ["Presentation Client", "Attestation Client"]),
-             ("Domain", [("Credential Verifier", "SD-JWT VC and mdoc only")]),
+             ("Domain", [("Credential Verifier", "SD-JWT VC and mdoc; ldp_vc phase 2")]),
              ("View", ["Result View"]),
-             ("Provider", [("Keystore Manager", "secure element"), ("Trust SDK", "local cache")]),
+             ("Provider", [("Keystore Manager", "secure element"), ("Reader SDK", "BLE and NFC, ISO/IEC 18013-5"),
+                           ("Trust SDK", "local cache")]),
              ("Repository", [("Activity Repository", "no citizen attribute")])])],
-        "Verifier Core reads nothing in proximity. Mobile Verifier carries no ldp_vc path and verifies entirely from cache.")
+        "Verifier Core reads nothing in proximity. Mobile Verifier decrypts and verifies on the device, from cache.")
 
 
 # ---------------------------------------------------------------- figure 4.6
@@ -444,16 +414,16 @@ def fig_trust_components():
     return component_figure(
         "component-trust-infrastructure",
         "Components inside Trust Infrastructure",
-        "Trust Authority with its registrar controller, five domain services including the "
-        "Certificate Authority, and two repositories. Trust Registry, which answers TRQP and "
-        "publishes the static artifacts. DID Service, which issues and resolves did:webvh. "
-        "KMS, whose Key Controller exposes no sign operation.",
+        "Trust Authority with its registrar controller, four domain services including the "
+        "Certificate Authority, and three repositories including the Public Key Registry. "
+        "Trust Registry, which answers TRQP and publishes the static artifacts. DID Service, "
+        "which witnesses and resolves did:webvh.",
         [("TRUST AUTHORITY", "trust", [
             ("Controller", ["Registrar Controller"]),
             ("Domain", ["Accreditation Service", ("Certificate Authority", "both roots, offline HSM"),
-                        ("Key Lifecycle Service", "never sign"), "Governance Service",
-                        "Incident Service"]),
-            ("Repository", ["Entity Repository", ("Transparency Log", "append only")])]),
+                        "Governance Service", "Incident Service"]),
+            ("Repository", ["Entity Repository", ("Public Key Registry", "no private key"),
+                            ("Transparency Log", "append only")])]),
          ("TRUST REGISTRY", "trust", [
              ("Controller", ["TRQP Controller", "Credential Rulebook Controller"]),
              ("Domain", ["List Publisher", "Conformance Crawler"]),
@@ -461,15 +431,10 @@ def fig_trust_components():
              ("Repository", ["Registry Repository"])]),
          ("DID SERVICE", "trust", [
              ("Controller", ["Publisher Controller", "Resolver Controller"]),
-             ("Domain", [("Log Service", "did.jsonl, pre-rotation")]),
-             ("Provider", [("Object Storage Provider", "to CDN")]),
-             ("Repository", ["Document Repository"])]),
-         ("KMS", "trust", [
-             ("Controller", [("Key Controller", "no sign operation")]),
-             ("Domain", [("Escrow Service", "one-time key handover")]),
-             ("Provider", [("Cryptographic Provider", "HSM, cloud KMS, vault")]),
-             ("Repository", ["Key Registry"])])],
-        "Nothing in Trust Infrastructure signs on behalf of an entity.")
+             ("Domain", [("Log Service", "witness, eddsa-jcs-2022")]),
+             ("Provider", [("Log Delivery", "witness proof to the entity")]),
+             ("Repository", ["Document Repository"])])],
+        "Nothing in Trust Infrastructure holds or uses an entity's private key.")
 
 
 # ---------------------------------------------------------------- figure 4.7
@@ -477,15 +442,16 @@ def fig_trust_components():
 def fig_trust_sdk():
     c = Canvas(
         "Trust SDK: six parts, and the four Modules that embed it",
-        "The Trust SDK is a library rather than a Module. Six parts, of which the DID "
-        "Resolver Client and the X.509 Validator carry the highest risk of the Go and Dart "
-        "implementations drifting apart. It is embedded as a Provider-layer component in "
+        "The Trust SDK is a library rather than a Module. Six parts, of which the X.509 "
+        "Validator carries the highest risk of the Go and Dart implementations drifting "
+        "apart and the DID Resolver Client the next highest. It is embedded as a "
+        "Provider-layer component in "
         "Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier, and in no "
         "other Module.")
     parts = [("Trust Client", "TRQP", ""), ("Artifact Consumer", "trusted list, rulebook", "!"),
              ("DID Resolver Client", "did:webvh, did:key", "!!"),
              ("Status Checker", "status list, bitstring", "!"),
-             ("X.509 Validator", "DSC, VDC, CRL, VICAL", "!!!"),
+             ("X.509 Validator", "certificate chains, CRL, VICAL", "!!!"),
              ("Cache Store", "TTL, last known good", "")]
     risk = {"": ("low", "#e9ecef", "#6c757d"), "!": ("medium", "#fff3cd", "#d4a017"),
             "!!": ("high", "#ffe0cc", "#d2691e"), "!!!": ("highest", "#f8d7da", "#c0392b")}
@@ -509,7 +475,7 @@ def fig_trust_sdk():
         c.box(ex, ey, BOX_W, 58, name, (lang,), kind)
     c.text(0, ey + 92, "and in no other Module", 11, "600", INK)
     for i, name in enumerate(["Issuer Console", "Verifier Console", "Wallet Backend Service",
-                              "Trust Authority", "Trust Registry", "DID Service", "KMS"]):
+                              "Trust Authority", "Trust Registry", "DID Service"]):
         ox = (i % 4) * (BOX_W + GAP)
         oy = ey + 104 + (i // 4) * 44
         c.box(ox, oy, BOX_W, 34, name, (), "off")
@@ -565,25 +531,26 @@ def fig_two_representations():
 
 def fig_holder_identifier():
     c = Canvas(
-        "A fresh holder identifier for every credential",
-        "One citizen holds three credentials, and each carries a different did:key. Each "
-        "credential goes to a different verifier. Because no identifier is shared between "
-        "them, two verifiers comparing what they received find nothing in common.")
-    c.box(220, 0, 200, 46, "One citizen", (), "wallet")
+        "One holder identifier for every credential",
+        "One citizen holds three credentials, and all three carry the same did:key, derived "
+        "from the one credential key of that wallet installation. Each credential goes to a "
+        "different verifier. Because the identifier is shared, two verifiers comparing what "
+        "they received can tell it came from the same citizen, the exposure this phase accepts.")
+    c.box(220, 0, 200, 46, "One citizen, one did:key", (), "wallet")
     c.edge([(320, 46), (320, 62), (320, 76)], arrow=False)
     c.edge([(100, 76), (320, 76), (540, 76)], arrow=False)
     for title, key, x in (("KTP Digital", "did:key A", 0),
-                          ("Driving license", "did:key B", 220),
-                          ("Diploma", "did:key C", 440)):
+                          ("Driving license", "did:key A", 220),
+                          ("Diploma", "did:key A", 440)):
         c.edge([(x + 100, 76), (x + 100, 91), (x + 100, 106)])
         c.box(x, 106, 200, 58, title, (key,), "wallet")
         c.edge([(x + 100, 164), (x + 100, 182), (x + 100, 200)])
     for i, x in enumerate((0, 220, 440)):
         c.box(x, 200, 200, 46, f"Verifier {i + 1}", (), "verifier")
     c.text(320, 288,
-           "no identifier in common, so two verifiers cannot tell these are one citizen",
+           "one identifier in common, so two verifiers comparing notes can match the citizen",
            10.5, "600", MUTED, "middle")
-    return c.render("holder-identifier-per-credential", DMP)
+    return c.render("holder-identifier", DMP)
 
 
 # ---------------------------------------------------------------- figure 3.1
@@ -596,8 +563,9 @@ def fig_protocol_per_interaction():
         "to Mobile Verifier over ISO/IEC 18013-5, and exchanges a platform attestation with "
         "Wallet Backend Service for a Key Attestation. Issuer Core and Verifier Core query "
         "Trust Registry over ToIP TRQP. Mobile Verifier carries a Verifier Device "
-        "Certificate from Verifier Core. Verifier Core hands its result to the Relying "
-        "Party application over OIDC or SAML.")
+        "Certificate from Verifier Core, which also relays a merchant's online check. "
+        "Verifier Core hands its result to the Relying "
+        "Party application over OpenID Connect or SAML.")
     c.box(310, 0, 200, 50, "Wallet Backend Service", (), "wallet")
     c.box(0, 120, 200, 50, "Issuer Core", (), "issuer")
     c.box(310, 120, 200, 50, "Mobile Wallet", (), "wallet")
@@ -611,8 +579,8 @@ def fig_protocol_per_interaction():
     c.edge([(410, 170), (410, 200), (410, 270)], "OpenID4VP")
     c.edge([(100, 170), (100, 220), (100, 270)], "ToIP TRQP")
     c.edge([(310, 295), (255, 295), (200, 295)], "ToIP TRQP")
-    c.edge([(720, 170), (720, 305), (615, 305), (510, 305)], "Verifier Device Certificate")
-    c.edge([(410, 320), (410, 355), (410, 390)], "OIDC / SAML")
+    c.edge([(720, 170), (720, 305), (615, 305), (510, 305)], "Verifier Device Certificate, relay")
+    c.edge([(410, 320), (410, 355), (410, 390)], "OpenID Connect / SAML")
     return c.render("protocol-per-interaction", DMP)
 
 
@@ -623,15 +591,16 @@ def fig_online_and_offline():
         "Online and offline: where the network calls go",
         "Two columns. Online, Mobile Wallet presents to Verifier Core over OpenID4VP on "
         "HTTPS, and Verifier Core fetches the trusted list, the status list and a TRQP "
-        "answer fresh over the network. Offline, Mobile Wallet presents to Mobile Verifier "
-        "over ISO/IEC 18013-5 on BLE, and Mobile Verifier reads the same artifacts from its "
-        "own cache, making no network call at all.")
+        "answer fresh over the network. Offline, Mobile Wallet presents to a reader on a "
+        "device, Mobile Verifier or a Relying Party's own app built on the Reader SDK, over "
+        "ISO/IEC 18013-5 on BLE, and the reader takes the same artifacts from its own cache, "
+        "making no network call at all.")
     for ox, label in ((0, "ONLINE"), (440, "OFFLINE  ·  PROXIMITY")):
         c.band(ox, 0, 400, 330, label)
     for ox, who, proto, how, artifacts, foot in (
             (0, "Verifier Core", "OpenID4VP over HTTPS", "fetched fresh",
              "Trusted list, status list, TRQP", "network calls: yes"),
-            (440, "Mobile Verifier", "ISO/IEC 18013-5 over BLE", "read from cache",
+            (440, "Reader on a device", "ISO/IEC 18013-5 over BLE", "read from cache",
              "Trusted list, status list, VICAL", "network calls: zero")):
         cx = ox + 200
         c.box(ox + 115, 44, 170, 46, "Mobile Wallet", (), "wallet")
@@ -691,7 +660,7 @@ def fig_where_artifacts_live():
 
 
 if __name__ == "__main__":
-    for fn in (fig_module_map, fig_call_matrix, fig_issuer_components, fig_wallet_components,
+    for fn in (fig_call_matrix, fig_issuer_components, fig_wallet_components,
                fig_verifier_components, fig_trust_components, fig_trust_sdk,
                fig_credential_anatomy, fig_two_representations, fig_holder_identifier,
                fig_protocol_per_interaction, fig_online_and_offline,

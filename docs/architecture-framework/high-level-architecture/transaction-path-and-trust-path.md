@@ -1,13 +1,13 @@
 ---
 title: The transaction path and the trust path
-description: How the eleven Modules divide into a data plane, a control plane, and an operations layer, and what passes between them.
+description: How the ten Modules divide into a data plane, a control plane, and an operations layer, and what passes between them.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), Kep. 12 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), Kep. 9, 12, 28 -->
 
 # 2. The transaction path and the trust path
 
-Four Services, eleven Modules. The separation that shapes everything else is
+Four Services, ten Modules. The separation that shapes everything else is
 between the transaction path, which is the data plane, and the trust path,
 which is the control plane. They do not meet at runtime, which the chapter
 overview states as
@@ -23,7 +23,7 @@ verifying anything themselves. They are the operations layer.
 | Plane | Modules | What it does |
 |---|---|---|
 | Transaction path (data plane) | Issuer Core, Mobile Wallet, Verifier Core, Mobile Verifier | Issues and presents credentials |
-| Trust path (control plane) | Trust Authority, Trust Registry, DID Service, KMS | Decides who is trusted, and publishes the answer |
+| Trust path (control plane) | Trust Authority, Trust Registry, DID Service | Decides who is trusted, and publishes the answer |
 | Operations layer | Issuer Console, Verifier Console, Wallet Backend Service | Configures an entity's own Module, and vouches for its devices |
 
 <figure markdown="1" class="ekdn-fig-wide" id="figure-2-1">
@@ -37,10 +37,11 @@ path is [Section 2.2](#22-the-trust-path), the artifact lane
 [Section 2.1](#21-the-transaction-path), and the operations layer
 [Section 2.3](#23-the-operations-layer).
 
-The artifact lane draws the six artifacts a party fetches from an address and
-caches before a transaction, which is what the dashed arrows in the figure
-mean. Six more are never fetched at all, traveling with a party or with a
-message instead. All twelve are in
+The artifact lane draws the six artifacts a party reads before a transaction,
+five of them fetched from an address and cached, which is what the dashed
+arrows in the figure mean, and the sixth answered over TRQP rather than
+published as a file. Six more are never fetched at all, traveling with a party
+or with a message instead. All twelve are in
 [Section 4, Artifacts exchanged](../data-model-and-protocols/artifacts-exchanged.md).
 
 ## 2.1 The transaction path
@@ -50,9 +51,9 @@ no others.
 
 | From | To | Protocol |
 |---|---|---|
-| Issuer Core | Mobile Wallet | OpenID4VCI |
-| Mobile Wallet | Verifier Core | OpenID4VP, online only |
-| Mobile Wallet | Mobile Verifier | OpenID4VP for online, ISO/IEC 18013-5 for proximity |
+| Issuer Core | Mobile Wallet | [OpenID4VCI](../references.md#exchange-protocols) |
+| Mobile Wallet | Verifier Core | [OpenID4VP](../references.md#exchange-protocols), online only |
+| Mobile Wallet | Mobile Verifier | OpenID4VP for online, relayed by the RP Intermediary's Verifier Core; [ISO/IEC 18013-5](../references.md#exchange-protocols) for proximity |
 
 The wallet is the only Module that appears on both sides. It receives from an
 issuer and presents to a verifier, and nothing moves between an issuer and a
@@ -62,16 +63,20 @@ statements in [Section 2.4](#24-what-connects-the-two-planes).
 Both verifier Modules appear because each covers a different setting. Verifier
 Core receives a presentation online, at the Relying Party's own endpoint.
 Mobile Verifier reads on a device, online or in proximity: a merchant with no
-server uses it, and so does a Relying Party at its counter. Proximity reading
-happens on that device alone, so an offline check makes no network call on
-either side.
+server uses it, and so does a Relying Party at its counter. Online, a merchant's
+device leaves its signed request with the RP Intermediary's Verifier Core and
+collects the encrypted response from it, and Verifier Core passes both along
+without opening them. Proximity reading happens on the device alone, in Mobile
+Verifier or in a Relying Party's own app built on the Reader SDK, so an offline
+check makes no network call on either side.
 
 ## 2.2 The trust path
 
-Trust Authority drives the other three Trust Infrastructure Modules and nothing
-else. It tells Trust Registry what to publish, DID Service which entity
-identifiers to create and resolve, and KMS which keys to generate, rotate, or
-revoke. The direction is one way in a second sense too: no Module in Trust
+Trust Authority drives the other two Trust Infrastructure Modules and nothing
+else. It tells Trust Registry what to publish, and it witnesses, through DID
+Service, every entry an entity adds to its own identifier log. The keys
+themselves are generated and held by each entity; Trust Authority receives only
+public keys and certificate requests. The direction is one way in a second sense too: no Module in Trust
 Infrastructure ever calls a Module outside it, and none of them calls an entity
 back.
 
@@ -115,7 +120,7 @@ On the wallet side the daily cadence is itself the revocation mechanism. An
 installation that stops being reissued stops working when its current
 attestation expires, with no revocation list to distribute and no message that
 has to arrive. A merchant certificate lives longer than a day, so it is
-withdrawn the ordinary X.509 way instead: the operator publishes a CRL, and a
+withdrawn the ordinary [X.509](../references.md#certificates-and-revocation) way instead: the operator publishes a CRL, and a
 reader checks its cached copy.
 
 ## 2.4 What connects the two planes
@@ -153,11 +158,10 @@ that no Module has to call the trust path to ask.
 No artifact on the central CDN carries citizen data.
 
 The query is the sixth, the one that is no file. A participant asks Trust
-Registry over TRQP whether a given party may do a given thing and caches the
+Registry over [TRQP](../references.md#exchange-protocols) whether a given party may do a given thing and caches the
 answer like everything else, so a permission check survives an unreachable
 registry exactly as a cached file does. What a statement covers, and how one is
-granted, is in
-[Section 2.3, Authorization](../roles/three-stages-of-authority.md#23-authorization).
+granted, is in [Section 2.3, Authorization](../roles/three-stages-of-authority.md#23-authorization).
 
 What each of the six contains, and the six further artifacts that nobody
 publishes to an address at all, are in

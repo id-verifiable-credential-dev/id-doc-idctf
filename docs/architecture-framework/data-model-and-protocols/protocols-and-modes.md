@@ -3,7 +3,7 @@ title: "Protocols and modes"
 description: Which standard protocol carries each interaction in the ecosystem, and what changes when a transaction runs with the network switched off.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.5, §4.7 (Kep. 19, 21, 26, 28); JWT di OpenID4VCI dan OpenID4VP -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.5, §4.7 (Kep. 19, 21, 26, 28), §7.5; JWT di OpenID4VCI dan OpenID4VP -->
 
 # 3. Protocols and modes
 
@@ -23,13 +23,13 @@ Seven interactions cross the ecosystem, each carried by one standard.
 
 | Interaction | Protocol | Standards |
 |---|---|---|
-| Issuer to Wallet | Credential offer; PAR mandatory plus PKCE; pre-authorized code with `tx_code`, or authorization code; DPoP; nonce endpoint; credential request with proof type `attestation` or `jwt`; deferred issuance | OpenID4VCI 1.0 (§8.2, §12.2.4, App. D.1, F.1, F.3), OAuth 2.0, RFC 9126, RFC 7636, RFC 9449 |
-| Wallet to Verifier, online | Authorization request with DCQL, `request_uri`, `direct_post.jwt`, Key Binding JWT. `client_id` opens with `decentralized_identifier` for an accredited verifier, `x509_hash` for a merchant | OpenID4VP 1.0 |
-| Wallet to Reader, proximity | Engagement over QR or NFC, an encrypted BLE session, DeviceRequest with ReaderAuth, DeviceResponse with DeviceAuth (`deviceSignature`) | ISO/IEC 18013-5 |
-| Entity to Trust Registry | `POST /authorization`, `POST /recognition` | ToIP TRQP v2.0, RFC 7807 |
-| Wallet to Wallet Backend Service | Instance registration; a platform attestation exchanged for a Key Attestation, only for credentials rated `substantial` or `high` | OpenID4VCI 1.0 Appendix D.1, Play Integrity, App Attest |
-| Mobile Verifier to Verifier Core | A Verifier Device Certificate with a limited lifetime per device, with a CRL from the Verifier Core that vouches for it (online, an accredited verifier uses a DID instead, with no attestation) | ISO/IEC 18013-5 Annex B, OpenID4VP 1.0 `x509_hash` |
-| Verifier to RP application | An OpenID Connect or SAML session | OpenID Connect Core, SAML 2.0 |
+| Issuer to Wallet | Credential offer; PAR mandatory plus PKCE; pre-authorized code with `tx_code`, or authorization code; DPoP; nonce endpoint; credential request with proof type `attestation` or `jwt`; deferred issuance | [OpenID4VCI 1.0](../references.md#exchange-protocols) (§8.2, §12.2.4, App. D.1, F.1, F.3), [OAuth 2.0](../references.md#oauth-20-and-the-endpoints-it-secures), [RFC 9126](../references.md#oauth-20-and-the-endpoints-it-secures), [RFC 7636](../references.md#oauth-20-and-the-endpoints-it-secures), [RFC 9449](../references.md#oauth-20-and-the-endpoints-it-secures) |
+| Wallet to Verifier, online | Authorization request with DCQL, `request_uri`, `direct_post.jwt`, Key Binding JWT. `client_id` opens with `decentralized_identifier` for an accredited verifier, `x509_hash` for a merchant | [OpenID4VP 1.0](../references.md#exchange-protocols) |
+| Wallet to Reader, proximity | Engagement over QR or NFC, an encrypted BLE session, DeviceRequest with ReaderAuth, DeviceResponse with DeviceAuth (`deviceSignature`) | [ISO/IEC 18013-5](../references.md#exchange-protocols) |
+| Entity to Trust Registry | `POST /authorization`, `POST /recognition` | [ToIP TRQP v2.0](../references.md#exchange-protocols), [RFC 7807](../references.md#oauth-20-and-the-endpoints-it-secures) |
+| Wallet to Wallet Backend Service | Instance registration; a platform attestation exchanged for a Key Attestation, only for credentials rated `substantial` or `high` | [OpenID4VCI 1.0 Appendix D.1](../references.md#device-attestation-and-assurance), [Play Integrity](../references.md#device-attestation-and-assurance), [App Attest](../references.md#device-attestation-and-assurance) |
+| Mobile Verifier to Verifier Core | A Verifier Device Certificate with a limited lifetime per device, with a CRL from the Verifier Core that vouches for it (online, an accredited verifier uses a DID instead, with no attestation); for a merchant's online check, the relayed `request_uri` and `response_uri` | [ISO/IEC 18013-5 Annex B](../references.md#certificates-and-revocation), OpenID4VP 1.0 `x509_hash` |
+| Verifier to RP application | An OpenID Connect or SAML session | [OpenID Connect Core](../references.md#exchange-protocols), [SAML 2.0](../references.md#exchange-protocols) |
 
 ### 3.1.1 Issuer to Wallet
 
@@ -98,7 +98,11 @@ guarantees it: a
 [Verifier Device Certificate](artifacts-exchanged.md#443-verifier-device-certificate)
 with a limited lifetime, following ISO/IEC 18013-5 Annex B, withdrawn early
 through a CRL the guarantor publishes. This is how a merchant's device gets an
-identity it does not otherwise have. An accredited verifier operating online
+identity it does not otherwise have. The same Verifier Core also relays a
+merchant's online check. The device leaves its signed Request Object there, and
+the wallet fetches it through `request_uri` and posts an encrypted response to
+`response_uri`. Verifier Core hands the ciphertext to the device and deletes
+it, with a short lifetime and no logging. An accredited verifier operating online
 skips this exchange: it already has a DID, and OpenID4VP 1.0 lets its
 `client_id` carry the `decentralized_identifier` scheme with no certificate
 and no attestation at all.
@@ -115,10 +119,11 @@ is the outcome.
 ## 3.2 Online and offline
 
 Online and offline presentation use different protocols, different formats,
-and different trust anchors. Verifier Core serves online presentation. Only
-Mobile Verifier serves offline, run from a merchant's counter device or from a
-Relying Party's own, which is why "zero network calls" in the offline column
-holds for both kinds of device.
+and different trust anchors. Verifier Core serves online presentation, and
+relays a merchant's online check to its Mobile Verifier. Offline is served only
+on a device: Mobile Verifier, run from a merchant's counter device or from a
+Relying Party's own, or a Relying Party's own app built on the Reader SDK. That
+is why "zero network calls" in the offline column holds for every reader.
 
 <figure markdown="1" id="figure-3-2">
   ![Two columns, online and offline, each from Mobile Wallet through a verifier to the artifacts it reads](../../images/architecture-framework/data-model-and-protocols/online-and-offline.svg){ loading=lazy }
@@ -129,7 +134,7 @@ holds for both kinds of device.
 |---|---|---|
 | Protocol | OpenID4VP 1.0 with DCQL | ISO/IEC 18013-5 |
 | Transport | HTTPS: QR code or deep link, `request_uri`, `direct_post.jwt` | Engagement over QR or NFC, an encrypted BLE session |
-| Format | SD-JWT VC (primary) and `ldp_vc`; mdoc is not used online | mdoc only |
+| Format | SD-JWT VC (primary) and `ldp_vc`; on Mobile Verifier `ldp_vc` arrives in phase 2; mdoc is not used online | mdoc only |
 | Holder binding | Key Binding JWT (`nonce`, `aud`) checked against `cnf` | DeviceAuth checked against `DeviceKey` and SessionTranscript |
 | Wallet checks the verifier | Accredited verifier: `client_id` carries a `decentralized_identifier`, no further artifact needed. Merchant: a Verifier Device Certificate in `x5c`, chained to the Verifier Issuing CA on the trusted list | ReaderAuth: a Verifier Device Certificate chained to the Verifier Root CA, read from cache. Applies at every level, including an accredited verifier: ISO/IEC 18013-5 has no notion of a DID, so anyone reading an mdoc in proximity needs its own X.509 chain |
 | Verifier checks the issuer | The issuer's DID Document, the trusted list, and a TRQP query | `x5chain` chained to the Issuer Root CA, or checked against VICAL |

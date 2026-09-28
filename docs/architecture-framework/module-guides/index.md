@@ -18,5 +18,4 @@ title: "Module Guides"
 8. [Trust Authority](trust-authority.md)
 9. [Trust Registry](trust-registry.md)
 10. [DID Service](did-service.md)
-11. [KMS](kms.md)
-12. [Trust SDK](trust-sdk.md)
+11. [Trust SDK](trust-sdk.md)

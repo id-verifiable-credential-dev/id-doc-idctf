@@ -3,7 +3,7 @@ title: "Architecture on the device: Mobile Wallet and Mobile Verifier"
 description: The layout both applications share, the one-way dependency that keeps an SDK extractable, and where the two differ.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3.4 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3.4, Kep. 5 -->
 
 # 4. Architecture on the device: Mobile Wallet and Mobile Verifier
 
@@ -18,8 +18,8 @@ Credential Renderer, and App Lock. The protocol layer under it holds Issuance
 Client, Presentation Client, Credential Codec, Attestation Client, Auth Client,
 and the Trust SDK. The Credential Store sits alongside, encrypted with
 SQLCipher. The secure element, StrongBox on Android or the Secure Enclave on
-iOS, holds the device key and one credential key for every credential the
-wallet carries. The component-by-component breakdown of both applications is in
+iOS, holds the device key and the single credential key that binds every
+credential the wallet carries. The component-by-component breakdown of both applications is in
 [Section 2.2.1, Mobile Wallet](../software-architecture/components-inside-a-module.md#221-mobile-wallet)
 and
 [Section 2.3.3, Mobile Verifier](../software-architecture/components-inside-a-module.md#233-mobile-verifier).
@@ -30,16 +30,17 @@ secure element, through a Keystore Manager, and the Credential Store. What that
 one layer talks to falls into four kinds.
 
 1. The transaction itself, which reaches three counterparties. CONNECTIDN
-   authenticates the citizen over OpenID Connect. Issuer Core delivers a
-   credential over OpenID4VCI. The verifier side receives a presentation in two
-   forms: Verifier Core over OpenID4VP, and Mobile Verifier, at a merchant or
-   at a Relying Party's counter, over OpenID4VP online and over ISO/IEC 18013-5
+   authenticates the citizen over [OpenID Connect](../references.md#exchange-protocols). Issuer Core delivers a
+   credential over [OpenID4VCI](../references.md#exchange-protocols). The verifier side receives a presentation in two
+   forms: Verifier Core over [OpenID4VP](../references.md#exchange-protocols), and Mobile Verifier, at a merchant or
+   at a Relying Party's counter, over OpenID4VP online, relayed by the RP
+   Intermediary's Verifier Core for a merchant, and over [ISO/IEC 18013-5](../references.md#exchange-protocols)
    in proximity.
 2. The application's own backing. Wallet Backend Service carries Key
    Attestation, device binding, recovery, and push notification, and no issuer
    or verifier is party to any of it.
 3. A read-only feed. Trust Registry supplies the trusted list, the Credential
-   Rulebook, and VICAL, all of which the application reads from its local cache
+   Rulebook, and [VICAL](../references.md#trust-lists-and-credential-status), all of which the application reads from its local cache
    rather than fetching mid-transaction.
 4. What is not remote at all. The secure element and the Credential Store are
    reached on the device, and what passes between them and the protocol layer
@@ -79,14 +80,15 @@ one row at a time.
 |---|---|---|
 | Backed by | Wallet Backend Service (Wallet Provider) | Verifier Core (the RP Intermediary for a merchant's device, the Relying Party for its own counter device) |
 | What vouches for the device | Key Attestation, daily | Verifier Device Certificate, limited lifetime plus a CRL |
-| Keys in the secure element | Device key, plus a credential key per credential | Device key |
+| Keys in the secure element | Device key, plus one credential key for all credentials | Device key |
 | Role in the protocol | Presents, as holder | Requests, as reader |
 | Storage | Encrypted Credential Store | On-device Activity Repository |
-| User login | CONNECTIDN | Merchant account at the RP Intermediary, or a staff account at the Relying Party |
+| User login | The identity provider of that Mobile Wallet, CONNECTIDN among them | Merchant account at the RP Intermediary, or a staff account at the Relying Party |
 
-The asymmetry in the key row is the substantive one. A wallet accumulates a key
-per credential, because each credential is bound to its own holder key; a
-verifier device needs one key and keeps one.
+The key row is where the two differ. A wallet adds a credential key to its
+device key, because every credential is bound to a holder key; in this phase
+that is one key per installation, shared by all its credentials, a decision
+marked temporary. A verifier device needs only its device key.
 
 ## 4.4 Which interfaces the Governance Profile sets
 
@@ -100,9 +102,9 @@ column first: it is what an implementer has to comply with.
 | Issuer Core to Mobile Wallet | OpenID4VCI 1.0 | Yes |
 | Mobile Wallet to Verifier Core | OpenID4VP 1.0 | Yes |
 | Mobile Wallet to Mobile Verifier | OpenID4VP 1.0, ISO/IEC 18013-5 | Yes |
-| Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, TRQP, Credential Rulebook, VICAL | Yes |
-| Mobile Wallet to Wallet Backend Service | Key Attestation, OpenID4VCI Appendix D.1 | Partly |
-| Mobile Verifier to Verifier Core | Verifier Device Certificate, ISO/IEC 18013-5 Annex B | Partly |
+| Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, [TRQP](../references.md#exchange-protocols), Credential Rulebook, VICAL | Yes |
+| Mobile Wallet to Wallet Backend Service | Key Attestation, [OpenID4VCI Appendix D.1](../references.md#device-attestation-and-assurance) | Partly |
+| Mobile Verifier to Verifier Core | Verifier Device Certificate, [ISO/IEC 18013-5 Annex B](../references.md#certificates-and-revocation); relayed `request_uri` and `response_uri` for a merchant's online check | Partly |
 | Mobile Wallet to CONNECTIDN | OpenID Connect | Set by BSSN |
 | Application to secure element | Google and Apple platform APIs | No |
 

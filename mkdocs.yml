@@ -7,6 +7,9 @@ repo_name: id-doc-idctf
 # theme.features; without these the Edit / View source buttons never render.
 edit_uri: edit/main/docs/
 
+# Dev server address for `mkdocs serve`.
+dev_addr: 127.0.0.1:8002
+
 # Configuration
 theme:
   name: material
@@ -221,7 +224,6 @@ nav:
       - architecture-framework/module-guides/trust-authority.md
       - architecture-framework/module-guides/trust-registry.md
       - architecture-framework/module-guides/did-service.md
-      - architecture-framework/module-guides/kms.md
       - architecture-framework/module-guides/trust-sdk.md
     - architecture-framework/open-decisions-and-technical-debt.md
     - architecture-framework/references.md

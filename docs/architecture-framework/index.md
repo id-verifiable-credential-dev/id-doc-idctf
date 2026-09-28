@@ -25,7 +25,7 @@ joining the ecosystem and what each participant owes are in
 
 This document is IDCTF-AF, the first of the five IDCTF documents to be written.
 It declares what gets built: the roles and the institutions that hold them, the
-four Services that group their functions, the eleven Modules that implement
+four Services that group their functions, the ten Modules that implement
 those Services, which roles are accredited and which are only registered, the
 trust model, and one flow per use case. Architects change it, and rarely.
 
@@ -48,9 +48,9 @@ interface, and each is described in
 [Section 1.3.1, External systems](roles/role-map.md#131-external-systems).
 
 !!! note "Partly written"
-    The Roles and High-Level Architecture chapters carry prose, and so does one
-    section of Software Architecture. Every other chapter below is a skeleton
-    marked `(soon)`.
+    The Roles, High-Level Architecture, and Data Model and Protocols chapters
+    carry prose, and so do References and one section of Software Architecture.
+    Every other chapter below is a skeleton marked `(soon)`.
 
 ## Chapters
 

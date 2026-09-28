@@ -96,10 +96,10 @@ specification.
 
 ## Progress
 
-Only the Architecture Framework is being written. Roles and Data Model and
-Protocols are done; High-Level Architecture and Software Architecture are part
-written. 17 of 57 pages carry prose. A page whose prose is unwritten carries a
-`(soon)` marker and holds section headings only.
+Only the Architecture Framework is being written. Roles, Data Model and
+Protocols, and References are done; High-Level Architecture and Software
+Architecture are part written. 19 of 56 pages carry prose. A page whose prose
+is unwritten carries a `(soon)` marker and holds section headings only.
 
 | Document | Chapter | Status |
 | --- | --- | --- |
@@ -110,7 +110,7 @@ written. 17 of 57 pages carry prose. A page whose prose is unwritten carries a
 | `IDCTF-AF` | [Trust Model](architecture-framework/trust-model/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-AF` | [Module Guides](architecture-framework/module-guides/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-AF` | [Open Decisions and Technical Debt](architecture-framework/open-decisions-and-technical-debt.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-AF` | [References](architecture-framework/references.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
+| `IDCTF-AF` | [References](architecture-framework/references.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-TS-nn` | [Technical Specifications](technical-specifications/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |

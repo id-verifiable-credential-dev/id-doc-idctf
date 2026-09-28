@@ -11,18 +11,18 @@ Five different things in the ecosystem carry an identifier: an entity, a
 holder, a credential type, an attribute inside that type, and a device. Each
 gets a different shape, because each is asked to do a different job. An
 entity's identifier has to resolve to a full history of keys. A holder's
-identifier has to stop two verifiers from recognizing the same citizen. A
+identifier has to bind every credential to the phone that holds it. A
 credential type's identifier has to stay fixed for one version and change only
 by becoming a new one. A device's identifier has to name a piece of hardware
 without ever exposing the key that hardware holds.
 
 | Object | Identifier | Why this shape |
 |---|---|---|
-| Entity (issuer, verifier, Wallet Provider) | did:webvh | An append-only `did.jsonl` log with pre-rotation, so a resolver can walk a key through its full history |
-| Holder | A new did:key for every credential | Nothing links two presentations back to the same citizen |
+| Entity (issuer, verifier, Wallet Provider) | [did:webvh](../references.md#identifiers-and-keys) | An append-only `did.jsonl` log with pre-rotation, so a resolver can walk a key through its full history |
+| Holder | One [did:key](../references.md#identifiers-and-keys) per wallet installation, shared by every credential | The simplest binding to run in this phase; presentations can be linked, a cost accepted until the decision is revisited |
 | Credential type | `id.go.credential.<TypeName>.v<N>` | A name that stays fixed for one version, and changes only by becoming a new version |
 | Attribute in scope | `<type>#<attribute>`, for example `id.go.credential.KTPDigital.v1#usia_di_atas_17` | Names one attribute wherever a rule needs to point at it without pointing at the whole credential |
-| Wallet or merchant device | JWK thumbprint of the device key (RFC 7638) | Identifies the device without transmitting the key it names |
+| Wallet or merchant device | JWK thumbprint of the device key ([RFC 7638](../references.md#identifiers-and-keys)) | Identifies the device without transmitting the key it names |
 
 ## 2.1 Entities: did:webvh
 
@@ -48,43 +48,47 @@ it. Whether that entity is allowed to issue or verify at all is a separate
 question, answered by the trusted list and by the Authority Statement it can
 be asked for, not by did:webvh itself.
 
-## 2.2 Holder: a new did:key per credential
+## 2.2 Holder: one did:key per wallet installation
 
 did:key needs nothing did:webvh needs. It is derived entirely from a public
 key, so there is no log to sign, no domain to host it on, and no resolver
-call beyond decoding the identifier itself. That is what makes minting a new
-one for every credential practical: the wallet generates a key pair, and the
-identifier falls out of it for free.
+call beyond decoding the identifier itself. The wallet generates one key pair
+in the secure element at its first issuance, and the identifier falls out of
+it for free.
 
-A fresh did:key per credential is what stops two verifiers from recognizing
-the same citizen. If a holder presented the same identifier to a grocery
-store and to a bank, the two could compare notes and know the same person
-visited both, even without either one reading a single disclosed attribute. A
-new key per credential removes the shared anchor they would need to do that.
+In this phase that one key serves every credential on the installation, and it
+is not created again per issuance. The decision is marked temporary because it
+has a known cost. A holder who presents the same identifier to a grocery store
+and to a bank can be recognized by the two of them comparing notes, even
+without either one reading a single disclosed attribute.
 
 <figure markdown="1" id="figure-2-1">
-  ![One citizen holding three credentials, each with its own did:key, presented to three different verifiers](../../images/architecture-framework/data-model-and-protocols/holder-identifier-per-credential.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.1</span> One citizen, three credentials, three holder identifiers.</figcaption>
+  ![One citizen holding three credentials that share one did:key, presented to three different verifiers](../../images/architecture-framework/data-model-and-protocols/holder-identifier.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum">Figure 2.1</span> One citizen, three credentials, one holder identifier.</figcaption>
 </figure>
 
-- **Each credential** carries a did:key minted for it alone, so the wallet holds
-  as many holder identifiers as it holds credentials.
-- **Each verifier** sees one of them and no more.
-- **Comparing notes** gets two verifiers nothing, because the identifiers they
-  hold have nothing in common to match on.
+- **Every credential** carries the same did:key, so the wallet holds one holder
+  identifier however many credentials it holds.
+- **Each verifier** sees that identifier.
+- **Comparing notes** lets two verifiers match the holder, which is the exposure
+  this phase accepts.
+
+The way out is prepared. Each stored credential records which key binds it, so
+a later move to a key per credential, or to the batch issuance OpenID4VCI 1.0
+already defines, changes the wallet's key handling and no credential format.
 
 This key is what the rest of the ecosystem calls the credential key: one key
-per credential, used for holder binding and for presentation, kept separate
+per wallet installation, used for holder binding and for presentation, kept separate
 from the device key that identifies the hardware itself (covered in
-[Section 2.4](#24-devices)). Each credential format asserts the same holder
-binding differently. SD-JWT VC carries it in the `cnf` claim. ISO mdoc carries
-the same key as the `DeviceKey` field inside the MSO, a name that belongs to
-the mdoc specification's own vocabulary rather than to the physical device.
-W3C VCDM 2.0 (`ldp_vc`) has no claim to carry it in at all, so it proves
-possession with a Data Integrity proof at the presentation level, signed over
-a `challenge` and a `domain` the verifier supplies.
+[Section 2.4](#24-devices)). Each credential format asserts the same holder binding
+differently. [SD-JWT VC](../references.md#credential-formats-and-their-signatures) carries it in the `cnf` claim. [ISO mdoc](../references.md#credential-formats-and-their-signatures) carries the same
+key as the `DeviceKey` field inside the MSO, a name that belongs to the mdoc
+specification's own vocabulary rather than to the physical device. [W3C VCDM 2.0](../references.md#credential-formats-and-their-signatures)
+(`ldp_vc`) has no claim to carry it in at all, so it proves possession with a
+[Data Integrity](../references.md#credential-formats-and-their-signatures) proof at the presentation level, signed over a `challenge` and a
+`domain` the verifier supplies.
 
-Because the credential key is shared rather than tied to one format, a
+Because the credential key is shared across formats as well, a
 credential type that ships as both SD-JWT VC and ISO mdoc, per
 [Section 1.3, One credential, two representations](credential-formats.md#13-one-credential-two-representations),
 binds both representations to the same did:key. The wallet does not mint a
@@ -126,11 +130,12 @@ public key's own JSON fields, so anyone holding the public key can compute
 the identical identifier without asking a registry for it.
 
 This device key is not the credential key from
-[Section 2.2](#22-holder-a-new-didkey-per-credential). One belongs to the
+[Section 2.2](#22-holder-one-didkey-per-wallet-installation). One belongs to the
 hardware and is minted once, held in the device's secure element from
-provisioning onward. The other is minted per credential and never touches
-the device's own identity. A phone carrying ten credentials has ten
-credential keys behind one device key.
+provisioning onward. The other is minted at the first issuance, binds every
+credential, and never touches the device's own identity. A phone carrying ten
+credentials has one credential key beside one device key, and the two are
+never the same key.
 
 Publishing only the thumbprint, and never the key, is deliberate: the
 identifier is safe to carry inside a request or write to a log, because it

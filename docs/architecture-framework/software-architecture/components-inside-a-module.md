@@ -1,15 +1,15 @@
 ---
 title: "Components inside a Module"
-description: What sits inside each of the eleven Modules, layer by layer, and the Trust SDK that four of them embed.
+description: What sits inside each of the ten Modules, layer by layer, and the Trust SDK that four of them embed.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §9 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §9, Kep. 5, 9, 28 -->
 
 # 2. Components inside a Module
 
 A component is a part of a Module that is not deployed on its own. Where
 [Section 3, Module Map](../high-level-architecture/module-map.md) names the
-eleven units that ship, this section opens each one and names what is inside.
+ten units that ship, this section opens each one and names what is inside.
 
 Every component sits in one of the layers
 [Section 1, Layers inside a Module](layers-inside-a-module.md) defines, and the
@@ -24,18 +24,20 @@ Client and View, plus Domain, Provider, or Repository wherever one applies. In
 both cases a component is drawn where it is because of what it does, not because
 of the layer it happens to sit in: it holds one responsibility, removing it
 leaves a functional hole, and the full set of components together covers
-everything the Module does.
+everything the Module does. Claims Provider is the clearest case: it faces the
+source system outside the Module, and the Provider layer is where everything
+facing outward goes.
 
 <figure markdown="1" id="figure-2-1">
   ![Components inside Issuer Core and Issuer Console](../../images/architecture-framework/software-architecture/component-issuer-services.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.1</span> Issuer Core and Issuer Console by layer. Claims Provider sits in the Provider layer because that is where the architecture puts everything facing outward.</figcaption>
+  <figcaption><span class="ekdn-fignum">Figure 2.1</span> Issuer Core and Issuer Console by layer.</figcaption>
 </figure>
 
 ### 2.1.1 Issuer Core
 
 Issuer Core is where credentials come from. It runs the OpenID4VCI endpoint,
 assembles a credential in whichever of the three formats the Credential Rulebook
-specifies for that credential type, signs it with the entity's local keystore,
+specifies for that credential type, signs it through the entity's Key Manager,
 and manages and hosts that entity's status list. Every accredited issuer runs
 its own, which is why the count is many.
 
@@ -48,9 +50,10 @@ its own, which is why the count is many.
 | Status Manager | Domain | Random index allocation inside a partition, revocation, reissuing the Status List Token and the Bitstring Status List, hosted on the issuer's own domain | IETF Token Status List, W3C Bitstring Status List |
 | Key Attestation Validator | Domain | When the Credential Rulebook requires `substantial` or `high`: validates the Key Attestation (the signer is on the trusted list, the nonce matches, it has not expired, the proof key is present in `attested_keys`, `key_storage` meets the `min_assurance` mapping in the Governance Profile). When `low`: an ordinary proof JWT is enough | OpenID4VCI 1.0 App. D.1, F.1, F.3 |
 | Claims Provider | Provider | The extension point into the source system, `getClaims(subjectRef, credentialType)`; read-only; returns only the fields listed in the Credential Rulebook; has no notion of credential format; stores no PII. Built from a Source Connector (REST, SOAP, JDBC, CDC), a Mapping Service (normalizes to the Credential Rulebook schema, `data_as_of`), and a Staging Repository (periodic replication only) | JSON Schema |
-| Signing Provider | Provider | JWS with the `issuance-jose` key; `COSE_Sign1` with the `issuance-cose` key and the DSC in `x5chain`; the institution's own local keystore | PKCS#11, RFC 7515, RFC 9052 |
+| Key Manager | Domain | Generates, stores, and rotates `issuance-jose`, `issuance-cose`, and the Ed25519 `did:webvh` update key through a driver: an encrypted software keystore by default, `cloudkms`, or `pkcs11`; registers each public key with Trust Authority (a `did.jsonl` entry, proof of possession, `keyStorage`, and a CSR); scheduled rotation; publishes `did.jsonl` | did:webvh v1.0, `eddsa-jcs-2022`, RFC 2986, PKCS#11 |
+| Signing Provider | Provider | JWS with the `issuance-jose` key (also the Data Integrity proof of `ldp_vc` and the status list); `COSE_Sign1` with the `issuance-cose` key and the DSC in `x5chain`; through Key Manager | PKCS#11, RFC 7515, RFC 9052 |
 | Trust SDK | Provider | Trusted list, Credential Rulebook, DID resolution, TRQP; the library's own contents are in [Section 2.5](#25-trust-sdk) | ETSI TS 119 602, ToIP TRQP v2.0 |
-| Issuance Repository | Repository | `issuance_record` (pseudonym, holder key thumbprint, status index, `signing_key_ref`, digest, `holder_key_storage`, `data_as_of`), the status list, deferred requests, a local copy of the Credential Rulebook, the local key registry | None |
+| Issuance Repository | Repository | `issuance_record` (pseudonym, holder key thumbprint, status index, `signing_key_ref`, digest, `holder_key_storage`, `data_as_of`), the status list, deferred requests, a local copy of the Credential Rulebook | None |
 
 The restrictions on Claims Provider are load-bearing rather than incidental. It
 is read-only against the source system, so nothing it does can write back into
@@ -87,13 +90,13 @@ and the backend that vouches for it.
 
 <figure markdown="1" id="figure-2-2">
   ![Components inside Mobile Wallet and Wallet Backend Service](../../images/architecture-framework/software-architecture/component-wallet-services.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.2</span> The wallet's four layers, and the backend that vouches for it. Nothing in the backend's Repository layer can hold a credential.</figcaption>
+  <figcaption><span class="ekdn-fignum">Figure 2.2</span> The wallet's four layers, and the backend that vouches for it.</figcaption>
 </figure>
 
 ### 2.2.1 Mobile Wallet
 
-Mobile Wallet is the citizen's. It stores credentials, creates a fresh
-credential key for each one, shows who is requesting a presentation and what
+Mobile Wallet is the citizen's. It stores credentials, holds one
+credential key that binds all of them, shows who is requesting a presentation and what
 they are asking for, and signs presentations both online and in proximity. Every
 accredited Wallet Provider publishes one, and each has millions of
 installations, which is the count that matters.
@@ -113,7 +116,7 @@ above.
 | App Lock | Domain | Authenticates the citizen by biometrics, enforces a session timeout, and locks the app in the background; kept separate from the CONNECTIDN login | BiometricPrompt, LocalAuthentication |
 | Credential Renderer | Domain | Displays a credential according to the Credential Rulebook's display metadata, with localization | OCA, SD-JWT VC Type Metadata |
 | Credential Codec | Domain | Parses and reassembles SD-JWT VC, mdoc, and `ldp_vc`: disclosures, IssuerSigned, DeviceAuth, the Data Integrity proof | IETF SD-JWT VC, ISO/IEC 18013-5, W3C VCDM 2.0, VC Data Integrity |
-| Keystore Manager | Provider | The device key, one per device, and each credential key, one per credential, in the secure element; platform attestation; the credential key doubles as `DeviceKey` in the MSO | Android Keystore, iOS Secure Enclave |
+| Keystore Manager | Provider | The device key, one per device, and the credential key, one per installation and shared by every credential (a temporary decision), in the secure element; platform attestation; the credential key doubles as `DeviceKey` in the MSO | Android Keystore, iOS Secure Enclave |
 | Trust SDK | Provider | Trusted list, status list, and VICAL from local cache; falls back to the last known good copy | ETSI TS 119 602, IETF Token Status List |
 | Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local activity history | SQLCipher, Keystore |
 
@@ -126,7 +129,7 @@ device, and revokes a device when it must. It stores no credentials at all.
 That absence is what lets it disown a wallet without ever being able to read
 what the wallet holds.
 
-Wallet Backend Service has six components, and none of them touches a
+Wallet Backend Service has seven components, and none of them touches a
 credential.
 
 | Component | Layer | What it does | Standards |
@@ -135,7 +138,8 @@ credential.
 | Account Service | Domain | Validates the CONNECTIDN token, links the citizen's account to the device, and forms the basis for recovery | OpenID Connect Core |
 | Notification Service | Domain | Pushes the credential offer and notices of revocation or credential updates | None |
 | Recovery Service | Domain | Encrypted client-side backup, orchestrating reissuance on a new device, revoking a lost device | None |
-| Signing Provider | Provider | Signs the Key Attestation with the Wallet Provider's key in the HSM | PKCS#11, RFC 7515 |
+| Key Manager | Domain | Generates, stores, and rotates the Wallet Provider's Key Attestation key (P-256) and its Ed25519 `did:webvh` update key through a driver, and registers them with Trust Authority | did:webvh v1.0, `eddsa-jcs-2022`, PKCS#11 |
+| Signing Provider | Provider | Signs the Key Attestation with the Wallet Provider's key, through Key Manager | PKCS#11, RFC 7515 |
 | Device Repository | Repository | The registry of active and revoked devices, device key thumbprints, links to the CONNECTIDN account. Holds no credential data | None |
 
 Device Repository is where holding no credentials stops being a claim and
@@ -151,32 +155,38 @@ carried by a merchant with no server or set on a Relying Party's counter.
 
 <figure markdown="1" id="figure-2-3">
   ![Components inside Verifier Core, Verifier Console and Mobile Verifier](../../images/architecture-framework/software-architecture/component-verifier-services.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.3</span> All three verifying Modules. Verifier Core verifies online formats only, Mobile Verifier reads mdoc in proximity, carries no `ldp_vc` path, and keeps no repository that could hold an attribute.</figcaption>
+  <figcaption><span class="ekdn-fignum">Figure 2.3</span> All three verifying Modules.</figcaption>
 </figure>
 
 ### 2.3.1 Verifier Core
 
 Verifier Core requests credentials over OpenID4VP, verifies both trust chains,
 and hands the result to the entity's own Relying Party application over
-OpenID Connect or SAML. It also issues the Verifier Device Certificate that
-each Mobile Verifier it answers for depends on, a merchant's or its own counter
-device, and the CRL that withdraws one early. It reads nothing in proximity; that happens on
-[Mobile Verifier](#233-mobile-verifier).
+OpenID Connect or SAML. It is a backend only; whatever front end sits before it
+belongs to the Relying Party. It also issues the Verifier Device Certificate that
+each reader device it answers for depends on, a merchant's or its own counter
+device, from its own Verifier Issuing CA, and the CRL that withdraws one early.
+For a merchant, it also holds the signed request and the encrypted response of
+an online check in transit, without opening them. It reads nothing in
+proximity; that happens on the device, in
+[Mobile Verifier](#233-mobile-verifier) or in a Relying Party's own app built on
+the Reader SDK.
 
-Verifier Core carries nine components: three controllers, three domain
+Verifier Core carries ten components: three controllers, four domain
 services, two providers, and one repository. The Trust Evaluator row is the
 one to read closely, because the two chains it walks are what verification
 actually means here.
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Presentation Controller | Controller | Authorization request, DCQL, `request_uri`, accepts `vp_token` through `direct_post.jwt` | OpenID4VP 1.0, RFC 9101 |
+| Presentation Controller | Controller | Authorization request, DCQL, `request_uri`, accepts `vp_token` through `direct_post.jwt`; also serves as the relayed `request_uri` and `response_uri` for a merchant's Mobile Verifier (ciphertext only, short lifetime, never opened) | OpenID4VP 1.0, RFC 9101 |
 | RP Controller | Controller | Bridges OpenID Connect and SAML to the entity's Relying Party application; forwards attributes without storing them | OpenID Connect Core, SAML 2.0 |
 | Admin Controller | Controller | Internal endpoint for Verifier Console | None |
-| Credential Verifier | Domain | Verifies SD-JWT VC (signature, KB-JWT, disclosures) and `ldp_vc` (Data Integrity proof on the credential and the VP, `challenge` and `domain`). An mdoc is read in proximity, so Mobile Verifier verifies it | RFC 9901, W3C VCDM 2.0, VC Data Integrity |
+| Credential Verifier | Domain | Verifies SD-JWT VC (signature, KB-JWT, disclosures) and `ldp_vc` (Data Integrity proof on the credential and the VP, `challenge` and `domain`). An mdoc is read in proximity, so the reader on the device verifies it, through the Reader SDK | RFC 9901, W3C VCDM 2.0, VC Data Integrity |
 | Trust Evaluator | Domain | Walks the entity chain E1 to E5 and the transaction chain T1 to T6; enforces accreditation scope and minimization; policy written as Rego | ToIP TRQP, ETSI TS 119 602, IETF Token Status List, OPA/Rego |
-| Verifier Device Certificate Issuer | Domain | Onboards each Mobile Verifier device it answers for: a merchant's, after verifying the business's identity, or the entity's own counter device. Binds the device, checks application integrity; issues the Verifier Device Certificate with its ReaderAuthRole, for a lifetime the Governance Profile sets; issues the CRL; rejects revoked devices. Online, an accredited verifier still introduces itself through its DID | OpenID4VP client identifier, ISO/IEC 18013-5 |
-| Signing Provider | Provider | Signs the Request Object and the Verifier Device Certificate through the Verifier Issuing CA; decrypts responses; keeps the operator's keystore local | PKCS#11, RFC 7515, RFC 7516 |
+| Verifier Device Certificate Issuer | Domain | Onboards each reader device it answers for: used by a Relying Party for its own devices, for offline reading, and by an RP Intermediary for its merchants, after verifying the business's identity. Binds the device, checks application integrity; issues the Verifier Device Certificate with its ReaderAuthRole from this Verifier Core's own Verifier Issuing CA, for a lifetime the Governance Profile sets; issues the CRL; rejects revoked devices. Online, an accredited verifier still introduces itself through its DID | OpenID4VP client identifier, ISO/IEC 18013-5 |
+| Key Manager | Domain | Generates, stores, and rotates the Request Object key, the response encryption key, the Verifier Issuing CA key, and the Ed25519 `did:webvh` update key through a driver: an encrypted software keystore by default, `cloudkms`, or `pkcs11`; registers each public key with Trust Authority (a `did.jsonl` entry, proof of possession, `keyStorage`, and a CSR) | did:webvh v1.0, `eddsa-jcs-2022`, RFC 2986, PKCS#11 |
+| Signing Provider | Provider | Signs the Request Object and, through the Verifier Issuing CA, the Verifier Device Certificate; decrypts responses; through Key Manager | PKCS#11, RFC 7515, RFC 7516 |
 | Trust SDK | Provider | Trusted list, DID resolution, status list, CRL | ETSI TS 119 602, ToIP TRQP |
 | Verification Repository | Repository | `verification_record` (txId, requested attributes, outcome, `trust_list_version`, `vp_digest`, consent receipt), `request_template`, `client_app`, and each merchant's `verifier_instance` | ISO/IEC 29184 |
 
@@ -200,15 +210,25 @@ Verifier Core's database directly.
 
 ### 2.3.3 Mobile Verifier
 
-Mobile Verifier verifies without running a server at all, for a merchant or at a Relying Party's counter.
-Keys stay on the device, the result appears on the screen, and there is no web
-version, because a browser cannot hold the keys this design requires. It
-supports `dc+sd-jwt` and `mso_mdoc` and not `ldp_vc`, for the reasons set out in
-[Section 1.5, Which format each role verifies](../data-model-and-protocols/credential-formats.md#15-which-format-each-role-verifies).
+Mobile Verifier is the official verifier app for merchants, and it also runs at
+a Relying Party's counter. It decrypts and verifies on the device: online, a
+merchant's request and response pass through the RP Intermediary's Verifier
+Core, which only relays them. Keys stay on the device, the result appears on the
+screen, and there is no web version, because a browser cannot hold the keys
+this design requires. In phase 1 it supports `dc+sd-jwt` and `mso_mdoc`;
+`ldp_vc` is supported by the architecture and arrives in phase 2, as
+[Section 1.5, Which format each role verifies](../data-model-and-protocols/credential-formats.md#15-which-format-each-role-verifies)
+sets out.
 
-Mobile Verifier's Credential Verifier carries the restriction already
-named above at the code level: it verifies SD-JWT VC and mdoc, and nothing
-verifies `ldp_vc` on this Module. It works from cache rather than reaching
+Its proximity reading lives in the Reader SDK, a Dart library that used to be a
+Proximity Reader component inside Verifier Core. Reading over BLE and NFC has to
+happen on a physical device, so the library is embedded here, and a Relying
+Party may embed the same library in its own app instead of running Mobile
+Verifier.
+
+Mobile Verifier's Credential Verifier carries the phase 1 restriction at the
+code level: it verifies SD-JWT VC and mdoc, and nothing verifies `ldp_vc` on
+this Module yet. It works from cache rather than reaching
 Trust Infrastructure at the moment of verification, checking both trust
 chains against whatever the Trust SDK component last downloaded. The
 Activity Repository keeps the record of that work on the device, but the
@@ -217,22 +237,25 @@ belonging to the person whose credential was checked.
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Presentation Client | Client | Assembles the request, QR or deeplink, reads an mdoc over BLE or NFC, ReaderAuth with the Verifier Device Certificate | OpenID4VP 1.0, ISO/IEC 18013-5 |
+| Presentation Client | Client | Assembles the request, QR or deeplink; online, leaves the Request Object with and collects the response from the RP Intermediary's Verifier Core; offline, reads an mdoc over BLE or NFC through the Reader SDK, with ReaderAuth from the Verifier Device Certificate | OpenID4VP 1.0, ISO/IEC 18013-5 |
 | Attestation Client | Client | Registers the device with the Verifier Core that answers for it (the RP Intermediary's for a merchant, the Relying Party's own for a counter device), retrieves and renews the Verifier Device Certificate | OpenID4VP client identifier |
-| Credential Verifier | Domain | Verifies SD-JWT VC and mdoc only, not `ldp_vc`, both trust chains, from cache | RFC 9901, ISO/IEC 18013-5 |
+| Credential Verifier | Domain | Verifies SD-JWT VC and mdoc; `ldp_vc` supported, implemented in phase 2; both trust chains, from cache | RFC 9901, ISO/IEC 18013-5 |
 | Result View | View | Shows the verification result to the merchant on screen | None |
 | Keystore Manager | Provider | Device key in the secure element; signs the Request Object and decrypts the response on the device | Android Keystore, iOS Secure Enclave |
+| Reader SDK | Provider | The proximity reading library a Relying Party's own app may also embed: QR or NFC engagement, the BLE session, DeviceRequest with ReaderAuth, verification of the DeviceResponse | ISO/IEC 18013-5 |
 | Trust SDK | Provider | Trusted list, status list, VICAL from the local cache | ETSI TS 119 602 |
 | Activity Repository | Repository | Verification history on the device; holds no citizen attribute | None |
 
 ## 2.4 Trust Infrastructure
 
-Trust Infrastructure is four Modules. Only the first has a human at the
-controls; the other three carry out what it decides and publish the result.
+Trust Infrastructure is three Modules. Only the first has a human at the
+controls; the other two carry out what it decides and publish the result. No
+entity key is created in any of the three. Entities generate their own, and
+Trust Infrastructure certifies, witnesses, and records the public halves.
 
 <figure markdown="1" id="figure-2-4">
-  ![Components inside the four Trust Infrastructure Modules](../../images/architecture-framework/software-architecture/component-trust-infrastructure.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.4</span> The control plane in full. The Certificate Authority and KMS are the two places a key is created, and neither of them signs on an entity's behalf.</figcaption>
+  ![Components inside the three Trust Infrastructure Modules](../../images/architecture-framework/software-architecture/component-trust-infrastructure.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum">Figure 2.4</span> The control plane in full.</figcaption>
 </figure>
 
 ### 2.4.1 Trust Authority
@@ -240,22 +263,23 @@ controls; the other three carry out what it decides and publish the result.
 Trust Authority is where registration, accreditation, and authorization
 happen. It acts as the Certificate Authority for the
 Issuer Root CA, the Verifier Root CA, Document Signer Certificates, the Verifier
-Issuing CA, and the CRL; it sends key lifecycle commands to KMS; and it holds
-the governance registry, incident handling, and the transparency log. Its HSM is
-offline.
+Issuing CA, and the CRL, each issued from a CSR the entity sends. It records
+every entity's public keys in the Public Key Registry and holds none of their
+private keys, and it holds the governance registry, incident handling, and the
+transparency log. Its HSM is offline.
 
-Its eight components divide into one controller, five domain services, and two
+Its eight components divide into one controller, four domain services, and three
 repositories.
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Registrar Controller | Controller | Self-service entity portal (`/entities`, `/entities/me/*`), operator back office with MFA | None |
+| Registrar Controller | Controller | Self-service entity portal (`/entities`, `/entities/me/*`, including `POST /entities/me/keys` for a log entry, proof of possession, and a CSR), operator back office with MFA | None |
 | Accreditation Service | Domain | Registration, verification of legal-entity status, intake of assessment-body reports, status decisions, issuance of the Authority Statement and the Accreditation Credential; pathways A, B, and C | ToIP TRQP, IETF SD-JWT VC |
-| Certificate Authority | Domain | Issuer Root CA and Verifier Root CA, each self-signed in its own offline HSM; issues the Document Signer Certificate (EKU 1.0.18013.5.1.2) and the Verifier Issuing CA from a CSR; issues and hosts the CRL | ISO/IEC 18013-5 Annex B, RFC 5280, RFC 2986 |
-| Key Lifecycle Service | Domain | `createKey`, `rotate`, `revoke` sent to KMS. Never `sign` | PKCS#11, KMIP |
+| Certificate Authority | Domain | Issuer Root CA and Verifier Root CA, each self-signed in its own offline HSM; issues the Document Signer Certificate (EKU 1.0.18013.5.1.2) and the Verifier Issuing CA, for an RP Intermediary and for a Relying Party that reads offline, from a CSR; issues and hosts the CRL | ISO/IEC 18013-5 Annex B, RFC 5280, RFC 2986 |
 | Governance Service | Domain | List of `action` and `resource`, mapping of `issuer_assurance` and `min_assurance` to ISO/IEC 18045 values, cache TTL, tolerance limits, list of Assessment Bodies | None |
 | Incident Service | Domain | Freezes an entity, revokes it, issues an emergency trusted list, notifies verifiers directly | None |
 | Entity Repository | Repository | Entity data, status, accreditation and authorization history | None |
+| Public Key Registry | Repository | `keyRef`, thumbprint, `purpose`, evidence of `keyStorage`, validity, status; no private key | None |
 | Transparency Log | Repository | Append-only, entity events only, no citizen transaction | RFC 6962 / RFC 9162 |
 
 ### 2.4.2 Trust Registry
@@ -275,46 +299,28 @@ the Authority Statements the rest of it is derived from.
 | TRQP Controller | Controller | `POST /authorization`, `POST /recognition`, `/.well-known/trqp-configuration`; errors as Problem Details | ToIP TRQP v2.0, RFC 7807 |
 | Credential Rulebook Controller | Controller | `GET /rulebooks`, `GET /rulebooks/{id}`; schema, display, minimization, `min_assurance`; each version frozen once published | JSON Schema, OCA, SD-JWT VC Type Metadata |
 | List Publisher | Domain | LoTE JSON, VICAL, JSON-LD Context; status with history (`StatusStartingTime`, `NextUpdate`) | ETSI TS 119 602, ISO/IEC 18013-5 Annex C |
-| Conformance Crawler | Domain | Compares an issuer's `.well-known` and a verifier's metadata against its approved scope; findings go to Incident Service | None |
+| Conformance Crawler | Domain | Compares an issuer's `.well-known` and a verifier's metadata against its approved scope, and looks for `did:webvh` log entries without a witness; findings go to Incident Service | None |
 | Object Storage Provider | Provider | Publishes static artifacts to the CDN with refresh jitter | None |
 | Registry Repository | Repository | Authority Statement with its status history | None |
 
 ### 2.4.3 DID Service
 
-DID Service issues and resolves `did:webvh` identifiers for entities,
-including each entity's key history, and publishes through the same CDN.
+DID Service witnesses and resolves `did:webvh` identifiers for entities,
+including each entity's key history, and publishes through the same CDN. The
+entity signs its own log; DID Service validates each new entry and adds the
+witness proof without which no resolver accepts it.
 
-DID Service's five components issue and resolve `did:webvh`, the entity
+DID Service's five components witness and resolve `did:webvh`, the entity
 identifier fixed by
 [Principle 3, Finished specifications only](../high-level-architecture/index.md#3-finished-specifications-only).
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Publisher Controller | Controller | Receives a public key from KMS or from an entity, together with proof of possession | W3C DID Core |
+| Publisher Controller | Controller | Receives a new `did:webvh` log entry from an entity, with proof of possession of each new key | W3C DID Core |
 | Resolver Controller | Controller | Replays the `did:webvh` log and verifies the chain; decodes `did:key` locally | did:webvh, W3C DID Resolution |
-| Log Service | Domain | Assembles and signs `did.jsonl` entries; pre-rotation `nextKeyHashes`; two active keys during a transition; the old key stays in `verificationMethod` but drops out of `assertionMethod` | did:webvh |
-| Object Storage Provider | Provider | Publishes to the CDN and to the entity's own domain | None |
+| Log Service | Domain | Witness: validates each `did.jsonl` entry the entity signed (the chain, pre-rotation `nextKeyHashes`, proof of possession, `keyStorage` against `issuer_assurance`), then signs the witness proof in `eddsa-jcs-2022` with the witness key in Trust Authority's HSM; the old key stays in `verificationMethod` but drops out of `assertionMethod` | did:webvh v1.0 |
+| Log Delivery | Provider | Sends the witness proof to the entity and watches that `did.jsonl` stays available on the entity's own domain | None |
 | Document Repository | Repository | Log, versions, validity range | None |
-
-### 2.4.4 KMS
-
-KMS generates, rotates, and revokes entity keys, hands over an encrypted
-private key exactly once, and creates CSRs. It has no sign operation. Nothing in
-the ecosystem can ask KMS to sign something, which means a compromise of KMS
-cannot produce a signature.
-
-KMS's four components carry out the lifecycle commands Key Lifecycle Service
-sends it, and nothing beyond that. When a private key does have to leave
-KMS, Escrow Service is the only path: it encrypts the key once, the
-link to collect it expires within minutes, and the key material is zeroized
-afterward, so the same key cannot be handed over twice.
-
-| Component | Layer | What it does | Standards |
-|---|---|---|---|
-| Key Controller | Controller | `createKey`, `rotate`, `revoke`, `listKeys`. No `sign` operation | PKCS#11, KMIP |
-| Escrow Service | Domain | One-time private-key encryption (JWE PBES2-HS512+A256KW, Argon2id), collection link expires within minutes, zeroizes after use; issues a CSR from the `issuance-cose` key; tags `keyOrigin`, `keyStorage`, `purpose` | RFC 9106, RFC 2986 |
-| Cryptographic Provider | Provider | Storage driver for pkcs11, a cloud KMS, or a vault; the root key and both CA roots sit in separate profiles | PKCS#11, KMIP |
-| Key Registry | Repository | `keyRef`, provider, `keyType`, owner, status, `keyOrigin`, `keyStorage`, `purpose`, validity period | None |
 
 ## 2.5 Trust SDK
 
@@ -337,7 +343,7 @@ carrying its own risk that the Go and Dart versions drift apart.
 |---|---|---|---|
 | Trust Client | `checkAuthorization` and `checkRecognition` against TRQP | Low | ToIP TRQP v2.0 |
 | Artifact Consumer | Downloads, verifies the JWS, validates the trusted list and the Credential Rulebook | Medium | ETSI TS 119 602, RFC 7515 |
-| DID Resolver Client | Resolves `did:webvh` (replays the log, verifies the hash chain, checks `proof`, handles pre-rotation) and decodes `did:key` | High | did:webvh |
+| DID Resolver Client | Resolves `did:webvh` (replays the log, verifies the hash chain, checks `proof`, handles pre-rotation, verifies the `eddsa-jcs-2022` proofs of log entries and witnesses) and decodes `did:key` | High | did:webvh v1.0 |
 | Status Checker | Status List Token and Bitstring Status List: downloads, verifies, decompresses, checks the bit | Medium | IETF Token Status List, W3C Bitstring Status List |
 | X.509 Validator | Chains the Document Signer Certificate to the Issuer Root CA and the Verifier Device Certificate to the Verifier Root CA, against the CRL and VICAL. On Dart it calls the platform's own validator, `CertPathValidator` on Android and the Security framework on iOS, rather than a version written from scratch | Highest | RFC 5280, ISO/IEC 18013-5 Annex B and C |
 | Cache Store | Redis on the server, an encrypted file on the device; TTL set by the Governance Framework; last-known-good held until the tolerance limit; signature checked again on every read | Low | None |
@@ -353,6 +359,6 @@ versions.
 
 <figure markdown="1" id="figure-2-5">
   ![The Trust SDK's six parts and the four Modules that embed it](../../images/architecture-framework/software-architecture/trust-sdk.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 2.5</span> Six parts, two implementations, four Modules. The two parts marked highest risk are where a Go and a Dart implementation are most likely to disagree, which is why both defer to a platform validator for X.509.</figcaption>
+  <figcaption><span class="ekdn-fignum">Figure 2.5</span> Six parts, two implementations, four Modules.</figcaption>
 </figure>
 

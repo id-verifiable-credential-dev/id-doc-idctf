@@ -3,7 +3,7 @@ title: "Artifacts exchanged"
 description: The twelve artifacts of the ecosystem, one section each, with who publishes it, what reads it, where it lives, and how long a copy stays good.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.6 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.6, §5.7 (Kep. 9, 28) -->
 
 # 4. Artifacts exchanged
 
@@ -62,7 +62,7 @@ behind a CDN fails more gracefully than an interface does.
 
 ### 4.1.1 Trusted list
 
-- **Published by** Trust Registry, as a LoTE JSON document signed with a JWS.
+- **Published by** Trust Registry, as a LoTE JSON document signed with a [JWS](../references.md#encoding-and-signing).
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   each from its own cached copy.
 - **Where it lives** on the central CDN, as a static file anyone may fetch.
@@ -108,7 +108,7 @@ sits among the three levels of rules is in
 ### 4.1.3 VICAL
 
 - **Published by** Trust Registry, as a `COSE_Sign1` structure defined in
-  ISO/IEC 18013-5 Annex C.
+  [ISO/IEC 18013-5 Annex C](../references.md#trust-lists-and-credential-status).
 - **Read by** any mdoc reader, including one operated in another country.
 - **Where it lives** on the central CDN.
 - **Lifetime** one registration period at a time.
@@ -130,19 +130,20 @@ accumulates in one place as the ecosystem grows.
 
 ### 4.2.1 DID Document
 
-- **Published by** DID Service, which composes and signs the `did.jsonl` log.
-  The entity itself serves the file.
+- **Published by** the entity, which signs each `did.jsonl` entry with its own
+  update key and serves the file. DID Service adds a witness proof to every new
+  entry, and a resolver rejects an entry without one.
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   through the Trust SDK embedded in each.
 - **Where it lives** at the entity's own domain rather than the central CDN,
-  because `did:webvh` derives the address from the DID itself.
+  because [`did:webvh`](../references.md#identifiers-and-keys) derives the address from the DID itself.
 - **Lifetime** versioned, with a history a reader can follow through a key
   rotation.
 
 A DID Document holds an entity's public keys and verification methods, and it is
 what proves a signature belongs to the entity that claims it.
 
-The center signs and the center does not host. `did:webvh:<scid>:kampus.ac.id`
+The center witnesses and the center does not host. `did:webvh:<scid>:kampus.ac.id`
 resolves at that university's own domain and nowhere else. A merchant has none,
 because it has no entity of its own and borrows its cryptographic identity from
 the device certificate its intermediary issues. How the identifiers are formed
@@ -158,9 +159,9 @@ take to an anchor are in
 - **Lifetime** a time to live set by how much risk a stale answer carries.
 
 A status list says which of an issuer's credentials have been revoked. The
-encoding follows IETF Token Status List for SD-JWT VC and mdoc, and W3C
-Bitstring Status List for `ldp_vc`. Only issuers have one, since only they issue
-credentials that can be revoked.
+encoding follows [IETF Token Status List](../references.md#trust-lists-and-credential-status) for SD-JWT VC and mdoc, and
+[W3C Bitstring Status List](../references.md#trust-lists-and-credential-status) for `ldp_vc`. Only issuers have one, since only they
+issue credentials that can be revoked.
 
 Publishing it per issuer rather than centrally buys three things at once.
 Revocation data scales with the number of issuers instead of accumulating
@@ -180,7 +181,8 @@ answered.
 ### 4.3.1 Authority Statement
 
 - **Published by** Trust Authority, which writes one each time it grants a role.
-- **Read by** any participant, through a TRQP query that Trust Registry answers.
+- **Read by** any participant, through a [TRQP](../references.md#exchange-protocols) query that Trust Registry
+  answers.
 - **Where it lives** as a row in the registry's own database. It is never a file
   and nobody hosts it.
 - **Lifetime** until it is withdrawn. An answer is cached like everything else.
@@ -211,7 +213,7 @@ The mechanism is in
 
 ### 4.4.1 Accreditation Credential
 
-- **Published by** Trust Authority, as an SD-JWT VC, when an accreditation is
+- **Published by** Trust Authority, as an [SD-JWT VC](../references.md#credential-formats-and-their-signatures), when an accreditation is
   granted.
 - **Read by** the entity it was issued to, and by nobody else.
 - **Where it lives** with that entity, carried rather than published.
@@ -245,11 +247,13 @@ revocation list to distribute and no message that has to arrive.
 
 ### 4.4.3 Verifier Device Certificate
 
-- **Published by** the Verifier Core that answers for the device, as an X.509
-  certificate bound to one device: an RP Intermediary's for a merchant's
-  device, a Relying Party's own for its counter device.
+- **Published by** the Verifier Core that answers for the device, as an [X.509](../references.md#certificates-and-revocation)
+  certificate bound to one device and issued from that Verifier Core's own
+  Verifier Issuing CA: an RP Intermediary's for a merchant's device, a Relying
+  Party's own for its counter device.
 - **Read by** Mobile Wallet, before it releases an attribute to that device.
-- **Where it lives** with the Mobile Verifier installation on that device.
+- **Where it lives** with the reader on that device: Mobile Verifier, or a
+  Relying Party's own app built on the Reader SDK.
 - **Lifetime** set by the Governance Profile, and withdrawn early through a CRL.
 
 A Verifier Device Certificate carries the `ReaderAuthRole` that bounds which
@@ -265,7 +269,7 @@ a CRL and a reader checks its cached copy. The arrangement is set out in
 
 ### 4.4.4 Credential
 
-- **Published by** Issuer Core, signed as a JWS or as COSE depending on the
+- **Published by** Issuer Core, signed as a JWS or as [COSE](../references.md#encoding-and-signing) depending on the
   format.
 - **Read by** Verifier Core and Mobile Verifier.
 - **Where it lives** on the citizen's device, and in no register anywhere.
@@ -299,7 +303,7 @@ somewhere else.
 - **Published by** Trust Authority, which issues all three.
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   through the Trust SDK.
-- **Where it lives** in an entity's own keystore and inside the `x5chain` of a
+- **Where it lives** with the entity's Key Manager and inside the `x5chain` of a
   message. The Verifier Issuing CA also appears in the trusted list.
 - **Lifetime** 457 days for a signer certificate for an mDL, 3650 days
   otherwise.

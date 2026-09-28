@@ -3,7 +3,7 @@ title: "Credential formats"
 description: What a credential carries, the three shapes it can take, which participant issues and verifies each one, and the file that fixes the choice for a credential type.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.2 (Kep. 3), §4.4, §2.5, §4.7 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.2 (Kep. 3, 5), §4.4, §2.5, §4.7, §10.1 -->
 
 # 1. Credential formats
 
@@ -33,29 +33,28 @@ verifier that receives one checks all five.
   what a verifier asks for, and what that verifier's accreditation is measured
   against. One claim can be an attribute, and the two words stay separate
   because the authority question attaches only to the second.
-- **The type identifier** says which Credential Rulebook governs the credential.
-  SD-JWT VC carries it as `vct`, ISO mdoc as `docType`, and both values come
-  from the Rulebook rather than from the issuer's own software.
+- **The type identifier** says which Credential Rulebook governs the
+  credential. [SD-JWT VC](../references.md#credential-formats-and-their-signatures) carries it as `vct`, [ISO mdoc](../references.md#credential-formats-and-their-signatures) as `docType`, and both
+  values come from the Rulebook rather than from the issuer's own software.
 - **The holder binding** names a key the citizen's device controls, so a
   credential copied off that device proves nothing on its own. Each format binds
   differently, and [Section 1.2](#12-three-credential-formats) gives the three
   mechanisms.
 - **The status pointer** is how a verifier learns that a credential was
   withdrawn before it expired. SD-JWT VC and ISO mdoc point at an
-  IETF Token Status List, `ldp_vc` at a W3C Bitstring Status List. Each issuer
-  publishes its own on its own domain, described in
-  [Section 4.2.2, Status list](artifacts-exchanged.md#422-status-list).
+  [IETF Token Status List](../references.md#trust-lists-and-credential-status), `ldp_vc` at a [W3C Bitstring Status List](../references.md#trust-lists-and-credential-status). Each issuer
+  publishes its own on its own domain, described in [Section 4.2.2, Status list](artifacts-exchanged.md#422-status-list).
 - **The issuer's signature** closes the envelope around the other four. SD-JWT
-  VC is a JWS, ISO mdoc is COSE, and `ldp_vc` carries a Data Integrity proof
+  VC is a [JWS](../references.md#encoding-and-signing), ISO mdoc is [COSE](../references.md#encoding-and-signing), and `ldp_vc` carries a [Data Integrity](../references.md#credential-formats-and-their-signatures) proof
   using the `ecdsa-jcs-2019` cryptosuite.
 
 ## 1.2 Three credential formats
 
 | Format | Used for | Holder binding | Status |
 |---|---|---|---|
-| SD-JWT VC | The main online path, every credential type | `cnf` carrying a did:key | Token Status List |
+| SD-JWT VC | The main online path, every credential type | `cnf` carrying a [did:key](../references.md#identifiers-and-keys) | Token Status List |
 | ISO mdoc | Proximity, no signal, international readers | `DeviceKey` inside the MSO | Token Status List |
-| W3C VCDM 2.0 (`ldp_vc`) | Interoperability with JSON-LD ecosystems | Data Integrity proof at presentation level, with `challenge` and `domain` | Bitstring Status List |
+| [W3C VCDM 2.0](../references.md#credential-formats-and-their-signatures) (`ldp_vc`) | Interoperability with JSON-LD ecosystems | Data Integrity proof at presentation level, with `challenge` and `domain` | Bitstring Status List |
 
 Two of the three support selective disclosure, which lets a holder reveal one
 attribute without revealing the ones beside it. SD-JWT VC does it with salted
@@ -64,7 +63,12 @@ hashes, ISO mdoc with digests in the MSO. `ldp_vc` secured with
 where the format may be used rather than by accepting the disclosure. A
 credential type whose Rulebook classifies any attribute as `restricted` may not
 list `ldp_vc` among its formats at all, a rule
-[Section 1.6](#16-the-credential-rulebook) returns to.
+[Section 1.6](#16-the-credential-rulebook) returns to. A credential type that
+needs selective disclosure is issued as SD-JWT VC instead. The pilot does not
+move `ldp_vc` to a selective-disclosure cryptosuite; that is reopened only when
+two conditions hold together: a JSON-LD interoperability need for a credential
+type with `restricted` attributes, and mature RDF Dataset canonicalization
+libraries in Go and Dart.
 
 Several formats that would have fitted are deliberately absent: AnonCreds,
 JWT-VC 1.1 (`jwt_vc_json`), SD-JWT VCLD, and BBS signatures. Each one would
@@ -84,7 +88,8 @@ that happen to agree.
   <figcaption><span class="ekdn-fignum">Figure 1.2</span> One credential key, two representations, two modes.</figcaption>
 </figure>
 
-- **The credential key** is minted once for the credential, not once per format.
+- **The credential key** is the wallet's one holder key, the same for every
+  format and, in this phase, for every credential.
 - **SD-JWT VC** is the representation the online path reads.
 - **ISO mdoc** is the representation a reader in proximity reads, and the only
   one that works with no signal.
@@ -128,19 +133,22 @@ no selective disclosure.
 ## 1.5 Which format each role verifies
 
 On the verifying side the limit is implementation cost, not authority. All
-three verifier roles read the same two formats, and one of them stops there.
+three verifier roles read the same two formats, and in phase 1 one of them stops
+there.
 
 | Format | Relying Party | RP Intermediary | Merchant |
 |---|---|---|---|
 | SD-JWT VC, online | Yes | Yes | Yes |
-| W3C VCDM 2.0 (`ldp_vc`), online | Yes | Yes | **No** |
+| W3C VCDM 2.0 (`ldp_vc`), online | Yes | Yes | **Phase 2** |
 | ISO mdoc, in proximity | Yes | Yes | Yes |
 
-A merchant announces only `dc+sd-jwt` and `mso_mdoc`. Verifying `ldp_vc` means
-processing JSON-LD and checking a Data Integrity proof in two places at once,
-on the credential and again on the presentation. That is heavy for software
-running on a merchant's phone, and `ldp_vc` exists for interoperability between
-systems rather than for a transaction at a counter.
+In phase 1 a merchant's Mobile Verifier announces only `dc+sd-jwt` and
+`mso_mdoc`, and a merchant conformance test may not require `ldp_vc`. The
+architecture supports `ldp_vc` on Mobile Verifier, and it arrives in phase 2.
+The delay is not technical. The Dart Trust SDK already carries Data Integrity
+and JCS, because it verifies `did:webvh` logs signed with `eddsa-jcs-2022`, so
+adding `ecdsa-jcs-2019` adds one signature algorithm. It is left out of the
+pilot only to keep the Dart SDK from growing another module.
 
 ## 1.6 The Credential Rulebook
 

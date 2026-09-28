@@ -67,8 +67,8 @@ are external systems. Both are covered in
 [Section 1.3, Others](#13-others).
 
 <figure markdown="1" class="ekdn-fig-wide" id="figure-1-2">
-  ![The ten roles, the external systems, and the module](../../images/architecture-framework/roles/role-map.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 1.2</span> The role map: ten roles, four external systems, and one module.</figcaption>
+  ![The ten roles, the external systems, and the Module](../../images/architecture-framework/roles/role-map.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum">Figure 1.2</span> The role map: ten roles, four external systems, and one Module.</figcaption>
 </figure>
 
 The table below holds all ten in one place, each with the section that
@@ -100,7 +100,7 @@ verification.
 
 The Root Authority is a designated state institution, and which one is still
 open. It decides both questions about every entity: whether it may take part,
-and what it may then do. It accredits the Wallet Provider, every issuer, every
+and what it may then do. It accredits every issuer, every Wallet Provider, every
 Relying Party and every RP Intermediary, writes each Authority Statement
 itself, holds the `id.go` namespace, and sets the Governance Profile and the
 Governance Framework. It also operates the two X.509 roots of the ecosystem,
@@ -203,11 +203,13 @@ demands a fresh attestation.
 
 A Relying Party is the party that relies on a credential to serve someone. It
 requests and verifies credentials within the scope of its accreditation,
-`restricted` attributes included where
-[Approval Tier C](three-stages-of-authority.md#23-authorization) approved them.
-It hands the result to its own service system over OpenID Connect or Security
-Assertion Markup Language (SAML). It runs verifying infrastructure of its own
-and appears in the trusted list.
+`restricted` attributes included where [Approval Tier C](three-stages-of-authority.md#23-authorization) approved them. It hands
+the result to its own service system over [OpenID Connect](../references.md#exchange-protocols) or
+[Security Assertion Markup Language (SAML)](../references.md#exchange-protocols). It runs verifying infrastructure of
+its own and appears in the trusted list. A Relying Party that reads credentials face to face
+also holds a Verifier Issuing CA of its own, listed in the trusted list, and
+issues Verifier Device Certificates to its own counter devices; on that one
+point it stands exactly where an RP Intermediary stands.
 
 *Relying Party* is the organizational role. *Verifier* is the name of the
 software it runs: Verifier Core, Verifier Console, Mobile Verifier. The
@@ -246,7 +248,8 @@ through a CRL. Nothing about a merchant appears in the trusted list.
 The holder is the person the credentials are about, and the only role a person
 holds. They receive credentials into the wallet, keep them on their own device,
 choose which attributes to disclose, and approve every presentation. They sign
-in to the wallet through CONNECTIDN.
+in through the identity provider of the Mobile Wallet they chose, covered in
+[Section 1.2.3, Wallet Provider](#123-wallet-provider).
 
 A holder registers nowhere. There is no Institution, no Entity, and no account
 anywhere in the ecosystem. What a verifier checks is a signature made by a key
@@ -272,7 +275,7 @@ Four systems fit that description, and the table below is the whole list.
 | Source System | The authoritative record an issuer copies from, read-only and never written to | Whatever each register already offers |
 | CONNECTIDN | Authentication of the citizen signing in to the wallet, and an authenticated session that can serve as identity proofing during issuance | OpenID Connect |
 | Device Platform | Proof that a key was generated inside hardware and that the application asking is the genuine one | The platform API of each mobile operating system |
-| KMS Provider | Storage for the keys of entities and of the trust infrastructure itself | PKCS#11, KMIP |
+| KMS Provider | Optional storage for an entity's keys, as a cloud KMS or an HSM, and the HSM that holds the trust infrastructure's own keys | [PKCS#11](../references.md#key-storage-interfaces), [KMIP](../references.md#key-storage-interfaces) |
 
 Reading a source system and never writing to it keeps the register
 authoritative: a credential is a signed copy of what the register already
@@ -288,7 +291,9 @@ in
 [Section 11, Technology risks and mitigation](../software-architecture/technology-risks-and-mitigation.md).
 The KMS providers are a milder dependency, because they are reached through
 PKCS#11 and KMIP, so one vendor can be exchanged for another without changing
-anything above.
+anything above. They are also optional for an entity: one that uses none of
+them keeps its keys in the encrypted software keystore its own software ships
+with, at the lowest `issuer_assurance`.
 
 ### 1.3.2 Module
 
@@ -299,7 +304,7 @@ the holder. It is drawn in [Figure 1.2](#figure-1-2) because every credential
 passes through it, both on the way in from an issuer and on the way out to a
 verifier.
 
-The eleven Modules of the ecosystem, this one included, are described in
+The ten Modules of the ecosystem, this one included, are described in
 [Module map](../high-level-architecture/module-map.md).
 
 ## 1.4 How the roles fit together
@@ -318,8 +323,8 @@ role stands on both while a transaction is happening.
   produces is a decision recorded about a party. Assessment Bodies test
   implementations and hand their reports to the Root Authority. Credential
   Rulebook Providers draft schemas and submit them for approval. The Root
-  Authority accredits and authorizes every entity itself, issuers, the Wallet
-  Provider, Relying Parties and RP Intermediaries alike, and issues their
+  Authority accredits and authorizes every entity itself, issuers, Wallet
+  Providers, Relying Parties and RP Intermediaries alike, and issues their
   certificates. There is no layer in between. The one thing arriving from
   outside is a sector license, which an applicant attaches as evidence rather
   than as authority of its own. The roles that sit on this path are in

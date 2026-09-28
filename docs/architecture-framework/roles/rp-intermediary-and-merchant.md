@@ -14,9 +14,9 @@ limit the ecosystem to large institutions; letting them in individually would
 mean accrediting millions of businesses.
 
 The answer is a role, not a technology. An accredited Relying Party may take on
-the additional role of **RP Intermediary**, called *RP Penyelenggara* in the
-draft, and run verifying infrastructure for the merchants it registers as well
-as for itself. The intermediary is assessed, the merchant is not, and the
+the additional role of **RP Intermediary**, Relying Party Intermediary written
+in full, and run verifying infrastructure for the merchants it registers as
+well as for itself. The intermediary is assessed, the merchant is not, and the
 intermediary answers for what its merchants do.
 
 **Both are roles, and both sit in the verifier group.** The verifier group in
@@ -228,9 +228,11 @@ to the provider, which is listed. The provider is the party the ecosystem
 knows.
 
 **The provider cannot read any of the three responses.** The answer the shop
-receives is encrypted to a key on the shop's own phone. The terminal provider
-routes nothing, stores nothing, and sees nothing, which is the point: the party
-accountable for a merchant is deliberately not the party able to watch it.
+receives is encrypted to a key on the shop's own phone. Online, the terminal
+provider's Verifier Core carries the shop's signed request and that encrypted
+answer between the wallet and the shop, and opens neither. Face to face it
+carries nothing at all. The party accountable for a merchant is deliberately
+not the party able to watch it.
 
 **If one of the three misbehaves, only that one stops.** Suppose the depot
 starts asking for more than an address. The terminal provider withdraws that

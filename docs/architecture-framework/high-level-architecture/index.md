@@ -3,7 +3,7 @@ title: "High-Level Architecture"
 description: What the ecosystem is made of, how its parts are kept apart, and the principles that separation serves.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §1 (Kep. 3, 5, 8, 9, 12, 16, 20, 21, 23, 25, 26, 27), §2, §3, §8.7; EUDI Architecture and Reference Framework 3.0.0, §4.2, disesuaikan -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §1 (Kep. 3, 5, 8, 9, 11, 12, 16, 20, 21, 23, 25, 26, 27), §2, §3, §8.7, §10 butir 19; EUDI Architecture and Reference Framework 3.0.0, §4.2, disesuaikan -->
 
 # High-Level Architecture
 
@@ -16,7 +16,7 @@ and which pieces are forbidden to speak to one another.
 Three words carry the chapter, and they nest: Service, Module, and component.
 [Section 1, System Models](system-models.md) defines them beside the figure that
 shows how they sit inside one another, and describes the four Services and the
-eleven Modules that fill them.
+ten Modules that fill them.
 
 The separation that shapes everything else runs between two planes. On the
 transaction path, a credential is issued to a citizen's wallet and shown to
@@ -91,8 +91,9 @@ long a cache may be trusted is set in the
 ### 3. Finished specifications only
 
 Only final specifications bind implementations in this ecosystem. A draft does
-not, however widely it is implemented elsewhere, and a profile published by
-another ecosystem is read as a comparison rather than as a requirement.
+not, however widely it is implemented elsewhere. Two drafts are the exception,
+and this section names them. A profile published by another ecosystem is read
+as a comparison rather than as a requirement.
 
 The rule has already cost the architecture something, which is what makes it a
 rule rather than a preference. A draft mechanism for proving that a wallet
@@ -101,6 +102,16 @@ job is done with
 mechanisms the final issuance specification already defines. Which specification
 is fixed for which job is set out in
 [Data Model and Protocols, technology map](../data-model-and-protocols/index.md#technology-map).
+
+Two drafts are admitted, because the credential formats cannot work without
+them. [SD-JWT VC](../references.md#credential-formats-and-their-signatures) defines the credential that [OpenID4VCI 1.0](../references.md#exchange-protocols) and [OpenID4VP 1.0](../references.md#exchange-protocols)
+carry as `dc+sd-jwt`. Those two specifications fix the format identifier and
+how it is requested, and they leave the contents of the credential to the
+SD-JWT VC draft. The salted-hash mechanism underneath is already final as
+[RFC 9901](../references.md#credential-formats-and-their-signatures). [IETF Token Status List](../references.md#trust-lists-and-credential-status) is the revocation mechanism for SD-JWT VC and
+mdoc, and it is waiting in the RFC Editor queue. Each of the two is pinned to
+one revision and moves to the RFC once it is published. Which revisions are
+pinned is still open. No other draft is admitted on the same grounds.
 
 Interoperability also has to survive two codebases. The Trust SDK exists twice,
 once for the server Modules and once for the two applications, and the two are
@@ -128,10 +139,12 @@ intermediary configured for it, and once by a limit written into the certificate
 it presents, so its authority over attributes is provable and not merely
 configured.
 
-Correlation is attacked separately from disclosure. A holder's identifier is
-created fresh for every credential, so two credentials held by the same citizen
-carry nothing in common that would let two verifiers, or an issuer and a
-verifier, recognize them as one person.
+Correlation is the one exposure this phase accepts knowingly. A holder has one
+credential key per wallet installation, and so one identifier, for every
+credential it holds, which means two verifiers comparing notes can recognize
+the same holder. The decision is marked temporary, and each stored credential
+records which key binds it, so moving later to a key per credential changes no
+credential format.
 [Section 2, Identifier](../data-model-and-protocols/identifier.md) says which
 identifier is used where.
 
@@ -140,15 +153,19 @@ identifier is used where.
 The architecture assumes that a key which can be moved will eventually be moved,
 and removes the ability to move it.
 
-The KMS generates, rotates and revokes entity keys, and it has no sign
-operation. Nothing can ask it to sign. An entity that needs a signature produces
-it locally, from a keystore it holds itself. On a phone, the keys live in
+An entity's keys are generated and kept on the entity's own side, by its Key
+Manager, and Trust Authority never holds one of them. What Trust Authority
+receives is a public key, proof that the entity holds the matching private key,
+and a certificate request where one is needed. Every key change goes into the
+entity's `did:webvh` log, and an entry without Trust Authority's witness is
+rejected by every resolver, so no key can be swapped quietly. On a phone, the keys live in
 hardware the operating system keeps apart from ordinary storage, and a
 merchant's key never leaves the merchant's own device even though the Verifier
 Core behind it belongs to an RP Intermediary.
 
-Placement backs this up. The KMS, the hardware module behind it, and both
-offline certificate roots sit in a zone that only Trust Authority can reach.
+Placement backs this up. Trust Authority's own hardware module, with both
+offline certificate roots and the witness key, sits in a zone that only Trust
+Authority can reach.
 Public endpoints and administrative ones sit on separate doors of the same
 application, so one Module is exposed in two different degrees. A Console
 reaches its Core through the administrative door and never touches a database.
@@ -210,7 +227,7 @@ a statement of the obligation and not as evidence that anything satisfies it.
    runs it, and why one of the four is single
 2. [Section 2, The transaction path and the trust path](transaction-path-and-trust-path.md),
    which Module sits on which plane, and what passes between them
-3. [Section 3, Module Map](module-map.md), the eleven Modules, what each is
+3. [Section 3, Module Map](module-map.md), the ten Modules, what each is
    built as and who runs it, who may call whom, and the network zone each is
    placed in
 4. [Section 4, Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md),

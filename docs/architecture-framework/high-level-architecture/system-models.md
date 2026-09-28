@@ -30,19 +30,19 @@ the question is really asking about.
   everything inside it: if it does not ship on its own, it is not a Module. A
   Service holds one or more.
 - **Component** is a part inside a Module, and it never appears on the map by
-  itself. It is deployed because the Module around it is deployed. Four of them
+  itself. It is deployed because the Module around it is deployed. Six of them
   are named often enough to be mistaken for Modules, and
   [Section 3.2, What is not a Module](module-map.md#32-what-is-not-a-module)
   says why each one is not.
 
-There are four Services and eleven Modules. Both counts are decisions rather
+There are four Services and ten Modules. Both counts are decisions rather
 than accidents of the drawing, and
 [Section 1.5, Why the counts are what they are](#15-why-the-counts-are-what-they-are)
 is about what they protect.
 
 <figure markdown="1" id="figure-1-2">
-  ![The four Services, the eleven Modules, and components inside each Module](../../images/architecture-framework/high-level-architecture/system-models-details.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 1.2</span> The same three scales with their real names: four Services, eleven Modules, and a sample of the components inside each Module.</figcaption>
+  ![The four Services, the ten Modules, and components inside each Module](../../images/architecture-framework/high-level-architecture/system-models-details.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum">Figure 1.2</span> The same three scales with their real names: four Services, ten Modules, and a sample of the components inside each Module.</figcaption>
 </figure>
 
 - **The rows inside each Module are its components**, shown as a sample rather
@@ -50,11 +50,12 @@ is about what they protect.
   a reminder that the third scale is real. What every Module is actually built
   from is [Section 3, Module Map](module-map.md).
 - **Mobile Verifier carries a lighter shade** because it works without a server
-  of its own. A merchant, or a Relying Party at its counter, verifies online and
-  offline from the device alone, with the keys on the device and the result on
-  its screen. The Verifier Core it checks in with belongs to whoever answers for
-  the device: the RP Intermediary for a merchant, the Relying Party itself for a
-  counter device.
+  of its own. A merchant, or a Relying Party at its counter, decrypts and
+  verifies on the device, with the keys on the device and the result on its
+  screen. The Verifier Core it checks in with belongs to whoever answers for the
+  device: the RP Intermediary for a merchant, which also relays a merchant's
+  online request and encrypted response without reading it, and the Relying
+  Party itself for a counter device.
 
 ## 1.1 Issuer Services
 
@@ -121,8 +122,8 @@ is how that works.
 Trust Infrastructure decides who may take part and what each participant may
 then do, and it publishes those answers so that everybody else can read them
 without asking. Accreditation and authorization are settled here. So are the
-trusted list, the identifiers entities are known by, the lifecycle of their
-keys, and the two certificate roots the whole ecosystem hangs from.
+trusted list, the identifiers entities are known by, the witness on every
+change to their keys, and the two certificate roots the whole ecosystem hangs from.
 
 Publishing rather than answering is the whole point. What the other three
 Services consume from this one is a file that was signed and cached in advance,
@@ -134,8 +135,7 @@ verified.
 - **Roles:** [Root Authority](../roles/role-map.md#111-root-authority)
 - **Modules:** [Trust Authority](module-map.md#318-trust-authority),
   [Trust Registry](module-map.md#319-trust-registry),
-  [DID Service](module-map.md#3110-did-service),
-  [KMS](module-map.md#3111-kms)
+  [DID Service](module-map.md#3110-did-service)
 
 ## 1.5 Why the counts are what they are
 
@@ -193,6 +193,6 @@ field, instead of writing the protocol again and introducing a second set of
 bugs into the same exchange. The shared library that carries this is
 [Section 2.5, Trust SDK](../software-architecture/components-inside-a-module.md#25-trust-sdk).
 
-The eleven Modules named here, with what each is built as and who may call
+The ten Modules named here, with what each is built as and who may call
 whom, are [Section 3, Module Map](module-map.md). What sits inside each one
 is [Section 2, Components inside a Module](../software-architecture/components-inside-a-module.md).
