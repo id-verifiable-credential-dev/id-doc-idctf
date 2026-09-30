@@ -3,9 +3,7 @@ title: "High-Level Architecture"
 description: What the ecosystem is made of, how its parts are kept apart, and the principles that separation serves.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §1 (Kep. 3, 5, 8, 9, 11, 12, 16, 20, 21, 23, 25, 26, 27), §2, §3, §8.7, §10 butir 19; EUDI Architecture and Reference Framework 3.0.0, §4.2, disesuaikan -->
-
-# High-Level Architecture
+# High-Level Architecture {#high-level-architecture}
 
 <p class="ekdn-lead" markdown="span">
 This chapter is the shape of the system. The previous one named who is
@@ -13,9 +11,9 @@ answerable for what; this one names what actually runs, where each piece sits,
 and which pieces are forbidden to speak to one another.
 </p>
 
-Three words carry the chapter, and they nest: Service, Module, and component.
-[Section 1, System Models](system-models.md) defines them beside the figure that
-shows how they sit inside one another, and describes the four Services and the
+Three words carry the chapter, and they nest: System Model, Module, and component.
+[System Models](system-models.md) defines them beside the figure that
+shows how they sit inside one another, and describes the four System Models and the
 ten Modules that fill them.
 
 The separation that shapes everything else runs between two planes. On the
@@ -34,23 +32,18 @@ to the [Technical Specifications](../../technical-specifications/index.md), and
 anything a participant can be assessed against to the
 [Governance Framework](../../governance-framework/index.md).
 
-## Design principles
+## Design principles {#design-principles}
 
 A principle here is a constraint the architecture already obeys, not an ambition
-it works toward. Six of the seven trace back to a numbered decision in the draft
-or to a rule the build tests, and each one forbids something specific: a call
-that may not be made, a central component whose outage may not stop a
-verification, an attribute a verifier may not ask for. The seventh states an
-obligation the architecture does not yet meet, and says so.
+it works toward.
 
-### 1. The two paths never cross
+### The two paths never cross {#the-two-paths-never-cross}
 
 Two planes run through the ecosystem and they do not meet at runtime. On the
 transaction path, an issuer hands a credential to a wallet, and the wallet shows
-it to a verifier. On the trust path, Trust Authority drives the registry, the
-identifier service, and the key management that stand behind all of them. No
-message crosses from one to the other while a credential is being issued or
-verified.
+it to a verifier. On the trust path, Trust Authority drives the registry and
+the identifier service that stand behind all of them. No message crosses from
+one to the other while a credential is being issued or verified.
 
 What makes that possible is that everything the transaction path needs was
 published in advance as a file and copied into a local cache before the
@@ -60,15 +53,12 @@ revoked is a read of a file the issuer itself publishes, rather than a question
 put to the center.
 
 This is the principle that makes a single national Trust Infrastructure
-acceptable. One instance of anything is a single point of failure only if it
-sits on the path. Because it does not, its outage costs nothing until the caches
-age out. The rule is not left to discipline: four calls are forbidden outright
-and the build fails if any of them appears, which
-[Section 3.3, Who may call whom](module-map.md#33-who-may-call-whom) sets out.
-How the two planes are drawn is
-[Section 2, The transaction path and the trust path](transaction-path-and-trust-path.md).
+acceptable: a single instance is a point of failure only if it sits on the
+path, and [the trust path][the-trust-path] sets out why this one does not. How
+the two planes are drawn is
+[The transaction path and the trust path](transaction-path-and-trust-path.md).
 
-### 2. The center may be down
+### The center may be down {#the-center-may-be-down}
 
 If the whole of Trust Infrastructure stops, issuance and verification carry on
 from cache until the tolerance limit runs out. Verification in person asks more
@@ -84,11 +74,11 @@ cache with a stated tolerance limit, so what ends a verification is the limit
 rather than the network.
 
 The measurable targets live in
-[Section 7, Quality goals](../software-architecture/quality-targets.md), and how
+[Quality goals](../software-architecture/quality-targets.md), and how
 long a cache may be trusted is set in the
 [Governance Framework](../../governance-framework/index.md), not here.
 
-### 3. Finished specifications only
+### Finished specifications only {#finished-specifications-only}
 
 Only final specifications bind implementations in this ecosystem. A draft does
 not, however widely it is implemented elsewhere. Two drafts are the exception,
@@ -104,11 +94,11 @@ is fixed for which job is set out in
 [Data Model and Protocols, technology map](../data-model-and-protocols/index.md#technology-map).
 
 Two drafts are admitted, because the credential formats cannot work without
-them. [SD-JWT VC](../references.md#credential-formats-and-their-signatures) defines the credential that [OpenID4VCI 1.0](../references.md#exchange-protocols) and [OpenID4VP 1.0](../references.md#exchange-protocols)
+them. [SD-JWT VC][credential-formats-and-their-signatures] defines the credential that [OpenID4VCI 1.0][exchange-protocols] and [OpenID4VP 1.0][exchange-protocols]
 carry as `dc+sd-jwt`. Those two specifications fix the format identifier and
 how it is requested, and they leave the contents of the credential to the
 SD-JWT VC draft. The salted-hash mechanism underneath is already final as
-[RFC 9901](../references.md#credential-formats-and-their-signatures). [IETF Token Status List](../references.md#trust-lists-and-credential-status) is the revocation mechanism for SD-JWT VC and
+[RFC 9901][credential-formats-and-their-signatures]. [IETF Token Status List][trust-lists-and-credential-status] is the revocation mechanism for SD-JWT VC and
 mdoc, and it is waiting in the RFC Editor queue. Each of the two is pinned to
 one revision and moves to the RFC once it is published. Which revisions are
 pinned is still open. No other draft is admitted on the same grounds.
@@ -119,10 +109,10 @@ held together by a shared set of test vectors rather than by shared code. Where
 a standard leaves a choice open, the Governance Profile closes it, so that two
 independent implementations reach the same answer.
 
-### 4. Minimal disclosure
+### Minimal disclosure {#minimal-disclosure}
 
 A verifier receives the attributes it has registered a need for and no others.
-That holds because four separate things enforce it at once, not because any one
+That holds because five separate things enforce it at once, not because any one
 of them is strong enough alone.
 
 The credential format decides what is possible at all. Two of the three formats
@@ -130,14 +120,24 @@ let a holder reveal one attribute without revealing its neighbors. The third
 cannot, and the architecture answers by restricting where that format may be
 used rather than by accepting the leak. Both the formats and the restriction are
 in
-[Section 1.2, Three credential formats](../data-model-and-protocols/credential-formats.md#12-three-credential-formats).
+[Three credential formats][three-credential-formats].
 
 The Credential Rulebook classifies every attribute of every credential type, and
 that classification is what the restriction above is measured against. On the
-verifier's side a registered merchant is bounded twice over: once by what its
-intermediary configured for it, and once by a limit written into the certificate
-it presents, so its authority over attributes is provable and not merely
-configured.
+verifier's side a Relying Party is bounded twice over: by its Authority Statement
+(per entity, which sets its accreditation scope), and by its Use Statement (per
+registered use, which sets the purpose and approved attribute subset for that
+transaction). A merchant is bounded three times over, because its Verifier Device
+Certificate adds a third boundary through ReaderAuthRole.
+
+Registration is literal rather than a figure of speech. A verifier states each
+use it intends before it runs it, naming the purpose and the attributes that
+purpose needs, and what the Root Authority approves comes back as a Use
+Statement, signed by Trust Authority, that the verifier carries in every
+request. The wallet holds the request
+against it and refuses anything outside, so the limit on one transaction is the
+one that was approved for that use rather than the whole of the verifier's
+scope. It is set out in [Registered use][registered-use].
 
 Correlation is the one exposure this phase accepts knowingly. A holder has one
 credential key per wallet installation, and so one identifier, for every
@@ -145,10 +145,10 @@ credential it holds, which means two verifiers comparing notes can recognize
 the same holder. The decision is marked temporary, and each stored credential
 records which key binds it, so moving later to a key per credential changes no
 credential format.
-[Section 2, Identifier](../data-model-and-protocols/identifier.md) says which
+[Identifier](../data-model-and-protocols/identifier.md) says which
 identifier is used where.
 
-### 5. Security by design
+### Security by design {#security-by-design}
 
 The architecture assumes that a key which can be moved will eventually be moved,
 and removes the ability to move it.
@@ -157,20 +157,21 @@ An entity's keys are generated and kept on the entity's own side, by its Key
 Manager, and Trust Authority never holds one of them. What Trust Authority
 receives is a public key, proof that the entity holds the matching private key,
 and a certificate request where one is needed. Every key change goes into the
-entity's `did:webvh` log, and an entry without Trust Authority's witness is
+entity's `did:webvh` log, and an entry without DID Service's witness is
 rejected by every resolver, so no key can be swapped quietly. On a phone, the keys live in
 hardware the operating system keeps apart from ordinary storage, and a
 merchant's key never leaves the merchant's own device even though the Verifier
 Core behind it belongs to an RP Intermediary.
 
-Placement backs this up. Trust Authority's own hardware module, with both
-offline certificate roots and the witness key, sits in a zone that only Trust
-Authority can reach.
+Placement backs this up. Trust Authority's HSM, which holds both offline
+certificate roots and, in a separate partition, the did:webvh witness key, sits in
+the secure zone. Only Trust Authority and, for that witness key partition alone,
+the Log Service of DID Service may reach it.
 Public endpoints and administrative ones sit on separate doors of the same
 application, so one Module is exposed in two different degrees. A Console
 reaches its Core through the administrative door and never touches a database.
 The layout is
-[Section 3.4, Network zones and placement](module-map.md#34-network-zones-and-placement).
+[network zones and placement][network-zones-and-placement].
 
 The trust anchors are split for the same reason. There are two roots, one for
 the issuing side and one for the reading side, kept apart so that a compromise
@@ -178,7 +179,7 @@ on one side does not authorize the other. Below that, every protocol option that
 could be left loose is fastened down, and the wallet is treated throughout as
 software an attacker may take apart, because it is.
 
-### 6. The citizen decides
+### The citizen decides {#the-citizen-decides}
 
 Before a credential leaves the wallet, the citizen is shown who is asking, what
 is being asked for, and on what authority. The wallet's interface exists for
@@ -193,15 +194,23 @@ presents the certificate its intermediary issued to it, which carries the
 merchant's authority inside it. Either way the wallet has something to show the
 citizen that a third party stands behind, rather than a name the requester chose
 for itself. The second case is
-[Section 3, RP Intermediary and merchant](../roles/rp-intermediary-and-merchant.md).
+[RP Intermediary and merchant](../roles/rp-intermediary-and-merchant.md).
+
+The purpose is held to the same standard as the name. It is read from the Use
+Statement Trust Authority signed for that use, not from the request the
+verifier composed, so a verifier cannot describe its own reason for asking in
+whatever terms suit it. Where a request carries none, during the transition
+period, the wallet says so on the consent screen rather than passing the
+verifier's own wording off as approved.
 
 What was consented to is recorded afterward as a consent receipt, so the
 decision is auditable later by someone other than the party that benefited from
-it. The record's format is specified in
-[TS-12](../../technical-specifications/index.md), and the retention rules belong
-to the [Governance Framework](../../governance-framework/index.md).
+it. The record's format is specified in the
+[Technical Specifications](../../technical-specifications/index.md), and the
+retention rules belong to the
+[Governance Framework](../../governance-framework/index.md).
 
-### 7. Accessibility
+### Accessibility {#accessibility}
 
 Every surface a person touches has to be usable by people with disabilities: the
 Mobile Wallet, the Mobile Verifier, both Consoles, and the Trust Authority
@@ -221,16 +230,17 @@ same reason the retention rules do: it binds participants and is verified by
 assessment, not by architecture. Until it is written there, treat this section as
 a statement of the obligation and not as evidence that anything satisfies it.
 
-## Chapter contents
+## Chapter contents {#hla-chapter-contents}
 
-1. [Section 1, System Models](system-models.md), what each Service groups, who
+1. [System Models](system-models.md), what each System Model groups, who
    runs it, and why one of the four is single
-2. [Section 2, The transaction path and the trust path](transaction-path-and-trust-path.md),
+2. [The transaction path and the trust path](transaction-path-and-trust-path.md),
    which Module sits on which plane, and what passes between them
-3. [Section 3, Module Map](module-map.md), the ten Modules, what each is
+3. [Module Map](module-map.md), the ten Modules, what each is
    built as and who runs it, who may call whom, and the network zone each is
    placed in
-4. [Section 4, Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md),
+4. [Flows per use case](flows-per-use-case.md), the flows from entity
+   onboarding through incident key revocation
+5. [Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md),
    the four parts of an application, and what the Governance Profile fixes
-5. [Section 5, Flows per use case](flows-per-use-case.md), eight flows end to
-   end, from entity onboarding to a change of device
+

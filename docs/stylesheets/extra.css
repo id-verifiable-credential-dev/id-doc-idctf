@@ -36,6 +36,7 @@
   --ekdn-label: #9fb0bd;
   --ekdn-rule: #e8eef4;
   --ekdn-rule-strong: #e2e9f0;
+  --ekdn-table-head: #f6f8fb;
   --ekdn-tint: #f2faff;
   --ekdn-tint-line: #e2f1fd;
   --ekdn-surface: #ffffff;
@@ -82,6 +83,7 @@
   --ekdn-label: #5c7180;
   --ekdn-rule: rgba(255, 255, 255, 0.11);
   --ekdn-rule-strong: rgba(255, 255, 255, 0.16);
+  --ekdn-table-head: rgba(255, 255, 255, 0.05);
   --ekdn-tint: rgba(74, 168, 255, 0.1);
   --ekdn-tint-line: rgba(74, 168, 255, 0.22);
   --ekdn-surface: #12202c;
@@ -698,6 +700,9 @@ html {
 
 .md-content__inner {
   max-width: 38.4rem;
+  /* Penomoran gambar dimulai lagi di setiap halaman. Angkanya digambar oleh
+     penghitung di bawah, tidak pernah diketik ke dalam halaman. */
+  counter-reset: fig;
 }
 
 /* Gambar tetap di dalam kolom baca seperti di GitBook: tidak ada bleed ke
@@ -756,11 +761,52 @@ html {
   color: var(--ekdn-muted);
 }
 
+/* Tabel tidak berketerangan: yang menjelaskannya adalah kalimat prosa sebelum
+   tabel, dan `figure` hanya membawa jangkar yang dirujuk kalimat itu serta
+   ruang gulir untuk tabel yang lebih lebar dari kolom baca. */
+.md-typeset figure.ekdn-table {
+  overflow-x: auto;
+}
+
+/* Tema membungkus setiap tabel dalam dua kotak: yang luar diberi margin kiri
+   dan kanan negatif, yang dalam diberi padding sebesar itu. Di dalam `figure`
+   yang bisa digulir, margin negatif itu terbaca sebagai isi yang melebihi
+   bingkai, dan muncul batang gulir sepanjang tabel yang tidak menggulir apa
+   pun. Keduanya dinolkan; tabel yang memang lebih lebar tetap digulir oleh
+   `overflow-x` di atas. */
+.md-typeset figure.ekdn-table .md-typeset__scrollwrap {
+  margin-inline: 0;
+}
+
+.md-typeset figure.ekdn-table .md-typeset__table {
+  padding-inline: 0;
+}
+
 /* Nomor gambar: dirujuk dari naskah, jadi ditulis tebal dan tidak ikut
-   diredam seperti sisa keterangannya. */
+   diredam seperti sisa keterangannya. Angkanya digambar oleh penghitung, jadi
+   `<span class="ekdn-fignum"></span>` di dalam keterangan gambar dibiarkan
+   kosong: menambah atau memindahkan satu gambar tidak menomori ulang apa pun.
+   Tabel tidak bernomor, jadi tidak ada penghitung untuknya. */
 .ekdn-fignum {
   font-weight: 600;
   color: var(--ekdn-ink);
+}
+
+.md-content__inner .ekdn-fignum::before {
+  counter-increment: fig;
+  content: "Figure " counter(fig);
+}
+
+/* Jangkar Markdown `[](){ #id }` di atas sebuah gambar atau tabel: satu tautan
+   kosong yang hanya membawa id, dan Markdown membungkusnya dalam satu
+   paragraf. Paragraf itu dikempiskan sampai setinggi nol supaya tidak
+   menyisakan baris kosong di atas blok yang dinamainya. Bukan `display: none`:
+   elemen tanpa kotak tidak punya posisi, dan tautan ke id-nya berhenti
+   melompat. */
+.md-typeset p:has(> a[href=""][id]:only-child) {
+  margin: 0;
+  font-size: 0;
+  line-height: 0;
 }
 
 /* Paragraf pembuka: satu tingkat di atas body text, warna diredam supaya
@@ -1299,43 +1345,62 @@ html {
 }
 
 /* ==========================================================================
-   Tabel — tanpa bingkai luar dan tanpa baris berselang. Kepala kolom memakai
-   perlakuan label BLPID: 10px, tebal, jarak huruf lebar, warna paling redup.
+   Tabel — bingkai rambut dengan sudut membulat, kepala kolom berlatar redup,
+   dan garis pemisah antar kolom. Bentuknya mengikuti tabel dokumentasi
+   GitBook; perlakuan label BLPID pada kepala kolom dipertahankan, hanya
+   dinaikkan ukurannya dan digelapkan warnanya supaya terbaca.
    ========================================================================== */
 
 .md-typeset table:not([class]) {
-  border: 0;
-  border-radius: 0;
+  border: 1px solid var(--ekdn-rule-strong);
+  border-radius: 8px;
+  border-collapse: separate;
+  border-spacing: 0;
   box-shadow: none;
   font-size: 0.7rem;
 }
 
 .md-typeset table:not([class]) th {
-  background: transparent;
+  background: var(--ekdn-table-head);
   border-bottom: 1px solid var(--ekdn-rule-strong);
-  color: var(--ekdn-label);
-  font-size: 0.56rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  color: var(--ekdn-muted);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 0 1.1rem 0.7rem 0;
+  padding: 0.6rem 0.8rem;
   min-width: 0;
 }
 
+/* Tema memasang `border-top` pada setiap sel; dengan garis bawah di sini
+   hasilnya dua garis bertumpuk, jadi yang atas dilepas. */
 .md-typeset table:not([class]) td {
+  border-top: 0;
   border-bottom: 1px solid var(--ekdn-rule);
-  padding: 0.85rem 1.1rem 0.85rem 0;
+  padding: 0.7rem 0.8rem;
   vertical-align: top;
+}
+
+/* Pemisah antar kolom: yang menolong pada tabel lebar bukan lebar halaman,
+   melainkan batas yang jelas antara satu kolom dan kolom berikutnya. */
+.md-typeset table:not([class]) th:not(:last-child),
+.md-typeset table:not([class]) td:not(:last-child) {
+  border-right: 1px solid var(--ekdn-rule);
+}
+
+/* Sudut bingkai dibulatkan pada selnya sendiri, bukan dengan `overflow`:
+   latar kepala kolom kalau tidak akan menutupi lengkungan di dua sudut atas. */
+.md-typeset table:not([class]) th:first-child {
+  border-top-left-radius: 7px;
+}
+
+.md-typeset table:not([class]) th:last-child {
+  border-top-right-radius: 7px;
 }
 
 .md-typeset table:not([class]) th:first-child,
 .md-typeset table:not([class]) td:first-child {
   width: 28%;
-}
-
-.md-typeset table:not([class]) th:last-child,
-.md-typeset table:not([class]) td:last-child {
-  padding-right: 0;
 }
 
 .md-typeset table:not([class]) tr:last-child td {

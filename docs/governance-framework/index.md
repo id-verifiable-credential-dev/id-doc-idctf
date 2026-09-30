@@ -5,7 +5,7 @@ description: "IDCTF-GF: who decides, what participants owe, and what happens whe
 
 <!-- Sumber: IDCTF-AF — Architecture Framework, §0 -->
 
-# Governance Framework
+# Governance Framework {#governance-framework}
 
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-GF</code>. Who may recognize whom, what each role owes, and what

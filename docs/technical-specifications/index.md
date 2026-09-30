@@ -5,7 +5,7 @@ description: "IDCTF-TS: the normative specifications that bind implementations, 
 
 <!-- Sumber: IDCTF-AF — Architecture Framework, §0 -->
 
-# Technical Specifications
+# Technical Specifications {#technical-specifications}
 
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-TS-nn</code>. How the ecosystem works exactly, written so that an

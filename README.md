@@ -20,21 +20,19 @@ IDCTF is five documents:
 
 ## Status
 
-Only the Architecture Framework is being written. Roles and Data Model and
-Protocols are done; High-Level Architecture and Software Architecture are part
-written. 17 of 57 pages carry prose.
+Only the Architecture Framework is being written. Roles, High-Level Architecture,
+Data Model and Protocols, and References are done; Software Architecture is part
+written. 19 of 56 pages carry prose.
 
 
 | Document      | Chapter                           | Status                      |
 | ------------- | --------------------------------- | --------------------------- |
 | `IDCTF-AF`    | Roles                             | ![Written][written]         |
-| `IDCTF-AF`    | High-Level Architecture           | ![Drafting][drafting]       |
+| `IDCTF-AF`    | High-Level Architecture           | ![Written][written]         |
 | `IDCTF-AF`    | Software Architecture             | ![Drafting][drafting]       |
 | `IDCTF-AF`    | Data Model and Protocols          | ![Written][written]         |
 | `IDCTF-AF`    | Trust Model                       | ![Not started][not-started] |
-| `IDCTF-AF`    | Module Guides                     | ![Not started][not-started] |
-| `IDCTF-AF`    | Open Decisions and Technical Debt | ![Not started][not-started] |
-| `IDCTF-AF`    | References                        | ![Not started][not-started] |
+| `IDCTF-AF`    | References                        | ![Written][written]         |
 | `IDCTF-TS-nn` | —                                 | ![Not started][not-started] |
 | `IDCTF-GF`    | —                                 | ![Not started][not-started] |
 | `IDCTF-CR`    | —                                 | ![Not started][not-started] |

@@ -4,15 +4,14 @@ title: "Two trust anchor paths: DID and X.509"
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5 (pengantar), §5.2, Kep. 8 -->
 
-# 2. Two trust anchor paths: DID and X.509
+# Two trust anchor paths: DID and X.509 {#two-trust-anchor-paths}
 
 Three questions get three different answers, and nothing answers more than one
 of them.
 
 - **The trusted list** answers whether an entity is recognized at all.
 - **The Authority Statement**, answered over TRQP, answers what that entity may
-  do, which is the subject of
-  [Section 2.3, Authorization](../roles/three-stages-of-authority.md#23-authorization).
+  do, which is the subject of [Authorization][authorization].
 - **The DID Document** answers only whether a signing key really belongs to it.
 
 A DID that is absent from the trusted list is rejected however well its DID
@@ -25,18 +24,18 @@ The third question has two answers rather than one, because a verifier reaches
 an anchor by one of two routes. This page sets out both: the DID route, and the
 X.509 route that proximity reading obliges every reader to hold as well.
 
-## 2.1 The issuer side: Issuer Root CA and Document Signer Certificate
+## The issuer side: Issuer Root CA and Document Signer Certificate {#the-issuer-side}
 
 <p class="ekdn-soon">(soon)</p>
 
-## 2.2 The reader side: Verifier Root CA, Verifier Issuing CA, Verifier Device Certificate
+## The reader side: Verifier Root CA, Verifier Issuing CA, Verifier Device Certificate {#the-reader-side}
 
 <p class="ekdn-soon">(soon)</p>
 
-## 2.3 Two parallel roots that never sign each other
+## Two parallel roots that never sign each other {#two-parallel-roots-that-never-sign-each-other}
 
 <p class="ekdn-soon">(soon)</p>
 
-## 2.4 Naming and its ISO/IEC 18013-5 equivalents
+## Naming and its ISO/IEC 18013-5 equivalents {#naming-and-its-isoiec-18013-5-equivalents}
 
 <p class="ekdn-soon">(soon)</p>

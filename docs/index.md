@@ -14,7 +14,7 @@ hide:
 
 <div class="ekdn-hero" markdown="1">
 
-# Indonesia Digital Credential Trust Framework
+# Indonesia Digital Credential Trust Framework {#idctf}
 
 A digital credential issued by one institution, accepted by another. Five
 documents say what gets built, how it is specified, who may join, what each
@@ -61,7 +61,7 @@ credential type requires, and which decisions are already closed.
 
 <div class="ekdn-sections" markdown="1">
 
-## What IDCTF is
+## What IDCTF is {#what-idctf-is}
 
 IDCTF is the name of the framework as a whole: the rules, the accreditation,
 the architecture, and the technical specifications that let a digital
@@ -73,14 +73,16 @@ as in the IDCTF ecosystem or an ecosystem participant. It is not a name.
 Three names are fixed and used consistently across all five documents.
 
 - The wallet on the citizen's phone is a Module called **Mobile Wallet**.
-- Credential types are named in the `id.go.credential.<Type>.v<N>` namespace.
+- Credential types are named in the `id.idctf.<type>.<N>` namespace.
 - The technical profile that applies across credential types is called the
   **Governance Profile**.
 
-## What the five documents hold
+## What the five documents hold {#what-the-five-documents-hold}
 
 IDCTF is five documents. They are split by the kind of question each answers
 and by who is allowed to change it.
+
+<figure markdown="1" class="ekdn-table">
 
 | Code | Document | Answers | Who changes it |
 | --- | --- | --- | --- |
@@ -90,31 +92,35 @@ and by who is allowed to change it.
 | `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | The rules for each credential type | The owner of that credential type |
 | `IDCTF-DL` | [Decision Log](decision-log/index.md) | Numbered decisions and their status | The architecture committee |
 
+</figure>
+
 A version is written with its document code, so `IDCTF-AF-1.0` is a version of
 the Architecture Framework and `IDCTF-TS-06-1.2` is a version of one technical
 specification.
 
-## Progress
+## Progress {#progress}
 
-Only the Architecture Framework is being written. Roles, Data Model and
-Protocols, and References are done; High-Level Architecture and Software
-Architecture are part written. 19 of 56 pages carry prose. A page whose prose
-is unwritten carries a `(soon)` marker and holds section headings only.
+Only the Architecture Framework is being written. Roles, High-Level Architecture,
+Data Model and Protocols, and References are done; Software Architecture is part
+written. 19 of 56 pages carry prose. A page whose prose is unwritten carries a
+`(soon)` marker and holds section headings only.
+
+<figure markdown="1" class="ekdn-table">
 
 | Document | Chapter | Status |
 | --- | --- | --- |
 | `IDCTF-AF` | [Roles](architecture-framework/roles/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
-| `IDCTF-AF` | [High-Level Architecture](architecture-framework/high-level-architecture/index.md) | <span class="ekdn-status ekdn-status--drafting"><span class="dot"></span>Drafting</span> |
+| `IDCTF-AF` | [High-Level Architecture](architecture-framework/high-level-architecture/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-AF` | [Software Architecture](architecture-framework/software-architecture/index.md) | <span class="ekdn-status ekdn-status--drafting"><span class="dot"></span>Drafting</span> |
 | `IDCTF-AF` | [Data Model and Protocols](architecture-framework/data-model-and-protocols/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-AF` | [Trust Model](architecture-framework/trust-model/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-AF` | [Module Guides](architecture-framework/module-guides/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-AF` | [Open Decisions and Technical Debt](architecture-framework/open-decisions-and-technical-debt.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-AF` | [References](architecture-framework/references.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-TS-nn` | [Technical Specifications](technical-specifications/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-DL` | [Decision Log](decision-log/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
+
+</figure>
 
 <p class="ekdn-legend">
 <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> every page has prose &nbsp;·&nbsp;

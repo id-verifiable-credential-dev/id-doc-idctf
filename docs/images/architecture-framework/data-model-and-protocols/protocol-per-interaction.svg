@@ -24,8 +24,8 @@
 <rect x="362.0" y="76.0" width="96.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
 <text x="410.0" y="89.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">Key Attestation</text>
 <polyline points="510,145 565,145 620,145" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
-<rect x="517.0" y="136.0" width="96.0" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
-<text x="565.0" y="149.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">ISO/IEC 18013-5</text>
+<rect x="483.4" y="136.0" width="163.2" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
+<text x="565.0" y="149.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OpenID4VP / ISO/IEC 18013-5</text>
 <polyline points="410,170 410,200 410,270" fill="none" stroke="#5c7180" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"/>
 <rect x="378.8" y="191.0" width="62.4" height="18" rx="3" fill="#ffffff" fill-opacity="0.94"/>
 <text x="410.0" y="204.0" text-anchor="middle" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="10.5" fill="#4a5f6f">OpenID4VP</text>

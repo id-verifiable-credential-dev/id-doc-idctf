@@ -1,0 +1,40 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="system-models" id="system-models">
+    <mxGraphModel dx="0" dy="0" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1066" pageHeight="599" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c3" value="" style="rounded=1;absoluteArcSize=1;arcSize=35.76;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeOpacity=20;strokeWidth=1.02;" vertex="1" parent="1">
+          <mxGeometry x="0.51" y="0.51" width="1064.98" height="597.98" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="" style="rounded=1;absoluteArcSize=1;arcSize=44.94;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2F2F2F;strokeWidth=3.37;dashed=1;dashPattern=3.33 3.33;" vertex="1" parent="1">
+          <mxGeometry x="93" y="111.84" width="880.85" height="411.16" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="Service" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=1.39;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="388.75" y="78.67" width="290.74" height="66.34" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="" style="rounded=1;absoluteArcSize=1;arcSize=44.94;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2F2F2F;strokeWidth=3.37;dashed=1;dashPattern=3.33 3.33;" vertex="1" parent="1">
+          <mxGeometry x="127.84" y="230.31" width="395.83" height="255.06" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" value="" style="rounded=1;absoluteArcSize=1;arcSize=44.94;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#2F2F2F;strokeWidth=3.37;dashed=1;dashPattern=3.33 3.33;" vertex="1" parent="1">
+          <mxGeometry x="543.18" y="230.31" width="395.82" height="161.68" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" value="Module" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=0.66;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="181.09" y="197.14" width="290.74" height="66.34" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" value="Module" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=0.66;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="596.42" y="197.14" width="290.74" height="66.34" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" value="Component" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=0.96;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="154.6" y="300.28" width="340.91" height="66.34" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" value="Component" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=0.96;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="569.94" y="300.28" width="340.91" height="66.34" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" value="Component" style="rounded=1;absoluteArcSize=1;arcSize=24.74;whiteSpace=wrap;html=1;fillColor=#EFEFEF;strokeColor=#2F2F2F;strokeWidth=3.35;fontStyle=1;fontSize=32.9;fontColor=#000000;align=center;verticalAlign=middle;spacing=0;spacingTop=0.96;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="154.6" y="385.3" width="340.91" height="66.34" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

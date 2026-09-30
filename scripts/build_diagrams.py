@@ -44,6 +44,11 @@ PER_ROW = 4           # components per row before wrapping within one layer
 
 
 def wrap(text: str, limit: int = 26) -> list[str]:
+    if "\n" in text:
+        lines: list[str] = []
+        for part in text.split("\n"):
+            lines.extend(wrap(part, limit))
+        return lines
     words, lines, cur = text.split(), [], ""
     for w in words:
         trial = f"{cur} {w}".strip()
@@ -109,7 +114,7 @@ class Canvas:
                 f'fill="{fill_c}">{html.escape(text)}</text>'
             )
             cy += 13.4
-        label = html.escape(title + ("\n" + "\n".join(subs) if subs else ""))
+        label = html.escape(title + ("\n" + "\n".join(subs) if subs else "")).replace("\n", "&lt;br&gt;")
         self.cells.append(
             f'<mxCell id="{self._id("n")}" value="{label}" '
             f'style="rounded=1;arcSize=8;fillColor={fill};strokeColor={stroke};'
@@ -123,6 +128,12 @@ class Canvas:
         self.svg.append(
             f'<text x="{x}" y="{y + h / 2 + 4:.1f}" font-family="{FONT}" font-size="11" '
             f'font-weight="600" fill="{MUTED}">{html.escape(text)}</text>'
+        )
+        self.cells.append(
+            f'<mxCell id="{self._id("gl")}" value="{html.escape(text)}" '
+            f'style="text;html=1;strokeColor=none;fillColor=none;align=left;'
+            f'verticalAlign=middle;fontSize=11;fontColor={MUTED};fontStyle=1;" vertex="1" parent="1">'
+            f'<mxGeometry x="{x}" y="{y + h / 2 - 6}" width="100" height="20" as="geometry"/></mxCell>'
         )
 
     def text(self, x, y, s, size=11, weight="400", fill=MUTED, anchor="start"):
@@ -149,6 +160,27 @@ class Canvas:
             f'<polyline points="{pts}" fill="none" stroke="{LINE}" stroke-width="1.5" '
             f'stroke-linejoin="round"{dash}{mark}/>'
         )
+        edge_id = self._id("e")
+        dash_style = "dashed=1;dashPattern=6 4;" if dashed else ""
+        arrow_style = "endArrow=classic;" if arrow else "endArrow=none;"
+        
+        geom = f'<mxGeometry relative="1" as="geometry">'
+        geom += f'<mxPoint x="{points[0][0]}" y="{points[0][1]}" as="sourcePoint"/>'
+        geom += f'<mxPoint x="{points[-1][0]}" y="{points[-1][1]}" as="targetPoint"/>'
+        if len(points) > 2:
+            geom += '<Array as="points">'
+            for px, py in points[1:-1]:
+                geom += f'<mxPoint x="{px}" y="{py}"/>'
+            geom += '</Array>'
+        geom += '</mxGeometry>'
+        
+        self.cells.append(
+            f'<mxCell id="{edge_id}" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;'
+            f'{arrow_style}{dash_style}strokeColor={LINE};strokeWidth=1.5;" edge="1" parent="1">'
+            f'{geom}'
+            f'</mxCell>'
+        )
+
         if label:
             mx, my = points[len(points) // 2]
             w = len(label) * 5.6 + 12
@@ -159,6 +191,13 @@ class Canvas:
             self.svg.append(
                 f'<text x="{mx:.1f}" y="{my + 4:.1f}" text-anchor="middle" '
                 f'font-family="{FONT}" font-size="10.5" fill="{MUTED}">{html.escape(label)}</text>'
+            )
+            self.cells.append(
+                f'<mxCell id="{self._id("el")}" value="{html.escape(label)}" '
+                f'style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];'
+                f'fontSize=10.5;fontColor={MUTED};labelBackgroundColor=#ffffff;" vertex="1" connectable="0" parent="{edge_id}">'
+                f'<mxGeometry relative="1" as="geometry"/>'
+                f'</mxCell>'
             )
         for px, py in points:
             self.extend(px, py)
@@ -575,7 +614,7 @@ def fig_protocol_per_interaction():
     c.box(310, 390, 200, 50, "Relying Party application", (), "off")
     c.edge([(200, 145), (255, 145), (310, 145)], "OpenID4VCI")
     c.edge([(410, 120), (410, 85), (410, 50)], "Key Attestation")
-    c.edge([(510, 145), (565, 145), (620, 145)], "ISO/IEC 18013-5")
+    c.edge([(510, 145), (565, 145), (620, 145)], "OpenID4VP / ISO/IEC 18013-5")
     c.edge([(410, 170), (410, 200), (410, 270)], "OpenID4VP")
     c.edge([(100, 170), (100, 220), (100, 270)], "ToIP TRQP")
     c.edge([(310, 295), (255, 295), (200, 295)], "ToIP TRQP")
@@ -589,24 +628,23 @@ def fig_protocol_per_interaction():
 def fig_online_and_offline():
     c = Canvas(
         "Online and offline: where the network calls go",
-        "Two columns. Online, Mobile Wallet presents to Verifier Core over OpenID4VP on "
-        "HTTPS, and Verifier Core fetches the trusted list, the status list and a TRQP "
-        "answer fresh over the network. Offline, Mobile Wallet presents to a reader on a "
-        "device, Mobile Verifier or a Relying Party's own app built on the Reader SDK, over "
-        "ISO/IEC 18013-5 on BLE, and the reader takes the same artifacts from its own cache, "
-        "making no network call at all.")
+        "Two columns. Online, Mobile Wallet presents to Verifier Core or Mobile Verifier "
+        "over OpenID4VP on HTTPS, and the verifier fetches the trusted list, the status "
+        "list and a TRQP answer fresh over the network. Offline, Mobile Wallet presents to "
+        "Mobile Verifier over ISO/IEC 18013-5 on BLE, and Mobile Verifier takes the same "
+        "artifacts from its own cache, making no network call at all.")
     for ox, label in ((0, "ONLINE"), (440, "OFFLINE  ·  PROXIMITY")):
         c.band(ox, 0, 400, 330, label)
     for ox, who, proto, how, artifacts, foot in (
-            (0, "Verifier Core", "OpenID4VP over HTTPS", "fetched fresh",
+            (0, "Verifier Core or\nMobile Verifier", "OpenID4VP over HTTPS", "fetched fresh",
              "Trusted list, status list, TRQP", "network calls: yes"),
-            (440, "Reader on a device", "ISO/IEC 18013-5 over BLE", "read from cache",
+            (440, "Mobile Verifier", "ISO/IEC 18013-5 over BLE", "read from cache",
              "Trusted list, status list, VICAL", "network calls: zero")):
         cx = ox + 200
-        c.box(ox + 115, 44, 170, 46, "Mobile Wallet", (), "wallet")
+        c.box(ox + 107, 44, 186, 46, "Mobile Wallet", (), "wallet")
         c.edge([(cx, 90), (cx, 115), (cx, 140)], proto)
-        c.box(ox + 115, 140, 170, 46, who, (), "verifier")
-        c.edge([(cx, 186), (cx, 213), (cx, 240)], how)
+        c.box(ox + 107, 140, 186, 50, who, (), "verifier")
+        c.edge([(cx, 190), (cx, 215), (cx, 240)], how)
         c.box(ox + 55, 240, 290, 50, artifacts, (), "trust")
         c.text(cx, 314, foot, 11, "600", INK, "middle")
     return c.render("online-and-offline", DMP)

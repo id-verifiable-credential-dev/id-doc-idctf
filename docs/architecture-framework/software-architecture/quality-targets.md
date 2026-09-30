@@ -2,6 +2,6 @@
 title: "Quality targets"
 ---
 
-# 7. Quality targets
+# Quality targets {#quality-targets}
 
 <p class="ekdn-soon">(soon)</p>

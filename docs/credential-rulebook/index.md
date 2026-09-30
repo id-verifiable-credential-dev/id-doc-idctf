@@ -5,7 +5,7 @@ description: "IDCTF-CR: the rules for each credential type, one rulebook per typ
 
 <!-- Sumber: IDCTF-AF — Architecture Framework, §0 -->
 
-# Credential Rulebook Catalog
+# Credential Rulebook Catalog {#credential-rulebook-catalog}
 
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-CR</code>. One rulebook per credential type: its attributes, the
@@ -15,4 +15,4 @@ the owner of that credential type, not by the architects.
 
 <p class="ekdn-soon">(soon)</p>
 
-Credential types are named in the `id.go.credential.<Type>.v<N>` namespace.
+Credential types are named in the `id.idctf.<type>.<N>` namespace.

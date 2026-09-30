@@ -1,0 +1,145 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="system-models-details" id="system-models-details">
+    <mxGraphModel dx="0" dy="0" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1696" pageHeight="908" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c3" value="" style="rounded=1;absoluteArcSize=1;arcSize=35.76;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeOpacity=20;strokeWidth=1.02;" vertex="1" parent="1">
+          <mxGeometry x="0.51" y="0.51" width="1694.98" height="906.98" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" value="Wallet Services" style="rounded=1;absoluteArcSize=1;arcSize=30.9;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7F7F7F;strokeWidth=1.54;dashed=1;dashPattern=3 3;fontStyle=1;fontSize=21.6;fontColor=#1E1E1E;align=center;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;spacing=0;verticalAlign=top;spacingTop=17.53;" vertex="1" parent="1">
+          <mxGeometry x="474" y="56" width="390" height="478" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" value="Mobile Wallet" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="495.98" y="116.34" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" value="Auth Client" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c5">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" value="Issuance Client" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c5">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c8" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.06;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c5">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" value="Wallet Backend Service" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="495.98" y="320" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" value="Key Attestation Issuer" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c9">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" value="Account Service" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c9">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.08;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c9">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c13" value="Trust Infrastructure" style="rounded=1;absoluteArcSize=1;arcSize=30.9;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7F7F7F;strokeWidth=1.54;dashed=1;dashPattern=3 3;fontStyle=1;fontSize=21.6;fontColor=#1E1E1E;align=center;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;spacing=0;verticalAlign=top;spacingTop=19.34;" vertex="1" parent="1">
+          <mxGeometry x="55" y="562" width="1585" height="291" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" value="Trust Authority" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="319" y="626.28" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c15" value="Registrar Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c14">
+          <mxGeometry x="18.54" y="58.58" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" value="Public Key Registry" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c14">
+          <mxGeometry x="18.54" y="97.2" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.06;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c14">
+          <mxGeometry x="18.54" y="135.82" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" value="Trust Registry" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="691" y="626.28" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" value="TRQP Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.5;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c18">
+          <mxGeometry x="18.54" y="58.58" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" value="Credential Rulebook Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c18">
+          <mxGeometry x="18.54" y="97.2" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.06;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c18">
+          <mxGeometry x="18.54" y="135.82" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" value="DID Service" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="1063" y="626.28" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" value="Publisher Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c22">
+          <mxGeometry x="18.54" y="58.58" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c24" value="Resolver Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.5;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c22">
+          <mxGeometry x="18.54" y="97.2" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c25" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.06;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c22">
+          <mxGeometry x="18.54" y="135.82" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c26" value="Issuer Services" style="rounded=1;absoluteArcSize=1;arcSize=30.9;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7F7F7F;strokeWidth=1.54;dashed=1;dashPattern=3 3;fontStyle=1;fontSize=21.6;fontColor=#1E1E1E;align=center;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;spacing=0;verticalAlign=top;spacingTop=17.53;" vertex="1" parent="1">
+          <mxGeometry x="55" y="56" width="389" height="478" as="geometry" />
+        </mxCell>
+        <mxCell id="c27" value="Issuer Core" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.41;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="78.17" y="119.43" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c28" value="Issuance Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.5;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c27">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c29" value="Authorization Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.41;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c27">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c30" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.06;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c27">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c31" value="Issuer Console" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.41;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="78.17" y="320" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c32" value="Configuration View" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.29;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c31">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c33" value="Operations View" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c31">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c34" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.08;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c31">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c35" value="Verifier Services" style="rounded=1;absoluteArcSize=1;arcSize=30.9;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#7F7F7F;strokeWidth=1.54;dashed=1;dashPattern=3 3;fontStyle=1;fontSize=21.6;fontColor=#1E1E1E;align=center;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;spacing=0;verticalAlign=top;spacingTop=17.53;" vertex="1" parent="1">
+          <mxGeometry x="892" y="56" width="748" height="478" as="geometry" />
+        </mxCell>
+        <mxCell id="c36" value="Verifier Console" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="1271" y="116" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c37" value="Template View" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c36">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c38" value="Merchant View" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c36">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c39" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.08;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c36">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c40" value="Verifier Core" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="915" y="116" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c41" value="Presentation Controller" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c40">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c42" value="Verifier Device Certificate Issuer" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.29;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c40">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c43" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.08;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c40">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c44" value="Mobile Verifier" style="rounded=1;absoluteArcSize=1;arcSize=21.62;fillColor=#007FFF;gradientColor=#009CFF;gradientDirection=east;strokeColor=none;whiteSpace=wrap;html=1;container=1;collapsible=0;fontStyle=1;fontSize=21.6;fontColor=#FFFFFF;align=center;spacing=0;verticalAlign=top;spacingTop=18.43;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="1">
+          <mxGeometry x="915" y="320" width="344.49" height="186.92" as="geometry" />
+        </mxCell>
+        <mxCell id="c45" value="Presentation Client" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.43;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c44">
+          <mxGeometry x="18.54" y="58.57" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c46" value="Reader SDK" style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.5;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c44">
+          <mxGeometry x="18.54" y="97.19" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+        <mxCell id="c47" value="......." style="rounded=1;absoluteArcSize=1;arcSize=15.94;whiteSpace=wrap;html=1;fillColor=#E8F4FF;strokeColor=#FFFFFF;strokeWidth=1.54;fontSize=14.1;fontColor=#050505;align=center;verticalAlign=middle;spacing=0;spacingTop=1.08;spacingBottom=0;fontFamily=Inter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DInter%3A400%2C400i%2C700%2C700i;" vertex="1" parent="c44">
+          <mxGeometry x="18.54" y="135.81" width="307.42" height="32.44" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

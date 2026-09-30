@@ -3,92 +3,90 @@ title: Module Map
 description: The ten Modules, what each is built from, who runs it, what it does, which Module is allowed to call which, and the network zone each Module is placed in.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §1 (Kep. 5, 9, 28), §3.1, §3.2, §3.3 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §1 (Kep. 5, 9, 25, 28, 29), §3.1, §3.2, §3.3, §3.5 -->
 
-# 3. Module Map
+# Module Map {#module-map}
 
-A Module is a unit of deployable software. One Module is packaged as one
-container image, which is what separates a Module from the pieces inside it:
-if it does not ship on its own, it is not a Module.
+A Module is what ships as one container image. [System Models](system-models.md)
+defines the scale in full.
 
 There are ten. Which role runs each Service is on
-[Section 1, System Models](system-models.md), and which plane each Module sits
-on is on
-[Section 2, The transaction path and the trust path](transaction-path-and-trust-path.md).
+[System Models](system-models.md), and which plane each Module sits on is on
+[The transaction path and the trust path](transaction-path-and-trust-path.md).
 
-## 3.1 The ten Modules
+## The ten Modules {#the-ten-modules}
 
 Each entry below opens with what the Module is and what it does, then gives the
 four facts that place it on the map: the Service it belongs to, what it is built
-as, who runs it, and how many instances the ecosystem has. Those four do most of
-the explaining on their own, because a web application run by one national
-authority and a mobile application installed millions of times are not
-constrained by the same things. The last line of each entry points at the
-components inside that Module. Built as names the shape rather than the
-product; what each shape is built from is in
-[Section 8, Technology choices per layer](../software-architecture/technology-choices-per-layer.md).
+as, who runs it, and how many instances the ecosystem has. The last line of
+each entry points at the components inside that Module. Built as names the
+shape rather than the product; what each shape is built from is in
+[Technology choices per layer](../software-architecture/technology-choices-per-layer.md).
+[The ten Modules by Service][fig-ten-modules-by-service] draws the map the
+entries fill in.
 
-<figure markdown="1" id="figure-3-1">
+[](){ #fig-ten-modules-by-service }
+
+<figure markdown="1">
   ![The ten Modules grouped into four Services](../../images/architecture-framework/high-level-architecture/module-map.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 3.1</span> The ten Modules, grouped by the Service each belongs to, with the interface named on each line outside Trust Infrastructure.</figcaption>
+  <figcaption><span class="ekdn-fignum"></span> The ten Modules, grouped by the Service each belongs to, with the interface named on each line outside Trust Infrastructure.</figcaption>
 </figure>
 
-- **Mobile Verifier is drawn lighter** because it runs with no server of its
-  own. The Verifier Core it checks in with belongs to whoever answers for the
-  device: the RP Intermediary for a merchant, the Relying Party itself for a
-  counter device.
+- **Mobile Verifier runs with no server of its own.** The Verifier Core it
+  checks in with belongs to whoever answers for the device: the RP Intermediary
+  for a merchant, the Relying Party itself for a counter device.
 - **No line runs from the three Services to Trust Infrastructure**, and that is
   the design rather than an omission. What the three consume from it is a
   published file read from a local cache, not a call made while a citizen is
-  being served, which is
-  [Principle 1, The two paths never cross](index.md#1-the-two-paths-never-cross).
+  being served, which is the design principle
+  [the two paths never cross][the-two-paths-never-cross].
 - **A line names an interface, not a permission.** Which Module may call which
-  is [Section 3.3, Who may call whom](#33-who-may-call-whom).
+  is [who may call whom][who-may-call-whom].
 
-### 3.1.1 Issuer Core
+### Issuer Core {#hla-issuer-core}
 
 Issuer Core is where a credential is created and then kept alive. It issues
-over [OpenID4VCI](../references.md#exchange-protocols) and assembles whichever of the three formats the Credential
+over [OpenID4VCI][exchange-protocols] and assembles whichever of the three formats the Credential
 Rulebook names for that credential type. It signs through its Key Manager, which
 generates and holds the issuer's keys on the issuer's own side. It also manages
 and hosts that issuer's status list, which is what tells a verifier later
 whether the credential still stands.
 
-- **Service:** Issuer Services
+- **System Model:** Issuer Services
 - **Built as:** REST API, cache, database
 - **Run by:** Identity Issuer, Attribute Issuer
 - **How many:** Many, one per issuer
-- **Inside it:** [Section 2.1.1, Issuer Core](../software-architecture/components-inside-a-module.md#211-issuer-core)
+- **Inside it:** [Issuer Core][sa-issuer-core]
 
-### 3.1.2 Issuer Console
+### Issuer Console {#hla-issuer-console}
 
 Issuer Console is the staff side of Issuer Core. Credential types are configured
 here from their Credential Rulebook, batches are issued, credentials are
 revoked, and reports are read. It works through the Admin API alone and opens no
 database connection of its own.
 
-- **Service:** Issuer Services
+- **System Model:** Issuer Services
 - **Built as:** Web application
 - **Run by:** The same entity that runs Issuer Core
 - **How many:** Many
-- **Inside it:** [Section 2.1.2, Issuer Console](../software-architecture/components-inside-a-module.md#212-issuer-console)
+- **Inside it:** [Issuer Console][sa-issuer-console]
 
-### 3.1.3 Mobile Wallet
+### Mobile Wallet {#hla-mobile-wallet}
 
 Mobile Wallet is the citizen's copy of everything issued to them. It stores
 credentials, holds one credential key that binds all of them, shows which
-verifier is asking and what for, and signs the presentation once the citizen
-agrees. It runs on hardware nobody in the ecosystem owns, which is why a secure
+verifier is asking and what for, and signs the presentation online and
+offline once the citizen agrees. It runs on hardware nobody in the ecosystem owns, which is why a secure
 element and a backend that vouches for the installation are both part of the
 design.
 
-- **Service:** Wallet Services
+- **System Model:** Wallet Services
 - **Built as:** Android and iOS application, secure element
 - **Run by:** Published by a Wallet Provider, installed by the citizen
 - **How many:** Many, one per Wallet Provider, millions of installations
-- **Inside it:** [Section 2.2.1, Mobile Wallet](../software-architecture/components-inside-a-module.md#221-mobile-wallet)
+- **Inside it:** [Mobile Wallet][sa-mobile-wallet]
 
-### 3.1.4 Wallet Backend Service
+### Wallet Backend Service {#hla-wallet-backend-service}
 
 Wallet Backend Service stands behind the wallet and vouches for it. It issues
 the daily Key Attestation, binds an installation to its device, carries the
@@ -96,22 +94,26 @@ CONNECTIDN account link and push notification, and handles recovery onto a
 replacement device and revocation of a lost one. It stores no credential of its
 own.
 
-- **Service:** Wallet Services
+- **System Model:** Wallet Services
 - **Built as:** REST API, database
 - **Run by:** Wallet Provider
 - **How many:** Many, one per Wallet Provider
-- **Inside it:** [Section 2.2.2, Wallet Backend Service](../software-architecture/components-inside-a-module.md#222-wallet-backend-service)
+- **Inside it:** [Wallet Backend Service][sa-wallet-backend-service]
 
-### 3.1.5 Verifier Core
+### Verifier Core {#hla-verifier-core}
 
 Verifier Core is where a credential is checked and turned into a decision. It is
 a backend with no front end of its own: the web page, kiosk, or app in front of
-it belongs to the Relying Party. It requests over [OpenID4VP](../references.md#exchange-protocols), tests what comes
+it belongs to the Relying Party. It requests over [OpenID4VP][exchange-protocols], tests what comes
 back against both chains of trust, and passes the result to the Relying Party's
-own service system over [OpenID Connect](../references.md#exchange-protocols) or [SAML](../references.md#exchange-protocols).
+own service system over [OpenID Connect][exchange-protocols]
+or [Security Assertion Markup Language
+(SAML)][exchange-protocols]. A deployment of it is the remote form of a
+[Relying Party Instance][relying-party-instance], and it introduces itself to a
+wallet with the did:webvh of the entity running it.
 
 It reads nothing in proximity. A Relying Party that checks credentials face to
-face uses [Mobile Verifier](#317-mobile-verifier), or its own app built on the Reader SDK, on its own
+face uses [Mobile Verifier][hla-mobile-verifier], or its own app built on the Reader SDK, on its own
 counter device, and Verifier Core issues that device the limited-life Verifier
 Device Certificate it carries, from the Relying Party's own Verifier Issuing CA.
 An RP Intermediary issues the same certificate to each of its merchants'
@@ -119,105 +121,120 @@ devices. For a merchant's online check, the RP Intermediary's Verifier Core
 also holds the signed request and the encrypted response in transit, and it
 cannot read the response.
 
-- **Service:** Verifier Services
+- **System Model:** Verifier Services
 - **Built as:** REST API, cache, database
 - **Run by:** Relying Party; a Relying Party that also serves merchants is an
   RP Intermediary
 - **How many:** Many
-- **Inside it:** [Section 2.3.1, Verifier Core](../software-architecture/components-inside-a-module.md#231-verifier-core)
+- **Inside it:** [Verifier Core][sa-verifier-core]
 
-### 3.1.6 Verifier Console
+### Verifier Console {#hla-verifier-console}
 
-Verifier Console is the operator's side of Verifier Core. Request templates live
-here, merchants are onboarded and their `allowed_attrs` set, a merchant device
-is revoked, consent receipts are archived, and reports are read. Like Issuer
-Console it reaches its Core through the Admin API and nothing else.
+Verifier Console is the operator's side of Verifier Core. Request templates
+live here, each naming one `use_id` of a [Use Statement][use-statement] that
+the Console validates the template against; merchants are onboarded and their
+`allowed_attrs` set, a merchant device is revoked, consent receipts are
+archived, and reports are read. Like Issuer Console it reaches its Core
+through the Admin API and nothing else.
 
-- **Service:** Verifier Services
+- **System Model:** Verifier Services
 - **Built as:** Web application
 - **Run by:** Relying Party, RP Intermediary
 - **How many:** Many
-- **Inside it:** [Section 2.3.2, Verifier Console](../software-architecture/components-inside-a-module.md#232-verifier-console)
+- **Inside it:** [Verifier Console][sa-verifier-console]
 
-### 3.1.7 Mobile Verifier
+### Mobile Verifier {#hla-mobile-verifier}
 
-Mobile Verifier is the official verifier app for merchants, and it does its own
-checking. The keys stay on the device and the result appears on its screen,
+Mobile Verifier is the verifier app for merchants, and it does its own
+checking. Running it is the on-device form of a
+[Relying Party Instance][relying-party-instance], which is the only form a
+merchant has. The keys stay on the device and the result appears on its screen,
 online and in proximity alike. Online, the device leaves its signed request
 with the RP Intermediary's Verifier Core and collects the encrypted response
 from it; decryption and verification happen on the phone. In proximity it reads
 through the Reader SDK. It is the only Module that reads a credential in
 proximity, although a Relying Party's own app may do the same with that
-library. In phase 1 it reads `dc+sd-jwt` and `mso_mdoc`; `ldp_vc` is supported
-by the architecture and arrives in phase 2, as
-[Section 1.5, Which format each role verifies](../data-model-and-protocols/credential-formats.md#15-which-format-each-role-verifies)
-explains. There is no web version of it.
+library. It reads `dc+sd-jwt`, `mso_mdoc` and `ldp_vc`, as
+[which format each role verifies][which-format-each-role-verifies]
+sets out. There is no web version of it.
 
-- **Service:** Verifier Services
+- **System Model:** Verifier Services
 - **Built as:** Android and iOS application, secure element
 - **Run by:** Merchants, registered by an RP Intermediary; a Relying Party or
   RP Intermediary on its own counter devices
 - **How many:** Millions of installations
-- **Inside it:** [Section 2.3.3, Mobile Verifier](../software-architecture/components-inside-a-module.md#233-mobile-verifier)
+- **Inside it:** [Mobile Verifier][sa-mobile-verifier]
 
-### 3.1.8 Trust Authority
+### Trust Authority {#hla-trust-authority}
 
 Trust Authority is where an entity is registered, accredited, and authorized. It
 is also the certificate authority behind Issuer Root CA, Verifier Root CA, every
-Document Signer Certificate, Verifier Issuing CA, and the CRL, each issued from
+Document Signer Certificate, and Verifier Issuing CA, and it publishes the
+revocation lists for the certificates it issues, each issued from
 a certificate request the entity sends. It keeps every entity's public keys in
 the Public Key Registry and holds none of their private keys, and it holds the
 governance registry, incident handling, and the transparency log. Its portal is the one part of it every
 entity touches.
 
-- **Service:** Trust Infrastructure
-- **Built as:** Web application, REST API, database, offline HSM
+- **System Model:** Trust Infrastructure
+- **Built as:** Web application, REST API, database, offline hardware security
+  module (HSM)
 - **Run by:** Root Authority, though every entity uses its portal
 - **How many:** One
-- **Inside it:** [Section 2.4.1, Trust Authority](../software-architecture/components-inside-a-module.md#241-trust-authority)
+- **Inside it:** [Trust Authority][sa-trust-authority]
 
-### 3.1.9 Trust Registry
+### Trust Registry {#hla-trust-registry}
 
 Trust Registry publishes what the rest of the ecosystem has to agree on. It
-answers [TRQP](../references.md#exchange-protocols) for `authorization` and `recognition`, publishes the trusted list
-as LoTE JSON and publishes [VICAL](../references.md#trust-lists-and-credential-status), stores every Credential Rulebook, and runs
-the conformance crawler. What it publishes leaves as a static file through a
-CDN, which is what keeps it off the transaction path.
+answers [Trust Registry Query Protocol
+(TRQP)][exchange-protocols] for `authorization` and
+`recognition`, publishes the trusted list as LoTE JSON and publishes [Verified
+Issuer Certificate Authority List
+(VICAL)][trust-lists-and-credential-status], stores every
+Credential Rulebook, and runs the conformance crawler. What it publishes leaves
+as a static file through a content delivery network (CDN), which is what keeps
+it off the transaction path.
 
-- **Service:** Trust Infrastructure
+- **System Model:** Trust Infrastructure
 - **Built as:** REST API, database, object storage, CDN
 - **Run by:** Root Authority
 - **How many:** One
-- **Inside it:** [Section 2.4.2, Trust Registry](../software-architecture/components-inside-a-module.md#242-trust-registry)
+- **Inside it:** [Trust Registry][sa-trust-registry]
 
-### 3.1.10 DID Service
+### DID Service {#hla-did-service}
 
 DID Service is the witness behind every entity's identifier. Each entity signs
-its own [`did:webvh`](../references.md#identifiers-and-keys) log; DID Service validates each new entry and adds a
-witness proof, without which no resolver accepts the entry. It also resolves
-the identifier along with the key history behind it, and publishes through the
-same CDN Trust Registry uses.
+its own [`did:webvh`][identifiers-and-keys] log on its own domain; DID Service
+validates each new entry and signs a witness proof using the witness key in
+Trust Authority's HSM. Without that proof, no resolver accepts the entry. It also
+resolves `did:webvh` and `did:key` for any Module that needs them, caching the
+results so resolution rarely touches the network. No DID artifacts sit on the
+central CDN; each entity hosts its own log.
 
-- **Service:** Trust Infrastructure
-- **Built as:** REST API, database, object storage, CDN
+- **System Model:** Trust Infrastructure
+- **Built as:** REST API, database, object storage
 - **Run by:** Root Authority
 - **How many:** One
-- **Inside it:** [Section 2.4.3, DID Service](../software-architecture/components-inside-a-module.md#243-did-service)
+- **Inside it:** [DID Service][sa-did-service]
 
-## 3.2 What is not a Module
+## What is not a Module {#what-is-not-a-module}
 
 Six things get called Modules in conversation and are not. Each is a component
 or a library living inside a Module, and none of them ships or is deployed on
 its own.
 
+<figure markdown="1" class="ekdn-table">
+
 | Name | What it actually is | Described in |
 |---|---|---|
-| Claims Provider | The component in Issuer Core that faces an institution's own source system | [Section 2.1](../software-architecture/components-inside-a-module.md#21-issuer-services) |
-| Signing Provider | The component that signs through the entity's Key Manager | [Section 2.1](../software-architecture/components-inside-a-module.md#21-issuer-services) and [Section 2.3](../software-architecture/components-inside-a-module.md#23-verifier-services) |
-| Key Manager | The component that generates, stores, rotates, and registers an entity's keys | [Section 2.1](../software-architecture/components-inside-a-module.md#21-issuer-services), [Section 2.2](../software-architecture/components-inside-a-module.md#22-wallet-services), and [Section 2.3](../software-architecture/components-inside-a-module.md#23-verifier-services) |
-| Cryptographic Provider | The Key Manager driver: an encrypted software keystore by default, a cloud KMS, or an HSM over PKCS#11 | [Section 2.1](../software-architecture/components-inside-a-module.md#21-issuer-services) |
-| Trust SDK | A library, published in Go and Dart, embedded in four Modules | [Section 2.5](../software-architecture/components-inside-a-module.md#25-trust-sdk) |
-| Reader SDK | A Dart library that reads an mdoc in proximity, embedded in Mobile Verifier or a Relying Party's own app | [Section 2.3.3](../software-architecture/components-inside-a-module.md#233-mobile-verifier) |
+| Claims Provider | The component in Issuer Core that faces an institution's own source system | [Issuer Services][sa-issuer-services] |
+| Signing Provider | The component that signs through the entity's Key Manager | [Issuer Services][sa-issuer-services] and [Verifier Services][sa-verifier-services] |
+| Key Manager | The component that generates, stores, rotates, and registers an entity's keys | [Issuer Services][sa-issuer-services], [Wallet Services][sa-wallet-services], and [Verifier Services][sa-verifier-services] |
+| Cryptographic Provider | The Key Manager driver: an encrypted software keystore by default, a cloud KMS, or an HSM over PKCS#11 | [Issuer Services][sa-issuer-services], [Wallet Services][sa-wallet-services], and [Verifier Services][sa-verifier-services] |
+| Trust SDK | A library, published in Go and Dart, embedded in four Modules | [Trust SDK][sa-trust-sdk] |
+| Reader SDK | A Dart library that reads an mdoc in proximity, embedded in Mobile Verifier or a Relying Party's own app | [Mobile Verifier][sa-mobile-verifier] |
+
+</figure>
 
 Claims Provider is the interesting case, because it is the one component whose
 contents differ at every installation: each institution's source system is its
@@ -225,15 +242,25 @@ own. It may be deployed as a separate process when that source system is heavy
 enough to warrant it, and it still belongs to Issuer Core. Deploying something
 separately does not make it a Module.
 
-## 3.3 Who may call whom
+## Who may call whom {#who-may-call-whom}
 
-Nothing in the code stops one Module from calling another. The architecture
-therefore states, for every Module, which Modules it may call and which it may
-not, so that the boundary is something a test can check rather than something a
-developer has to remember.
+The architecture states, for every Module, which Modules it may call and
+which it may not, so that the boundary is something a test can check rather
+than something a developer has to remember.
 
-The table below states that permission once for each Module. Trust Registry
-and DID Service share one row, because the rule is identical for both of them.
+[The table of permitted calls][tbl-permitted-calls] states that permission
+once for each Module. The *May call* column is an exhaustive list: any call not
+listed there is prohibited by default (which is why Verifier Core may not call
+Wallet Backend Service, even where that pair is not named under *May not call*).
+The *May not call* column names the specific prohibitions that are enforced
+automatically in the continuous integration pipeline and fail the build. In
+[the grid of permitted and forbidden calls][fig-module-call-matrix], blank
+cells represent calls that never arise under this rule. Trust Registry and DID
+Service share one row, because the rule is identical for both of them.
+
+[](){ #tbl-permitted-calls }
+
+<figure markdown="1" class="ekdn-table">
 
 | Module | May call | May not call |
 |---|---|---|
@@ -243,9 +270,11 @@ and DID Service share one row, because the rule is identical for both of them.
 | Wallet Backend Service | CONNECTIDN, Trust Registry, DID Service, the device platform, its own Key Manager; Trust Authority and DID Service to register or rotate keys | Issuer Core, Verifier Core |
 | Verifier Core | Trust Registry, DID Service, the issuer's status list (a static file), the Relying Party application, its own Key Manager; Trust Authority and DID Service to register or rotate keys | Issuer Core |
 | Verifier Console | Verifier Core's Admin API | Any database, any other Module |
-| Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
+| Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); DID Service (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
 | Trust Authority | Trust Registry, DID Service | Any Module outside Trust Infrastructure |
 | Trust Registry, DID Service | Nothing | Any Module outside Trust Infrastructure; none of them ever calls an entity back |
+
+</figure>
 
 Four of the prohibitions above are not left to code review either. The pipeline
 tests them automatically, and a violation fails the build: Verifier Core calling
@@ -253,50 +282,63 @@ Issuer Core, Issuer Core calling Wallet Backend Service, a Console calling a
 database directly, and a Module inside Trust Infrastructure calling a Module
 outside it.
 
-<figure markdown="1" id="figure-3-2">
+[](){ #fig-module-call-matrix }
+
+<figure markdown="1">
   ![Matrix of which Module may call which](../../images/architecture-framework/high-level-architecture/module-dependencies.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 3.2</span> Every permitted and forbidden call in one grid.</figcaption>
+  <figcaption><span class="ekdn-fignum"></span> Every Module-to-Module call, permitted or forbidden, in one grid.</figcaption>
 </figure>
 
-Read the last three rows of [Figure 3.2](#figure-3-2) across. No Module of Trust
-Infrastructure may call anything outside it, which is the claim
-[Section 2.2, The trust path](transaction-path-and-trust-path.md#22-the-trust-path)
-makes in prose.
+[The grid of permitted and forbidden calls][fig-module-call-matrix] shows that
+no Module of Trust Infrastructure may call anything outside it, which is the
+claim [the trust path][the-trust-path] makes in prose.
 
 What sits inside each Module is a separate question, answered in
-[Section 2, Components inside a Module](../software-architecture/components-inside-a-module.md).
+[Components inside a Module](../software-architecture/components-inside-a-module.md).
 
-## 3.4 Network zones and placement
+## Network zones and placement {#network-zones-and-placement}
 
 Every Module sits in one of five network zones, and the zone is what decides
-who can reach it. The zones are ordered by exposure. The two applications sit
-in the open Internet, and each step inward admits fewer callers, ending in a
-zone that admits exactly one.
+who can reach it. [The network zones][fig-network-zones] are ordered by
+exposure. The two applications sit in the open Internet, and each step inward
+admits fewer callers, ending in a zone that admits exactly one.
 
-Read the third column first. It is the one that carries the design, because a
-zone is defined by who is let in rather than by where the hardware is.
+[The zone table][tbl-network-zones]'s third column carries the design,
+because a zone is defined by who is let in rather than by where the hardware
+is.
 
-<figure markdown="1" id="figure-3-3">
+[](){ #fig-network-zones }
+
+<figure markdown="1">
   ![The five network zones, with each Module placed in one of them](../../images/architecture-framework/high-level-architecture/network-zones.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum">Figure 3.3</span> The five network zones, with each Module placed in the zone that decides who can reach it.</figcaption>
+  <figcaption><span class="ekdn-fignum"></span> The five network zones, with each Module placed in the zone that decides who can reach it.</figcaption>
 </figure>
 
-- **The two dotted risers are one Module, not two.** Issuer Core and Verifier
-  Core answer their protocol endpoint in the public zone and their Admin API in
-  the internal one, which is [Section 3.4.1](#341-one-application-two-doors).
-- **The secure zone admits one caller.** Everything in it is reached by Trust
-  Authority and by nothing else, which is why Trust Authority's HSM and both CA
-  roots sit behind the same boundary.
+- **The dotted risers are one Module, not two.** Issuer Core, Verifier Core,
+  and DID Service answer their protocol endpoints in the public zone and their
+  Admin API in the internal one, which is
+  [one application, two doors][one-application-two-doors].
+- **The secure zone admits Trust Authority and DID Service's Log Service.**
+  Trust Authority's HSM holds both CA roots, the trusted list and VICAL keys,
+  the Accreditation Credential key, and a separate partition for the did:webvh
+  witness key. Log Service is the sole user of that witness key partition;
+  everything else in the secure zone is reached by Trust Authority alone.
 - **The last zone is drawn detached** because it is not the ecosystem's
   network. Claims Provider is the one thing that enters it, and it only reads.
+
+[](){ #tbl-network-zones }
+
+<figure markdown="1" class="ekdn-table">
 
 | Zone | What is in it | Who reaches it |
 |---|---|---|
 | Internet | Mobile Wallet, Mobile Verifier | Citizens, merchants, counter staff of a Relying Party |
-| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules |
-| Internal | Issuer Console, Verifier Console, Admin API, Trust Authority (back office and portal), databases, caches, Claims Provider | An operator, over VPN or the office network |
-| Secure | Trust Authority's HSM: both offline CA roots, the trusted list and VICAL keys, the Accreditation Credential key, the did:webvh witness key | Trust Authority only |
+| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, DID Service's Publisher and Resolver endpoints, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules |
+| Internal | Issuer Console, Verifier Console, Admin API (Issuer Core, Verifier Core, DID Service), Trust Authority (back office and portal), databases, caches, Claims Provider | An operator, over VPN or the office network |
+| Secure | Trust Authority's HSM: both offline CA roots, the trusted list and VICAL keys, the Accreditation Credential key, and in a separate partition, the did:webvh witness key | Trust Authority; DID Service's Log Service (witness key partition only) |
 | Closed agency network | Source systems | Claims Provider only, and read-only |
+
+</figure>
 
 Only protocol endpoints are public. Nothing is placed in the public zone for
 convenience, which is why the databases, the Consoles, and the Admin API all
@@ -308,13 +350,13 @@ agency that runs it, and the architecture reaches into that network at exactly
 one point: Claims Provider, reading and never writing. That is the only
 component in the ecosystem that crosses an organizational boundary.
 
-### 3.4.1 One application, two doors
+### One application, two doors {#one-application-two-doors}
 
-A Core Module answers two kinds of caller that have nothing in common. A wallet
-arrives from the Internet with no credentials of its own; an operator arrives
-from the office network already authenticated. Issuer Core and Verifier Core
-therefore expose their public protocol endpoint on one ingress and their Admin
-API on a separate one.
+A Core or infrastructure Module answers two kinds of caller that have nothing in
+common. A wallet arrives from the Internet with no credentials of its own; an
+operator arrives from the office network already authenticated. Issuer Core,
+Verifier Core, and DID Service therefore expose their public protocol endpoints
+on one ingress and their Admin API on a separate one.
 
 The separation is what makes the placement enforceable. Without it, the Admin
 API would be reachable from wherever the protocol endpoint is reachable, and a

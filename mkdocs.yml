@@ -114,6 +114,12 @@ plugins:
           copyright: Copyright &copy; 2026 Indonesia Digital Credential Trust Framework
   - search:
       separator: '[\s​\-_,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  # Cross-references by identifier. Every heading, and every `[](){ #id }`
+  # anchor above a figure or a table, is registered site-wide, so a page cites
+  # another with `[descriptive text][the-id]` and no path. Moving a page or
+  # renaming a file breaks nothing, and an identifier that does not resolve, or
+  # one declared twice, is a warning — an error under `--strict`.
+  - autorefs
   - minify:
       minify_html: true
 
@@ -181,8 +187,9 @@ nav:
       - architecture-framework/high-level-architecture/system-models.md
       - architecture-framework/high-level-architecture/transaction-path-and-trust-path.md
       - architecture-framework/high-level-architecture/module-map.md
-      - architecture-framework/high-level-architecture/architecture-on-the-device.md
       - architecture-framework/high-level-architecture/flows-per-use-case.md
+      - architecture-framework/high-level-architecture/architecture-on-the-device.md
+
     - "Software Architecture":
       - architecture-framework/software-architecture/index.md
       - architecture-framework/software-architecture/layers-inside-a-module.md
@@ -212,20 +219,6 @@ nav:
       - architecture-framework/trust-model/two-assurance-levels.md
       - architecture-framework/trust-model/keys-who-creates-who-signs.md
       - architecture-framework/trust-model/trust-model-scope.md
-    - "Module Guides":
-      - architecture-framework/module-guides/index.md
-      - architecture-framework/module-guides/issuer-core.md
-      - architecture-framework/module-guides/issuer-console.md
-      - architecture-framework/module-guides/mobile-wallet.md
-      - architecture-framework/module-guides/wallet-backend-service.md
-      - architecture-framework/module-guides/verifier-core.md
-      - architecture-framework/module-guides/verifier-console.md
-      - architecture-framework/module-guides/mobile-verifier.md
-      - architecture-framework/module-guides/trust-authority.md
-      - architecture-framework/module-guides/trust-registry.md
-      - architecture-framework/module-guides/did-service.md
-      - architecture-framework/module-guides/trust-sdk.md
-    - architecture-framework/open-decisions-and-technical-debt.md
     - architecture-framework/references.md
   # The four documents below are parked: each is one page carrying its title
   # and a `(soon)` marker, so the tab is visible and says what it will hold.

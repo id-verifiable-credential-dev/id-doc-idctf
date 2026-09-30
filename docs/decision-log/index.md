@@ -5,7 +5,7 @@ description: "IDCTF-DL: every settled decision, numbered, with the status that s
 
 <!-- Sumber: IDCTF-AF — Architecture Framework, §0 -->
 
-# Decision Log
+# Decision Log {#decision-log}
 
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-DL</code>. Every decision the ecosystem has settled, numbered so the

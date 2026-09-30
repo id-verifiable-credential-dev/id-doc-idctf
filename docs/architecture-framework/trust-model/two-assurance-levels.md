@@ -4,14 +4,14 @@ title: "Two assurance levels"
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5.6, Kep. 13 -->
 
-# 6. Two assurance levels
+# Two assurance levels {#two-assurance-levels}
 
 <p class="ekdn-soon">(soon)</p>
 
-## 6.1 `issuer_assurance`: the issuer signing key
+## `issuer_assurance`: the issuer signing key {#issuer-assurance}
 
 <p class="ekdn-soon">(soon)</p>
 
-## 6.2 `min_assurance`: the holder key on a citizen's device
+## `min_assurance`: the holder key on a citizen's device {#min-assurance}
 
 <p class="ekdn-soon">(soon)</p>

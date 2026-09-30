@@ -4,11 +4,11 @@ title: "Trust Model"
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5 -->
 
-# Trust Model
+# Trust Model {#trust-model}
 
 <p class="ekdn-soon">(soon)</p>
 
-## Chapter contents
+## Chapter contents {#tm-chapter-contents}
 
 1. [Chain of trust](chain-of-trust.md)
 2. [Two trust anchor paths: DID and X.509](two-trust-anchor-paths.md)
