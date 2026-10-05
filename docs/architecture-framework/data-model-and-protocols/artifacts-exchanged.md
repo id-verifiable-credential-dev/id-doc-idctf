@@ -302,9 +302,12 @@ platform vouches for, and it carries the resistance values the Governance
 Profile maps assurance onto. For a Rulebook that asks only for `low`, an
 ordinary proof JWT is enough and no attestation is needed.
 
-The daily cadence is itself the revocation mechanism. An installation that stops
-being reissued stops working when its current attestation expires, with no
-revocation list to distribute and no message that has to arrive.
+The daily cadence is itself the revocation mechanism, and it reaches issuance
+alone. An installation that stops being reissued can obtain no further
+credential once its current attestation expires, with no revocation list to
+distribute and no message that has to arrive. The credentials it already holds
+go on being presented: no verifier reads a Key Attestation, so reaching those is
+the issuer's job, through the status list its own revocation sets.
 
 ### Verifier Device Certificate {#verifier-device-certificate}
 

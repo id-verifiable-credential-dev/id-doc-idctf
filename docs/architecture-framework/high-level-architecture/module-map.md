@@ -268,7 +268,7 @@ Service share one row, because the rule is identical for both of them.
 | Issuer Console | Issuer Core's Admin API | Any database, any other Module |
 | Mobile Wallet | Issuer Core, Verifier Core, Mobile Verifier, Wallet Backend Service, Trust Registry (cache), DID Service (cache), CONNECTIDN | Trust Authority |
 | Wallet Backend Service | CONNECTIDN, Trust Registry, DID Service, the device platform, its own Key Manager; Trust Authority and DID Service to register or rotate keys | Issuer Core, Verifier Core |
-| Verifier Core | Trust Registry, DID Service, the issuer's status list (a static file), the Relying Party application, its own Key Manager; Trust Authority and DID Service to register or rotate keys | Issuer Core |
+| Verifier Core | Trust Registry (cache), DID Service (cache), the issuer's status list (cache, a static file), the Relying Party application, its own Key Manager; Trust Authority and DID Service to register or rotate keys, never during a transaction | Issuer Core |
 | Verifier Console | Verifier Core's Admin API | Any database, any other Module |
 | Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); DID Service (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
 | Trust Authority | Trust Registry, DID Service | Any Module outside Trust Infrastructure |

@@ -101,9 +101,10 @@ specification.
 ## Progress {#progress}
 
 Only the Architecture Framework is being written. Roles, High-Level Architecture,
-Data Model and Protocols, and References are done; Software Architecture is part
-written. 19 of 56 pages carry prose. A page whose prose is unwritten carries a
-`(soon)` marker and holds section headings only.
+Data Model and Protocols, the Glossary, and References are done; Software
+Architecture is part written, and the Trust Model has not started. 22 of 45 pages
+carry prose. A page whose prose is unwritten carries a `(soon)` marker and holds
+section headings only.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -114,6 +115,7 @@ written. 19 of 56 pages carry prose. A page whose prose is unwritten carries a
 | `IDCTF-AF` | [Software Architecture](architecture-framework/software-architecture/index.md) | <span class="ekdn-status ekdn-status--drafting"><span class="dot"></span>Drafting</span> |
 | `IDCTF-AF` | [Data Model and Protocols](architecture-framework/data-model-and-protocols/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-AF` | [Trust Model](architecture-framework/trust-model/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
+| `IDCTF-AF` | [Glossary](architecture-framework/glossary.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-AF` | [References](architecture-framework/references.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Written</span> |
 | `IDCTF-TS-nn` | [Technical Specifications](technical-specifications/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 | `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |

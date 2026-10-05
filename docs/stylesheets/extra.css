@@ -59,6 +59,29 @@
   --md-mermaid-label-bg-color: var(--ekdn-surface);
   --md-mermaid-label-fg-color: var(--ekdn-ink);
 
+  /* Sequence diagrams: the step flows in flows-per-use-case (tracks/0092).
+     Mermaid's own defaults put a pale digit on a pale circle for `autonumber`
+     and a light gray on white for the message text, both of which are
+     unreadable at the size the figure renders at. These are set once and not
+     repeated in the slate block below: each one resolves through an
+     `--ekdn-*` variable, and the slate block already redefines those. */
+  --md-mermaid-sequence-actor-bg-color: var(--ekdn-tint);
+  --md-mermaid-sequence-actor-fg-color: var(--ekdn-ink);
+  --md-mermaid-sequence-actor-border-color: var(--md-primary-fg-color);
+  --md-mermaid-sequence-actor-line-color: var(--ekdn-rule);
+  --md-mermaid-sequence-message-fg-color: var(--ekdn-ink);
+  --md-mermaid-sequence-message-line-color: var(--ekdn-label);
+  --md-mermaid-sequence-number-bg-color: var(--ekdn-ink);
+  --md-mermaid-sequence-number-fg-color: var(--ekdn-surface);
+  --md-mermaid-sequence-note-bg-color: var(--ekdn-tint);
+  --md-mermaid-sequence-note-fg-color: var(--ekdn-ink);
+  --md-mermaid-sequence-note-border-color: var(--ekdn-tint-line);
+  --md-mermaid-sequence-loop-bg-color: var(--ekdn-surface);
+  --md-mermaid-sequence-loop-fg-color: var(--ekdn-ink);
+  --md-mermaid-sequence-loop-border-color: var(--ekdn-rule);
+  --md-mermaid-sequence-label-bg-color: var(--ekdn-tint);
+  --md-mermaid-sequence-label-fg-color: var(--ekdn-ink);
+
   /* Footer mengikuti badan halaman — putih dengan garis rambut, bukan blok
      gelap bawaan tema, sama seperti footer situs BLPID. */
   --md-footer-bg-color: #ffffff;
@@ -667,7 +690,6 @@ html {
 
 .md-typeset h3 {
   color: var(--ekdn-ink-soft);
-  font-size: 1rem;
   font-weight: 600;
   line-height: 1.375;
   letter-spacing: -0.0125em;
@@ -1016,7 +1038,7 @@ html {
    bukan dengan menarik spanduk keluar lewat margin negatif: margin negatif
    berpasangan dengan `display: grid` tidak menggeser kotaknya. */
 .md-typeset .ekdn-banner::after {
-  border-bottom: 1px solid var(--ekdn-rule);
+  
   bottom: 0;
   content: "";
   left: 50%;
@@ -1376,7 +1398,7 @@ html {
    hasilnya dua garis bertumpuk, jadi yang atas dilepas. */
 .md-typeset table:not([class]) td {
   border-top: 0;
-  border-bottom: 1px solid var(--ekdn-rule);
+  
   padding: 0.7rem 0.8rem;
   vertical-align: top;
 }
@@ -1586,4 +1608,38 @@ html {
     opacity: 1;
     transform: translateX(60px);
   }
+}
+
+/* ==========================================================================
+   Glossary two-column layout
+   ========================================================================== */
+
+.glossary-list dl {
+  display: grid;
+  grid-template-columns: 30% 70%;
+  border-top: 1px solid var(--ekdn-rule);
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.glossary-list dt {
+  padding: 1.5rem 1rem 1.5rem 0;
+  
+  font-weight: 400;
+  margin: 0;
+  color: var(--ekdn-ink);
+}
+
+.glossary-list dd {
+  padding: 1.5rem 0;
+  
+  margin: 0;
+  color: var(--ekdn-muted);
+}
+
+.glossary-list .glossary-meta {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--ekdn-faint, #757575);
 }

@@ -45,7 +45,8 @@ Issuance starts with a credential offer and runs on OpenID4VCI 1.0, with the
 pushed authorization request (PAR) endpoint mandatory. The authorization step
 is secured by Proof Key for Code Exchange (PKCE); depending on the offer, the
 wallet redeems either a pre-authorized code with the `tx_code` a citizen types
-in, or an authorization code. Either way, DPoP binds the access token to the
+in, or an authorization code. Either way, Demonstrating Proof of Possession
+(DPoP) binds the access token to the
 key that requested it, using a nonce the issuer's nonce endpoint supplies. An
 attestation plays no part in it: attestation-based client authentication at the
 PAR and token endpoints is still an Internet-Draft, so it stays out. Proof of
@@ -62,7 +63,7 @@ Presentation runs on OpenID4VP 1.0. The verifier states what it wants with
 Digital Credentials Query Language (DCQL), which replaced Presentation
 Exchange, and sends the request as a `request_uri` with the response returned
 through `direct_post.jwt`. The wallet proves the presented credential is bound
-to a key it holds with a Key Binding JSON Web Token (JWT). How the verifier
+to a key it holds with a Key Binding JWT (KB-JWT). How the verifier
 introduces itself is carried in the shape of `client_id`. A Relying Party or an
 RP Intermediary uses `decentralized_identifier` and resolves to a decentralized
 identifier (DID) from [Identifier](identifier.md). A merchant uses
@@ -173,12 +174,30 @@ is the outcome.
 Online and offline presentation use different protocols, different formats,
 and different trust anchors. Online presentation is handled by Verifier Core
 for server-based Relying Parties, and by Mobile Verifier for merchants and
-counter operators (with Verifier Core relaying the exchange). In both online
-paths, the verifier checks trust and revocation fresh over the network.
-Offline presentation is served only on a device: Mobile Verifier, run from a
+counter operators (with Verifier Core relaying the exchange). Offline
+presentation is served only on a device: Mobile Verifier, run from a
 merchant's counter device or from a Relying Party's own, or a Relying Party's
 own app built on the Reader SDK. That is why "zero network calls" in the
 offline column holds for every offline device.
+
+What does not differ is where the trust data comes from. Neither path asks
+Trust Infrastructure anything while a transaction runs, which is
+[the two paths never cross][the-two-paths-never-cross]: the trusted list, the
+status list, and the answer to a permission query are all read from a local
+cache filled beforehand. Online the verifier is reachable and offline it is
+not, so what separates the two columns is how stale that cache is allowed to
+get, not whether it is used.
+
+Three things keep it current, and none of them runs inside a transaction. A
+[scheduled sync][trust-registry-and-status-list-sync] pulls the trusted list,
+the VICAL, and the status list on a timer, every twenty-four hours or when the
+device reaches an unmetered network. A Time to Live (TTL) set by the
+credential's risk profile decides how long a cached copy still counts, which
+is short for a verifier that is online anyway and runs to the tolerance limit
+the Governance Framework sets for one that is not. And an incident waits for
+neither: on a key compromise Trust Registry publishes an emergency trusted
+list within the hour and notifies verifiers directly, the first phase of
+[entity key revocation][entity-key-revocation].
 
 [](){ #fig-online-and-offline }
 
@@ -193,16 +212,16 @@ offline column holds for every offline device.
 
 | | Online | Offline (proximity) |
 |---|---|---|
-| Verifier | Verifier Core, or Mobile Verifier | Mobile Verifier, or Reader SDK |
+| Verifier | Verifier Core, or Mobile Verifier | Mobile Verifier, or a Relying Party's own app built on the Reader SDK |
 | Protocol | OpenID4VP 1.0 with DCQL | ISO/IEC 18013-5 |
 | Transport | HTTPS: QR code or deep link, `request_uri`, `direct_post.jwt` | Engagement over QR or NFC, an encrypted BLE session |
 | Format | SD-JWT VC and `ldp_vc` | mdoc only |
-| Holder binding | Key Binding JWT (`nonce`, `aud`) checked against `cnf` | DeviceAuth checked against `DeviceKey` and SessionTranscript |
+| Holder binding | SD-JWT VC: a KB-JWT (`nonce`, `aud`) checked against `cnf`. `ldp_vc`: a Data Integrity proof at presentation level, checked against `challenge` and `domain` | DeviceAuth checked against `DeviceKey` and SessionTranscript |
 | Wallet checks the verifier | A DID for an accredited verifier, a certificate for a merchant | A certificate, for every device |
 | Wallet checks the purpose | The Use Statement, in `verifier_info` | The same Use Statement, in `requestInfo` |
-| Verifier checks the issuer | The issuer's DID Document, the trusted list, and a TRQP query | `x5chain` chained to the Issuer Root CA, or checked against VICAL |
-| Status | Fetched fresh | Read from cache |
-| Network calls | Yes | Zero |
+| Verifier checks the issuer | The issuer's DID Document, the trusted list, and a cached TRQP answer | `x5chain` chained to the Issuer Root CA, or checked against VICAL |
+| Status | Read from cache, on a short TTL | Read from cache, until the next sync |
+| Network calls | The presentation exchange only | Zero |
 | Result | Passed to the RP application over OpenID Connect or SAML, or read on the Mobile Verifier screen | Read on the Mobile Verifier screen |
 
 </figure>
@@ -220,8 +239,11 @@ in mind, so every device there chains its certificate to the Verifier Root CA,
 with the issuing CA on the trusted list. That is the one place a merchant and
 an accredited verifier carry the same kind of proof. And the status list is the
 hardest of the three, because a proximity transaction makes no network call in
-either direction: online it is fetched fresh, with a Time to Live (TTL) set by
-risk; offline it is read from a cache whose staleness has no set limit yet.
+either direction. Both columns read it from cache, so the cost is the window
+between the last sync and the presentation: online that window is one short
+TTL, because the device is reachable and refreshes on its own; offline it runs
+to whatever tolerance limit the Governance Framework sets, and that number is
+not fixed yet. A credential revoked inside the window still verifies.
 
 The purpose row carries no cost of its own. The wallet checks the
 citizen-facing purpose the same way face to face as it does online: the same

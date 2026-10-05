@@ -239,8 +239,9 @@ a statement of the obligation and not as evidence that anything satisfies it.
 3. [Module Map](module-map.md), the ten Modules, what each is
    built as and who runs it, who may call whom, and the network zone each is
    placed in
-4. [Flows per use case](flows-per-use-case.md), the flows from entity
-   onboarding through incident key revocation
+4. [Flows per use case](flows-per-use-case.md), the thirteen flows, from
+   entity onboarding and incident key revocation through issuance,
+   verification, and the lifetime of a wallet on one citizen's phone
 5. [Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md),
    the four parts of an application, and what the Governance Profile fixes
 

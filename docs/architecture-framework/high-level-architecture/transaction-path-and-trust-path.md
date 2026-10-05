@@ -132,10 +132,13 @@ reads it before issuing a credential that demands one. Verifier Core issues a
 Verifier Device Certificate, Mobile Verifier carries it, and Mobile Wallet
 reads it before releasing an attribute to that device.
 
-On the wallet side the daily cadence is itself the revocation mechanism. An
-installation that stops being reissued stops working when its current
-attestation expires, with no revocation list to distribute and no message that
-has to arrive. A merchant certificate lives longer than a day, so it is
+On the wallet side the daily cadence is itself the revocation mechanism, and it
+reaches issuance alone. An installation that stops being reissued can obtain no
+further credential once its current attestation expires, with no revocation list
+to distribute and no message that has to arrive. The credentials it already
+holds go on being presented, because no verifier reads a Key Attestation, and
+reaching those is the issuer's job through its status list. A merchant
+certificate lives longer than a day, so it is
 withdrawn the ordinary [X.509][certificates-and-revocation]
 way instead: the intermediary publishes a certificate revocation list (CRL),
 and the wallet checks its cached copy.

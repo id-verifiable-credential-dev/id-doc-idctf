@@ -82,3 +82,6 @@ driver: an encrypted software keystore by default, a cloud KMS, or an HSM over
 4. [Artifacts exchanged](artifacts-exchanged.md), every artifact that
    crosses between two parties, who publishes it, who reads it, where it sits,
    and how long it lasts
+5. [Credential lifecycle](credential-lifecycle.md), what ends a
+   credential's life early: its own expiry, status list revocation, a
+   compromised signing key, and a lost or replaced device

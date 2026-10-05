@@ -209,6 +209,7 @@ nav:
       - architecture-framework/data-model-and-protocols/identifier.md
       - architecture-framework/data-model-and-protocols/protocols-and-modes.md
       - architecture-framework/data-model-and-protocols/artifacts-exchanged.md
+      - architecture-framework/data-model-and-protocols/credential-lifecycle.md
     - "Trust Model":
       - architecture-framework/trust-model/index.md
       - architecture-framework/trust-model/chain-of-trust.md
@@ -219,6 +220,7 @@ nav:
       - architecture-framework/trust-model/two-assurance-levels.md
       - architecture-framework/trust-model/keys-who-creates-who-signs.md
       - architecture-framework/trust-model/trust-model-scope.md
+    - architecture-framework/glossary.md
     - architecture-framework/references.md
   # The four documents below are parked: each is one page carrying its title
   # and a `(soon)` marker, so the tab is visible and says what it will hold.

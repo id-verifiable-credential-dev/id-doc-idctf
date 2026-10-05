@@ -1,9 +1,9 @@
 ---
 title: Flows per use case
-description: The minimum path through each use case, from entity onboarding to key revocation, and which of them run without reaching Trust Infrastructure.
+description: The minimum path through each use case, from entity onboarding to citizen-initiated revocation, and which of them run without reaching Trust Infrastructure.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, Section 7, Kep. 5, 9, 28, 30; siklus hidup kredensial belum ada di draft -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, Section 7, Kep. 5, 9, 28, 30 -->
 
 # Flows per use case {#flows-per-use-case}
 
@@ -17,76 +17,70 @@ with the wire format.
 Every flow holds to [the two paths never cross][the-two-paths-never-cross]:
 nothing in Trust Infrastructure is called while a transaction runs.
 
-## 1. Trust Ecosystem & Infrastructure
+## Trust ecosystem and infrastructure {#trust-ecosystem-and-infrastructure}
 
 ### Entity onboarding {#entity-onboarding}
 
 Onboarding brings a new entity into the control plane, the step that has to
 happen before the entity can sign anything on the transaction path. The entity
-generates its own keys, and Trust Authority, Decentralized Identifier (DID) Service, and Trust Registry
-each play a distinct part in accepting them. The entity onboarding flow is shown in Figure 1.
+generates its own keys, and Trust Authority, Decentralized Identifier (DID)
+Service, and Trust Registry each play a distinct part in accepting them.
+
+[](){ #fig-entity-onboarding }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef ta fill:#fce7f3,stroke:#db2777,stroke-width:2px,rx:8px,ry:8px;
-    classDef did fill:#dcfce7,stroke:#16a34a,stroke-width:2px,rx:8px,ry:8px;
-    classDef tr fill:#fef3c7,stroke:#d97706,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS (Aktor)
-        Ent["<font color='black'>🏢 Entity (with Key Manager)</font>"]:::entity
-        TA["<font color='black'>🏛️ Trust Authority</font>"]:::ta
-        DID["<font color='black'>📇 DID Service</font>"]:::did
-        TR["<font color='black'>📖 Trust Registry</font>"]:::tr
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Submit onboarding request</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Generate keys</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Submit genesis DID</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Return witness proof</font>"):::stepNode
-        S5a("<font color='black'>(5a)<br/>Request DSC</font>"):::stepNode
-        S5b("<font color='black'>(5b)<br/>Return DSC</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Register entity authority</font>"):::stepNode
-        S7a("<font color='black'>(7)<br/>Return accreditation</font>"):::stepNode
-        S7b("<font color='black'>(8)<br/>Publish DID document</font>"):::stepNode
-
-        %% RELASI ALUR
-        Ent --> S1 --> TA
-        Ent -.-> S2
-        Ent --> S3 --> DID
-        DID --> S4 --> Ent
-        Ent --> S5a --> TA
-        TA --> S5b --> Ent
-        TA --> S6 --> TR
-        TR --> S7 --> Ent
-        Ent -.-> S8
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant Ent as Entity
+    participant TA as Trust Authority
+    participant DID as DID Service
+    participant TR as Trust Registry
+    Ent->>TA: Submit the onboarding request
+    Ent->>Ent: Generate its own keys
+    Ent->>DID: Submit the genesis identifier
+    DID-->>Ent: Return the witness proof
+    Ent->>TA: Request a signing certificate
+    TA-->>Ent: Issue the Document Signer Certificate
+    TA->>TR: Record the entity's authority
+    TA-->>Ent: Issue the Accreditation Credential
+    TR->>TR: Publish the new trusted list
+    Ent->>Ent: Publish its DID Document
 ```
 
-**Figure 1 Entity Onboarding Flow**
+<figcaption><span class="ekdn-fignum"></span> Entity onboarding, from the request to Trust Authority through to the DID Document the entity publishes.</figcaption>
+</figure>
 
-1. The entity initiates the process to submit an onboarding request by sending `POST /entities` to Trust Authority, supplying its legal-entity documentation and a conformance test.
+1. The entity sends `POST /entities` to Trust Authority, supplying its
+   legal-entity documentation and a conformance test.
 
-2. The entity's Key Manager proceeds to generate keys—specifically `issuance-jose`, `issuance-cose`, and an Ed25519 update key—in whichever driver the entity uses, such as an encrypted software keystore, a cloud Key Management Service (KMS), or a Hardware Security Module (HSM). (Illustrated for an Issuer; Relying Parties and Wallet Providers generate their respective keys according to their registered role).
+2. The entity's Key Manager generates `issuance-jose`, `issuance-cose`, and an
+   Ed25519 update key in whichever driver the entity uses: an encrypted
+   software keystore, a cloud Key Management Service (KMS), or a Hardware
+   Security Module (HSM). The keys shown are an Issuer's; a Relying Party or a
+   Wallet Provider generates the keys of its own registered role.
 
-3. The entity then must submit its genesis DID by sending the `did.jsonl` document, a proof of possession for each key, and the `keyStorage` to the DID Service.
+3. The entity submits its genesis DID to DID Service, sending the `did.jsonl`
+   document, a proof of possession for each key, and the `keyStorage` value.
 
-4. In response, the DID Service will return a witness proof signed with `eddsa-jcs-2022`.
+4. DID Service returns a witness proof signed with `eddsa-jcs-2022`.
 
-5. The entity will then request, and Trust Authority will return, a Document Signer Certificate (DSC) for the mdoc path after receiving a certificate signing request (CSR) from the `issuance-cose` key.
+5. The entity sends Trust Authority a Certificate Signing Request (CSR) from
+   the `issuance-cose` key, for the mdoc path.
 
-6. To register entity authority, Trust Authority sends an Authority Statement to Trust Registry, naming the specific action and resource, together with the public keys and `keyStorage`.
+6. Trust Authority returns a Document Signer Certificate (DSC).
 
-7. Trust Registry returns the new trusted list and the Accreditation Credential to the entity.
+7. Trust Authority records an Authority Statement in Trust Registry, naming
+   the action and the resource, together with the public keys and the
+   `keyStorage` value.
 
-8. Finally, the entity can publish the DID document on its own domain.
+8. Trust Authority issues the entity its Accreditation Credential.
+
+9. Trust Registry publishes the new trusted list, which now carries the
+   entity's keys.
+
+10. The entity publishes its DID Document on its own domain.
 
 Rotation follows the same path: a new log entry, signed with the current update
 key and matching the pre-rotation hash, is witnessed before it counts. After
@@ -95,113 +89,101 @@ Infrastructure is not called once transactions start.
 
 ### Multi-tenant merchant onboarding {#multi-tenant-merchant-onboarding}
 
-This flow describes how a Relying Party Intermediary (acting as a Verifier Core) securely onboards a new sub-merchant. It establishes the trust binding between the merchant's physical device and the Intermediary's root authority without requiring the merchant to run complex backend infrastructure. The multi-tenant merchant onboarding flow is shown in Figure 2.
+This flow lets an RP Intermediary, which runs a Verifier Core, onboard a new
+merchant. It establishes the trust binding between the merchant's device
+certificate and the RP Intermediary's Verifier Issuing CA, without requiring
+the merchant to run infrastructure of its own.
+
+[](){ #fig-multi-tenant-merchant-onboarding }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MV["<font color='black'>📱 Mobile Verifier (Merchant)</font>"]:::wallet
-        VC["<font color='black'>🛡️ Verifier Core (Intermediary)</font>"]:::entity
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Authenticate tenant</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Generate key & PoP</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Submit onboarding request</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Validate business profile</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Issue device certificate</font>"):::stepNode
-
-        %% RELASI ALUR
-        MV --> S1 --> VC
-        MV -.-> S2
-        MV --> S3 --> VC
-        VC -.-> S4
-        VC --> S5 --> MV
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MV as Mobile Verifier
+    participant VC as Verifier Core
+    MV->>VC: Authenticate the merchant's tenant identity
+    MV->>MV: Generate a device key and prove possession of it
+    MV->>VC: Submit the onboarding request
+    VC->>VC: Validate the merchant's business profile
+    VC-->>MV: Issue the Verifier Device Certificate
 ```
 
-**Figure 2 Multi-Tenant Merchant Onboarding Flow**
+<figcaption><span class="ekdn-fignum"></span> Multi-tenant merchant onboarding, from tenant authentication through to the Verifier Device Certificate the merchant receives.</figcaption>
+</figure>
 
-1. The merchant downloads the Mobile Verifier application and authenticates their tenant identity against the Intermediary's portal (e.g., using standard OAuth or API keys).
+1. Mobile Verifier authenticates the merchant's tenant identity against the
+   RP Intermediary's portal, using OAuth or an API key.
 
-2. Upon successful login, the Mobile Verifier interacts with the device's secure hardware to generate a new key pair and a corresponding Proof of Possession (PoP).
+2. Mobile Verifier generates a key pair in the device's secure hardware,
+   producing a Proof of Possession (PoP) for the new key.
 
-3. The Mobile Verifier submits an onboarding request to the Verifier Core, attaching the PoP and the merchant's business profile.
+3. Mobile Verifier submits an onboarding request to Verifier Core, attaching
+   the PoP and the merchant's business profile.
 
-4. The Verifier Core validates the merchant's business status and permissions against its own internal tenant database, ensuring the merchant is authorized to request specific credential attributes.
+4. Verifier Core validates the merchant's business status and permissions
+   against its own tenant database, checking that the merchant is authorized
+   for the attributes it will request.
 
-5. Finally, the Verifier Core acts as an issuing authority (Sub-CA) and issues a Verifier Device Certificate to the Mobile Verifier. The certificate's `Subject` identifies the specific merchant, and its `ReaderAuthRole` extension cryptographically binds the allowed attribute request scope.
+5. Verifier Core issues the merchant a Verifier Device Certificate, cut from
+   the RP Intermediary's Verifier Issuing CA. Its `Subject` names the
+   merchant, and its `ReaderAuthRole` extension binds the certificate to the
+   allowed attribute request scope.
 
 ### Wallet registration and attestation {#wallet-registration-and-attestation}
 
 This flow registers a wallet installation with Wallet Backend Service and
-keeps it supplied with a Key Attestation, drawing on the device's own operating
-system or chip and on CONNECTIDN. The wallet registration flow is shown in Figure 3.
+keeps it supplied with a Key Attestation, drawing on the device's own
+operating system or chip and on CONNECTIDN.
+
+[](){ #fig-wallet-registration-and-attestation }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef wbs fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,rx:8px,ry:8px;
-    classDef connectidn fill:#ffedd5,stroke:#c2410c,stroke-width:2px,rx:8px,ry:8px;
-    classDef hardware fill:#e2e8f0,stroke:#475569,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        IDN["<font color='black'>🆔 CONNECTIDN</font>"]:::connectidn
-        OS["<font color='black'>⚙️ OS / Secure Element</font>"]:::hardware
-        WBS["<font color='black'>☁️ Wallet Backend</font>"]:::wbs
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Log in</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Return id_token</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Create key & attestation</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Register wallet instance</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Confirm registration</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Request new attestation</font>"):::stepNode
-        S7("<font color='black'>(7)<br/>Return key attestation</font>"):::stepNode
-
-        %% RELASI ALUR
-        MW --> S1 --> IDN
-        IDN --> S2 --> MW
-        MW --> S3 --> OS
-        MW --> S4 --> WBS
-        WBS --> S5 --> MW
-        MW -.-> S6 -.-> WBS
-        WBS -.-> S7 -.-> MW
+sequenceDiagram
+    autonumber
+    participant MW as Mobile Wallet
+    participant IDN as CONNECTIDN
+    participant WBS as Wallet Backend Service
+    MW->>IDN: Log in
+    IDN-->>MW: Confirm the citizen's identity
+    MW->>MW: Create the credential key and a platform attestation
+    MW->>WBS: Register the wallet instance
+    WBS-->>MW: Confirm the registration
+    opt Before high-assurance issuance or daily refresh
+        MW->>WBS: Request a Key Attestation
+        WBS-->>MW: Return the Key Attestation, or refuse
     end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
 ```
 
-**Figure 3 Wallet Registration Flow**
+<figcaption><span class="ekdn-fignum"></span> Wallet registration and attestation, from the CONNECTIDN login through to the Key Attestation Wallet Backend Service issues.</figcaption>
+</figure>
 
-1. To initiate, the Mobile Wallet will log in to CONNECTIDN over OpenID Connect.
+1. Mobile Wallet logs in to CONNECTIDN over OpenID Connect.
 
-2. In response, CONNECTIDN will return an `id_token` verifying the user's identity.
+2. CONNECTIDN returns an `id_token` verifying the user's identity.
 
-3. The Mobile Wallet then interacts with the hardware to create a key and an attestation, prompting the operating system to produce a platform attestation and return an integrity verdict.
+3. Mobile Wallet creates a key and a platform attestation in the device's
+   operating system or secure element, producing an integrity verdict.
 
-4. The Mobile Wallet will proceed to register the wallet instance by sending the public key, the platform attestation, and the CONNECTIDN token to the Wallet Backend Service.
+4. Mobile Wallet registers the wallet instance with Wallet Backend Service,
+   sending the public key, the platform attestation, and the CONNECTIDN
+   `id_token`.
 
-5. The Wallet Backend Service will confirm the registration, signaling that the instance is active.
+5. Wallet Backend Service confirms the registration, marking the instance
+   active.
 
-6. Before issuing a credential requiring substantial or high assurance (or upon daily refresh), the Mobile Wallet requests a new Key Attestation from Wallet Backend Service by sending proof of possession of the device key, the holder's credential key (to be attested), an integrity token, and the issuer's nonce. For low assurance credentials, Wallet Backend Service is not contacted.
+6. Before issuing a credential that requires substantial or high assurance,
+   or on a daily refresh, Mobile Wallet requests a new Key Attestation from
+   Wallet Backend Service, sending PoP of the device key, the holder's
+   credential key to be attested, an integrity token, and the issuer's nonce.
+   For low assurance credentials, Wallet Backend Service is not contacted.
 
-7. The Wallet Backend Service will then return a key attestation (attesting the credential key in `attested_keys`), or refuse if the device has been marked as revoked.
+7. Wallet Backend Service returns the Key Attestation, attesting the
+   credential key in `attested_keys`, or refuses if the device is marked
+   revoked.
 
 Wallet Backend Service knows the account and the device. It knows neither the
 credential, the issuer, nor the verifier. Replacing the phone means
@@ -210,32 +192,72 @@ re-issuance, because a hardware key cannot be backed up.
 ### Entity key revocation {#entity-key-revocation}
 
 This flow runs when an entity's signing key is compromised, moving through
-five phases from the freeze to the post-mortem. The entity key revocation timeline is shown in Figure 4.
+five phases from the freeze to the post-mortem.
+
+[](){ #fig-entity-key-revocation }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart LR
-    classDef phase fill:#f8fafc,stroke:#94a3b8,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#ef4444,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction LR
-        
-        %% SIMPUL ALUR (Phase)
-        P1["<font color='black'>(1)<br/>❄️ Freeze<br/>(Trust Registry, Issuer Core)</font>"]:::phase
-        P2["<font color='black'>(2)<br/>🔑 Revoke key<br/>(Entity, Trust Authority)</font>"]:::phase
-        P3["<font color='black'>(3)<br/>🚫 Revoke credentials<br/>(Status Manager)</font>"]:::phase
-        P4["<font color='black'>(4)<br/>🔄 Recover & reissue<br/>(Issuer Core, Wallet)</font>"]:::phase
-        P5["<font color='black'>(5)<br/>📝 File post-mortem<br/>(Entity)</font>"]:::phase
-
-        %% RELASI ALUR
-        P1 --> P2 --> P3 --> P4 --> P5
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant TR as Trust Registry
+    participant Ent as Entity
+    participant TA as Trust Authority
+    participant SM as Status Manager
+    participant IC as Issuer Core
+    participant MW as Mobile Wallet
+    Note over TR: Phase 1, freeze (under 1 hour)
+    TR->>TR: Suspend the entity and publish an emergency trusted list
+    TR-->>IC: Signal that the entity is suspended
+    Note over Ent,TA: Phase 2, revoke the key (same day)
+    Ent->>Ent: Rotate the key through its Key Manager
+    Ent->>TA: Request a replacement certificate
+    TA->>TA: Revoke the old Document Signer Certificate
+    Note over IC,SM: Phase 3, revoke the credentials
+    IC->>SM: Flag every credential signed with the compromised key
+    SM->>SM: Set the status bits and republish the status list
+    Note over TA,MW: Phase 4, recover and reissue
+    TA-->>Ent: Issue a new certificate and restore the entity's status
+    IC->>MW: Reissue the affected credentials
+    Note over Ent: Phase 5, file the post-mortem
+    Ent->>TR: File the post-mortem
 ```
 
-**Figure 4 Entity Key Revocation Flow**
+<figcaption><span class="ekdn-fignum"></span> Entity key revocation, the five phases as the messages exchanged among Trust Registry, the entity, Trust Authority, Status Manager, Issuer Core, and Mobile Wallet.</figcaption>
+</figure>
+
+1. Trust Registry sets the entity's status to suspended and publishes an
+   emergency trusted list, within an hour of the compromise being reported.
+
+2. Trust Registry signals Issuer Core that the entity is suspended; Issuer
+   Core stops issuing, and verifiers are notified directly.
+
+3. The entity rotates its key at once through its own Key Manager, with
+   pre-rotation in `did:webvh` witnessed by DID Service before it counts.
+
+4. The entity submits a new CSR from the rotated key to Trust Authority, the
+   same day.
+
+5. Trust Authority adds the old DSC to the Certificate Revocation List (CRL).
+   The old key leaves `assertionMethod` without the entry being deleted, and
+   the witness refuses any new entry signed by the revoked key.
+
+6. Issuer Core flags the `issuance_record` of every credential signed with
+   the compromised key, pointing Status Manager at each credential's index in
+   the status list.
+
+7. Status Manager sets the status bit for each flagged index and republishes
+   the Status List Token.
+
+8. Trust Authority issues the entity a new DSC and sets its status to
+   granted.
+
+9. Issuer Core reissues the affected credentials; Mobile Wallet can receive a
+   push notice to update.
+
+10. The entity files a post-mortem to the transparency log, and its Key
+    Manager driver is reviewed.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -252,453 +274,457 @@ flowchart LR
 Two things have to exist from phase 1 for this flow to run at all: an
 `issuance_record` that records a `signing_key_ref` per credential, and a DID
 Service that keeps history and holds two active keys at once. Scheduled key
-rotation, a DSC valid at most 457 days for an mDL, decides how many
-credentials get caught up when one key leaks: the more often a key rotates,
-the fewer credentials need reissuing. Note that revoking the DSC in Phase 2 immediately blocks offline mdoc presentations via the CRL check, while online SD-JWT VC validity is terminated when the Status List Token is republished in Phase 3.
+rotation, with a DSC valid at most 457 days for a Mobile Driving License
+(mDL), decides how many credentials get caught up when one key leaks: the
+more often a key rotates, the fewer credentials need reissuing. Revoking the
+DSC in phase 2 blocks offline mdoc presentations immediately through the CRL
+check; online SD-JWT VC validity ends only when the Status List Token is
+republished in phase 3.
 
-### Trust registry and status list sync {#cache-sync}
+### Trust registry and status list sync {#trust-registry-and-status-list-sync}
 
-Edge components such as the Mobile Wallet and Mobile Verifier must operate reliably in fully offline environments. To ensure they can validate signatures and check for revoked credentials without an active internet connection, these devices rely on a background synchronization mechanism. The trust registry and status list sync flow is shown in Figure 5.
+Nothing on the transaction path asks Trust Infrastructure anything while a
+transaction runs, so every verifying party works from a local cache this sync
+fills. Mobile Wallet and Mobile Verifier need it because they operate in fully
+offline settings; Verifier Core runs the same sync on a shorter timer, because
+being reachable shortens how stale its copy may get but does not let it query
+the center mid-transaction. Mobile Wallet runs the sync shown here.
+
+[](){ #fig-trust-registry-and-status-list-sync }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        Edge["<font color='black'>📱 Edge Device (Wallet/Verifier)</font>"]:::wallet
-        TR["<font color='black'>🗂️ Trust Registry</font>"]:::entity
-        SM["<font color='black'>⚙️ Status Manager</font>"]:::entity
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Trigger scheduled sync</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Fetch trusted list, VICAL, <br/>& Use Statements</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Fetch status list</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Validate integrity</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Update local cache</font>"):::stepNode
-
-        %% RELASI ALUR
-        Edge -.-> S1
-        Edge --> S2 --> TR
-        Edge --> S3 --> SM
-        TR -.-> S4
-        SM -.-> S4
-        S4 --> S5 --> Cache
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MW as Mobile Wallet
+    participant TR as Trust Registry
+    participant SM as Status Manager
+    MW->>MW: Trigger the scheduled sync
+    MW->>TR: Fetch the trusted list and the VICAL
+    TR-->>MW: Return the trusted list and the VICAL
+    MW->>SM: Fetch the status list
+    SM-->>MW: Return the status list
+    MW->>MW: Verify the signatures on all three
+    MW->>MW: Update the local cache
 ```
 
-**Figure 5 Trust Registry and Status List Sync Flow**
+<figcaption><span class="ekdn-fignum"></span> Trust registry and status list sync, from the scheduled trigger through to the refreshed local cache.</figcaption>
+</figure>
 
-1. An automated background job triggers on the edge device (e.g., every 24 hours or when the device detects an unmetered Wi-Fi connection).
+1. Mobile Wallet triggers a scheduled background sync, for example every 24
+   hours or when it detects an unmetered network connection.
 
-2. The edge device sends a request to the Trust Registry to download the latest published Trusted List (which contains the public keys and permissions of all accredited issuers and verifiers), the Vehicle for Issuer CA List (VICAL), and the valid Use Statements.
+2. Mobile Wallet requests Trust Registry for the latest trusted list and the
+   Verified Issuer Certificate Authority List (VICAL).
 
-3. Concurrently, the edge device calls the Status Manager to fetch the latest Status List Token, which contains the bitstring representing all revoked or suspended credentials.
+3. Trust Registry returns the trusted list, carrying the public keys and
+   accredited entities, and the VICAL, the signed list of mdoc issuer root
+   certificates from ISO/IEC 18013-5 Annex C.
 
-4. The edge device cryptographically verifies the signatures on the Trusted List, VICAL, Use Statements, and the Status List Token to ensure they originated from the legitimate authorities and have not been tampered with.
+4. Mobile Wallet requests Status Manager for the latest status list.
 
-5. Upon successful validation, the edge device overwrites its Local Cache with the fresh data, ensuring it is fully prepared for the next offline presentation.
+5. Status Manager returns the status list, the bitstring that marks every
+   revoked or suspended credential and withdraws a revoked Use Statement.
 
-## 2. Credential Issuance
+6. Mobile Wallet verifies the signatures on the trusted list, the VICAL, and
+   the status list, confirming each comes from its legitimate authority and
+   has not been tampered with.
+
+7. Mobile Wallet overwrites its local cache with the fresh data, ready for
+   the next offline presentation.
+
+## Credential issuance {#credential-issuance-flows}
 
 ### Credential issuance {#credential-issuance}
 
-This flow issues a credential to a citizen's wallet over [OpenID4VCI][exchange-protocols], online. It serves as the standard, interactive route utilized when a citizen requests a credential from scratch. Because it relies on the Authorization Code flow, the wallet must redirect the user to the Issuer's portal to explicitly log in and prove their identity. Mobile Wallet, Wallet Backend Service, Issuer Core, and Claims Provider each take part, and the trusted list is read from cache throughout. The credential issuance flow is shown in Figure 6.
+This flow issues a credential to a citizen's wallet over
+[OpenID4VCI][exchange-protocols], online, using the Authorization Code flow.
+The wallet redirects the citizen to the issuer's portal to log in and prove
+their identity before requesting a token. Mobile Wallet, Wallet Backend
+Service, Issuer Core, and Claims Provider take part, and the trusted list is
+read from cache throughout.
+
+[](){ #fig-credential-issuance }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef wbs fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        IC["<font color='black'>🏢 Issuer Core</font>"]:::entity
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        WBS["<font color='black'>☁️ Wallet Backend</font>"]:::wbs
-        CP["<font color='black'>🗄️ Claims Provider</font>"]:::entity
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR (Kegiatan/Kondisi)
-        S1("<font color='black'>(1)<br/>Send offer</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Fetch configuration</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Authorize & request token</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Request nonce</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Obtain platform attestation</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Exchange attestation</font>"):::stepNode
-        S7("<font color='black'>(7)<br/>Return key attestation</font>"):::stepNode
-        S8("<font color='black'>(8)<br/>Request credential</font>"):::stepNode
-        S9("<font color='black'>(9)<br/>Verify signer</font>"):::stepNode
-        S10("<font color='black'>(10)<br/>Request claims</font>"):::stepNode
-        S11("<font color='black'>(11)<br/>Return claims</font>"):::stepNode
-        S12("<font color='black'>(12)<br/>Assemble & sign</font>"):::stepNode
-        S13("<font color='black'>(13)<br/>Return credentials</font>"):::stepNode
-
-        %% RELASI ALUR
-        IC --> S1 --> MW
-        MW --> S2 --> IC
-        MW --> S3 --> IC
-        MW --> S4 --> IC
-        MW -.-> S5
-        MW --> S6 --> WBS
-        WBS --> S7 --> MW
-        MW --> S8 --> IC
-        IC --> S9 --> Cache
-        IC --> S10 --> CP
-        CP --> S11 --> IC
-        IC -.-> S12
-        IC --> S13 --> MW
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant IC as Issuer Core
+    participant MW as Mobile Wallet
+    participant WBS as Wallet Backend Service
+    participant CP as Claims Provider
+    IC->>MW: Send the credential offer
+    MW->>IC: Fetch the issuer's configuration
+    MW->>IC: Authorize the citizen and request a token
+    MW->>IC: Request a nonce
+    MW->>MW: Obtain a platform attestation
+    MW->>WBS: Exchange the attestation and the issuer's nonce
+    WBS-->>MW: Return the Key Attestation
+    MW->>IC: Request the credential
+    IC->>IC: Check the cached trusted list for the signer
+    IC->>CP: Request the citizen's claims
+    CP-->>IC: Return the claims
+    IC->>IC: Assemble and sign every format the Rulebook names
+    IC-->>MW: Return the issued credential
 ```
 
-**Figure 6 Credential Issuance Flow**
+<figcaption><span class="ekdn-fignum"></span> Credential issuance over OpenID4VCI with the Authorization Code flow, from the credential offer to Mobile Wallet receiving the issued credential.</figcaption>
+</figure>
 
-1. To begin, Issuer Core will send a credential offer to the Mobile Wallet, usually by presenting a QR code or a deeplink.
+1. Issuer Core sends a credential offer to Mobile Wallet, using a QR code or
+   a deeplink.
 
-2. The Mobile Wallet then needs to fetch the configuration by sending `GET /.well-known/openid-credential-issuer` to Issuer Core, reading `proof_types_supported` and `key_attestations_required` from the response. Before proceeding, the Mobile Wallet verifies the issuer's identity and authority from its local cache of the trusted list.
+2. Mobile Wallet sends `GET /.well-known/openid-credential-issuer` to Issuer
+   Core, reading `proof_types_supported` and `key_attestations_required`
+   from the response, and checks the issuer's identity and authority
+   against its local cache of the trusted list.
 
-3. Next, the Mobile Wallet will authorize and request a token using the Authorization Code flow by sending a pushed authorization request (PAR) and Proof Key for Code Exchange (PKCE) to Issuer Core, securing the exchange with Demonstrating Proof of Possession (DPoP).
+3. Mobile Wallet authorizes and requests a token through the Authorization
+   Code flow, sending a pushed authorization request (PAR) and a Proof Key
+   for Code Exchange (PKCE) to Issuer Core, bound with Demonstrating Proof
+   of Possession (DPoP).
 
-4. The Mobile Wallet proceeds to request a nonce by sending a `POST /nonce` to Issuer Core.
+4. Mobile Wallet requests a nonce, sending `POST /nonce` to Issuer Core.
 
-5. Taking its credential key (created inside the secure element at its first issuance and reused subsequently), the Mobile Wallet acts to obtain a platform attestation.
+5. Mobile Wallet obtains a platform attestation for its credential key,
+   created inside the secure element at first issuance and reused
+   afterward.
 
-6. The Mobile Wallet will exchange this attestation and the issuer's nonce by interacting with the Wallet Backend Service.
+6. Mobile Wallet exchanges the platform attestation and the issuer's nonce
+   with Wallet Backend Service.
 
-7. In response, the Wallet Backend Service will return a key attestation, carrying the `attested_keys` and `key_storage`.
+7. Wallet Backend Service returns a Key Attestation, carrying
+   `attested_keys` and `key_storage`.
 
-8. The Mobile Wallet can now request the credential by sending `POST /credential` to Issuer Core, attaching the `proofs.attestation`.
+8. Mobile Wallet requests the credential, sending `POST /credential` to
+   Issuer Core with `proofs.attestation` attached.
 
-9. The Issuer Core must verify the signer by checking the local cache of the trusted list to ensure the Key Attestation's signer is present.
+9. Issuer Core checks its local cache of the trusted list to confirm the
+   Key Attestation's signer is present.
 
-10. The Issuer Core then proceeds to request claims by calling `getClaims(subjectRef, credentialType)` on the Claims Provider.
+10. Issuer Core requests claims, calling `getClaims(subjectRef,
+    credentialType)` on Claims Provider.
 
-11. The Claims Provider will return the claims along with a `data_as_of` value.
+11. Claims Provider returns the claims with a `data_as_of` value.
 
-12. The Issuer Core will assemble and sign the credentials locally, producing an SD-JWT Verifiable Credential (VC) carrying `cnf`, and an mdoc carrying a Mobile Security Object (MSO) and a DeviceKey. This dual issuance is standard for credentials like KTP Digital.
+12. Issuer Core assembles and signs the credential locally, in every format
+    the [Credential Rulebook][the-credential-rulebook] names for that
+    credential type. There are three to choose from: an SD-JWT Verifiable
+    Credential (VC) carrying `cnf`, an mdoc carrying a Mobile Security Object
+    (MSO) and a DeviceKey, and a W3C Verifiable Credentials Data Model (VCDM)
+    credential in `ldp_vc` form carrying a Data Integrity proof. The common
+    case is the first two together, because a type that has to be checked
+    where there is no signal needs the mdoc and a type with a `restricted`
+    attribute cannot take `ldp_vc` at all. Which formats a given type takes,
+    and which role may issue each, is in
+    [Credential formats](../data-model-and-protocols/credential-formats.md).
 
-13. Finally, the Issuer Core will return the credentials (the SD-JWT VC and the mdoc) to the Mobile Wallet.
+13. Issuer Core returns the issued credential to Mobile Wallet, in each
+    format it signed.
 
-`subjectRef` never arrives from the wallet. It comes from how the citizen was
-authenticated: the citizen logs into an agency's own system, an officer
-selects a record and creates the offer on the citizen's behalf, or the offer
-chains from a credential the citizen already holds, with Issuer Core
+[](){ #subjectref-origin }
+
+`subjectRef` never arrives from the wallet. It comes from how the citizen
+was authenticated: the citizen logs into an agency's own system, an officer
+selects a record and creates the offer on the citizen's behalf, or the
+offer chains from a credential the citizen already holds, with Issuer Core
 verifying that credential (a KTP Digital) first. When the source system
 answers slowly, issuance is deferred and Issuer Core returns a
 `transaction_id` instead of the credential.
 
-### Pre-Authorized credential issuance {#pre-authorized-issuance}
+### Pre-authorized credential issuance {#pre-authorized-issuance}
 
-This flow issues a credential over OpenID4VCI utilizing the Pre-Authorized Code flow. It acts as a non-interactive fast track, primarily deployed when the Issuer already knows the citizen's identity and proactively pushes a credential offer. Instead of redirecting the user to a login page, the wallet bypasses the authorization endpoint entirely and exchanges the offer's code—secured by an out-of-band factor like an SMS PIN or OTP—directly for the credential. The pre-authorized credential issuance flow is shown in Figure 7.
+This flow issues a credential over OpenID4VCI using the Pre-Authorized Code
+flow, for when Issuer Core already knows the citizen's identity and pushes
+a credential offer on its own. Instead of redirecting the citizen to a
+login page, Mobile Wallet exchanges the offer's `pre-authorized_code` and
+an out-of-band factor, such as an SMS PIN or a One-Time Password (OTP),
+directly for the credential.
+
+[](){ #fig-pre-authorized-issuance }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef wbs fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        IC["<font color='black'>🏢 Issuer Core</font>"]:::entity
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        WBS["<font color='black'>☁️ Wallet Backend</font>"]:::wbs
-        CP["<font color='black'>🗄️ Claims Provider</font>"]:::entity
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR (Kegiatan/Kondisi)
-        S1("<font color='black'>(1)<br/>Send offer</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Fetch configuration</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Request token (Pre-Auth)</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Request nonce</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Obtain platform attestation</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Exchange attestation</font>"):::stepNode
-        S7("<font color='black'>(7)<br/>Return key attestation</font>"):::stepNode
-        S8("<font color='black'>(8)<br/>Request credential</font>"):::stepNode
-        S9("<font color='black'>(9)<br/>Verify signer</font>"):::stepNode
-        S10("<font color='black'>(10)<br/>Request claims</font>"):::stepNode
-        S11("<font color='black'>(11)<br/>Return claims</font>"):::stepNode
-        S12("<font color='black'>(12)<br/>Assemble & sign</font>"):::stepNode
-        S13("<font color='black'>(13)<br/>Return credentials</font>"):::stepNode
-
-        %% RELASI ALUR
-        IC --> S1 --> MW
-        MW --> S2 --> IC
-        MW --> S3 --> IC
-        MW --> S4 --> IC
-        MW -.-> S5
-        MW --> S6 --> WBS
-        WBS --> S7 --> MW
-        MW --> S8 --> IC
-        IC --> S9 --> Cache
-        IC --> S10 --> CP
-        CP --> S11 --> IC
-        IC -.-> S12
-        IC --> S13 --> MW
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant IC as Issuer Core
+    participant MW as Mobile Wallet
+    participant WBS as Wallet Backend Service
+    participant CP as Claims Provider
+    IC->>MW: Send the credential offer carrying a pre-authorized code
+    MW->>IC: Fetch the issuer's configuration
+    MW->>IC: Redeem the code with the out-of-band factor
+    MW->>IC: Request a nonce
+    MW->>MW: Obtain a platform attestation
+    MW->>WBS: Exchange the attestation and the issuer's nonce
+    WBS-->>MW: Return the Key Attestation
+    MW->>IC: Request the credential
+    IC->>IC: Check the cached trusted list for the signer
+    IC->>CP: Request the citizen's claims
+    CP-->>IC: Return the claims
+    IC->>IC: Assemble and sign every format the Rulebook names
+    IC-->>MW: Return the issued credential
 ```
 
-**Figure 7 Pre-Authorized Credential Issuance Flow**
+<figcaption><span class="ekdn-fignum"></span> Credential issuance over OpenID4VCI with the Pre-Authorized Code flow, from the credential offer to Mobile Wallet receiving the issued credential.</figcaption>
+</figure>
 
-1. To begin, Issuer Core will send a credential offer (carrying a `pre-authorized_code`) to the Mobile Wallet, usually by presenting a QR code or a deeplink.
+1. Issuer Core sends a credential offer carrying a `pre-authorized_code` to
+   Mobile Wallet, using a QR code or a deeplink.
 
-2. The Mobile Wallet then needs to fetch the configuration by sending `GET /.well-known/openid-credential-issuer` to Issuer Core, reading `proof_types_supported` and `key_attestations_required` from the response. Before proceeding, the Mobile Wallet verifies the issuer's identity and authority from its local cache of the trusted list.
+2. Mobile Wallet sends `GET /.well-known/openid-credential-issuer` to Issuer
+   Core, reading `proof_types_supported` and `key_attestations_required`
+   from the response, and checks the issuer's identity and authority
+   against its local cache of the trusted list.
 
-3. Next, the Mobile Wallet bypasses the interactive authorization step and requests a token directly by sending `POST /token` to Issuer Core. It utilizes the `pre-authorized_code` and a generalized additional authentication factor (such as a PIN or OTP serving as the `tx_code`), along with Demonstrating Proof of Possession (DPoP).
+3. Mobile Wallet bypasses the authorization endpoint and requests a token
+   directly, sending `POST /token` to Issuer Core with the
+   `pre-authorized_code` and an out-of-band factor, such as a PIN or a
+   One-Time Password (OTP), serving as the `tx_code`, bound with DPoP.
 
-4. The Mobile Wallet proceeds to request a nonce by sending a `POST /nonce` to Issuer Core.
+4. Mobile Wallet requests a nonce, sending `POST /nonce` to Issuer Core.
 
-5. Taking its credential key (created inside the secure element at its first issuance and reused subsequently), the Mobile Wallet acts to obtain a platform attestation.
+5. Mobile Wallet obtains a platform attestation for its credential key,
+   created inside the secure element at first issuance and reused
+   afterward.
 
-6. The Mobile Wallet will exchange this attestation and the issuer's nonce by interacting with the Wallet Backend Service.
+6. Mobile Wallet exchanges the platform attestation and the issuer's nonce
+   with Wallet Backend Service.
 
-7. In response, the Wallet Backend Service will return a key attestation, carrying the `attested_keys` and `key_storage`.
+7. Wallet Backend Service returns a Key Attestation, carrying
+   `attested_keys` and `key_storage`.
 
-8. The Mobile Wallet can now request the credential by sending `POST /credential` to Issuer Core, attaching the `proofs.attestation`.
+8. Mobile Wallet requests the credential, sending `POST /credential` to
+   Issuer Core with `proofs.attestation` attached.
 
-9. The Issuer Core must verify the signer by checking the local cache of the trusted list to ensure the Key Attestation's signer is present.
+9. Issuer Core checks its local cache of the trusted list to confirm the
+   Key Attestation's signer is present.
 
-10. The Issuer Core then proceeds to request claims by calling `getClaims(subjectRef, credentialType)` on the Claims Provider.
+10. Issuer Core requests claims, calling `getClaims(subjectRef,
+    credentialType)` on Claims Provider.
 
-11. The Claims Provider will return the claims along with a `data_as_of` value.
+11. Claims Provider returns the claims with a `data_as_of` value.
 
-12. The Issuer Core will assemble and sign the credentials locally, producing an SD-JWT Verifiable Credential (VC) carrying `cnf`, and an mdoc carrying a Mobile Security Object (MSO) and a DeviceKey. This dual issuance is standard for credentials like KTP Digital.
+12. Issuer Core assembles and signs the credential locally, in every format
+    the Credential Rulebook names for that credential type, exactly as on the
+    interactive path.
 
-13. Finally, the Issuer Core will return the credentials (the SD-JWT VC and the mdoc) to the Mobile Wallet.
+13. Issuer Core returns the issued credential to Mobile Wallet, in each
+    format it signed.
 
-`subjectRef` never arrives from the wallet. It comes from how the citizen was
-authenticated: the citizen logs into an agency's own system, an officer
-selects a record and creates the offer on the citizen's behalf, or the offer
-chains from a credential the citizen already holds, with Issuer Core
-verifying that credential (a KTP Digital) first. When the source system
-answers slowly, issuance is deferred and Issuer Core returns a
-`transaction_id` instead of the credential.
+Issuer Core already knows the citizen before it creates the offer; [how
+`subjectRef` reaches Issuer Core][subjectref-origin] applies the same way
+here.
 
-## 3. Presentation & Verification
+## Presentation and verification {#presentation-and-verification}
 
 ### Online verification {#online-verification}
 
 This flow lets a Relying Party (RP) application verify a credential over
-[OpenID4VP][exchange-protocols], with Verifier Core mediating between it and Mobile Wallet. The
-trusted list and the status list are both read from cache. The online verification flow is shown in Figure 8.
+[OpenID4VP][exchange-protocols], with Verifier Core mediating between it and
+Mobile Wallet. The trusted list and the status list are both read from cache.
+
+[](){ #fig-online-verification }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        RP["<font color='black'>🏢 RP Application</font>"]:::entity
-        VC["<font color='black'>🛡️ Verifier Core</font>"]:::entity
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Request verification</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Send auth request</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Verify client & scope</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Verify Use Statement</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Prompt consent & sign</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Send presentation</font>"):::stepNode
-        S7("<font color='black'>(7)<br/>Verify issuer chain</font>"):::stepNode
-        S8("<font color='black'>(8)<br/>Verify presentation & status</font>"):::stepNode
-        S9("<font color='black'>(9)<br/>Record transaction</font>"):::stepNode
-        S10("<font color='black'>(10)<br/>Return session</font>"):::stepNode
-
-        %% RELASI ALUR
-        RP --> S1 --> VC
-        VC --> S2 --> MW
-        MW --> S3 --> Cache
-        MW --> S4 --> Cache
-        MW -.-> S5
-        MW --> S6 --> VC
-        VC --> S7 --> Cache
-        VC --> S8 --> Cache
-        VC -.-> S9
-        VC --> S10 --> RP
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant RP as RP Application
+    participant VC as Verifier Core
+    participant MW as Mobile Wallet
+    RP->>VC: Request a verification
+    VC->>MW: Present the authorization request and the signed request
+    MW->>MW: Resolve the verifier and its scope against the cached trusted list
+    MW->>MW: Verify the Use Statement carried in the request
+    MW->>MW: Prompt for consent and sign the presentation
+    MW->>VC: Send the encrypted presentation
+    VC->>VC: Verify the issuer chain against the cached trusted list
+    VC->>VC: Verify the presentation and its status
+    VC->>VC: Record the transaction
+    VC-->>RP: Return a session carrying the attributes
 ```
 
-**Figure 8 Online Verification Flow**
+<figcaption><span class="ekdn-fignum"></span> Online verification, from the RP application's request to Verifier Core through to the session it returns.</figcaption>
+</figure>
 
-1. First, the RP application will request verification by asking Verifier Core to run a check using a template.
+1. The RP application asks Verifier Core to run a check using a template.
 
-2. Verifier Core presents an authorization request (via QR code or deeplink) carrying `request_uri` and `client_id` (prefixed with `decentralized_identifier:`). The Mobile Wallet retrieves the signed Request Object via `GET request_uri`, which delivers the Digital Credentials Query Language (DCQL) query, nonce, verifier encryption key, and Use Statement in `verifier_info`.
+2. Verifier Core sends Mobile Wallet an authorization request (a QR code or a
+   deeplink) carrying `request_uri` and `client_id`, prefixed with
+   `decentralized_identifier:`. Mobile Wallet retrieves the signed Request
+   Object via `GET request_uri`, which carries the Digital Credentials Query
+   Language (DCQL) query, the nonce, the verifier's encryption key, and the
+   Use Statement in `verifier_info`.
 
-3. The Mobile Wallet will verify the client and scope by resolving the `client_id` against the trusted list and checking the requested scope through Trust Registry Query Protocol (TRQP), utilizing the local cache for both.
+3. Mobile Wallet resolves `client_id` against the trusted list and checks the
+   requested scope through Trust Registry Query Protocol (TRQP), reading both
+   from the local cache.
 
-4. The Mobile Wallet also proceeds to verify the Use Statement from the cache, checking the Trust Authority's signature, its revocation status, and ensuring that the requested attributes are a subset of the ones it lists.
+4. Mobile Wallet reads the Use Statement out of `verifier_info` in the signed
+   Request Object it fetched at step 2, verifies Trust Authority's signature
+   on it, checks its revocation against the cached status list, and confirms
+   the requested attributes are a subset of the ones it lists.
 
-5. Next, the Mobile Wallet will prompt for consent and sign by showing the citizen the consent request (for example, that Bank XYZ is requesting confirmation of age over 17, as per the purpose shown in the Use Statement), and signing a Key Binding JSON Web Token (KB-JWT) over the nonce and the audience.
+5. Mobile Wallet shows the citizen the consent request (for example, that Bank
+   XYZ asks to confirm age over 17, per the purpose in the Use Statement) and
+   signs a Key Binding JWT (KB-JWT) over the nonce and the
+   audience.
 
-6. The Mobile Wallet delivers the `vp_token` to Verifier Core's `response_uri` via `direct_post.jwt`, encrypted as a JWE using the verifier's key from `client_metadata.jwks`.
+6. Mobile Wallet delivers the `vp_token` to Verifier Core's `response_uri` via
+   `direct_post.jwt`, encrypted as a JWE using the verifier's key from
+   `client_metadata.jwks`.
 
-7. Verifier Core then verifies the issuer chain by running Chain 1 against the cached trusted list, checking E1 through E4.
+7. Verifier Core verifies the issuer chain by running Chain 1 against the
+   cached trusted list, checking E1 through E4.
 
-8. Following this, Verifier Core verifies the presentation and status by running Chain 2 against the trusted list: checking T1 (the signature), T2 (the status list), T3 (the KB-JWT against `cnf`), T4 (the nonce and audience), and T5 (the scope).
+8. Verifier Core verifies the presentation and status by running Chain 2
+   against the trusted list: T1 (the signature), T2 (the status list), T3
+   (the KB-JWT against `cnf`), T4 (the nonce and audience), and T5 (the
+   scope).
 
-9. Verifier Core will internally record the transaction, keeping track of the transaction ID, the `use_id` under which the request ran, and the consent receipt as T6, storing only the `vp_digest`.
+9. Verifier Core records the transaction internally, keeping the transaction
+   ID, the `use_id` the request ran under, and the consent receipt as T6,
+   storing only the `vp_digest`.
 
-10. Finally, Verifier Core will return a session (such as OpenID Connect or a Security Assertion Markup Language (SAML) session) carrying the attributes back to the RP application.
+10. Verifier Core returns a session (OpenID Connect or a Security Assertion
+    Markup Language (SAML) session) carrying the attributes to the RP
+    application.
 
 Verifier Core does not store the resulting attributes. Keeping them is the RP
 application's responsibility.
 
 ### Offline verification {#offline-verification}
 
-This flow verifies a credential over [ISO/IEC 18013-5][exchange-protocols], in proximity, between
-Mobile Verifier and Mobile Wallet. The verifying application is always on a
-device: Mobile Verifier on a merchant's phone or a Relying Party's counter
-device, or a Relying Party's own app built on the Reader SDK. It is never Verifier
-Core. No network is reachable during it at all. The offline verification flow is shown in Figure 9.
+This flow verifies a credential over [ISO/IEC 18013-5][exchange-protocols], in
+proximity, between Mobile Verifier and Mobile Wallet. The verifying
+application is always on a device: Mobile Verifier on a merchant's phone or a
+Relying Party's counter device, or a Relying Party's own app built on the
+Reader SDK. It is never Verifier Core. No network is reachable during it at
+all.
+
+[](){ #fig-offline-verification }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MV["<font color='black'>📱 Mobile Verifier</font>"]:::wallet
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Engage via QR/NFC</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Establish BLE session</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Send verification request</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Validate request & prompt consent</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Return mdoc & DeviceAuth</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Validate response & status</font>"):::stepNode
-
-        %% RELASI ALUR
-        MV --> S1 --> MW
-        MW <--> S2 <--> MV
-        MV --> S3 --> MW
-        MW --> S4 --> Cache
-        MW --> S5 --> MV
-        MV --> S6 --> Cache
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MV as Mobile Verifier
+    participant MW as Mobile Wallet
+    MV->>MW: Engage by QR code or NFC tap
+    MV->>MW: Establish the proximity session
+    MV->>MW: Send the verification request
+    MW->>MW: Validate the request and prompt for consent
+    MW-->>MV: Return the credential and the device signature
+    MV->>MV: Validate the response and its status against the cache
 ```
 
-**Figure 9 Offline Verification Flow**
+<figcaption><span class="ekdn-fignum"></span> Offline verification, from the proximity engagement through to Mobile Verifier's check of the response.</figcaption>
+</figure>
 
-1. The interaction begins when the Mobile Verifier engages via QR or NFC tap with the Mobile Wallet.
+1. Mobile Verifier engages Mobile Wallet with a QR code or a Near Field
+   Communication (NFC) tap.
 
-2. Both the Mobile Verifier and Mobile Wallet then establish a BLE session, communicating over Bluetooth Low Energy (BLE) using ephemeral Elliptic Curve Diffie-Hellman (ECDH).
+2. Mobile Verifier and Mobile Wallet establish a session over Bluetooth Low
+   Energy (BLE), using ephemeral Elliptic Curve Diffie-Hellman (ECDH).
 
-3. The Mobile Verifier sends a `DeviceRequest` to the Mobile Wallet containing `ItemsRequest` (carrying the Use Statement in `requestInfo.idUseStatement`) and `ReaderAuth` (COSE_Sign1 containing the Verifier Device Certificate in `x5chain` and signing the request and `SessionTranscript`).
+3. Mobile Verifier sends Mobile Wallet a `DeviceRequest` containing
+   `ItemsRequest` (carrying the Use Statement in
+   `requestInfo.idUseStatement`) and `ReaderAuth` (a COSE_Sign1 structure
+   holding the Verifier Device Certificate in `x5chain` and signing the
+   request and the `SessionTranscript`).
 
-4. The Mobile Wallet will validate the request and prompt for consent by validating the certificate chain up to the Verifier Root CA embedded at build time. It confirms from the cached trusted list that the Verifier Issuing CA is granted, verifies that the Use Statement holds (with its `sub` naming the holder of that issuing CA), checks that the requested attributes are a subset of both `ReaderAuthRole` and the Use Statement, and finally asks the citizen to select which attributes to release.
+4. Mobile Wallet validates the certificate chain up to the Verifier Root CA
+   embedded at build time, confirms from the cached trusted list that the
+   Verifier Issuing CA is granted, verifies that the Use Statement holds (its
+   `sub` names the holder of that issuing CA), checks that the requested
+   attributes are a subset of both `ReaderAuthRole` and the Use Statement,
+   and asks the citizen to select which attributes to release.
 
-5. After consent, the Mobile Wallet will return the mdoc and DeviceAuth encapsulated in a DeviceResponse.
+5. Mobile Wallet returns the mdoc and DeviceAuth encapsulated in a
+   DeviceResponse.
 
-6. Finally, the Mobile Verifier will validate the response and status by chaining `x5chain` to the Issuer Root CA (from cache) to validate IssuerAuth, recomputing the digest, checking DeviceAuth against the SessionTranscript, and checking the status list from cache.
+6. Mobile Verifier chains `x5chain` to the Issuer Root CA from its cache to
+   validate IssuerAuth, recomputes the digest, checks DeviceAuth against the
+   SessionTranscript, and checks the status list from its cache.
 
 Zero network calls happen during this flow. The status list and the trusted
-list can both be stale by the time it runs; the tolerance limit, seven days for
-example, is set by the Governance Framework. DeviceAuth is a `deviceSignature`;
-`deviceMac` is out of scope. The consequence is that a presentation cannot be
-denied afterward: a verifier can prove to a third party that the citizen
-presented. That is accepted as the price of easier audit and dispute
-settlement.
+list can both be stale by the time it runs; the tolerance limit, seven days
+for example, is set by the Governance Framework. DeviceAuth is a
+`deviceSignature`; `deviceMac` is out of scope. The consequence is that a
+presentation cannot be denied afterward: a verifier can prove to a third
+party that the citizen presented. That is accepted as the price of easier
+audit and dispute settlement.
 
 ### Verification by a merchant {#verification-by-a-merchant}
 
 This flow lets a merchant verify a credential through Mobile Verifier,
 standing in for the Verifier Core it does not run itself. Three parties take
 part: Mobile Verifier on the merchant's own device, Verifier Core run by the
-RP Intermediary that registered the merchant, and Mobile Wallet. The merchant verification flow is shown in Figure 10.
+RP Intermediary that registered the merchant, and Mobile Wallet.
+
+[](){ #fig-verification-by-a-merchant }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MV["<font color='black'>📱 Mobile Verifier (Merchant)</font>"]:::wallet
-        VC["<font color='black'>🛡️ Verifier Core (Intermediary)</font>"]:::entity
-        MW["<font color='black'>📱 Mobile Wallet (Citizen)</font>"]:::wallet
-        Cache["<font color='black'>💾 Local Cache</font>"]:::cache
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Send PoP & integrity token</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Return device certificate</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Register request & show QR</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Fetch request & validate</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Send encrypted presentation</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Relay & decrypt presentation</font>"):::stepNode
-
-        %% RELASI ALUR
-        MV --> S1 --> VC
-        VC --> S2 --> MV
-        MV --> S3 --> VC
-        MV --> S3 --> MW
-        MW --> S4 --> VC
-        S4 -.-> Cache
-        MW --> S5 --> VC
-        VC --> S6 --> MV
-        S6 -.-> Cache
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MV as Mobile Verifier
+    participant VC as Verifier Core
+    participant MW as Mobile Wallet
+    MV->>VC: Prove possession of its device key
+    VC-->>MV: Issue the device certificate and the category Use Statements
+    MV->>VC: Leave the signed request
+    MV->>MW: Show a QR code for the request
+    VC-->>MW: Return the request
+    MW->>MW: Validate the certificate, the request, and the attributes asked for
+    MW->>VC: Send the encrypted presentation
+    VC-->>MV: Relay the encrypted presentation, then delete it
 ```
 
-**Figure 10 Merchant Verification Flow**
+<figcaption><span class="ekdn-fignum"></span> Verification by a merchant, from the device certificate request through to the relayed presentation.</figcaption>
+</figure>
 
-1. To set up or renew, the Mobile Verifier will send proof of possession (PoP) of its device key and an integrity token to the Verifier Core.
+1. Mobile Verifier sends Verifier Core a PoP of its device key and an
+   integrity token, to set up or renew its certificate.
 
-2. Verifier Core will then return a Verifier Device Certificate where the device key is the Subject Public Key Info (SPKI), carrying the `ReaderAuthRole` extension, along with the Use Statements for the business categories its device is bound to.
+2. Verifier Core returns a Verifier Device Certificate, with the device key
+   as the Subject Public Key Info (SPKI) and carrying the `ReaderAuthRole`
+   extension, along with the Use Statements for the business categories its
+   device is bound to. The
+   [multi-tenant merchant onboarding flow][multi-tenant-merchant-onboarding]
+   covers this certificate issuance in full.
 
-3. When a customer arrives, the Mobile Verifier registers a request by leaving a Request Object with Verifier Core (signed with the device key and carrying the certificate) and subsequently shows the Mobile Wallet a QR code.
+3. When a customer arrives, Mobile Verifier leaves a Request Object with
+   Verifier Core, signed with the device key and carrying the certificate.
 
-4. The Mobile Wallet will fetch the request and perform 5 validation checks: (1) the certificate chain ends at the embedded Verifier Root CA with the Issuing CA granted in the cached trusted list, (2) the certificate is valid and not on the CRL, (3) the Request Object signature matches the public key and the SHA-256 hash of the Verifier Device Certificate matches the `client_id`, (4) the requested attributes are a subset of `ReaderAuthRole` and never contain `restricted` attributes, and (5) the requested attributes align with the category Use Statement.
+4. Mobile Verifier shows Mobile Wallet a QR code for the request.
 
-5. After consent, the Mobile Wallet will send the encrypted presentation to Verifier Core via `direct_post.jwt`, keeping the data encrypted to the merchant's specific device key.
+5. Verifier Core returns the Request Object to Mobile Wallet.
 
-6. Finally, Verifier Core acts merely to relay the presentation, passing the ciphertext back to the Mobile Verifier before deleting it, allowing the Mobile Verifier to decrypt and verify the data locally on the merchant's device.
+6. Mobile Wallet validates the certificate chain against the embedded
+   Verifier Root CA with the Issuing CA granted in the cached trusted list,
+   checks that the certificate is valid and not on the CRL, matches the
+   Request Object signature and the SHA-256 hash of the Verifier Device
+   Certificate against the `client_id`, confirms the requested attributes
+   are a subset of `ReaderAuthRole` and never include `restricted`
+   attributes, and checks that the requested attributes align with the
+   category Use Statement.
+
+7. Mobile Wallet sends the encrypted presentation to Verifier Core via
+   `direct_post.jwt`, keeping the data encrypted to the merchant's device
+   key.
+
+8. Verifier Core relays the ciphertext back to Mobile Verifier and deletes
+   it, so Mobile Verifier decrypts and verifies the data locally on the
+   merchant's device.
 
 The key is born on the merchant's own device and signs there too. The RP
 Intermediary's Verifier Core holds only the Request Object and the encrypted
@@ -710,195 +736,143 @@ category Use Statement in use, for example age verification for buying
 tobacco products; the RP Intermediary's name appears only in the transaction
 history.
 
-
-## 4. Wallet & Holder Lifecycle
+## Wallet and holder lifecycle {#wallet-and-holder-lifecycle}
 
 ### Device migration and recovery {#device-migration}
 
-Hardware keys cannot be exported from the secure element. Therefore, when a citizen moves to a new device or recovers from a lost phone, the wallet instance must be re-registered and credentials re-issued. The Wallet Backend Service plays a critical role in preventing cloning by ensuring only the active device holds a valid Key Attestation. The device migration flow is shown in Figure 11.
+Hardware keys cannot be exported from the secure element. When a citizen
+moves to a new device or recovers from a lost phone, the wallet instance is
+re-registered and the credentials are reissued. Wallet Backend Service
+revokes the old instance's Key Attestation, so only the new device can
+authenticate.
+
+[](){ #fig-device-migration }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef wbs fill:#f3e8ff,stroke:#9333ea,stroke-width:2px,rx:8px,ry:8px;
-    classDef connectidn fill:#ffedd5,stroke:#c2410c,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MW["<font color='black'>📱 Mobile Wallet (New Device)</font>"]:::wallet
-        IDN["<font color='black'>🆔 CONNECTIDN</font>"]:::connectidn
-        WBS["<font color='black'>☁️ Wallet Backend</font>"]:::wbs
-        IC["<font color='black'>🏢 Issuer Core</font>"]:::entity
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Log in</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Create new key & request attestation</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Revoke old instance</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Return new attestation</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Request re-issuance</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Issue new credentials</font>"):::stepNode
-
-        %% RELASI ALUR
-        MW --> S1 --> IDN
-        MW --> S2 --> WBS
-        WBS -.-> S3
-        WBS --> S4 --> MW
-        MW --> S5 --> IC
-        IC --> S6 --> MW
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MW as Mobile Wallet
+    participant IDN as CONNECTIDN
+    participant WBS as Wallet Backend Service
+    participant IC as Issuer Core
+    MW->>IDN: Log in with the citizen's identity
+    MW->>MW: Generate a new hardware-bound device key
+    MW->>WBS: Request a Key Attestation for the new key
+    WBS->>WBS: Revoke the old instance's Key Attestation
+    WBS-->>MW: Return the new Key Attestation
+    MW->>IC: Start credential issuance with the new key
+    IC-->>MW: Reissue the citizen's credentials
 ```
 
-**Figure 11 Device Migration Flow**
+<figcaption><span class="ekdn-fignum"></span> Device migration, from the new device's Key Attestation request through to the reissued credentials.</figcaption>
+</figure>
 
-1. The citizen logs in to the Mobile Wallet on their new device using their CONNECTIDN identity.
+1. Mobile Wallet logs in with the citizen's CONNECTIDN identity on the new
+   device.
 
-2. The Mobile Wallet generates a fresh hardware-bound device key and sends a request for a new Key Attestation to the Wallet Backend Service.
+2. Mobile Wallet generates a new hardware-bound device key.
 
-3. Recognizing the identity is now bound to a new device, the Wallet Backend Service explicitly revokes the Key Attestation of the old wallet instance, permanently disabling its ability to authenticate against Issuer Cores.
+3. Mobile Wallet requests a Key Attestation for the new key from Wallet
+   Backend Service.
 
-4. The Wallet Backend Service returns the new Key Attestation to the new Mobile Wallet.
+4. Wallet Backend Service revokes the old instance's Key Attestation,
+   permanently disabling its ability to authenticate against Issuer Cores.
 
-5. The Mobile Wallet initiates a credential issuance flow (acting over OpenID4VCI) to the Issuer Core, utilizing the new key.
+5. Wallet Backend Service returns the new Key Attestation to Mobile Wallet.
 
-6. The Issuer Core verifies the new Key Attestation and re-issues the credentials (SD-JWT VC and mdoc), securely binding them to the new device.
+6. Mobile Wallet starts the [credential issuance][credential-issuance] flow
+   with Issuer Core, using the new key.
+
+7. Issuer Core verifies the new Key Attestation and reissues the credential
+   in each format its Rulebook names, bound to the new device.
 
 ### Credential renewal {#credential-renewal}
 
-Credentials such as the digital KTP have an expiration date. This proactive flow allows the Mobile Wallet to refresh a credential before it expires, ensuring uninterrupted offline and online presentations without forcing the citizen through a lengthy authorization process from scratch. The credential renewal flow is shown in Figure 12.
+Credentials such as the KTP Digital carry an expiration date. Mobile Wallet
+refreshes a credential before it expires, so offline and online
+presentations keep working without sending the citizen through a new
+authorization flow.
+
+[](){ #fig-credential-renewal }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef wallet fill:#ffe4e6,stroke:#e11d48,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        MW["<font color='black'>📱 Mobile Wallet</font>"]:::wallet
-        IC["<font color='black'>🏢 Issuer Core</font>"]:::entity
-        CP["<font color='black'>🗄️ Claims Provider</font>"]:::entity
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Detect impending expiry</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Refresh authorization</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Request credential update</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Fetch latest claims</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Return updated claims</font>"):::stepNode
-        S6("<font color='black'>(6)<br/>Issue renewed credentials</font>"):::stepNode
-
-        %% RELASI ALUR
-        MW -.-> S1
-        MW --> S2 --> IC
-        MW --> S3 --> IC
-        IC --> S4 --> CP
-        CP --> S5 --> IC
-        IC --> S6 --> MW
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant MW as Mobile Wallet
+    participant IC as Issuer Core
+    participant CP as Claims Provider
+    MW->>MW: Notice the credential nearing expiration
+    MW->>IC: Refresh the session token
+    MW->>IC: Request the renewed credential
+    IC->>CP: Request the citizen's current claims
+    CP-->>IC: Return the current claims
+    IC-->>MW: Return the renewed credential
 ```
 
-**Figure 12 Credential Renewal Flow**
+<figcaption><span class="ekdn-fignum"></span> Credential renewal, from detecting impending expiry through to the reissued credential.</figcaption>
+</figure>
 
-1. The Mobile Wallet proactively detects that a stored credential is approaching its expiration date.
+1. Mobile Wallet notices that a stored credential is nearing its expiration
+   date.
 
-2. The Mobile Wallet performs a lightweight token refresh (or pre-authorized refresh) with the Issuer Core, bypassing full user-interactive SSO if the session policy permits.
+2. Mobile Wallet refreshes its token with Issuer Core, without sending the
+   citizen back through the issuer's login, where the session policy
+   permits it.
 
-3. Utilizing the existing device key and a valid Key Attestation, the Mobile Wallet sends a `POST /credential` request to update the credential.
+3. Mobile Wallet sends a `POST /credential` request to Issuer Core, with its
+   existing device key and valid Key Attestation, to renew the credential.
 
-4. The Issuer Core queries the Claims Provider to ensure the citizen's source data has not fundamentally changed or been flagged.
+4. Issuer Core queries Claims Provider to check that the citizen's source
+   data has not changed or been flagged.
 
-5. The Claims Provider returns the latest claims and the current `data_as_of` timestamp.
+5. Claims Provider returns the latest claims and the current `data_as_of`
+   timestamp.
 
-6. The Issuer Core generates a renewed SD-JWT VC and mdoc with extended expiration dates and returns them to the Mobile Wallet.
+6. Issuer Core signs the credential again in each format its Rulebook names,
+   with extended expiration dates, and returns it to Mobile Wallet.
 
 ### Citizen-initiated revocation {#citizen-initiated-revocation}
 
-When a citizen realizes their device is compromised or lost—even before purchasing a new device—they must be able to revoke their credentials immediately. This flow operates independently of the Mobile Wallet, relying on a web portal or customer service intervention. The citizen-initiated revocation flow is shown in Figure 13.
+A citizen can revoke their credentials before replacing a lost or
+compromised device, through the Issuer's web portal or its call center
+rather than through Mobile Wallet.
+
+[](){ #fig-citizen-initiated-revocation }
+
+<figure markdown="1">
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'lineColor': '#334155'}}}%%
-flowchart TD
-    classDef entity fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,rx:8px,ry:8px;
-    classDef cache fill:#f1f5f9,stroke:#64748b,stroke-width:2px,rx:8px,ry:8px;
-    classDef stepNode fill:#ffffff,stroke:#94a3b8,stroke-width:1.5px,stroke-dasharray: 4 4,rx:4px,ry:4px;
-
-    subgraph Container [" "]
-        direction TD
-        
-        %% ENTITAS
-        Cit["<font color='black'>👤 Citizen (Web Portal)</font>"]:::entity
-        IC["<font color='black'>🏢 Issuer Core</font>"]:::entity
-        SM["<font color='black'>⚙️ Status Manager</font>"]:::entity
-        Cache["<font color='black'>💾 Local Cache (Verifiers)</font>"]:::cache
-
-        %% SIMPUL ALUR
-        S1("<font color='black'>(1)<br/>Report loss & request revocation</font>"):::stepNode
-        S2("<font color='black'>(2)<br/>Flag issuance record</font>"):::stepNode
-        S3("<font color='black'>(3)<br/>Update status bit</font>"):::stepNode
-        S4("<font color='black'>(4)<br/>Publish Status List Token</font>"):::stepNode
-        S5("<font color='black'>(5)<br/>Sync updated status</font>"):::stepNode
-
-        %% RELASI ALUR
-        Cit --> S1 --> IC
-        IC -.-> S2
-        IC --> S3 --> SM
-        SM -.-> S4
-        SM --> S5 --> Cache
-    end
-
-    style Container fill:#ffffff,stroke:#cbd5e1,stroke-width:2px,rx:16px,ry:16px;
+sequenceDiagram
+    autonumber
+    participant Cit as Citizen
+    participant IC as Issuer Core
+    participant SM as Status Manager
+    Cit->>IC: Report the lost device and request revocation
+    IC->>IC: Find the records for the citizen's active credentials
+    IC->>SM: Revoke those credentials
+    SM->>SM: Publish a new status list
 ```
 
-**Figure 13 Citizen-Initiated Revocation Flow**
+<figcaption><span class="ekdn-fignum"></span> Citizen-initiated revocation, from the web portal report through to the published Status List Token.</figcaption>
+</figure>
 
-1. The citizen logs into the Issuer's web portal (or contacts a designated call center) to report a lost device and explicitly request revocation of their credentials.
+1. The citizen reports the lost device and requests revocation, through the
+   Issuer's web portal or by contacting the call center.
 
-2. The Issuer Core retrieves the `issuance_record` associated with that citizen's active credentials, identifying their exact index positions.
+2. Issuer Core retrieves the `issuance_record` for the citizen's active
+   credentials, identifying their index positions in the status list.
 
-3. The Issuer Core instructs the Status Manager to flip the status bit for those specific indices to "revoked".
+3. Issuer Core instructs Status Manager to flip the status bit for those
+   indices to revoked.
 
-4. The Status Manager generates and publishes a new Status List Token (e.g., using Token Status List) reflecting the revoked status.
+4. Status Manager publishes a new Status List Token reflecting the revoked
+   status.
 
-5. Relying Parties and Mobile Verifiers, which periodically sync the Status List to their Local Cache, will subsequently reject any presentations originating from the lost device.
-
-## 5. Credential Lifecycle
-
-The lifecycle of a credential is bounded by the expiration of the credential itself, the lifetime of the keys that signed it, and the physical device that holds it. It is governed by rules drawn from the Architecture Framework to ensure compromises are contained and revocations are decentralized.
-
-### Expiry and validity periods
-
-A credential remains valid until its `exp` (expiration) timestamp is reached, unless it is revoked earlier. The validity period varies by credential type and format:
-- **mDL (mdoc)**: Governed strictly by the ISO/IEC 18013-5 standard, which limits the Document Signer Certificate (DSC) lifetime to at most 457 days.
-- **SD-JWT VC**: Follows the expiration rules set by the specific Credential Rulebook for that credential type.
-
-### Status list checking and revocation
-
-Status lists are decentralized. Each Issuer hosts its own Status List Token on its own domain, rather than in a central CDN. This design choice ensures that Trust Infrastructure cannot infer the number of circulating credentials or track citizen activity.
-
-A credential is tied to its status via its `issuance_record`, which points to a specific bit index in the status list. When a credential needs to be revoked, the Issuer's Status Manager flips this bit and republishes the Status List Token. Verifiers and wallets cache these tokens based on a Time-To-Live (TTL) appropriate to the credential's risk profile.
-
-### Scheduled key rotation and blast radius
-
-The lifecycle of a credential is tied to the lifecycle of the Issuer's key (the Document Signer Certificate). If an Issuer's signing key is compromised, every credential signed by that key must be explicitly revoked in the status list and reissued.
-
-To limit this "blast radius," Issuers must perform scheduled key rotation. The more frequently an Issuer rotates its keys, the fewer credentials share the same key, drastically reducing the number of credentials that require emergency reissuance during an incident.
-
-### Device migration and reissuance
-
-Holder keys are hardware-bound and born inside the device's secure element. Because they cannot be exported or backed up, a citizen changing or losing their phone terminates the credential's lifecycle on that device.
-
-Upon device loss or change:
-1. The old wallet instance's Key Attestation is explicitly revoked by the Wallet Backend Service.
-2. The citizen registers a new device, generating a new hardware-bound key.
-3. The credential cannot be restored from a backup; it must be requested anew from the Issuer Core and reissued to the new device.
+Verifiers and wallets do not see the change right away. They pick up the new
+Status List Token at their next
+[trust registry and status list sync][trust-registry-and-status-list-sync]
+and reject presentations from the lost device from that point on.
