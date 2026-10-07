@@ -15,7 +15,7 @@ class TemplateTest(unittest.TestCase):
         self.assertNotIn("{{CORPUS}}", system)
 
     def test_template_names_the_rules(self):
-        for needle in ("Glossary", "not written yet", "[QUESTION]", "sources", "language of the question"):
+        for needle in ("Glossary", "not written yet", "[QUESTION]", "sources", "language the question is written in"):
             with self.subTest(needle=needle):
                 self.assertIn(needle, prompt.TEMPLATE)
 

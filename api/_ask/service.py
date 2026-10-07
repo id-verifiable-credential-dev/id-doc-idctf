@@ -1,7 +1,7 @@
 """One request, end to end. Pure: time, environment, transport and corpus
 are passed in, so the tests drive it without a network.
 
-Order: origin, parse, validate, rate limit, injection detector, corpus,
+Order: origin, parse, validate, question-likeness, rate limit, injection detector, corpus,
 model, parse model JSON, clean answer, leak check, validate sources.
 """
 
@@ -90,6 +90,9 @@ def handle(
         logger.info("bad request: %s", getattr(exc, "args", [""])[0] if exc.args else "")
         return 400, {"error": "bad_request"}
 
+    if not guardrails.looks_like_question(question):
+        return 200, {"answer": constants.NOT_A_QUESTION, "sources": [], "declined": True}
+
     if not LIMITER.allow(access.client_key(lower), now):
         return 429, {"error": "rate_limited"}
 
@@ -101,6 +104,10 @@ def handle(
         return 200, {"answer": constants.DECLINE, "sources": [], "declined": True}
 
     loader = corpus_loader or corpus.load
+    if not env.get("ASK_CORPUS_DIR") and not env.get("VERCEL_URL") and lower.get("host"):
+        # The deployment host serves /ask/ too; this keeps the corpus fetch working
+        # when the project does not expose Vercel's system variables.
+        env = dict(env, VERCEL_URL=lower["host"])
     try:
         corpus_text, published = loader(env)
     except OSError as exc:

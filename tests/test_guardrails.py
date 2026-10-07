@@ -142,6 +142,29 @@ class InjectionScoreTest(unittest.TestCase):
                 self.assertLess(score, constants.BLOCK_SCORE)
 
 
+class LooksLikeQuestionTest(unittest.TestCase):
+    def test_real_questions_pass(self):
+        for q in (
+            "What is a Relying Party?",
+            "apa itu relying party?",
+            "Who accredits a Wallet Provider",
+            "Verifier?",
+            "RP Intermediary vs merchant",
+            "Jelaskan trusted list",
+        ):
+            with self.subTest(q=q):
+                self.assertTrue(guardrails.looks_like_question(q))
+
+    def test_greetings_and_noise_fail(self):
+        for q in ("tes", "test", "halo", "hi", "Hello!", "ok", "???", "...", "123", "tes tes", "halo min"):
+            with self.subTest(q=q):
+                self.assertFalse(guardrails.looks_like_question(q))
+
+    def test_single_word_needs_a_question_mark(self):
+        self.assertFalse(guardrails.looks_like_question("Verifier"))
+        self.assertTrue(guardrails.looks_like_question("Verifier?"))
+
+
 class StripInvisibleTest(unittest.TestCase):
     def test_removes_zero_width_and_bidi(self):
         self.assertEqual(guardrails.strip_invisible("a​b‮c﻿"), "abc")

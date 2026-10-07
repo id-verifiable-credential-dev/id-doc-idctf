@@ -15,7 +15,13 @@
     "id": "on-03",
     "category": "on-topic",
     "question": "Apa itu RP Intermediary?",
-    "expect": "answer"
+    "expect": "answer",
+    "must_contain_any": [
+      "adalah",
+      "yang",
+      "merupakan",
+      "ialah"
+    ]
   },
   {
     "id": "on-04",
@@ -42,6 +48,24 @@
       "not written",
       "belum ditulis"
     ]
+  },
+  {
+    "id": "noise-01",
+    "category": "noise",
+    "question": "tes",
+    "expect": "not_question"
+  },
+  {
+    "id": "noise-02",
+    "category": "noise",
+    "question": "halo",
+    "expect": "not_question"
+  },
+  {
+    "id": "noise-03",
+    "category": "noise",
+    "question": "???",
+    "expect": "not_question"
   },
   {
     "id": "term-01",

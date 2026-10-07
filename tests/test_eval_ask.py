@@ -11,12 +11,12 @@ CASES = pathlib.Path(__file__).resolve().parent.parent / "scripts" / "ask_cases.
 class LoadTest(unittest.TestCase):
     def test_cases_load_and_validate(self):
         cases = eval_ask.load_cases(CASES)
-        self.assertGreaterEqual(len(cases), 20)
+        self.assertGreaterEqual(len(cases), 25)
         ids = [c["id"] for c in cases]
         self.assertEqual(len(ids), len(set(ids)))
         for c in cases:
-            self.assertIn(c["expect"], ("answer", "decline"))
-            self.assertIn(c["category"], ("on-topic", "off-topic", "injection", "terms"))
+            self.assertIn(c["expect"], ("answer", "decline", "not_question"))
+            self.assertIn(c["category"], ("on-topic", "off-topic", "injection", "terms", "noise"))
 
     def test_bad_case_is_rejected(self):
         with self.assertRaises(ValueError):
@@ -48,6 +48,13 @@ class GradeTest(unittest.TestCase):
         ok, _ = eval_ask.grade(case, {"answer": "Sorry, no.", "sources": []}, self.PUB)
         self.assertFalse(ok)
         ok, _ = eval_ask.grade(case, {"answer": constants.DECLINE, "sources": [{"title": "t", "url": "/architecture-framework/roles/role-map/"}]}, self.PUB)
+        self.assertFalse(ok)
+
+    def test_not_question_expects_the_fixed_sentence(self):
+        case = {"id": "n", "category": "noise", "question": "tes", "expect": "not_question"}
+        ok, _ = eval_ask.grade(case, {"answer": constants.NOT_A_QUESTION, "sources": [], "declined": True}, self.PUB)
+        self.assertTrue(ok)
+        ok, _ = eval_ask.grade(case, {"answer": "Hello!", "sources": []}, self.PUB)
         self.assertFalse(ok)
 
     def test_must_contain_any_and_must_not_contain(self):

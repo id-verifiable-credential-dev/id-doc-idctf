@@ -46,7 +46,7 @@ class HandlerTest(unittest.TestCase):
 
         with mock.patch.object(service.gemini, "ask_model", fake_ask), \
              mock.patch.object(service.corpus, "load", lambda env: ("corpus", {"/"})):
-            status, out = self.post(json.dumps({"question": "hello"}).encode())
+            status, out = self.post(json.dumps({"question": "What is a role?"}).encode())
         self.assertEqual(status, 200)
         self.assertEqual(out, {"answer": "hi", "sources": []})
 
@@ -103,7 +103,7 @@ class HandlerTest(unittest.TestCase):
         with mock.patch.object(chat.service, "handle", side_effect=RuntimeError("boom")):
             req = urllib.request.Request(
                 f"http://127.0.0.1:{self.port}/api/chat",
-                data=json.dumps({"question": "q"}).encode(),
+                data=json.dumps({"question": "What is a role?"}).encode(),
                 method="POST",
                 headers={"Content-Type": "application/json"},
             )
@@ -118,7 +118,7 @@ class HandlerTest(unittest.TestCase):
              mock.patch.object(service.gemini, "ask_model",
                                lambda system, contents, *, models, call=None: gemini.ModelReply(text='{"answer":"a","sources":[]}', model="m", blocked_reason=None)):
             req = urllib.request.Request(f"http://127.0.0.1:{self.port}/api/chat",
-                                         data=json.dumps({"question": "q"}).encode(), method="POST",
+                                         data=json.dumps({"question": "What is a role?"}).encode(), method="POST",
                                          headers={"Content-Type": "application/json"})
             with urllib.request.urlopen(req) as resp:
                 self.assertEqual(resp.headers["Content-Type"], "application/json; charset=utf-8")

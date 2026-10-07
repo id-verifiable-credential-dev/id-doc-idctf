@@ -132,10 +132,11 @@ extra:
   status:
     new: Newly added
     deprecated: Deprecated
-  # Where the Ask IDCTF drawer posts. Production is the Vercel function
+  # Where the Ask IDCTF drawer posts, with the trailing slash so `trailingSlash`
+  # in vercel.json does not 308-redirect every POST. Production is the function
   # next to the site; local development points at `vercel dev`:
   #   ASK_ENDPOINT=http://localhost:3000/api/chat mkdocs serve
-  ask_endpoint: !ENV [ASK_ENDPOINT, "/api/chat"]
+  ask_endpoint: !ENV [ASK_ENDPOINT, "/api/chat/"]
 
 # Extensions
 markdown_extensions:

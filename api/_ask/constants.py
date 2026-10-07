@@ -10,6 +10,11 @@ DECLINE: Final[str] = (
     "I can only answer questions about the IDCTF documentation on this site."
 )
 FALLBACK: Final[str] = "I could not answer that. Try rewording the question."
+NOT_A_QUESTION: Final[str] = (
+    "That does not look like a question. Ask about IDCTF, for example what a "
+    "Relying Party is. Itu belum berupa pertanyaan; tanyakan tentang IDCTF, "
+    "misalnya apa itu Relying Party."
+)
 
 MAX_QUESTION: Final[int] = 1000
 MAX_HISTORY: Final[int] = 10

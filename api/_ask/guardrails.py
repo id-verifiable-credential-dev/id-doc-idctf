@@ -52,6 +52,34 @@ def validate(payload: object) -> tuple[str, list[dict]]:
     return question, clean
 
 
+# --- Question-likeness (before the model) ---------------------------------------
+
+_GREETINGS = {
+    "hi", "hello", "hey", "halo", "hai", "hallo", "tes", "test", "testing", "ok", "oke",
+    "okay", "thanks", "thank", "makasih", "terima", "kasih", "ping", "yo", "p", "cek",
+    "check", "coba", "woi", "woy", "bro", "sis", "min", "admin",
+}
+_WORD = re.compile(r"[^\W\d_]+", re.UNICODE)
+
+
+def looks_like_question(text: str) -> bool:
+    """A cheap gate so "tes", "halo" or "???" never reach the model.
+
+    Passes anything with two or more alphabetic words that is not only
+    greetings or test words, and any single word that ends with a question
+    mark (a term lookup such as "Verifier?"). Everything else is handled with
+    a fixed sentence, which costs no quota and cannot fail.
+    """
+    words = [w.lower() for w in _WORD.findall(text)]
+    if not words:
+        return False
+    if all(w in _GREETINGS for w in words):
+        return False
+    if len(words) >= 2:
+        return True
+    return text.rstrip().endswith("?")
+
+
 # --- Injection detection (before the model) -----------------------------------
 
 _INVISIBLE = re.compile(

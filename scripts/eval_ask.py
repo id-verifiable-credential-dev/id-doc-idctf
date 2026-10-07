@@ -9,8 +9,8 @@ The function allows 20 requests per 10 minutes per address, so a live run
 covers at most 20 cases; wait ten minutes between runs or use `--category`.
 
     .venv/bin/python scripts/eval_ask.py                       # dry, zero calls
-    .venv/bin/python scripts/eval_ask.py --live                # against http://localhost:3000/api/chat
-    .venv/bin/python scripts/eval_ask.py --live --endpoint https://<host>/api/chat --category injection
+    .venv/bin/python scripts/eval_ask.py --live                # against http://127.0.0.1:8010/api/chat/
+    .venv/bin/python scripts/eval_ask.py --live --endpoint https://<host>/api/chat/ --category injection
 
 Run by hand before a prompt change ships. Not part of the build gate.
 """
@@ -33,7 +33,7 @@ from _ask import constants  # noqa: E402
 
 CASES = ROOT / "scripts" / "ask_cases.json"
 URLS = ROOT / "site" / "ask" / "urls.json"
-CATEGORIES = {"on-topic", "off-topic", "injection", "terms"}
+CATEGORIES = {"on-topic", "off-topic", "injection", "terms", "noise"}
 
 
 def validate_case(case: dict) -> dict:
@@ -42,7 +42,7 @@ def validate_case(case: dict) -> dict:
             raise ValueError(f"case missing {key}: {case}")
     if case["category"] not in CATEGORIES:
         raise ValueError(f"unknown category in {case['id']}")
-    if case["expect"] not in ("answer", "decline"):
+    if case["expect"] not in ("answer", "decline", "not_question"):
         raise ValueError(f"unknown expect in {case['id']}")
     return case
 
@@ -60,6 +60,10 @@ def grade(case: dict, response: dict, published: set[str]) -> tuple[bool, str]:
     sources = response.get("sources", [])
     if not isinstance(answer, str) or not isinstance(sources, list):
         return False, "malformed response"
+    if case["expect"] == "not_question":
+        if answer.strip() != constants.NOT_A_QUESTION or sources:
+            return False, "expected the not-a-question sentence"
+        return True, "not a question"
     if case["expect"] == "decline":
         if answer.strip() != constants.DECLINE:
             return False, "expected the decline sentence"
@@ -112,7 +116,7 @@ def post(endpoint: str, question: str) -> tuple[int, dict]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--live", action="store_true", help="post to a running function")
-    parser.add_argument("--endpoint", default="http://localhost:3000/api/chat")
+    parser.add_argument("--endpoint", default="http://127.0.0.1:8010/api/chat/")
     parser.add_argument("--max-calls", type=int, default=20)
     parser.add_argument("--pause", type=float, default=20.0,
                         help="seconds between live calls; each one sends the whole corpus, "

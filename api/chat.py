@@ -20,8 +20,6 @@ logging.basicConfig(level=logging.INFO, format="%(name)s %(levelname)s %(message
 
 
 class handler(BaseHTTPRequestHandler):
-    # Bound how long a stalled client can hold the socket open.
-    timeout = 10
 
     def _send(self, status: int, body: dict) -> None:
         data = json.dumps(body).encode("utf-8")

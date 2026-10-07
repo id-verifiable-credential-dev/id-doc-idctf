@@ -50,7 +50,7 @@ import chat  # noqa: E402
 class DevHandler(SimpleHTTPRequestHandler):
     """Static site plus the function, on one origin."""
 
-    timeout = chat.handler.timeout
+    timeout = 10  # a stalled local client must not hold the socket forever
     _send = chat.handler._send
     do_POST = chat.handler.do_POST
 
