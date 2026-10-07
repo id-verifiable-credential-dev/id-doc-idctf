@@ -89,6 +89,9 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+extra_javascript:
+  - javascripts/ask.js
+
 copyright: Copyright &copy; 2026 Indonesia Digital Credential Trust Framework
 
 # Plugins
@@ -129,6 +132,10 @@ extra:
   status:
     new: Newly added
     deprecated: Deprecated
+  # Where the Ask IDCTF drawer posts. Production is the Vercel function
+  # next to the site; local development points at `vercel dev`:
+  #   ASK_ENDPOINT=http://localhost:3000/api/chat mkdocs serve
+  ask_endpoint: !ENV [ASK_ENDPOINT, "/api/chat"]
 
 # Extensions
 markdown_extensions:

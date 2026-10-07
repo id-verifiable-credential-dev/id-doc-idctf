@@ -194,7 +194,8 @@ the VICAL, and the status list on a timer, every twenty-four hours or when the
 device reaches an unmetered network. A Time to Live (TTL) set by the
 credential's risk profile decides how long a cached copy still counts, which
 is short for a verifier that is online anyway and runs to the tolerance limit
-the Governance Framework sets for one that is not. And an incident waits for
+the Governance Framework will set for one that is not, a limit nobody has set
+yet. And an incident waits for
 neither: on a key compromise Trust Registry publishes an emergency trusted
 list within the hour and notifies verifiers directly, the first phase of
 [entity key revocation][entity-key-revocation].

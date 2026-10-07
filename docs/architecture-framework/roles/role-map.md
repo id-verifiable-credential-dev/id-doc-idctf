@@ -523,6 +523,16 @@ workable is that no issuer ever trusts a named one: an issuer checks the signer
 of a vouching statement against the trusted list, so any accredited provider is
 accepted and no other is, however many appear later.
 
+A provider reaches that list the way every other accredited party does, and the
+sameness is the point. An Assessment Body tests its implementation against the
+Governance Profile and audits its security, the Root Authority decides on that
+report, and the provider is added to the trusted list. Nothing in those stages
+is particular to this role, so the first provider and the tenth face one test
+written by neither of them. The stages are in
+[Three stages of authority](three-stages-of-authority.md), and what the test
+itself covers is a question for the Governance Framework rather than this
+document.
+
 Enrollment is the one point where this role reaches outside the framework: a
 citizen signs in through an identity provider to enroll, and each wallet may
 use a different one, so long as it meets the identity-proofing requirement

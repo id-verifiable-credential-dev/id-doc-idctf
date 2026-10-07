@@ -90,6 +90,12 @@ The backend behind the wallet holds no credentials at all. Its job is to vouch
 that an installation is a genuine one on genuine hardware, and to handle what
 happens when a device is lost or replaced.
 
+Many providers hold this side at once. Each accredited Wallet Provider
+publishes a wallet of its own and runs the backend behind it, and a citizen
+chooses among them. What makes that workable is that no issuer ever trusts a
+named provider, and how a provider reaches the list it is checked against is in
+[Wallet Provider][wallet-provider].
+
 - **How many:** Many.
 - **Roles:** [Wallet Provider][wallet-provider]
 - **Modules:** [Mobile Wallet][hla-mobile-wallet],
@@ -162,7 +168,20 @@ three be trusted, and it is **never on the transaction path**.
 
 That absence is what makes the **one** in this System Model's count affordable: a
 single national instance is a point of failure only if something waits on it,
-and [the trust path][the-trust-path] sets out why nothing does.
+and [the trust path][the-trust-path] sets out why nothing on the transaction
+path does.
+
+Two things off that path do wait, and saying so is part of the claim rather
+than a qualification of it. An entity cannot onboard and cannot rotate a key
+while DID Service is unreachable, because an entry nobody witnessed is an entry
+every resolver rejects. Containment is the part that does not wait: suspending
+an entity, publishing an emergency trusted list, and stopping its issuance are
+Trust Registry's work, so a compromised key is cut off within the hour whether
+or not the witness is reachable, and what waits is the entity's return to
+service. The witness stays a single one on that reasoning. An outage delays a
+return and never a containment, which bounds what the single instance can cost,
+and a second witness would add a standing operational arrangement to Trust
+Infrastructure for a case the incident schedule already absorbs.
 
 The separation is drawn Module by Module in
 [The transaction path and the trust path](transaction-path-and-trust-path.md).

@@ -43,6 +43,15 @@ enough to pass it back, then deletes it and never logs what it relayed. The
 party accountable for a merchant is deliberately not the party able to watch
 it.
 
+Reading nothing is not the same as seeing nothing. The relay is the
+intermediary's own endpoint, so it necessarily observes that one of its
+merchants ran a check and when, and the request it holds is signed rather than
+encrypted. That much is what lets an intermediary notice a merchant asking for
+more than its category allows, which is the thing it answers for. What it may
+keep from a relayed request, what it may never keep, and for how long, belongs
+to the Governance Framework; the architecture settles only that the request
+side is readable to it and the response side is not.
+
 This arrangement exists on the verifying side only. Every Identity Issuer and
 every Attribute Issuer runs its own issuing infrastructure, signs with its own
 key, and appears in the trusted list; nobody issues through somebody else's.

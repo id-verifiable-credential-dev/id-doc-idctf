@@ -75,8 +75,9 @@ rather than the network.
 
 The measurable targets live in
 [Quality goals](../software-architecture/quality-targets.md), and how
-long a cache may be trusted is set in the
-[Governance Framework](../../governance-framework/index.md), not here.
+long a cache may be trusted belongs to the
+[Governance Framework](../../governance-framework/index.md), not here. Nothing
+has set it there yet, which [the trust path][the-trust-path] states in full.
 
 ### Finished specifications only {#finished-specifications-only}
 
@@ -209,6 +210,15 @@ it. The record's format is specified in the
 [Technical Specifications](../../technical-specifications/index.md), and the
 retention rules belong to the
 [Governance Framework](../../governance-framework/index.md).
+
+The citizen keeps a record too, and it is made of what the verifier already
+signed. Every request arrives signed, under the verifier's own key or under a
+merchant's device certificate, and carries the Use Statement Trust Authority
+signed for that use. The wallet holds both before anyone is asked to decide, so
+it keeps them afterward alongside the outcome and the time. Nothing is signed
+anew for this, and no attribute value is ever written down: what the wallet
+stores is the asking, never the answering. Format and retention sit where the
+verifier's receipt puts them.
 
 ### Accessibility {#accessibility}
 

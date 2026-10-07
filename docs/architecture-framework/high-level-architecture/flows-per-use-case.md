@@ -131,6 +131,56 @@ sequenceDiagram
    merchant, and its `ReaderAuthRole` extension binds the certificate to the
    allowed attribute request scope.
 
+### Merchant certificate withdrawal {#merchant-certificate-withdrawal}
+
+This flow lets an RP Intermediary stop a merchant it registered. It is the
+counterpart of the onboarding above, and it runs on the one part of a relayed
+transaction the intermediary can read: the request. What the intermediary
+observes, and what it may keep, is in
+[RP Intermediary and merchant](../roles/rp-intermediary-and-merchant.md).
+
+[](){ #fig-merchant-certificate-withdrawal }
+
+<figure markdown="1">
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant MV as Mobile Verifier
+    participant VC as Verifier Core
+    participant MW as Mobile Wallet
+    MV->>VC: Leave the signed request, one customer after another
+    VC->>VC: Compare what the merchant asks for with the category it registered
+    VC->>VC: Withdraw the merchant's device certificate
+    VC-->>MW: Publish the revoked certificate to the list wallets read
+    MW->>MW: Refuse the next request from that device
+```
+
+<figcaption><span class="ekdn-fignum"></span> Withdrawal of a merchant's certificate, from the requests the relay holds through to the wallet that refuses the device.</figcaption>
+</figure>
+
+1. Mobile Verifier leaves a signed request with Verifier Core for each
+   customer it serves, as [verification by a merchant][verification-by-a-merchant]
+   sets out. The request is signed and not encrypted, so it is readable to the
+   RP Intermediary; the response never is.
+
+2. Verifier Core compares the attributes a merchant asks for against the
+   Use Statement of the business category its device was bound to. A merchant
+   that asks beyond its category is refused by every wallet it approaches, and
+   without this comparison nobody would learn that it kept trying.
+
+3. Verifier Core withdraws that merchant's Verifier Device Certificate, within
+   the deadline the Governance Framework sets, and the merchant's other
+   permissions are untouched because it has none beyond that certificate.
+
+4. Verifier Core publishes the withdrawn certificate to the certificate
+   revocation list (CRL) it maintains for the certificates it issues. Nothing
+   is published centrally, and no other merchant is affected.
+
+5. Mobile Wallet checks the certificate against its cached copy of that list
+   and refuses the next request from the device. The refusal happens on the
+   citizen's phone, so no part of it waits on Trust Infrastructure.
+
 ### Wallet registration and attestation {#wallet-registration-and-attestation}
 
 This flow registers a wallet installation with Wallet Backend Service and
@@ -239,7 +289,7 @@ sequenceDiagram
 4. The entity submits a new CSR from the rotated key to Trust Authority, the
    same day.
 
-5. Trust Authority adds the old DSC to the Certificate Revocation List (CRL).
+5. Trust Authority adds the old DSC to the CRL.
    The old key leaves `assertionMethod` without the entry being deleted, and
    the witness refuses any new entry signed by the revoked key.
 

@@ -209,9 +209,15 @@ verification that starts while Trust Infrastructure is unreachable still
 completes. Issuance and verification continue from cache until the tolerance
 limit expires, and the limit is a policy decision rather than a network
 condition. The targets are in
-[Quality goals](../software-architecture/quality-targets.md) and the
-tolerance is set by the
+[Quality goals](../software-architecture/quality-targets.md), and the tolerance
+belongs to the
 [Governance Framework](../../governance-framework/index.md).
+
+That limit does not exist yet. No number has been set, here or anywhere else,
+which makes it an open question rather than a delegation: a cache with no stated
+ceiling is a cache that never ages out. Read the tolerance as named and not as
+given, and read a claim that a transaction survives an outage as true for as
+long as whoever sets the number decides.
 
 Keeping the status list off the center also keeps a count off the center: were revocation data
 collected nationally, Trust Infrastructure would know how many credentials are

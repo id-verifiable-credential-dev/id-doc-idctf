@@ -1643,3 +1643,266 @@ html {
   font-size: 0.75rem;
   color: var(--ekdn-faint, #757575);
 }
+
+/* ---------------------------------------------------------------------------
+   Ask IDCTF: the floating button and the drawer. Every color is a token
+   already defined above, so both palettes are covered. The drawer is
+   24 rem on desktop and the full width under 45 em. z-index sits above
+   Material's header (4) and search (5).
+   ------------------------------------------------------------------------ */
+
+.ekdn-ask-button[hidden],
+.ekdn-ask[hidden],
+.ekdn-ask-backdrop[hidden] {
+  display: none;
+}
+
+.ekdn-ask-button {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 6;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--md-primary-fg-color);
+  color: var(--ekdn-surface);
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ekdn-ask-button svg {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.ekdn-ask-button:hover,
+.ekdn-ask-button:focus-visible {
+  background: var(--md-primary-fg-color--dark);
+  outline: 0.125rem solid var(--md-accent-fg-color);
+  outline-offset: 0.125rem;
+}
+
+.ekdn-ask-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.ekdn-ask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 7;
+  width: 24rem;
+  max-width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: var(--ekdn-surface);
+  color: var(--md-typeset-color);
+  border-left: 1px solid var(--ekdn-rule);
+  box-shadow: -0.25rem 0 1rem rgba(0, 0, 0, 0.12);
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@media screen and (max-width: 44.9375em) {
+  .ekdn-ask {
+    width: 100vw;
+    border-left: 0;
+  }
+}
+
+html.ekdn-ask-open,
+html.ekdn-ask-open body {
+  overflow: hidden;
+}
+
+.ekdn-ask__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--ekdn-rule);
+}
+
+.ekdn-ask__title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ekdn-ink);
+}
+
+.ekdn-ask__close,
+.ekdn-ask__send {
+  border: 0;
+  background: transparent;
+  color: var(--ekdn-muted);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  border-radius: 0.25rem;
+}
+
+.ekdn-ask__close svg,
+.ekdn-ask__send svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.ekdn-ask__close:hover,
+.ekdn-ask__send:hover,
+.ekdn-ask__close:focus-visible,
+.ekdn-ask__send:focus-visible {
+  color: var(--md-primary-fg-color);
+  background: var(--md-accent-fg-color--transparent);
+  outline: none;
+}
+
+.ekdn-ask__send:disabled {
+  color: var(--ekdn-label);
+  cursor: default;
+  background: transparent;
+}
+
+.ekdn-ask__log {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.ekdn-ask__empty {
+  color: var(--ekdn-muted);
+  margin: 0;
+}
+
+.ekdn-ask__msg {
+  margin: 0 0 0.9rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  max-width: 92%;
+}
+
+.ekdn-ask__msg p {
+  margin: 0 0 0.5em;
+}
+
+.ekdn-ask__msg p:last-child,
+.ekdn-ask__msg ul:last-child,
+.ekdn-ask__msg ol:last-child {
+  margin-bottom: 0;
+}
+
+.ekdn-ask__msg ul,
+.ekdn-ask__msg ol {
+  margin: 0 0 0.5em 1.1em;
+  padding: 0;
+}
+
+.ekdn-ask__msg--user {
+  margin-left: auto;
+  background: var(--md-primary-fg-color);
+  color: var(--ekdn-surface);
+}
+
+.ekdn-ask__msg--model {
+  background: var(--ekdn-tint);
+  border: 1px solid var(--ekdn-tint-line);
+  color: var(--ekdn-ink);
+}
+
+.ekdn-ask__msg--model code {
+  background: var(--md-code-bg-color);
+  color: var(--md-code-fg-color);
+  padding: 0 0.25em;
+  border-radius: 0.2em;
+  font-size: 0.9em;
+}
+
+.ekdn-ask__msg--note {
+  background: transparent;
+  color: var(--ekdn-muted);
+  padding-left: 0;
+}
+
+.ekdn-ask__msg--thinking p::after {
+  content: "\2026";
+}
+
+.ekdn-ask__sources {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--ekdn-tint-line);
+  font-size: 0.72rem;
+}
+
+.ekdn-ask__sources ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ekdn-ask__sources a {
+  color: var(--md-primary-fg-color);
+}
+
+.ekdn-ask__form {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  border-top: 1px solid var(--ekdn-rule);
+}
+
+.ekdn-ask__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--ekdn-rule-strong);
+  border-radius: 0.4rem;
+  background: var(--md-default-bg-color);
+  color: var(--ekdn-ink);
+  font: inherit;
+}
+
+.ekdn-ask__input:focus-visible {
+  outline: 0.125rem solid var(--md-accent-fg-color);
+  outline-offset: 0;
+  border-color: transparent;
+}
+
+.ekdn-ask__input::placeholder {
+  color: var(--ekdn-faint);
+}
+
+.ekdn-ask__foot {
+  margin: 0;
+  padding: 0.5rem 1rem 0.8rem;
+  font-size: 0.66rem;
+  line-height: 1.45;
+  color: var(--ekdn-muted);
+}
+
+.ekdn-ask__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media print {
+  .ekdn-ask-button,
+  .ekdn-ask,
+  .ekdn-ask-backdrop {
+    display: none;
+  }
+}

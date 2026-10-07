@@ -2,7 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "python3 -m venv .venv && .venv/bin/python -m pip install -r requirements.txt",
-  "buildCommand": ".venv/bin/python -m mkdocs build --strict",
+  "buildCommand": ".venv/bin/python -m mkdocs build --strict && .venv/bin/python scripts/build_corpus.py",
   "outputDirectory": "site",
-  "trailingSlash": true
+  "trailingSlash": true,
+  "functions": {
+    "api/chat.py": {
+      "maxDuration": 60
+    }
+  }
 }

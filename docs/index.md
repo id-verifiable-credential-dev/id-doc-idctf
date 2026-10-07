@@ -73,6 +73,8 @@ as in the IDCTF ecosystem or an ecosystem participant. It is not a name.
 Three names are fixed and used consistently across all five documents.
 
 - The wallet on the citizen's phone is a Module called **Mobile Wallet**.
+  Every accredited Wallet Provider publishes one of its own, and a citizen
+  chooses among them.
 - Credential types are named in the `id.idctf.<type>.<N>` namespace.
 - The technical profile that applies across credential types is called the
   **Governance Profile**.

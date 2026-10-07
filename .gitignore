@@ -6,3 +6,8 @@ debt/
 source-data/
 CLAUDE.md
 .claude/
+specs/
+.env
+.env.*
+!.env.example
+.superpowers/

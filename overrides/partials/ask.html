@@ -1,0 +1,36 @@
+{#
+  Ask IDCTF: the floating button and the drawer. Behavior is in
+  docs/javascripts/ask.js, styles in docs/stylesheets/extra.css under the
+  "Ask IDCTF" section. The endpoint comes from `extra.ask_endpoint` in
+  mkdocs.yml so local development can point at `vercel dev`.
+#}
+<button type="button" class="ekdn-ask-button" aria-label="Ask IDCTF" data-ask-open hidden>
+  {% include ".icons/lucide/message-circle.svg" %}
+</button>
+
+<div class="ekdn-ask-backdrop" data-ask-backdrop hidden></div>
+
+<aside class="ekdn-ask" role="dialog" aria-modal="true" aria-labelledby="ekdn-ask-title"
+       data-ask data-ask-endpoint="{{ config.extra.ask_endpoint }}" hidden>
+  <header class="ekdn-ask__head">
+    <h2 id="ekdn-ask-title" class="ekdn-ask__title">Ask IDCTF</h2>
+    <button type="button" class="ekdn-ask__close" aria-label="Close" data-ask-close>
+      {% include ".icons/lucide/x.svg" %}
+    </button>
+  </header>
+
+  <div class="ekdn-ask__log" data-ask-log aria-live="polite">
+    <p class="ekdn-ask__empty" data-ask-empty>Ask a question about the framework. Answers come from the pages on this site, with links to them.</p>
+  </div>
+
+  <form class="ekdn-ask__form" data-ask-form>
+    <label class="ekdn-ask__sr" for="ekdn-ask-input">Ask about IDCTF</label>
+    <input id="ekdn-ask-input" class="ekdn-ask__input" type="text" maxlength="1000"
+           autocomplete="off" placeholder="Ask about IDCTF" data-ask-input>
+    <button type="submit" class="ekdn-ask__send" aria-label="Send" data-ask-send>
+      {% include ".icons/lucide/send.svg" %}
+    </button>
+  </form>
+
+  <p class="ekdn-ask__foot">Answers are generated and can be wrong. The page text is what counts. Questions are sent to Google Gemini for processing.</p>
+</aside>

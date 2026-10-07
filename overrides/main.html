@@ -15,3 +15,13 @@
     {{ super() }}
   {% endif %}
 {% endblock %}
+
+{#
+  Ask IDCTF drawer, on every page. The partial is fixed-position, so where
+  it sits in the document does not matter; the footer block keeps it out
+  of the content column.
+#}
+{% block footer %}
+  {{ super() }}
+  {% include "partials/ask.html" %}
+{% endblock %}

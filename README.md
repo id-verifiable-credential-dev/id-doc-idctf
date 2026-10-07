@@ -83,3 +83,60 @@ never ships, and cannot collide with the one the container builds.
 
 Import the repository at <https://vercel.com/new> and accept the settings from
 `vercel.json`, or deploy from this folder with `npx vercel --prod`.
+
+## Ask IDCTF
+
+A floating button on every page opens a drawer that answers questions from
+the site's own pages. The drawer posts to `api/chat.py`, a Vercel Python
+function; the guardrails and the Gemini call live in `api/_ask/`. The
+design is in `specs/2026-10-07-ask-idctf-design.md`.
+
+Environment variables on the Vercel project:
+
+| Variable | Required | Default |
+|---|---|---|
+| `GEMINI_API_KEY` | yes | none; without it the function answers `503` |
+| `ASK_MODEL` | no | `gemini-flash-latest` |
+| `ASK_MODEL_FALLBACK` | no | `gemini-flash-lite-latest` |
+
+Restrict the key in Google AI Studio to the Generative Language API and set
+a quota and a budget alert on it: the function's own rate limit is per warm
+instance and is a brake, not a wall. Each question sends the whole corpus,
+about 56,000 words, as context, so the cost per question is roughly 75,000
+input tokens; the brake is per warm instance, so concurrent instances
+multiply it.
+A free-tier key allows roughly three such questions a minute and a few
+hundred a day; past that Google answers 429, which the drawer shows as the
+"not available" line. The first live run also showed `gemini-flash-latest`
+failing on every call while `gemini-flash-lite-latest` answered in two to
+three seconds, so on a free key `ASK_MODEL=gemini-flash-lite-latest` is the
+faster setting.
+
+The build writes the corpus to `site/ask/` after `mkdocs build`
+(`scripts/build_corpus.py`); the function fetches it from its own
+deployment on first use. Vercel's Deployment Protection must be off for the
+deployment the function runs in, or that fetch returns the sign-in page and
+every question answers 503.
+
+Local development, with the function on the same origin as the pages (the
+function sends no CORS headers, so a split origin cannot work):
+
+```bash
+cp .env.example .env                 # once; fill in GEMINI_API_KEY
+.venv/bin/python -m mkdocs build --strict && .venv/bin/python scripts/build_corpus.py
+.venv/bin/python scripts/serve_ask.py                            # http://127.0.0.1:8010
+```
+
+`scripts/serve_ask.py` serves `site/` and routes `POST /api/chat` through the
+same handler class Vercel runs. It reads `.env` at the repository root
+(gitignored; `.env.example` lists the variables) and lets the real
+environment override it. It does not watch files: rebuild and restart after
+an edit. Without a key every question answers 503.
+
+Tests and the guardrail evaluation:
+
+```bash
+.venv/bin/python -m unittest discover -s tests -t . -v
+.venv/bin/python scripts/eval_ask.py              # dry: validates the cases, no network
+.venv/bin/python scripts/eval_ask.py --live       # posts to the running function, 20 cases per 10 minutes
+```

@@ -133,7 +133,7 @@ above.
 | Credential Codec | Domain | Parses and reassembles SD-JWT VC, mdoc, and `ldp_vc`: disclosures, IssuerSigned, DeviceAuth, the Data Integrity proof | IETF SD-JWT VC, ISO/IEC 18013-5, W3C VCDM 2.0, VC Data Integrity |
 | Keystore Manager | Provider | The device key, one per installation, and the credential key, one per installation and shared by every credential (a temporary decision), in the secure element; platform attestation; the credential key doubles as `DeviceKey` in the MSO | Android Keystore, iOS Secure Enclave |
 | Trust SDK | Provider | Trusted list, status list, and VICAL from local cache; falls back to the last known good copy | ETSI TS 119 602, IETF Token Status List |
-| Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local activity history | SQLCipher, Keystore |
+| Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local presentation history holding each signed request, its Use Statement, the outcome, and the time | SQLCipher, Keystore |
 
 </figure>
 
