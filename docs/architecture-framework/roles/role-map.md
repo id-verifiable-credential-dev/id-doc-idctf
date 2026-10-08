@@ -149,8 +149,9 @@ without that countersignature is rejected by every party that later tries to
 resolve it. The Root Authority keeps a record of every entity's public keys,
 what each is for, evidence of how it is stored, and its status, and it holds
 none of their private keys: its own hardware carries only its own two roots,
-its trusted-list signing key, its Accreditation Credential key, and its
-witness key. It also keeps an append-only log of entity events, registrations,
+its trusted-list signing key, the key that signs the list of issuer roots it
+publishes for face-to-face readers, its Accreditation Credential key, the key
+that maintains its own identifier, and its witness key. It also keeps an append-only log of entity events, registrations,
 accreditations, key rotations, incidents, and nothing about a citizen ever
 enters it.
 
@@ -191,7 +192,7 @@ inside every wallet and every verifier device at build time and is never downloa
 afterward, because a chain of trust cannot be circular: it has to terminate
 somewhere the application already carries, and that somewhere is the Root
 Authority. The two anchor paths are set out in
-[Two trust anchor paths](../trust-model/two-trust-anchor-paths.md).
+[Two trust anchor paths][two-trust-anchor-paths].
 
 **What it refuses to do is as much a part of the role as what it does.** It
 never accepts a party's own published description as the source of that
@@ -551,7 +552,7 @@ receiving tomorrow's vouching. Nothing has to be published anywhere and
 nothing has to be distributed to anyone: every issuer that would otherwise
 have been asked to vouch for that device refuses on its own the next time it
 checks, on the same logic that lets a
-[short-lived attestation](../trust-model/short-lived-attestations.md) do the
+[short-lived attestation][short-lived-attestations] do the
 work a published list would otherwise have to do. It never decides whether a
 particular credential may be issued, because it never learns what was issued
 in the first place, by design.
@@ -698,7 +699,7 @@ runs only the second kind, which is why its identity is borrowed rather than
 its own, described in
 [the two subtypes of Relying Party][the-two-subtypes-of-relying-party]. How
 each kind is actually recognized is set out in
-[Two trust anchor paths](../trust-model/two-trust-anchor-paths.md).
+[Two trust anchor paths][two-trust-anchor-paths].
 
 #### The two subtypes of Relying Party {#the-two-subtypes-of-relying-party}
 

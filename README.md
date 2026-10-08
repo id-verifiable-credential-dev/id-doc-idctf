@@ -22,7 +22,7 @@ IDCTF is five documents:
 
 Only the Architecture Framework is being written. Roles, High-Level Architecture,
 Data Model and Protocols, the Glossary, and References are done; Software
-Architecture is part written, and the Trust Model has not started. 22 of 45 pages
+Architecture is part written, and the Trust Model has not started. 23 of 41 pages
 carry prose.
 
 

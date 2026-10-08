@@ -264,11 +264,11 @@ Service share one row, because the rule is identical for both of them.
 
 | Module | May call | May not call |
 |---|---|---|
-| Issuer Core | The source system, through Claims Provider; Trust Registry; DID Service; its own Key Manager; Trust Authority and DID Service to register or rotate keys, never during a transaction | Wallet Backend Service, Verifier Core |
+| Issuer Core | The source system, through Claims Provider; Trust Registry; DID Service (cache); its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Wallet Backend Service, Verifier Core |
 | Issuer Console | Issuer Core's Admin API | Any database, any other Module |
 | Mobile Wallet | Issuer Core, Verifier Core, Mobile Verifier, Wallet Backend Service, Trust Registry (cache), DID Service (cache), CONNECTIDN | Trust Authority |
-| Wallet Backend Service | CONNECTIDN, Trust Registry, DID Service, the device platform, its own Key Manager; Trust Authority and DID Service to register or rotate keys | Issuer Core, Verifier Core |
-| Verifier Core | Trust Registry (cache), DID Service (cache), the issuer's status list (cache, a static file), the Relying Party application, its own Key Manager; Trust Authority and DID Service to register or rotate keys, never during a transaction | Issuer Core |
+| Wallet Backend Service | CONNECTIDN, Trust Registry, DID Service (cache), the device platform, its own Key Manager; Trust Authority to register or rotate keys | Issuer Core, Verifier Core |
+| Verifier Core | Trust Registry (cache), DID Service (cache), the issuer's status list (cache, a static file), the Relying Party application, its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Issuer Core |
 | Verifier Console | Verifier Core's Admin API | Any database, any other Module |
 | Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); DID Service (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
 | Trust Authority | Trust Registry, DID Service | Any Module outside Trust Infrastructure |
@@ -320,8 +320,8 @@ is.
   [one application, two doors][one-application-two-doors].
 - **The secure zone admits Trust Authority and DID Service's Log Service.**
   Trust Authority's HSM holds both CA roots, the trusted list and VICAL keys,
-  the Accreditation Credential key, and a separate partition for the did:webvh
-  witness key. Log Service is the sole user of that witness key partition;
+  the Accreditation Credential key, the update key of Trust Authority's own
+  did:webvh, and a separate partition for the did:webvh witness key. Log Service is the sole user of that witness key partition;
   everything else in the secure zone is reached by Trust Authority alone.
 - **The last zone is drawn detached** because it is not the ecosystem's
   network. Claims Provider is the one thing that enters it, and it only reads.
@@ -335,7 +335,7 @@ is.
 | Internet | Mobile Wallet, Mobile Verifier | Citizens, merchants, counter staff of a Relying Party |
 | Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, DID Service's Publisher and Resolver endpoints, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules |
 | Internal | Issuer Console, Verifier Console, Admin API (Issuer Core, Verifier Core, DID Service), Trust Authority (back office and portal), databases, caches, Claims Provider | An operator, over VPN or the office network |
-| Secure | Trust Authority's HSM: both offline CA roots, the trusted list and VICAL keys, the Accreditation Credential key, and in a separate partition, the did:webvh witness key | Trust Authority; DID Service's Log Service (witness key partition only) |
+| Secure | Trust Authority's HSM: both offline CA roots, the trusted list and VICAL keys, the Accreditation Credential key, the update key of Trust Authority's own did:webvh, and in a separate partition, the did:webvh witness key | Trust Authority; DID Service's Log Service (witness key partition only) |
 | Closed agency network | Source systems | Claims Provider only, and read-only |
 
 </figure>

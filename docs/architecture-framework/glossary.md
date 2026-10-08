@@ -149,7 +149,7 @@ Electronic System Provider (PSE)
 :   A party that operates an Electronic System. <span class="glossary-meta">Source: PP 71/2019.</span>
 
 Entity chain
-:   The set of checks that establish whether a party is a participant in good standing. They are answered from cached data, and their answers stay usable for hours or days. <span class="glossary-meta">See [Entity chain and transaction chain](trust-model/entity-chain-and-transaction-chain.md).</span>
+:   The set of checks that establish whether a party is a participant in good standing. They are answered from cached data, and their answers stay usable for hours or days. <span class="glossary-meta">See [Entity chain and transaction chain][entity-chain-and-transaction-chain].</span>
 
 Extension point (SPI)
 :   An interface at the Provider layer that IDCTF defines and the implementer fills in, which is how an institution plugs its own records, signing arrangements, and key storage into a Module without changing it.
@@ -194,10 +194,10 @@ iso_18045_*
 :   The attack-resistance values a wallet reports for its key storage and its user authentication. The Governance Profile maps them from the assurance a Credential Rulebook demands. <span class="glossary-meta">See [OpenID4VCI 1.0 and ISO/IEC 18045](references.md#device-attestation-and-assurance).</span>
 
 issuance-cose
-:   The mdoc issuer's signing key in COSE form, the one wrapped by the Document Signer Certificate.
+:   The issuer's signing key in COSE form, wrapped by the Document Signer Certificate. It signs the MSO of an mdoc.
 
 issuance-jose
-:   The mdoc issuer's signing key in JWS form, the one published in its DID Document.
+:   The issuer's signing key in JWS form, published in its DID Document. It signs SD-JWT VC and `ldp_vc`.
 
 issuance_record
 :   The archive an issuer keeps of what it issued and when, holding neither claims nor attributes.
@@ -225,7 +225,7 @@ keyStorage
 ## L {#glossary-l}
 
 Last-known-good
-:   The last signed copy of something an entity fetched, which it keeps using after the copy's lifetime runs out rather than failing at once. It stops being accepted at the tolerance limit.
+:   The last signed copy of a status list, a CRL, a VICAL, or a TRQP answer, which a participant keeps using after the copy's lifetime runs out rather than failing at once. It stops being accepted at the tolerance limit. The trusted list is never kept this way: past its `NextUpdate` it is discarded.
 
 Layer
 :   What a Component is responsible for: Controller, Domain, Repository, or Provider, with Client and View sitting outside the server. It is a way of dividing one Component's work and not a fourth tier of the structure.
@@ -345,6 +345,9 @@ Root Authority
 SD-JWT VC
 :   A credential built on the JSON Web Token, in which the holder can disclose some attributes and withhold the rest. It is the main online format in IDCTF, pinned to one revision because the specification is still a draft. <span class="glossary-meta">See [IETF SD-JWT VC](references.md#credential-formats-and-their-signatures).</span>
 
+SCID
+:   The self-certifying identifier inside a `did:webvh`, a hash of the first entry of the entity's log, so the identifier binds its whole key history without depending on the domain that serves it. Trust SDK carries Trust Authority's SCID at build time, which is what anchors Trust Authority's own signatures. <span class="glossary-meta">See [did:webvh v1.0](references.md#identifiers-and-keys).</span>
+
 Selective disclosure
 :   Showing some attributes of a credential while the rest stay hidden, with the credential still verifiable. The `ldp_vc` format does not offer it. <span class="glossary-meta">See [IETF SD-JWT VC and ISO/IEC 18013-5](references.md#credential-formats-and-their-signatures).</span>
 
@@ -357,6 +360,9 @@ SessionTranscript
 Shared test vector
 :   A test case, including a deliberately malicious one, run against both implementations of the Trust SDK so that the two agree on what they accept and what they reject.
 
+status-list
+:   The issuer's third signing key, published in its DID Document beside `issuance-jose`. It signs the Status List Token and the Bitstring Status List and nothing else, so that revocation keeps working while a credential signing key is frozen.
+
 Subject
 :   The party a claim is about, which is not always the party holding the credential. <span class="glossary-meta">See [W3C VCDM 2.0](references.md#credential-formats-and-their-signatures).</span>
 
@@ -366,10 +372,10 @@ Token Status List
 :   The revocation and suspension mechanism in which each credential points at one bit of a compressed published list. IDCTF uses it for SD-JWT VC and mdoc, pinned to one revision because the specification is still a draft. <span class="glossary-meta">See [IETF Token Status List](references.md#trust-lists-and-credential-status).</span>
 
 Tolerance limit
-:   How far past its stated lifetime a cached signed copy may still be used. Beyond it the copy is rejected, however recently it was fetched.
+:   How far past its stated lifetime a cached signed copy of a status list, a CRL, a VICAL, or a TRQP answer may still be used. Beyond it the copy is rejected, however recently it was fetched. The trusted list has no tolerance; its copy expires at `NextUpdate`. <span class="glossary-meta">See [ETSI TS 119 602](references.md#trust-lists-and-credential-status).</span>
 
 Transaction chain
-:   The set of checks made on a presentation while it happens. They run in real time, and their answers are worth seconds. <span class="glossary-meta">See [Entity chain and transaction chain](trust-model/entity-chain-and-transaction-chain.md).</span>
+:   The set of checks made on a presentation while it happens. They run in real time, and their answers are worth seconds. <span class="glossary-meta">See [Entity chain and transaction chain][entity-chain-and-transaction-chain].</span>
 
 Transaction path
 :   The route a credential or a presentation travels between an issuer, a wallet, and a verifier, the data plane of the ecosystem. It never crosses the trust path while a transaction is running. <span class="glossary-meta">See [Transaction path and trust path](high-level-architecture/transaction-path-and-trust-path.md).</span>
@@ -415,7 +421,7 @@ Verifier
 :   The software that verifies a presentation. The organization behind it is the Relying Party; *verifier* names the software and never the role. <span class="glossary-meta">See [W3C VCDM 2.0](references.md#credential-formats-and-their-signatures).</span>
 
 Verifier Device Certificate
-:   The certificate carried by one device that reads credentials face to face. It is issued by the Verifier Core that vouches for that device, lives for a short time, and is revoked through a CRL.
+:   The X.509 certificate carried by one reader device, a merchant's or a Relying Party's own counter device. It is issued by the Verifier Core that vouches for that device from its own Verifier Issuing CA, carries the attributes the device may ask for in `ReaderAuthRole`, lives for a period the Governance Profile sets, and is withdrawn early through a CRL. A merchant presents it online as well as in proximity.
 
 Verifier Issuing CA
 :   The intermediate certificate authority held by an RP Intermediary, and by a Relying Party that reads credentials offline, from which the certificates for individual devices are cut. The entity generates its own key; the Verifier Root CA issues the certificate for it.
@@ -428,6 +434,9 @@ verifier_info
 
 VICAL
 :   The signed list of the root certificates of mdoc issuers, which is how a reader learns which issuers to accept. The Trust Registry publishes it. <span class="glossary-meta">See [ISO/IEC 18013-5 Annex C](references.md#trust-lists-and-credential-status).</span>
+
+VICAL key
+:   The key in the Trust Authority's HSM that signs each published version of the VICAL. It is not the key that signs the trusted list, because the two lists have different formats and different readers: the VICAL is read by mdoc readers that never see the trusted list. <span class="glossary-meta">See [ISO/IEC 18013-5 Annex C](references.md#trust-lists-and-credential-status).</span>
 
 ## W {#glossary-w}
 

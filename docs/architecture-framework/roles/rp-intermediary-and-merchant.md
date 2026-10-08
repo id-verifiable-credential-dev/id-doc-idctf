@@ -131,7 +131,7 @@ its merchants receive, even though it is accountable for them.
 
 The technical detail behind the last four rows, including how a wallet follows
 a merchant's certificate back to the intermediary that issued it, is in
-[Two trust anchor paths](../trust-model/two-trust-anchor-paths.md).
+[Two trust anchor paths][two-trust-anchor-paths].
 
 ## Provisioning a merchant {#provisioning-a-merchant}
 
@@ -227,7 +227,7 @@ reject it on its own. The loud one is to withdraw a certificate that has not
 yet expired, which is announced on the intermediary's withdrawal list so that a
 wallet that was offline at the time still learns of it. Why short lifetimes are
 made to do the work of revocation is set out in
-[Short-lived attestations](../trust-model/short-lived-attestations.md).
+[Short-lived attestations][short-lived-attestations].
 
 ### What the three stages produce {#what-the-three-stages-produce}
 

@@ -39,12 +39,11 @@ sequenceDiagram
     participant TR as Trust Registry
     Ent->>TA: Submit the onboarding request
     Ent->>Ent: Generate its own keys
-    Ent->>DID: Submit the genesis identifier
-    DID-->>Ent: Return the witness proof
-    Ent->>TA: Request a signing certificate
-    TA-->>Ent: Issue the Document Signer Certificate
+    Ent->>TA: Submit the genesis identifier and the certificate request
+    TA->>DID: Hand the genesis entry to the witness
+    DID-->>TA: Return the witness proof
     TA->>TR: Record the entity's authority
-    TA-->>Ent: Issue the Accreditation Credential
+    TA-->>Ent: Return the witness proof, the certificate, and the Accreditation Credential
     TR->>TR: Publish the new trusted list
     Ent->>Ent: Publish its DID Document
 ```
@@ -61,31 +60,36 @@ sequenceDiagram
    Security Module (HSM). The keys shown are an Issuer's; a Relying Party or a
    Wallet Provider generates the keys of its own registered role.
 
-3. The entity submits its genesis DID to DID Service, sending the `did.jsonl`
-   document, a proof of possession for each key, and the `keyStorage` value.
+3. The entity submits its keys to Trust Authority in one request, through
+   `POST /entities/me/keys`: the genesis `did.jsonl` entry, a proof of
+   possession for each key, the `keyStorage` value, and a Certificate Signing
+   Request (CSR) from the `issuance-cose` key, for the mdoc path. Trust
+   Authority checks the `keyStorage` value against the `issuer_assurance` the
+   entity is to be granted, and the CSR against the certificate profile.
 
-4. DID Service returns a witness proof signed with `eddsa-jcs-2022`.
+4. Trust Authority hands the genesis entry to DID Service, which checks the
+   chain and each proof of possession.
 
-5. The entity sends Trust Authority a Certificate Signing Request (CSR) from
-   the `issuance-cose` key, for the mdoc path.
+5. DID Service returns a witness proof signed with `eddsa-jcs-2022` to Trust
+   Authority.
 
-6. Trust Authority returns a Document Signer Certificate (DSC).
-
-7. Trust Authority records an Authority Statement in Trust Registry, naming
+6. Trust Authority records an Authority Statement in Trust Registry, naming
    the action and the resource, together with the public keys and the
-   `keyStorage` value.
+   `keyStorage` value, and records the new keys in its Public Key Registry.
 
-8. Trust Authority issues the entity its Accreditation Credential.
+7. Trust Authority returns the witness proof, a Document Signer Certificate
+   (DSC), and the entity's Accreditation Credential in the same exchange.
 
-9. Trust Registry publishes the new trusted list, which now carries the
+8. Trust Registry publishes the new trusted list, which now carries the
    entity's keys.
 
-10. The entity publishes its DID Document on its own domain.
+9. The entity publishes its DID Document on its own domain.
 
-Rotation follows the same path: a new log entry, signed with the current update
-key and matching the pre-rotation hash, is witnessed before it counts. After
-onboarding, the entity signs through its own Key Manager, and Trust
-Infrastructure is not called once transactions start.
+Rotation follows the same path, through the same door: a new log entry, signed
+with the current update key and matching the pre-rotation hash, is submitted
+to Trust Authority and witnessed before it counts. The entity never submits an
+entry to DID Service itself. After onboarding, the entity signs through its own
+Key Manager, and Trust Infrastructure is not called once transactions start.
 
 ### Multi-tenant merchant onboarding {#multi-tenant-merchant-onboarding}
 
@@ -386,7 +390,7 @@ sequenceDiagram
 
 ## Credential issuance {#credential-issuance-flows}
 
-### Credential issuance {#credential-issuance}
+### Authorization Code flow {#authorization-code-flow}
 
 This flow issues a credential to a citizen's wallet over
 [OpenID4VCI][exchange-protocols], online, using the Authorization Code flow.
@@ -395,7 +399,7 @@ their identity before requesting a token. Mobile Wallet, Wallet Backend
 Service, Issuer Core, and Claims Provider take part, and the trusted list is
 read from cache throughout.
 
-[](){ #fig-credential-issuance }
+[](){ #fig-authorization-code-flow }
 
 <figure markdown="1">
 
@@ -485,7 +489,7 @@ verifying that credential (a KTP Digital) first. When the source system
 answers slowly, issuance is deferred and Issuer Core returns a
 `transaction_id` instead of the credential.
 
-### Pre-authorized credential issuance {#pre-authorized-issuance}
+### Pre-Authorized Code flow {#pre-authorized-code-flow}
 
 This flow issues a credential over OpenID4VCI using the Pre-Authorized Code
 flow, for when Issuer Core already knows the citizen's identity and pushes
@@ -494,7 +498,7 @@ login page, Mobile Wallet exchanges the offer's `pre-authorized_code` and
 an out-of-band factor, such as an SMS PIN or a One-Time Password (OTP),
 directly for the credential.
 
-[](){ #fig-pre-authorized-issuance }
+[](){ #fig-pre-authorized-code-flow }
 
 <figure markdown="1">
 
@@ -704,9 +708,10 @@ sequenceDiagram
    validate IssuerAuth, recomputes the digest, checks DeviceAuth against the
    SessionTranscript, and checks the status list from its cache.
 
-Zero network calls happen during this flow. The status list and the trusted
-list can both be stale by the time it runs; the tolerance limit, seven days
-for example, is set by the Governance Framework. DeviceAuth is a
+Zero network calls happen during this flow. The status list can be stale by
+the time it runs, up to the tolerance limit the Governance Framework sets,
+seven days for example; the trusted list is good until the `NextUpdate` Trust
+Registry wrote into it and is discarded after. DeviceAuth is a
 `deviceSignature`; `deviceMac` is out of scope. The consequence is that a
 presentation cannot be denied afterward: a verifier can prove to a third
 party that the citizen presented. That is accepted as the price of easier
@@ -832,7 +837,7 @@ sequenceDiagram
 
 5. Wallet Backend Service returns the new Key Attestation to Mobile Wallet.
 
-6. Mobile Wallet starts the [credential issuance][credential-issuance] flow
+6. Mobile Wallet starts the [Authorization Code flow][authorization-code-flow]
    with Issuer Core, using the new key.
 
 7. Issuer Core verifies the new Key Attestation and reissues the credential

@@ -54,8 +54,8 @@ its own, which is why the count is many.
 | Status Manager | Domain | Random index allocation inside a partition, revocation, reissuing the Status List Token and the Bitstring Status List, hosted on the issuer's own domain | IETF Token Status List, W3C Bitstring Status List |
 | Key Attestation Validator | Domain | When the Credential Rulebook requires `substantial` or `high`: validates the Key Attestation (the signer is on the trusted list, the nonce matches, it has not expired, the proof key is present in `attested_keys`, `key_storage` meets the `min_assurance` mapping in the Governance Profile). When `low`: an ordinary proof JWT is enough | OpenID4VCI 1.0 App. D.1, F.1, F.3 |
 | Claims Provider | Provider | The extension point into the source system, `getClaims(subjectRef, credentialType)`; read-only; returns only the fields listed in the Credential Rulebook; has no notion of credential format; stores no PII. Built from a Source Connector (REST, SOAP, JDBC, CDC), a Mapping Service (normalizes to the Credential Rulebook schema, `data_as_of`), and a Staging Repository (periodic replication only) | JSON Schema |
-| Key Manager | Domain | Generates, stores, and rotates `issuance-jose`, `issuance-cose`, and the Ed25519 `did:webvh` update key through a driver: an encrypted software keystore by default, `cloudkms`, or `pkcs11`; registers each public key with Trust Authority (a `did.jsonl` entry, proof of possession, `keyStorage`, and a CSR); scheduled rotation; publishes `did.jsonl` | did:webvh v1.0, `eddsa-jcs-2022`, RFC 2986, PKCS#11 |
-| Signing Provider | Provider | JWS with the `issuance-jose` key (also the Data Integrity proof of `ldp_vc` and the status list); `COSE_Sign1` with the `issuance-cose` key and the DSC in `x5chain`; through Key Manager | PKCS#11, RFC 7515, RFC 9052 |
+| Key Manager | Domain | Generates, stores, and rotates `issuance-jose`, `issuance-cose`, `status-list`, and the Ed25519 `did:webvh` update key through a driver: an encrypted software keystore by default, `cloudkms`, or `pkcs11`; registers each public key with Trust Authority (a `did.jsonl` entry, proof of possession, `keyStorage`, and a CSR); scheduled rotation; publishes `did.jsonl` | did:webvh v1.0, `eddsa-jcs-2022`, RFC 2986, PKCS#11 |
+| Signing Provider | Provider | JWS with the `issuance-jose` key (also the Data Integrity proof of `ldp_vc`); `COSE_Sign1` with the `issuance-cose` key and the DSC in `x5chain`; the Status List Token and the Bitstring Status List with the `status-list` key; through Key Manager | PKCS#11, RFC 7515, RFC 9052 |
 | Trust SDK | Provider | Trusted list, Credential Rulebook, DID resolution, TRQP; the library's own contents are in [Trust SDK][sa-trust-sdk] | ETSI TS 119 602, ToIP TRQP v2.0 |
 | Issuance Repository | Repository | `issuance_record` (pseudonym, holder key thumbprint, status index, `signing_key_ref`, digest, `holder_key_storage`, `data_as_of`), the status list, deferred requests, a local copy of the Credential Rulebook | None |
 
@@ -132,7 +132,7 @@ above.
 | Credential Renderer | Domain | Displays a credential according to the Credential Rulebook's display metadata, with localization | OCA, SD-JWT VC Type Metadata |
 | Credential Codec | Domain | Parses and reassembles SD-JWT VC, mdoc, and `ldp_vc`: disclosures, IssuerSigned, DeviceAuth, the Data Integrity proof | IETF SD-JWT VC, ISO/IEC 18013-5, W3C VCDM 2.0, VC Data Integrity |
 | Keystore Manager | Provider | The device key, one per installation, and the credential key, one per installation and shared by every credential (a temporary decision), in the secure element; platform attestation; the credential key doubles as `DeviceKey` in the MSO | Android Keystore, iOS Secure Enclave |
-| Trust SDK | Provider | Trusted list, status list, and VICAL from local cache; falls back to the last known good copy | ETSI TS 119 602, IETF Token Status List |
+| Trust SDK | Provider | Trusted list, status list, and VICAL from local cache; the status list and VICAL fall back to the last-known-good copy, the trusted list never does | ETSI TS 119 602, IETF Token Status List |
 | Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local presentation history holding each signed request, its Use Statement, the outcome, and the time | SQLCipher, Keystore |
 
 </figure>
@@ -314,7 +314,7 @@ repositories.
 | Registrar Controller | Controller | Self-service entity portal (`/entities`, `/entities/me/*`, including `POST /entities/me/keys` for a log entry, proof of possession, and a CSR, and `/entities/me/uses` for submitting and collecting a Use Statement), operator back office with MFA | None |
 | Accreditation Service | Domain | Registration, verification of legal-entity status, intake of assessment-body reports, status decisions, issuance of the Authority Statement, the Use Statement, and the Accreditation Credential; pathways A, B, and C | ToIP TRQP, IETF SD-JWT VC |
 | Certificate Authority | Domain | Issuer Root CA and Verifier Root CA, each self-signed in its own offline HSM; issues the Document Signer Certificate (EKU 1.0.18013.5.1.2) and the Verifier Issuing CA, for an RP Intermediary and for a Relying Party that reads offline, from a CSR; issues and hosts the CRL | ISO/IEC 18013-5 Annex B, RFC 5280, RFC 2986 |
-| Governance Service | Domain | List of `action` and `resource`, mapping of `issuer_assurance` and `min_assurance` to ISO/IEC 18045 values, cache TTL, tolerance limits, the cut-off date for requests carrying no Use Statement, list of Assessment Bodies | None |
+| Governance Service | Domain | List of `action` and `resource`, mapping of `min_assurance` to ISO/IEC 18045 values and of `issuer_assurance` to Key Manager drivers, cache TTL, tolerance limits, the `NextUpdate` horizon of the trusted list, the cut-off date for requests carrying no Use Statement, list of Assessment Bodies | None |
 | Incident Service | Domain | Freezes an entity, revokes it, issues an emergency trusted list, notifies verifiers directly | None |
 | Entity Repository | Repository | Entity data, status, accreditation and authorization history | None |
 | Public Key Registry | Repository | `keyRef`, thumbprint, `purpose`, evidence of `keyStorage`, validity, status; no private key | None |
@@ -365,10 +365,10 @@ the design principle
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Publisher Controller | Controller | Receives a new `did:webvh` log entry from an entity, with proof of possession of each new key | W3C DID Core |
+| Publisher Controller | Controller | Receives a new `did:webvh` log entry from Trust Authority, which collected it from the entity, with proof of possession of each new key; an entity never calls it | W3C DID Core |
 | Resolver Controller | Controller | Replays the `did:webvh` log and verifies the chain; decodes `did:key` locally | did:webvh, W3C DID Resolution |
-| Log Service | Domain | Witness: validates each `did.jsonl` entry the entity signed (the chain, pre-rotation `nextKeyHashes`, proof of possession, `keyStorage` against `issuer_assurance`), then signs the witness proof in `eddsa-jcs-2022` with the witness key in Trust Authority's HSM; the old key stays in `verificationMethod` but drops out of `assertionMethod` | did:webvh v1.0 |
-| Log Delivery | Provider | Sends the witness proof to the entity and watches that `did.jsonl` stays available on the entity's own domain | None |
+| Log Service | Domain | Witness: validates each `did.jsonl` entry the entity signed (the chain, pre-rotation `nextKeyHashes`, proof of possession; Trust Authority has already checked `keyStorage` against `issuer_assurance`), then signs the witness proof in `eddsa-jcs-2022` with the witness key in Trust Authority's HSM; the old key stays in `verificationMethod` but drops out of `assertionMethod` | did:webvh v1.0 |
+| Log Delivery | Provider | Returns the witness proof to Trust Authority, which passes it to the entity, and watches that `did.jsonl` stays available on the entity's own domain | None |
 | Document Repository | Repository | Log, versions, validity range | None |
 
 </figure>
@@ -399,7 +399,7 @@ carrying its own risk that the Go and Dart versions drift apart.
 | DID Resolver Client | Resolves `did:webvh` (replays the log, verifies the hash chain, checks `proof`, handles pre-rotation, verifies the `eddsa-jcs-2022` proofs of log entries and witnesses) and decodes `did:key` | High | did:webvh v1.0 |
 | Status Checker | Status List Token and Bitstring Status List: downloads, verifies, decompresses, checks the bit | Medium | IETF Token Status List, W3C Bitstring Status List |
 | X.509 Validator | Chains the Document Signer Certificate to the Issuer Root CA and the Verifier Device Certificate to the Verifier Root CA, against the CRL and VICAL. On Dart it calls the platform's own validator, `CertPathValidator` on Android and the Security framework on iOS, rather than a version written from scratch | Highest | RFC 5280, ISO/IEC 18013-5 Annex B and C |
-| Cache Store | Redis on the server, an encrypted file on the device; TTL set by the Governance Framework; last-known-good held until the tolerance limit; signature checked again on every read | Low | None |
+| Cache Store | Redis on the server, an encrypted file on the device; TTL set by the Governance Framework; the trusted list discarded at its `NextUpdate`; the status list, CRL, VICAL, and TRQP answers held as last-known-good until the tolerance limit; signature checked again on every read | Low | None |
 
 </figure>
 

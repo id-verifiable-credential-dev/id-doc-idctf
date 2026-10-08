@@ -75,9 +75,9 @@ interface does.
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   each from its own cached copy.
 - **Where it lives** on the central CDN, as a static file anyone may fetch.
-- **Lifetime** until the `NextUpdate` it carries. How long a copy may be trusted
-  past that is set in
-  [Trusted list and cache](../trust-model/trusted-list-and-cache.md).
+- **Lifetime** until the `NextUpdate` it carries, then discarded with no grace
+  period, as ETSI TS 119 602 requires. How that date is chosen is in
+  [Trusted list and cache][trusted-list-and-cache].
 
 The trusted list is the roll of accredited entities, naming each one along with
 the intermediary certificate authorities they issue from, so an RP
@@ -159,7 +159,7 @@ because it has no entity of its own and borrows its cryptographic identity from
 the device certificate its intermediary issues. How the identifiers are formed
 is in [Identifier](identifier.md), and the two routes a verifier can
 take to an anchor are in
-[Two trust anchor paths](../trust-model/two-trust-anchor-paths.md).
+[Two trust anchor paths][two-trust-anchor-paths].
 
 ### Status list {#status-list}
 
@@ -384,4 +384,4 @@ Verifier Root CA. A CRL withdraws either one early.
 The Verifier Issuing CA appearing in the trusted list is how a wallet can tell a
 genuine intermediary from an invented one. The two roots never sign each other,
 and both chains are set out in
-[Two trust anchor paths](../trust-model/two-trust-anchor-paths.md).
+[Two trust anchor paths][two-trust-anchor-paths].

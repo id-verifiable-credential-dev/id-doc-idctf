@@ -47,9 +47,9 @@ through a fixed interface, and each is described in
 
 !!! note "Partly written"
     The Roles, High-Level Architecture, and Data Model and Protocols chapters
-    carry prose, and so do the Glossary, References, and two sections of
-    Software Architecture. The rest of Software Architecture and the whole of
-    the Trust Model are skeletons marked `(soon)`.
+    carry prose, and so do the Glossary, References, two sections of
+    Software Architecture, and the whole of the Trust Model. The rest of
+    Software Architecture is a skeleton marked `(soon)`.
 
 ## Chapters {#chapters}
 

@@ -92,10 +92,12 @@ certificate requests. The direction is one way in a second sense too: no Module 
 Infrastructure ever calls a Module outside it, and none of them calls an entity
 back.
 
-One call runs the other way. A Core calls Trust Authority and DID Service
-only to register or rotate its own keys, never during a transaction: the one
-call the transaction path makes into the trust path, stated for each Core
-Module in [who may call whom][who-may-call-whom].
+One call runs the other way. A Core calls Trust Authority only to register or
+rotate its own keys, never during a transaction, and Trust Authority hands
+the entry to DID Service for its witness; a Core reads DID Service from cache
+and never submits to it. That is the one call the transaction path makes into
+the trust path, stated for each Core Module in
+[who may call whom][who-may-call-whom].
 
 This is why the plane can be one instance nationally without being a single
 point of failure. It is absent at the moment of use, so its availability is not
@@ -157,8 +159,8 @@ decided earlier, so that no Module has to call the trust path to ask.
 
 - The trusted list, published by Trust Registry to a central content delivery
   network (CDN), tells a Module that the party in front of it is accredited at
-  all. It is the copy the tolerance limit is really about: when it ages out,
-  the transaction stops. See [Trusted
+  all. It is the one cached copy with a hard expiry: past the `NextUpdate` it
+  carries, the copy is discarded and the transaction stops. See [Trusted
   list][trusted-list].
 - The Credential Rulebook, from the same CDN, is why an issuer and a verifier
   that have never spoken agree on what a credential of a given type contains.

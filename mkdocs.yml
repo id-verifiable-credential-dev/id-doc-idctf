@@ -221,13 +221,9 @@ nav:
     - "Trust Model":
       - architecture-framework/trust-model/index.md
       - architecture-framework/trust-model/chain-of-trust.md
-      - architecture-framework/trust-model/two-trust-anchor-paths.md
-      - architecture-framework/trust-model/entity-chain-and-transaction-chain.md
-      - architecture-framework/trust-model/trusted-list-and-cache.md
-      - architecture-framework/trust-model/short-lived-attestations.md
+      - architecture-framework/trust-model/trusted-list-and-short-lived-attestations.md
       - architecture-framework/trust-model/two-assurance-levels.md
       - architecture-framework/trust-model/keys-who-creates-who-signs.md
-      - architecture-framework/trust-model/trust-model-scope.md
     - architecture-framework/glossary.md
     - architecture-framework/references.md
   # The four documents below are parked: each is one page carrying its title
