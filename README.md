@@ -86,7 +86,7 @@ Import the repository at <https://vercel.com/new> and accept the settings from
 
 ## Ask IDCTF
 
-A floating button on every page opens a drawer that answers questions from
+A button in the header of every page opens a drawer that answers questions from
 the site's own pages. The drawer posts to `/api/chat/` (trailing slash, so
 `trailingSlash` in `vercel.json` does not redirect it), served by `api/chat.py`,
 a Vercel Python function; the guardrails and the Gemini call live in `api/_ask/`. The

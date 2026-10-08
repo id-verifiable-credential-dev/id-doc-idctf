@@ -388,7 +388,7 @@ sequenceDiagram
 7. Mobile Wallet overwrites its local cache with the fresh data, ready for
    the next offline presentation.
 
-## Credential issuance {#credential-issuance-flows}
+## Credential issuance {#credential-issuance}
 
 ### Authorization Code flow {#authorization-code-flow}
 

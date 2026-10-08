@@ -413,11 +413,12 @@
   --md-scroll-margin: 7.4rem;
 }
 
-/* Urutan ujung kanan dari kiri ke kanan: pencarian, bahasa, tema, repo.
-   Urutan DOM tema memasang palet sebelum bahasa dan repo sebelum keduanya,
-   jadi keempatnya diberi `order` eksplisit. Toggle bahasa dan toggle tema
-   sama-sama berkelas `.md-header__option`; yang palet berupa `form`, yang
-   bahasa berupa `div`. */
+/* Urutan ujung kanan dari kiri ke kanan: pencarian, bahasa, tema, Ask IDCTF,
+   repo. Urutan DOM tema memasang palet sebelum bahasa dan repo sebelum
+   keduanya, jadi kelimanya diberi `order` eksplisit. Toggle bahasa dan toggle
+   tema sama-sama berkelas `.md-header__option`; yang palet berupa `form`,
+   yang bahasa berupa `div`. Tombol Ask IDCTF dipasang di
+   overrides/partials/header.html. */
 .md-header__inner > .md-search {
   order: 1;
 }
@@ -430,8 +431,12 @@
   order: 3;
 }
 
-.md-header__inner > .md-header__source {
+.md-header__inner > .ekdn-ask-button {
   order: 4;
+}
+
+.md-header__inner > .md-header__source {
+  order: 5;
 }
 
 /* Di layar sempit bilah tab disembunyikan dan navigasi pindah ke laci.
@@ -1645,7 +1650,7 @@ html {
 }
 
 /* ---------------------------------------------------------------------------
-   Ask IDCTF: the floating button and the drawer. Every color is a token
+   Ask IDCTF: the header button and the drawer. Every color is a token
    already defined above, so both palettes are covered. The drawer is
    24 rem on desktop and the full width under 45 em. z-index sits above
    Material's header (4) and search (5).
@@ -1657,34 +1662,20 @@ html {
   display: none;
 }
 
+/* The button is a `<button>`, where the theme's other header icons are
+   `<label>`s; the browser's button chrome is stripped so it takes the
+   `.md-header__button` size, color and hover like the ones beside it. */
 .ekdn-ask-button {
-  position: fixed;
-  right: 1.25rem;
-  bottom: 1.25rem;
-  z-index: 6;
-  width: 3rem;
-  height: 3rem;
+  appearance: none;
   border: 0;
-  border-radius: 50%;
-  background: var(--md-primary-fg-color);
-  color: var(--ekdn-surface);
-  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.18);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: transparent;
+  font: inherit;
+  line-height: 0;
 }
 
-.ekdn-ask-button svg {
-  width: 1.4rem;
-  height: 1.4rem;
-}
-
-.ekdn-ask-button:hover,
 .ekdn-ask-button:focus-visible {
-  background: var(--md-primary-fg-color--dark);
   outline: 0.125rem solid var(--md-accent-fg-color);
-  outline-offset: 0.125rem;
+  outline-offset: -0.125rem;
 }
 
 .ekdn-ask-backdrop {

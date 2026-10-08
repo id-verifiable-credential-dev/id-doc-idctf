@@ -1,13 +1,9 @@
 {#
-  Ask IDCTF: the floating button and the drawer. Behavior is in
-  docs/javascripts/ask.js, styles in docs/stylesheets/extra.css under the
-  "Ask IDCTF" section. The endpoint comes from `extra.ask_endpoint` in
-  mkdocs.yml so local development can point at `vercel dev`.
+  Ask IDCTF: the drawer. The button that opens it is in partials/header.html.
+  Behavior is in docs/javascripts/ask.js, styles in docs/stylesheets/extra.css
+  under the "Ask IDCTF" section. The endpoint comes from `extra.ask_endpoint`
+  in mkdocs.yml so local development can point at `vercel dev`.
 #}
-<button type="button" class="ekdn-ask-button" aria-label="Ask IDCTF" data-ask-open hidden>
-  {% include ".icons/lucide/message-circle.svg" %}
-</button>
-
 <div class="ekdn-ask-backdrop" data-ask-backdrop hidden></div>
 
 <aside class="ekdn-ask" role="dialog" aria-modal="true" aria-labelledby="ekdn-ask-title"

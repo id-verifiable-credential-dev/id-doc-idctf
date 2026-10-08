@@ -1,6 +1,6 @@
 /* Ask IDCTF drawer.
  *
- * Opens from the floating button, posts the question and the last turns to
+ * Opens from the header button, posts the question and the last turns to
  * the endpoint on the drawer's data attribute, and renders the answer as
  * text. Nothing from the model reaches innerHTML: the mini renderer builds
  * nodes for paragraphs, bullets, bold and inline code and escapes the rest.
