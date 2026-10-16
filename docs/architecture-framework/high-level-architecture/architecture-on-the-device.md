@@ -8,15 +8,15 @@ description: The layout both applications share, the one-way dependency that kee
 # Architecture on the device: Mobile Wallet and Mobile Verifier {#architecture-on-the-device}
 
 Mobile Wallet and Mobile Verifier have the same shape. Each is an
-interface layer over a protocol layer, with encrypted storage and a secure
+interface part over a protocol part, with encrypted storage and a secure
 element beside them, all on a device the ecosystem does not own.
 
 ## The four parts {#the-four-parts}
 
-In Mobile Wallet, the interface layer holds Consent UI, Trust Display,
-Credential Renderer, and App Lock. The protocol layer under it holds Issuance
-Client, Presentation Client, Credential Codec, Attestation Client, Auth Client,
-and the Trust SDK. The Credential Store sits alongside, encrypted with
+In Mobile Wallet, the interface part is the View layer: Consent UI, Trust
+Display, Credential Renderer, and App Lock. The protocol part under it holds
+the four Clients, Issuance Client, Presentation Client, Attestation Client,
+and Auth Client, with Credential Codec and the Trust SDK beneath them. The Credential Store sits alongside, encrypted with
 SQLCipher. The secure element, StrongBox on Android or the Secure Enclave on
 iOS, holds the device key and the single credential key that binds every
 credential the wallet carries. The component-by-component breakdown of both applications is in
@@ -29,26 +29,26 @@ credential the wallet carries. The component-by-component breakdown of both appl
   <figcaption><span class="ekdn-fignum"></span> The four parts on the device, their connections, and their external counterparties.</figcaption>
 </figure>
 
-- **Solid arrows are interfaces set by the Governance Profile.** OpenID4VCI from
-  Issuer Core, OpenID4VP and ISO/IEC 18013-5 to verifiers, and OpenID Connect from
-  CONNECTIDN are ecosystem standards that every implementation must meet.
+- **Solid arrows are interfaces set by the Governance Profile.** OpenID for Verifiable Credential Issuance (OpenID4VCI) from
+  Issuer Core, OpenID for Verifiable Presentations (OpenID4VP) and ISO/IEC 18013-5 to verifiers, and OpenID Connect from
+  the identity provider are ecosystem standards that every implementation must meet.
 - **Dashed arrows are internal or platform interfaces.** The storage interface to
   Credential Store, the Keystore Manager interface to the secure element, the
   cache feed from Trust Registry, and the proprietary protocol to Wallet Backend
-  Service are internal to each provider.
-- **The protocol layer does not import the interface layer.** The dependency runs
-  strictly inward from the UI, keeping the protocol layer extractable as a
+  Service are internal to each Wallet Provider.
+- **The protocol part does not import the interface part.** The dependency runs
+  strictly inward from the UI, keeping the protocol part extractable as a
   standalone SDK.
 
 [The architecture on the device][fig-architecture-on-the-device] shows the four
 parts and the counterparties they talk to. The citizen touches only the interface
-layer. Everything that leaves the device leaves through the protocol layer, which
+part. Everything that leaves the device leaves through the protocol part, which
 is also the only part that reaches the secure element, through a Keystore
-Manager, and the Credential Store. What that one layer talks to falls into four
+Manager, and the Credential Store. What that one part talks to falls into four
 kinds.
 
-1. The transaction itself, which reaches three counterparties. CONNECTIDN
-   authenticates the citizen over [OpenID Connect][exchange-protocols]. Issuer Core delivers a
+1. The transaction itself, which reaches three counterparties. The identity
+   provider authenticates the citizen over [OpenID Connect][exchange-protocols]. Issuer Core delivers a
    credential over [OpenID4VCI][exchange-protocols]. The verifier side receives a presentation in two
    forms: Verifier Core over [OpenID4VP][exchange-protocols], and Mobile Verifier, at a merchant or
    at a Relying Party's counter, over OpenID4VP online, relayed by the RP
@@ -63,7 +63,7 @@ kinds.
    the application reads from its local cache
    rather than fetching mid-transaction.
 4. What is not remote at all. The secure element and the Credential Store are
-   reached on the device, and what passes between them and the protocol layer
+   reached on the device, and what passes between them and the protocol part
    never leaves it.
 
 Which Module is allowed to call which is set out in
@@ -74,15 +74,15 @@ separate question from who talks to whom. It is answered in
 [which interfaces the Governance Profile
 sets][which-interfaces-the-governance-profile-sets].
 
-## The protocol layer does not import the interface layer {#the-protocol-layer-does-not-import-the-interface-layer}
+## The protocol part does not import the interface part {#the-protocol-part-does-not-import-the-interface-part}
 
-The dependency runs one way. The protocol layer must not import anything from
-the interface layer, which is what lets it be pulled out as a standalone SDK.
+The dependency runs one way. The protocol part must not import anything from
+the interface part, which is what lets it be pulled out as a standalone SDK.
 
 That is the reason the rule exists. The ecosystem takes many Wallet Providers,
 each publishing a Mobile Wallet of its own, and every one of them has to get the
 same protocols right against the same issuers and verifiers. A shared protocol
-layer is how a second provider starts from a proven implementation instead of a
+part is how a second Wallet Provider starts from a proven implementation instead of a
 specification, and this one-way dependency is what keeps that extraction
 affordable.
 
@@ -106,14 +106,14 @@ plays, what it stores, and how its user signs in.
 | Backed by | Wallet Backend Service (Wallet Provider) | Verifier Core (the RP Intermediary for a merchant's device, the Relying Party for its own counter device) |
 | What vouches for the device | Key Attestation, daily | Verifier Device Certificate, limited lifetime plus a CRL |
 | Keys in the secure element | Device key, plus one credential key for all credentials | Device key |
-| Role in the protocol | Presents, as holder | Requests, as a [Relying Party Instance][relying-party-instance]; as verifier in proximity |
+| Side of a presentation | Presents, as holder | Requests, as a [Relying Party Instance][relying-party-instance]; as verifier in proximity |
 | Storage | Encrypted Credential Store | On-device Activity Repository |
-| User login | The identity provider of that Mobile Wallet, CONNECTIDN among them | Merchant account at the RP Intermediary, or a staff account at the Relying Party |
+| User login | The identity provider of that Mobile Wallet | Merchant account at the RP Intermediary, or a staff account at the Relying Party |
 
 </figure>
 
-That single credential key, shared by all of a wallet's credentials, is a
-decision marked temporary.
+That single credential key, shared by all of a wallet's credentials, lets two
+verifiers comparing notes match the holder, a cost IDCTF accepts.
 
 ## Which interfaces the Governance Profile sets {#which-interfaces-the-governance-profile-sets}
 
@@ -134,7 +134,7 @@ interface runs on.
 | Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, [TRQP][exchange-protocols], Credential Rulebook, VICAL | Yes |
 | Mobile Wallet to Wallet Backend Service | Key Attestation, [OpenID4VCI Appendix D.1][device-attestation-and-assurance] | Partly |
 | Mobile Verifier to Verifier Core | Verifier Device Certificate and the category Use Statements bound to the device, [ISO/IEC 18013-5 Annex B][certificates-and-revocation]; relayed `request_uri` and `response_uri` for a merchant's online check | Partly |
-| Mobile Wallet to CONNECTIDN | OpenID Connect | Set by BSSN |
+| Mobile Wallet to the identity provider | OpenID Connect | Set by the identity provider |
 | Application to secure element | Google and Apple platform APIs | No |
 
 </figure>
@@ -144,11 +144,11 @@ them the artifact is specified and the protocol carrying it is not. What a Key
 Attestation or a Verifier Device Certificate looks like has to be fixed, because
 another party verifies it: an issuer reads the attestation a wallet sends, and a
 wallet reads the certificate a Mobile Verifier presents. The rest stays with
-the party that runs it: how a Wallet Provider registers and recovers its own
+the party that runs it: how a Wallet Provider enrolls and recovers its own
 installations, and how a Verifier Core provisions the devices it answers for.
 Nobody outside that party ever sees those messages.
 
-The last two rows are fixed somewhere else entirely. Badan Siber dan Sandi
-Negara (BSSN) sets CONNECTIDN's interface; Balai Layanan Penghubung Identitas
-Digital (BLPID), a technical unit of BSSN, runs the service. The platform APIs
-belong to Google and Apple. The Governance Profile takes both as given.
+The last two rows are fixed somewhere else entirely. The identity provider's
+interface belongs to whoever runs it, and OpenID Connect is the one thing the
+ecosystem asks of it. The platform APIs belong to Google and Apple. The
+Governance Profile takes both as given.

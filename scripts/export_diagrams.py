@@ -21,11 +21,17 @@ sit on white rather than on the page.
 Fonts are not embedded — that multiplies a 30 kB export by twenty — so every
 font-family in the export is rewritten to the stack the pages already use.
 
+draw.io writes no <title> and no <desc>, so the export takes both from the
+page that embeds it: the alt text of the `![…](…)` becomes the <title>, and
+the <figcaption> under it becomes the <desc>. A figure no page embeds is
+exported without them, with a warning.
+
 Run:  .venv/bin/python scripts/export_diagrams.py [slug ...]
 """
 
 from __future__ import annotations
 
+import html
 import pathlib
 import re
 import subprocess
@@ -35,6 +41,7 @@ import xml.etree.ElementTree as ET
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DIO_ROOT = ROOT / "images"
 SVG_ROOT = ROOT / "docs" / "images"
+DOCS_ROOT = ROOT / "docs"
 
 DRAWIO = "drawio"
 PAD = 36
@@ -98,6 +105,29 @@ def add_card(svg: str) -> str:
     return svg[:at] + card + svg[at:]
 
 
+def page_text(rel: pathlib.Path) -> tuple[str, str] | None:
+    """The alt text and caption of the one page that embeds this export."""
+    needle = re.compile(r"!\[([^\]]*)\]\([^)]*/" + re.escape(rel.name) + r"\)")
+    for page in sorted(DOCS_ROOT.rglob("*.md")):
+        text = page.read_text()
+        m = needle.search(text)
+        if m is None:
+            continue
+        cap = re.compile(r"<figcaption>(.*?)</figcaption>", re.S).search(text, m.end())
+        caption = re.sub(r"<[^>]+>", "", cap.group(1)) if cap else ""
+        caption = re.sub(r"\[([^\]]*)\](?:\[[^\]]*\]|\([^)]*\))", r"\1", caption)
+        return m.group(1).strip(), " ".join(caption.split())
+    return None
+
+
+def add_text(svg: str, title: str, desc: str) -> str:
+    opening = re.search(r"<svg[^>]*>", svg)
+    tag = opening.group(0)[:-1] + ' role="img" aria-labelledby="t d">'
+    text = (f'<title id="t">{html.escape(title)}</title>'
+            f'<desc id="d">{html.escape(desc)}</desc>')
+    return svg[:opening.start()] + tag + text + svg[opening.end():]
+
+
 def main(only: list[str]) -> None:
     sources = sorted(DIO_ROOT.rglob("*.drawio"))
     if only:
@@ -112,6 +142,11 @@ def main(only: list[str]) -> None:
         svg = retype_fonts(dst.read_text())
         if not card:
             svg = add_card(svg)
+        found = page_text(rel)
+        if found:
+            svg = add_text(svg, *found)
+        else:
+            print(f"warning: no page embeds {rel}; exported without <title>/<desc>")
         dst.write_text(svg)
         size = re.search(r'width="([\d.]+)px?"\s+height="([\d.]+)px?"', svg)
         print(f"{'own card' if card else 'card added':11}  "

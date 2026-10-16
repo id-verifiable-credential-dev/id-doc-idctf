@@ -11,10 +11,10 @@ description: The standards this ecosystem adopted, the ones it turned down, and 
 Take, do not build. Every format and every protocol in this chapter is a
 standard that already exists, already has implementations, and was already
 argued over by people outside Indonesia. What the ecosystem writes for itself is
-the layer of rules sitting on top of them.
+the set of rules sitting on top of them.
 </p>
 
-That layer has three levels, and only the first of them belongs to this
+That set has three levels, and only the first of them belongs to this
 document. A **Credential Rulebook** covers one credential type: its schema, the
 formats it may take, how it is displayed, how far each attribute may be
 minimized, and the assurance it demands. Its shape is in
@@ -64,7 +64,8 @@ circulation.
 Two rows of the used column carry detail the cell leaves out. The Ed25519
 exception covers only the update key and the witness key of a did:webvh log,
 because did:webvh v1.0 requires it there. Each entity's Key Manager runs one
-driver: an encrypted software keystore by default, a cloud KMS, or an HSM over
+driver: an encrypted software keystore by default, a cloud key management service
+(KMS), or a hardware security module (HSM) over
 [PKCS#11][key-storage-interfaces].
 
 ## Chapter contents {#dmp-chapter-contents}
@@ -75,7 +76,7 @@ driver: an encrypted software keystore by default, a cloud KMS, or an HSM over
    type
 2. [Identifier](identifier.md), what names an entity, a holder, a
    credential type, an attribute, a registered use, and a device, and why the
-   holder uses one for now
+   holder uses one
 3. [Protocols and modes](protocols-and-modes.md), the protocol used
    for each interaction in the ecosystem, and what changes between the online
    path and the offline one

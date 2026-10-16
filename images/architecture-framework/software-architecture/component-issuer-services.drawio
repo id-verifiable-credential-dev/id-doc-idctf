@@ -27,7 +27,7 @@
         <mxCell id="n21" value="Reporting View" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="500" y="358.0" width="186" height="54" as="geometry"/></mxCell>
         <mxCell id="gl22" value="Client" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=11;fontColor=#4a5f6f;fontStyle=1;" vertex="1" parent="1"><mxGeometry x="14" y="445.0" width="100" height="20" as="geometry"/></mxCell>
         <mxCell id="n23" value="Core API Client&lt;br&gt;no database connection" style="rounded=1;arcSize=8;fillColor=#fff3cd;strokeColor=#d4a017;fontSize=12;fontColor=#16242f;html=1;whiteSpace=wrap;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="104" y="424.0" width="186" height="54" as="geometry"/></mxCell>
-        <mxCell id="t24" value="Claims Provider is the only component whose contents differ at every installation." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="520.0" width="220" height="20" as="geometry"/></mxCell>
+        <mxCell id="t24" value="Claims Provider is the only Component whose contents differ at every installation." style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=10.5;fontColor=#4a5f6f;fontStyle=0;" vertex="1" parent="1"><mxGeometry x="0" y="520.0" width="220" height="20" as="geometry"/></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

@@ -3,7 +3,7 @@ title: "Trusted list and short-lived attestations"
 description: What the trusted list answers and how a cached copy of it is trusted, and the four attestations whose limited lifetime does the work of a revocation list.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5.4, §5.5, §8.6, Kep. 7, 23, 25, 26; Bentuk Data Attestation (Kapan attestation diperlukan, Empat lapis, §3, Kenapa umurnya dibatasi); Rincian Module dan Operasi §2.3, §2.5, §7.4 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5.4, §5.5, §8.6, Kep. 7, 23, 25, 26; Bentuk Data Attestation (Kapan attestation diperlukan, Empat lapis, §3, Kenapa umurnya dibatasi); Rincian Module dan Operasi §2.3, §2.5, §7.4; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
 
 # Trusted list and short-lived attestations {#trusted-list-and-short-lived-attestations}
 
@@ -17,10 +17,19 @@ accredited. The attestations answer for everything one level below them.
 ## Trusted list and cache {#trusted-list-and-cache}
 
 The trusted list is an index, not a key store. Each entry names an entity by
-its Decentralized Identifier (DID), its name, its status, and its scope, and
-for an entity that holds a certificate authority, the Verifier Issuing CA it
-issues from. The entity's keys are not in it: a reader resolves them from the
-entity's DID Document, which [the DID Document][did-document] describes.
+its Decentralized Identifier (DID), its name, its status, its role, and the
+legal identifier of the body behind it, and for an entity that holds a
+certificate authority (CA), the Verifier Issuing CA it issues from. The legal
+identifier is the institution code of the Badan Kepegawaian Negara (BKN) for a
+government body and the Nomor Induk Berusaha (NIB) for a private one. Every
+registration of one legal body carries the same value, so the list shows which
+entries one body holds, and the DID still tells them apart. The entity's keys are not in it: a verifier resolves them from the
+entity's DID Document, which [the DID Document][did-document] describes. The
+keys the list does name are of two kinds. One is Trust Authority's witness key,
+as a `did:key`, which Trust SDK checks a witness proof against. The other is any
+key of an entity revoked early, named in that entity's entry with the time from
+which it is revoked. No key in good standing is listed, so the list still says
+which of an entity's keys may no longer be trusted and never which to use.
 [The trusted list][trusted-list] records what the list carries, who publishes
 it, and in what encoding.
 
@@ -34,22 +43,29 @@ transaction runs, which is the principle
 makes that principle hold.
 
 The reason is privacy before it is availability. A lookup made once per
-transaction would tell the center exactly which citizen was dealing with which
+transaction would tell Trust Infrastructure exactly which citizen was dealing with which
 bank, and when. One download a day covers every transaction the citizen makes
-that day and tells the center nothing about any of them. Availability follows
-from the same choice: a verification that starts while the center is
+that day and tells Trust Infrastructure nothing about any of them. Availability follows
+from the same choice: a verification that starts while Trust Infrastructure is
 unreachable completes from the copy already held.
 
 A cached copy is filled and refreshed outside any transaction. The
-[scheduled sync][trust-registry-and-status-list-sync] pulls the trusted list,
-the Verified Issuer Certificate Authority List (VICAL), and the status list on
-a timer, and the refresh is jittered so that every device does not reach the
-center in the same second. An entity missing from the cached copy is not
+[scheduled sync][trust-cache-sync] pulls the trusted list,
+the Verified Issuer Certificate Authority List (VICAL), the Use Statement
+status list, and, for a verifier, every issuer's credential status list on a
+timer, and the refresh is jittered so that every device does not reach
+Trust Infrastructure in the same second. An entity missing from the cached copy is not
 looked up on the spot: the copy is refreshed on its schedule, never in the
 middle of a transaction. The one exception that reaches a verifier between
-syncs is an incident: Trust Registry publishes an emergency trusted
-list within the hour and notifies verifiers directly, the first phase of
-[entity key revocation][entity-key-revocation].
+syncs is an emergency trusted list. When a key is compromised, the Root
+Authority revokes it through Trust Authority and notifies Relying Parties, the notice sent by Trust Authority
+using its Incident Service Component, and Trust Registry publishes an
+emergency trusted list naming the key, all within the hour, the first phase of
+[entity key revocation][entity-key-revocation]. The same list and notice go
+out when the Root Authority suspends a whole entity for misconduct. That
+suspension stops at the one registration, unless the Root Authority extends it
+to every registration of the same legal body, which all carry one legal
+identifier on the list.
 
 ### Three rules for reading the copy {#three-rules-for-reading-the-copy}
 
@@ -70,12 +86,12 @@ every Module that holds one.
    permits. A Verifier Core that is online refreshes well before the date; a
    device with no network reads its copy up to the date and refuses after.
 3. **The other cached artifacts have a tolerance limit.** The status list,
-   the certificate revocation list (CRL), the VICAL, and a cached Trust
-   Registry Query Protocol (TRQP) answer
+   the certificate revocation list (CRL), the VICAL, a cached Trust
+   Registry Query Protocol (TRQP) answer, and an entity's `did:webvh` log
    each carry a Time to Live (TTL) set by the risk profile of what they
    protect, and past it the last-known-good copy is still used, up to the
    tolerance limit, and refused after. None of their standards names a date
-   at which a reader must discard them, which is why they are treated
+   at which a verifier must discard them, which is why they are treated
    differently from the list.
    [What connects the two planes][what-connects-the-two-planes] states the
    same bound from the other side.
@@ -91,9 +107,10 @@ The trusted list sits behind the central content delivery network (CDN). The
 DID Document does not, and the difference is deliberate. `did:webvh` derives
 the address of its log from the identifier itself, so
 `did:webvh:<scid>:kampus.ac.id` resolves to a `did.jsonl` file at that
-university's own domain and nowhere else. The entity signs its own log and
-serves its own file; DID Service adds a witness proof to each new entry and
-hosts nothing. An entity's identity is therefore attached to the entity rather
+university's own domain. The entity signs its own log and serves its own
+file; DID Service adds a witness proof to each new entry and keeps a copy of
+the log, which [the scheduled sync][trust-cache-sync]
+reads only when the entity's domain cannot be reached. An entity's identity is therefore attached to the entity rather
 than to the registry, and an outage of the central CDN stops no key from being
 resolved. How the log is formed is in [entities: did:webvh][entities-didwebvh].
 
@@ -102,12 +119,14 @@ resolved. How the log is formed is in [entities: did:webvh][entities-didwebvh].
 Membership in the ecosystem is never answered by a DID Document. Three
 questions arise about any counterpart, and each has exactly one answer.
 
-- **Is this entity recognized?** The trusted list, published by Trust
+- **Is this entity accredited?** The trusted list, published by Trust
   Registry to the central CDN.
 - **What is it authorized to do?** The Authority Statement, asked for over
   TRQP and answered by Trust Registry, which [Authorization][authorization]
   sets out.
 - **Is this signing key really its own?** The DID Document, and nothing else.
+  The entity's entry in the trusted list adds only whether that key was revoked
+  early.
 
 The DID Document is checked last, after the first two have passed. A DID that
 is absent from the trusted list is rejected however perfectly its DID Document
@@ -131,22 +150,24 @@ statements exist in the ecosystem, and
 
 | Attestation | Issued by | About | Vouches that | Lifetime |
 |---|---|---|---|---|
-| Attestation platform | The phone's chip, Google's or Apple's | A device key | The key really sits in hardware | As long as the key |
-| Key Attestation | Wallet Backend Service, for its Wallet Provider | A citizen's wallet installation | The application is genuine and still entitled | One day |
+| Attestation platform | The phone's chip, Google's or Apple's | A key the chip generated: a wallet's device key or credential key, or a reader's device key | The key really sits in hardware, and the application holding it is genuine | As long as the key |
+| Key Attestation | Wallet Backend Service, for its Wallet Provider | A wallet installation's credential key | The key sits in secure storage of the strength it states, and the installation is still entitled | One day |
 | Verifier Device Certificate | Verifier Core, from its own Verifier Issuing CA: an RP Intermediary's for a merchant's device, a Relying Party's own for its counter device | A reader on a device: Mobile Verifier, or a Relying Party's own application built on the Reader SDK | The device is genuine and may ask for the attributes in `ReaderAuthRole` | Limited, set by the Governance Profile, plus a CRL |
 | Accreditation Credential | Trust Authority | An entity | The entity was accredited | The accreditation period |
 
 </figure>
 
-Each layer checks the one before it, then issues its own statement in a form
+Each attestation checks the one before it, then issues its own statement in a form
 the next party understands. The attestation platform is read only by the
 party that vouches for the device, Wallet Backend Service or Verifier Core,
 and never travels further. The Key Attestation travels with the credential
-key to the issuer's credential endpoint, and only when the Credential Rulebook
-demands `substantial` or `high`, as [`min_assurance`][min-assurance] sets out.
+key to the issuer's credential endpoint at every issuance, and the Credential
+Rulebook sets the storage it must report, as [`min_assurance`][min-assurance] sets out.
 The Verifier Device Certificate travels with every request a reader device
 sends. The Accreditation Credential is carried by the entity it was issued
 to and read by nobody else: everyone else checks the trusted list instead.
+Because it lives as long as the accreditation, it carries a `status`
+reference to a status list, so that it can be revoked before it expires.
 What each one carries is in [Key Attestation][key-attestation],
 [Verifier Device Certificate][verifier-device-certificate], and
 [Accreditation Credential][accreditation-credential].
@@ -164,8 +185,8 @@ short.
 
 Two of the four do this at different speeds, and the difference is a
 decision rather than an accident. A Key Attestation lives one day and is
-not reissued; its expiry reaches issuance alone, because no verifier
-ever reads one, and a credential already on the device goes on being
+never revoked: it expires, and a disowned installation gets no new one.
+Its expiry reaches issuance alone, because no verifier ever reads one, and a credential already on the device goes on being
 presented until the issuer's status list says otherwise. A Verifier Device
 Certificate lives longer than a day, so it is withdrawn the ordinary X.509
 way, through the CRL its issuer publishes and the wallet reads from cache.
@@ -180,7 +201,7 @@ a Verifier Device Certificate says nothing about how a merchant treats the
 data it receives. The first is the issuer's business and its source system's;
 the second is the Governance Framework's.
 
-### Verifier Device Certificate: a central verifier vouching for a small verifier {#verifier-device-certificate-for-a-small-verifier}
+### Verifier Device Certificate: a central Relying Party vouching for a small one {#verifier-device-certificate-for-a-small-verifier}
 
 A Relying Party and an RP Intermediary are on the trusted list. Online they
 introduce themselves with a `client_id` that is their `did:webvh` and sign
@@ -228,7 +249,7 @@ four from cache.
 1. The chain validates from the Verifier Device Certificate, through the
    Verifier Issuing CA, to the Verifier Root CA the wallet carries from build
    time, and the Verifier Issuing CA belongs to an entity whose status is
-   granted on the trusted list. [The reader side][the-reader-side] sets out
+   granted on the trusted list, with the entry not naming that CA as revoked. [The reader side][the-reader-side] sets out
    the chain.
 2. The certificate has not expired and is not on the CRL.
 3. The signature on the request matches the key in the certificate, so the

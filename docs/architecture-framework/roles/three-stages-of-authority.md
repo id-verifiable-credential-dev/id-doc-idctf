@@ -3,7 +3,7 @@ title: Three stages of authority
 description: What authority means in this ecosystem, and the three stages an entity passes through before it holds any.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.2 (syarat registrasi), §2.4, §2.5, §4.4 (kelas atribut menentukan jalur persetujuan), §5.6, §5.7, §7.1, §7.3, Kep. 30 dan 31; Peta Alur Penerbitan dan Presentasi, §1; Rincian Module dan Operasi, §1.3–1.4 (volume persetujuan, prinsip P6) -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.2 (syarat registrasi; satu Institution, beberapa Entity), §2.4, §2.5, §4.4 (kelas atribut menentukan jalur persetujuan), §5.6, §5.7, §7.1, §7.3, Kep. 30 dan 31; Peta Alur Penerbitan dan Presentasi, §1; Rincian Module dan Operasi, §1.3–1.4 (volume persetujuan, prinsip P6) -->
 
 # Three stages of authority {#three-stages-of-authority}
 
@@ -20,13 +20,14 @@ answered only the first can do nothing at all.
 
 Keeping them apart is what makes the arrangement workable over time. An entity
 is examined once, at the middle stage, and can then be given or refused
-individual permissions for years afterwards without being examined again.
+individual permissions for years afterward without being examined again.
 Adding a credential type is a small decision. Judging whether an institution
 can be trusted to run the software at all is a large one, and it should not
 have to be repeated every time the small decision comes up.
 
-All three stages are decided by the Root Authority, with nothing between it and
-the entity, and all three run outside any citizen's transaction. Nothing
+For every institution but a merchant, all three stages are decided by the Root
+Authority, with nothing between it and the institution, and all three run outside
+any citizen's transaction. Nothing
 described on this page happens while somebody is waiting to be served.
 
 The three stages in brief, before each gets a section of its own.
@@ -35,13 +36,13 @@ The three stages in brief, before each gets a section of its own.
 
 | Stage | Question | What it means |
 |---|---|---|
-| **Registration** | Who are you? | The party becomes known and its file is opened, but it may still do nothing. Everyone passes through this stage, merchants included |
+| **Registration** | Who are you? | The party becomes known and its file is opened, but it may still do nothing. Every institution passes through this stage, merchants included |
 | **Accreditation** | Are you fit? | The party is judged capable of taking part, and becomes visible to everyone else as a participant worth trusting. Only parties that run their own infrastructure reach it |
 | **Authorization** | What may you do? | The party is granted specific permissions, one at a time. Only accredited parties, and it repeats for as long as they take part |
 
 </figure>
 
-The three stay apart for the reason argued above: what rarely changes and what
+The three stay apart for the reason already argued: what rarely changes and what
 changes often are different questions, and reviewing both at the same depth
 would spend the ecosystem's effort on the one that seldom needs it. The Root
 Authority's own rule for its workload follows from that: it approves the
@@ -72,6 +73,10 @@ known and can be found, and it can do nothing. No keys exist yet, and nothing
 about it has been published for anyone else to check. What was registered is
 the legal body itself, and its record changes only when that body does: on a
 merger, a new name, or a new person answerable for it.
+
+One legal body may register more than once, as a ministry may register two of
+its work units separately, and each registration goes through the next two
+stages on its own.
 
 **One participant never goes further.** A merchant is registered by an RP
 Intermediary, not by the Root Authority, and stops here permanently. It is
@@ -131,14 +136,14 @@ accreditation covers every arrangement of it. A Relying Party runs a verifier
 for itself. One that also runs it for merchants it registers is accredited on
 the same terms and receives two further permissions rather than a second
 accreditation: serving merchants adds the power to register them and takes
-nothing away. A merchant runs Mobile Verifier on a phone and is accredited for nothing
+nothing away. A merchant runs verifying software on a phone and is accredited for nothing
 at all.
 
 The two questions are unrelated, and they are not meant to line up. A party can
-be an issuer and a verifier at once, accredited once, listed once, and granted
+be an issuer and a Relying Party at once, accredited once, listed once, and granted
 on both sides separately.
 
-**No participant carries a tier.** What separates one Relying Party from
+**No participant carries an approval tier.** What separates one Relying Party from
 another is the scope it was granted, not a class it belongs to. The approval
 tiers in [Authorization][authorization] grade a single request
 and attach to nobody. A bank may be permitted to ask for a national identity
@@ -149,7 +154,7 @@ in the next stage rather than by the party's standing.
 
 One detail is worth separating from the rest, because the words look alike. The
 assurance recorded against an issuer grades that issuer's own signing key. It
-is a different scale from the assurance demanded of the key on a citizen's
+is a different scale from the assurance demanded of the credential key on a citizen's
 device, which is set per credential type. The two are compared in
 [Two assurance levels](../trust-model/two-assurance-levels.md).
 
@@ -186,10 +191,10 @@ description a party could edit on its own is not a record anyone else can
 rely on.
 
 **How deeply a request is reviewed depends on what is being asked for, not on
-who is asking.** Every attribute carries a sensitivity class set in its
+who is asking.** Every attribute carries a minimization class set in its
 Credential Rulebook, described in
 [The Credential Rulebook][the-credential-rulebook].
-The three classes are open, normal and restricted, and the class decides
+The three classes are `open`, `normal` and `restricted`, and the class decides
 which of three approval tiers the request takes.
 
 !!! note "Tiers grade requests, not parties"
@@ -199,7 +204,7 @@ which of three approval tiers the request takes.
     party that made it. Nobody is a tier A or a tier C participant, and what a
     participant may ask for is set by its accreditation scope alone.
 
-**Approval Tier A is automatic.** An already accredited verifier asking only
+**Approval Tier A is automatic.** An already accredited Relying Party asking only
 for open attributes receives them immediately, with nobody reviewing
 anything, because the data involved is not sensitive enough to justify the
 delay.
@@ -238,7 +243,7 @@ what got it there.
 ### Registered use {#registered-use}
 
 An Authority Statement answers what a party may ask for. It does not answer what
-it may ask for it *for*, so a verifier holding a wide scope could put any purpose
+it may ask for it *for*, so a Relying Party holding a wide scope could put any purpose
 it liked on the consent screen and the wallet had no way to tell whether that
 purpose was ever approved. The **Use Statement** closes the gap. It is a second
 authorization artifact, granted to a Relying Party for one intended use, and it
@@ -253,8 +258,8 @@ beneficiary are two registered uses under it, each with its own purpose and its
 own narrower list.
 
 A use is submitted, reviewed and granted the same way scope is, through the three
-tiers above, and the tier is set by the most sensitive attribute the use asks
-for. Approving a use therefore costs what approving the equivalent scope change
+approval tiers, and the tier is set by the highest minimization class among the
+attributes the use asks for. Approving a use therefore costs what approving the equivalent scope change
 costs, which is the point of reusing the cycle rather than inventing a second
 one.
 
@@ -262,13 +267,13 @@ What changes is how the result reaches the party that checks it. An Authority
 Statement is answered when a participant asks, because a wallet checks it
 rarely and the answer caches well. A Use Statement is carried by the verifier inside its own
 request, signed, so a wallet reads the approved purpose without asking anyone and
-nothing about the transaction reaches the ecosystem's center. What it contains
+nothing about the transaction reaches the Root Authority. What it contains
 and how a wallet checks it is in [Use Statement][use-statement].
 
 A request carrying no Use Statement is still served during a transition, with the
 wallet telling the citizen the request is not registered. After a cut-off the
-Governance Profile sets, it is refused. An attribute outside a Use Statement that
-is present is refused from the start, transition or not.
+Governance Profile sets, it is refused. When a Use Statement is present, an attribute
+outside it is refused from the start, transition or not.
 
 A merchant registers no use of its own. It works under one of its intermediary's,
 handed to its device at provisioning, which is the same shape as everything else

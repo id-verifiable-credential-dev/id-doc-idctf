@@ -1,9 +1,9 @@
 ---
 title: The transaction path and the trust path
-description: How the ten Modules divide into a data plane, a control plane, and an operations layer, and what passes between them.
+description: How the ten Modules divide into a data plane, a control plane, and an operations group, and what passes between them.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), §4.6, Kep. 9, 12, 28, 30 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), §4.6, Kep. 9, 12, 28, 30; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
 
 # The transaction path and the trust path {#the-transaction-path-and-the-trust-path}
 
@@ -18,34 +18,35 @@ carry, and what passes between them.
 A third group falls out of the same split and is easy to miss, because it is
 neither. Issuer Console, Verifier Console, and Wallet Backend Service configure
 and vouch for the parties on the transaction path without ever issuing or
-verifying anything themselves. They are the operations layer.
+verifying anything themselves. They are the operations group.
 
 <figure markdown="1" class="ekdn-table">
 
 | Plane | Modules | What it does |
 |---|---|---|
 | Transaction path (data plane) | Issuer Core, Mobile Wallet, Verifier Core, Mobile Verifier | Issues and presents credentials |
-| Trust path (control plane) | Trust Authority, Trust Registry, DID Service | Decides who is trusted, and publishes the answer |
-| Operations layer | Issuer Console, Verifier Console, Wallet Backend Service | Configures an entity's own Module, and vouches for its devices |
+| Trust path (control plane) | Trust Authority, Trust Registry, DID Service | Records who is trusted, and publishes the answer |
+| Operations group | Issuer Console, Verifier Console, Wallet Backend Service | Configures an entity's own Module, and vouches for its devices |
 
 </figure>
 
 [](){ #fig-planes-and-artifact-lane }
 
 <figure markdown="1" class="ekdn-fig-wide">
-  ![The two planes, the operations layer, and the artifacts between them](../../images/architecture-framework/high-level-architecture/transaction-and-trust-path.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum"></span> The trust path, the band Artifacts, the transaction path, and the operations layer.</figcaption>
+  ![The two planes, the operations group, and the artifacts between them](../../images/architecture-framework/high-level-architecture/transaction-and-trust-path.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum"></span> The trust path, the band Artifacts, the transaction path, and the operations group.</figcaption>
 </figure>
 
-The figure reads downward, and each of its four bands has a section:
+[The diagram of the two planes][fig-planes-and-artifact-lane] reads downward,
+and each of its four bands has a section:
 [the trust path][the-trust-path], the band Artifacts in
 [what connects the two planes][what-connects-the-two-planes],
 [the transaction path][the-transaction-path], and
-[the operations layer][the-operations-layer].
+[the operations group][the-operations-group].
 
 The band Artifacts draws the seven artifacts that settle a question before a
-transaction runs. Five are fetched from an address and cached, which is what the
-dashed arrows in the figure mean; one is answered over Trust Registry Query
+transaction runs. Five are fetched from an address and cached, which is what its
+dashed arrows mean; one is answered over Trust Registry Query
 Protocol (TRQP) rather than published as a file; and one, the Use Statement, is
 carried by the verifier inside the request itself. Six more are never fetched at
 all, traveling with a party or with a message instead. All thirteen are in
@@ -78,15 +79,15 @@ server uses it, and so does a Relying Party at its counter. Online, a merchant's
 device leaves its signed request with the RP Intermediary's Verifier Core and
 collects the encrypted response from it, and Verifier Core passes both along
 without opening them. Proximity reading happens on the device alone, in Mobile
-Verifier or in a Relying Party's own app built on the Reader SDK, so an offline
+Verifier or in a Relying Party's own application built on the Reader SDK, so an offline
 check makes no network call on either side.
 
 ## The trust path {#the-trust-path}
 
 Trust Authority drives the other two Trust Infrastructure Modules and nothing
-else. It tells Trust Registry what to publish, while DID Service witnesses every
+else. It tells Trust Registry what to publish, while Decentralized Identifier (DID) Service witnesses every
 entry an entity adds to its own identifier log using the witness key held in a
-separate partition of Trust Authority's HSM. The keys themselves are generated
+separate partition of Trust Authority's hardware security module (HSM). The keys themselves are generated
 and held by each entity; Trust Infrastructure receives only public keys and
 certificate requests. The direction is one way in a second sense too: no Module in Trust
 Infrastructure ever calls a Module outside it, and none of them calls an entity
@@ -105,7 +106,7 @@ the ecosystem's availability. The four call prohibitions that hold the line,
 including the one forbidding Trust Infrastructure from reaching outward, are in
 [who may call whom][who-may-call-whom].
 
-## The operations layer {#the-operations-layer}
+## The operations group {#the-operations-group}
 
 Three Modules configure and vouch. None of them issues a credential or verifies
 one, and each is reached differently from the Module it serves.
@@ -121,7 +122,7 @@ Wallet Backend Service does something different. It vouches. It issues a Key
 Attestation to each Mobile Wallet daily, binds the installation to its
 device, and can revoke that device. It holds no credentials, which is the point:
 it can disown a wallet without being able to read what the wallet carries.
-Verifier Core plays the same vouching role toward Mobile Verifier. It issues a
+Verifier Core does the same vouching toward Mobile Verifier. It issues a
 Verifier Device Certificate to each device it answers for, a merchant's or the
 Relying Party's own counter device, and the Governance Profile sets how long
 that certificate lives. Provisioning and every renewal hand over both at once:
@@ -170,7 +171,8 @@ decided earlier, so that no Module has to call the trust path to ask.
   offline verifier accept an issuer it has never met with the network switched
   off, which is the hardest case this chapter has to serve. See
   [VICAL][vical].
-- The DID Document, signed by DID Service and served by the entity itself,
+- The DID Document, signed by the entity and witnessed by DID Service, served
+  by the entity itself, with DID Service's copy as the sync's fallback,
   turns a signature into proof that a named entity made it. See [DID
   Document][did-document].
 - The status list, published by each issuer at its own domain, is the only
@@ -194,7 +196,7 @@ it. The Authority Statement is the query: a participant asks Trust Registry over
 everything else, so a permission check survives an unreachable registry exactly
 as a cached file does. The Use Statement is neither fetched nor asked for; it
 arrives inside the request, which is what lets a wallet check an approved purpose
-without the center learning that the transaction happened. What each covers, and
+without Trust Infrastructure learning that the transaction happened. What each covers, and
 how one is granted, is in [Authorization][authorization] and
 [Registered use][registered-use].
 
@@ -211,7 +213,7 @@ verification that starts while Trust Infrastructure is unreachable still
 completes. Issuance and verification continue from cache until the tolerance
 limit expires, and the limit is a policy decision rather than a network
 condition. The targets are in
-[Quality goals](../software-architecture/quality-targets.md), and the tolerance
+[quality targets][quality-targets], and the tolerance
 belongs to the
 [Governance Framework](../../governance-framework/index.md).
 
@@ -221,7 +223,18 @@ ceiling is a cache that never ages out. Read the tolerance as named and not as
 given, and read a claim that a transaction survives an outage as true for as
 long as whoever sets the number decides.
 
-Keeping the status list off the center also keeps a count off the center: were revocation data
+What the limit bounds is how long a revocation can go unseen. An emergency
+trusted list reaches a verifier that is online within the hour. A device
+verifying in proximity learns of it only at its next successful sync, and a
+device that cannot sync keeps working from its copy until that copy expires:
+the trusted list at its `NextUpdate`, every other cached artifact at the
+tolerance limit. That expiry sets the longest a revoked key can still be
+accepted face to face, and the one-hour response does not shorten it. Whoever
+sets the number is setting that exposure. A limit longer than a credential type
+can bear leaves the emergency response reaching only the verifiers that are
+online.
+
+Keeping the status list off Trust Infrastructure also keeps a count off it: were revocation data
 collected nationally, Trust Infrastructure would know how many credentials are
 in circulation. The third statement follows from it. The only connection an
 issuer has to a verifier is a static file that the verifier fetches, so the two

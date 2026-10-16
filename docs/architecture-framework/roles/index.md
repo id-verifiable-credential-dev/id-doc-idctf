@@ -15,7 +15,9 @@ question.
 </p>
 
 Something is a role only if the Root Authority can accredit it, register it,
-or recognize it. Measured against that test, there are eight roles. Three of
+or recognize it. The holder is the one exception: the test does not reach a
+person, and the holder is a role because the ecosystem exists to serve them.
+Counting the holder, there are eight roles. Three of
 them govern: they decide who may take part and what they may then do, and they
 never touch a citizen's transaction. Five sit on the path a credential
 travels, and one of those five, the holder, is held by a person rather than an

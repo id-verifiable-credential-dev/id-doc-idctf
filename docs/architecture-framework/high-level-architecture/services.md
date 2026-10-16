@@ -1,44 +1,47 @@
 ---
-title: System Models
-description: How System Model, Module, and component nest, and what each of the four System Models is answerable for.
+title: Services
+description: How Service, Module, and Component nest, and what each of the four Services is answerable for.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.2, §2.3, §3.1; Gambar 1.1 dan 1.2 disediakan user, tidak berasal dari draft -->
 
-# System Models {#system-models}
+# Services {#services}
 
-The ecosystem is described at three scales, and each one sits inside the one
-above it. A System Model is where responsibility is assigned, a Module is what gets
-deployed, and a component is a part inside a Module. This chapter works at the
-first two and names the third: which components sit in which Module is part of
-the map, while how a component is built, and the layers inside it, belong to
+The ecosystem is described in three tiers, and each one sits inside the one
+above it. A Service is where responsibility is assigned, a Module is what gets
+deployed, and a Component is a part inside a Module. This chapter works at the
+first two and names the third: which Components sit in which Module is part of
+the map, while how a Component is built, and the layers inside a Module, belong to
 [Software Architecture](../software-architecture/index.md).
-[The system model][fig-service-module-component] draws the three sitting
+[Service, Module, and Component][fig-service-module-component] shows the three sitting
 inside one another.
 
 [](){ #fig-service-module-component }
 
 <figure markdown="1" class="ekdn-fig-medium">
-  ![Service, Module and component nested inside one another](../../images/architecture-framework/high-level-architecture/system-models.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum"></span> The system model: System Model, Module, and component.</figcaption>
+  ![Service, Module and Component nested inside one another](../../images/architecture-framework/high-level-architecture/services.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum"></span> The three tiers: Service, Module, and Component.</figcaption>
 </figure>
 
-- **System Model** is a group of functions that belong together, and it is the scale
-  at which responsibility is assigned. A role runs a System Model. It is not
-  something anyone deploys: naming a System Model says who answers for a part of the
-  ecosystem, not what is installed on a machine.
-- **Module** is the scale at which software is deployed and operated. One
+- **Service** is a group of functions that belong together, and it is the tier
+  at which responsibility is assigned. A role runs a Service. It is not
+  something anyone deploys: naming a Service says who answers for a part of the
+  ecosystem, not what is installed on a machine. The same word also closes the
+  names of two Modules, DID Service and Wallet Backend Service, and of some
+  Components, such as Log Service; the capital letter and the word before it
+  tell a Module or Component name apart from the tier.
+- **Module** is the tier at which software is deployed and operated. One
   Module ships as one container image, which is the test that separates it from
   everything inside it: if it does not ship on its own, it is not a Module. A
-  System Model holds one or more.
+  Service holds one or more.
 - **Component** is a part inside a Module, and it never appears on the map by
   itself. It is deployed because the Module around it is deployed. Six things
   are named often enough to be mistaken for Modules, and
   [what is not a Module][what-is-not-a-module] says why each one is not.
 
-There are four System Models and ten Modules, which
-[the four System Models and the ten Modules][fig-four-services-and-ten-modules]
-lays out with a sample of the components inside each Module. Both counts are
+There are four Services and ten Modules, which
+[the four Services and the ten Modules][fig-four-services-and-ten-modules]
+lays out with a sample of the Components inside each Module. Both counts are
 decisions rather than accidents of the drawing, and
 [why the counts are what they are][why-the-counts-are-what-they-are] is about
 what they protect.
@@ -46,13 +49,13 @@ what they protect.
 [](){ #fig-four-services-and-ten-modules }
 
 <figure markdown="1">
-  ![The four System Models, the ten Modules, and components inside each Module](../../images/architecture-framework/high-level-architecture/system-models-details.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum"></span> The same three scales with their real names: four System Models, ten Modules, and a sample of the components inside each Module.</figcaption>
+  ![The four Services, the ten Modules, and Components inside each Module](../../images/architecture-framework/high-level-architecture/services-details.svg){ loading=lazy }
+  <figcaption><span class="ekdn-fignum"></span> The same three tiers with their real names: four Services, ten Modules, and a sample of the Components inside each Module.</figcaption>
 </figure>
 
-- **The rows inside each Module are its components**, shown as a sample rather
+- **The rows inside each Module are its Components**, shown as a sample rather
   than a list, which is what the dots at the foot of each Module mean. They are
-  a reminder that the third scale is real. What every Module is actually built
+  a reminder that the third tier is real. What every Module is actually built
   from is [Module Map](module-map.md).
 - **Mobile Verifier carries a lighter shade** because it works without a server
   of its own.
@@ -62,7 +65,7 @@ what they protect.
 Issuer Services is where a credential is created. An institution that already
 holds records about people turns what it holds into a signed credential and
 hands it to a citizen's wallet. Issuing is the smaller half of the job: the
-System Model also carries the credential for the rest of its life, which means
+Service also carries the credential for the rest of its life, which means
 reissuing it, revoking it, and publishing the status list that tells a verifier
 whether it still stands.
 
@@ -90,10 +93,10 @@ The backend behind the wallet holds no credentials at all. Its job is to vouch
 that an installation is a genuine one on genuine hardware, and to handle what
 happens when a device is lost or replaced.
 
-Many providers hold this side at once. Each accredited Wallet Provider
+Many Wallet Providers hold this side at once. Each accredited Wallet Provider
 publishes a wallet of its own and runs the backend behind it, and a citizen
 chooses among them. What makes that workable is that no issuer ever trusts a
-named provider, and how a provider reaches the list it is checked against is in
+named Wallet Provider, and how a Wallet Provider reaches the list it is checked against is in
 [Wallet Provider][wallet-provider].
 
 - **How many:** Many.
@@ -105,14 +108,14 @@ named provider, and how a provider reaches the list it is checked against is in
 
 Verifier Services is where a credential is checked and turned into a decision.
 A party asks for the attributes its accreditation covers, tests what comes back
-against both chains of trust, and hands the result to its own service system.
+against both chains of trust, and hands the result to its own business system.
 What it may ask for is fixed before the transaction, and the request it sends is
 bounded twice over: by the Authority Statement of the entity (its accreditation scope),
 and by the narrower Use Statement of the [registered use][registered-use] the
-request runs under. (A merchant is bounded three times over, adding the ReaderAuthRole in
+request runs under. (A merchant is bounded three times over, adding the `ReaderAuthRole` in
 its Verifier Device Certificate.)
 
-This is the only System Model with a party riding on it that was never accredited. A
+This is the only Service with a party riding on it that was never accredited. A
 business too small for accreditation verifies through the Verifier Core of an
 intermediary, using a certificate that intermediary issued and can revoke, and
 the intermediary answers for what that business does. Both are arrangements of
@@ -138,7 +141,7 @@ change to their keys, and the two certificate roots the whole ecosystem hangs fr
 Publishing rather than answering is the whole point. What the other three
 Services consume from this one is a file that was signed and cached in advance,
 which is why [Trust Infrastructure is not a
-role][trust-infrastructure-is-not-a-role] can say that this System Model is never
+role][trust-infrastructure-is-not-a-role] can say that this Service is never
 present at the moment a credential is issued or verified.
 
 - **How many:** One.
@@ -161,25 +164,25 @@ on the rest. Both are deliberate, and they hold for opposite reasons.
 
 ### Trust Infrastructure is not a role {#trust-infrastructure-is-not-a-role}
 
-The first three System Models are roles in a transaction. Someone issues, someone
+The first three Services are run by the roles in a transaction. Someone issues, someone
 holds, someone verifies, and each of the three appears in the exchange. Trust
 Infrastructure appears in none of them. It is the foundation that lets the other
 three be trusted, and it is **never on the transaction path**.
 
-That absence is what makes the **one** in this System Model's count affordable: a
+That absence is what makes the **one** in this Service's count affordable: a
 single national instance is a point of failure only if something waits on it,
 and [the trust path][the-trust-path] sets out why nothing on the transaction
 path does.
 
 Two things off that path do wait, and saying so is part of the claim rather
 than a qualification of it. An entity cannot onboard and cannot rotate a key
-while DID Service is unreachable, because an entry nobody witnessed is an entry
-every resolver rejects. Containment is the part that does not wait: suspending
-an entity, publishing an emergency trusted list, and stopping its issuance are
-Trust Registry's work, so a compromised key is cut off within the hour whether
-or not the witness is reachable, and what waits is the entity's return to
-service. The witness stays a single one on that reasoning. An outage delays a
-return and never a containment, which bounds what the single instance can cost,
+while Decentralized Identifier (DID) Service is unreachable, because an entry nobody witnessed is an entry
+every resolver rejects. Containment is the part that does not wait: the
+Root Authority revokes the key through Trust Authority, Trust Registry publishes an emergency trusted
+list naming it, and issuance with that key stops, so a compromised key is cut off
+within the hour whether or not the witness is reachable, and what waits is
+the replacement key. The witness stays a single one on that reasoning. An outage delays a
+replacement and never a containment, which bounds what the single instance can cost,
 and a second witness would add a standing operational arrangement to Trust
 Infrastructure for a case the incident schedule already absorbs.
 
@@ -201,10 +204,10 @@ be two answers to the question of who is accredited, and an ecosystem that can
 answer that question twice has not answered it. Singleness is the property, not
 a limitation waiting to be lifted.
 
-One more count sits underneath the others: the wallet's protocol layer is kept
+One more count sits underneath the others: the wallet's protocol part is kept
 separable from the interface a citizen sees, so it can be lifted out as an SDK.
 That is what makes **many** Wallet Providers realistic rather than nominal. The
-second provider builds on an implementation the first one already proved in the
+second Wallet Provider builds on an implementation the first one already proved in the
 field, instead of writing the protocol again and introducing a second set of
 bugs into the same exchange. The shared library that carries this is
 [Trust SDK][sa-trust-sdk].

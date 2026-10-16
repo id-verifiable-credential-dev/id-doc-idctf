@@ -32,12 +32,12 @@ verifier that receives one checks all five.
   citizen, supplied by Claims Provider from that institution's own source
   system and assembled by Credential Builder. Claims and attributes are the
   same values seen from opposite sides. A claim is what the issuer put in. An
-  attribute is what a verifier asks for, and what that verifier's accreditation
+  attribute is what a verifier asks for, and what the Relying Party's accreditation
   is measured against. One claim can be an attribute, and the two words stay
   separate because the authority question attaches only to the second.
 - **The type identifier** says which Credential Rulebook governs the
-  credential. [SD-JWT
-  VC][credential-formats-and-their-signatures] carries it as
+  credential. [SD-JWT-based Verifiable Credentials (SD-JWT
+  VC)][credential-formats-and-their-signatures] carries it as
   `vct`, [ISO mdoc][credential-formats-and-their-signatures]
   as `docType`, and both values come from the Rulebook rather than from the
   issuer's own software.
@@ -82,7 +82,7 @@ disclosure. A credential type whose Rulebook classifies any attribute as
 selective disclosure is issued as SD-JWT VC instead. The pilot does not move
 `ldp_vc` to a selective-disclosure cryptosuite; that is reopened only when two
 conditions hold together: a JSON-LD interoperability need for a credential type
-with `restricted` attributes, and mature Resource Description Framework (RDF)
+with restricted attributes, and mature Resource Description Framework (RDF)
 Dataset canonicalization libraries in Go and Dart.
 
 Several formats that would have fitted are deliberately absent: AnonCreds,
@@ -105,8 +105,8 @@ that happen to agree.
   <figcaption><span class="ekdn-fignum"></span> One credential key, two representations, two modes.</figcaption>
 </figure>
 
-- **The credential key** is the wallet's one holder key, the same for every
-  format and, in this phase, for every credential.
+- **The credential key** is the wallet's one binding key, the same for every
+  format and for every credential.
 - **SD-JWT VC** is the representation the online path reads.
 - **ISO mdoc** is the representation a verifier in proximity reads, and the only
   one that works with no signal.
@@ -146,13 +146,13 @@ and the two issuer roles differ on one format only.
 | Format | Identity Issuer | Attribute Issuer |
 |---|---|---|
 | SD-JWT VC | Yes | Yes |
-| W3C VCDM 2.0 (`ldp_vc`) | No | Yes, if its Rulebook has no `restricted` attribute |
+| W3C VCDM 2.0 (`ldp_vc`) | No | Yes, if its Rulebook has no restricted attribute |
 | ISO mdoc | Yes | Yes |
 
 </figure>
 
 An Identity Issuer does not use `ldp_vc` because a basic identity credential
-carries `restricted` attributes, and `ldp_vc` secured with `ecdsa-jcs-2019` has
+carries restricted attributes, and `ldp_vc` secured with `ecdsa-jcs-2019` has
 no selective disclosure.
 
 ## Which format each role verifies {#which-format-each-role-verifies}
@@ -211,19 +211,19 @@ generated from:
 
 Four fields carry weight beyond their own line.
 
-`min_assurance` binds the holder's key, and at `substantial` or `high` it turns
-into a demand for a Key Attestation at issuance time; at `low` an ordinary
-proof JWT is accepted and no attestation is requested. `issuer_assurance` binds
+`min_assurance` binds the credential key: it sets the key storage the Key
+Attestation demanded at every issuance has to report. `issuer_assurance` binds
 the signing key on
 the other side, at the issuer.
 
-`minimization` sets the approval route a verifier has to walk before it may ask
-for that attribute: `open` is granted automatically, `normal` needs one
+`minimization` sets the approval tier a Relying Party's request for that
+attribute takes: `open` is granted automatically, `normal` needs one
 reviewer, `restricted` needs a committee. It is also what decides whether the
-type may offer `ldp_vc` at all. A Rulebook that lists a `restricted` attribute
-alongside `ldp_vc` in its `formats` is rejected by Trust Registry at submission,
-so the restriction is enforced when the rules are filed rather than trusted to
-hold at runtime.
+type may offer `ldp_vc` at all. A Rulebook that lists a restricted attribute
+alongside `ldp_vc` in its `formats` is refused at submission: the Root
+Authority approves no Rulebook pairing a `restricted` attribute with `ldp_vc`,
+and Trust Registry never publishes one. The restriction is enforced when the
+rules are filed rather than trusted to hold at runtime.
 
 `derived_from` marks an attribute computed rather than stored. The value
 `usia_di_atas_17` is calculated in Issuer Core from `tanggal_lahir`, not in

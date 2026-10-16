@@ -13,20 +13,20 @@ one does, with a link to the document and one line on what IDCTF uses it for.
 
 Definitions are not repeated here. Every name that belongs to IDCTF rather than
 to a standard has one home page, and
-[Where the ecosystem's own names are defined](#where-the-ecosystems-own-names-are-defined)
+[Where the ecosystem's own names are defined][where-the-ecosystems-own-names-are-defined]
 lists them at the end of this page. The standards that were considered and
 turned down are in the
-[technology map](data-model-and-protocols/index.md#technology-map). This page
+[technology map][technology-map]. This page
 names the source and points at the page that puts it to work.
 
 ## Exchange protocols {#exchange-protocols}
 
-- [OpenID4VCI
+- [OpenID for Verifiable Credential Issuance (OpenID4VCI)
   1.0](https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html),
   issuance from an issuer to a wallet: the credential offer, the authorization
   step, the credential request, and the proof of the key the credential is
   bound to. It is the only issuance protocol in the ecosystem.
-- [OpenID4VP
+- [OpenID for Verifiable Presentations (OpenID4VP)
   1.0](https://openid.net/specs/openid-4-verifiable-presentations-1_0.html),
   online presentation from a wallet to a verifier. It also supplies DCQL, the
   query language a verifier states its request in, the `client_id` schemes
@@ -46,19 +46,20 @@ names the source and points at the page that puts it to work.
   than downloaded in advance.
 - [OpenID Connect Core
   1.0](https://openid.net/specs/openid-connect-core-1_0.html), which carries a
-  verifier's result into the Relying Party's own application. It is also how a
-  Mobile Wallet authenticates a citizen through CONNECTIDN.
+  verifier's result into the Relying Party's business system. It is also how a
+  Mobile Wallet authenticates a citizen at its identity provider.
 - [SAML
   2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf),
-  the alternative to OpenID Connect for that same handoff to an application.
+  the alternative to OpenID Connect for that same handoff to the Relying
+  Party's business system.
 - [OpenID4VC High Assurance Interoperability
   Profile](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html),
-  a strict profile over OpenID4VCI and OpenID4VP. IDCTF reads it as a
-  comparison and is not bound by it: the Governance Profile narrows the same
-  optionality for itself.
+  a strict profile over OpenID4VCI and OpenID4VP. IDCTF is not bound by it:
+  the Governance Profile narrows the same optionality for itself.
 
 Where these appear:
-[Protocols and modes](data-model-and-protocols/protocols-and-modes.md).
+[Protocols and modes](data-model-and-protocols/protocols-and-modes.md),
+[Finished specifications only][finished-specifications-only].
 
 ## OAuth 2.0 and the endpoints it secures {#oauth-20-and-the-endpoints-it-secures}
 
@@ -85,12 +86,12 @@ Where these appear:
 ## Credential formats and their signatures {#credential-formats-and-their-signatures}
 
 - [RFC 9901](https://www.rfc-editor.org/rfc/rfc9901.html), selective disclosure
-  for JSON Web Tokens, the salted-hash mechanism SD-JWT VC is built on.
+  for JSON Web Tokens (SD-JWT), the salted-hash mechanism SD-JWT-based Verifiable Credentials (SD-JWT VC) are built on.
 - [IETF SD-JWT
   VC](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/), the
   credential type over SD-JWT, format `dc+sd-jwt`, carrying `vct` and the `cnf`
   holder binding. It is the main online path, and it is still an
-  Internet-Draft.
+  Internet-Draft, pinned at draft -13.
 - [ISO/IEC 18013-5](https://www.iso.org/standard/69084.html) again for the mdoc
   side: Concise Binary Object Representation (CBOR) and CBOR Object Signing and
   Encryption (COSE), the Mobile Security Object (MSO) with its `valueDigests`
@@ -104,30 +105,27 @@ Where these appear:
 - [RFC 8785](https://www.rfc-editor.org/rfc/rfc8785.html), JSON
   canonicalization, which is what `ecdsa-jcs-2019` canonicalizes with instead
   of the Resource Description Framework (RDF).
-- [VC-JOSE-COSE](https://www.w3.org/TR/vc-jose-cose/), securing W3C credentials
-  with JSON Object Signing and Encryption (JOSE) and COSE, one of the final
-  specifications the interoperability profile is drawn from.
 
 Where these appear:
 [Credential formats](data-model-and-protocols/credential-formats.md).
 
 ## Identifiers and keys {#identifiers-and-keys}
 
-- [W3C DID 1.0](https://www.w3.org/TR/did-1.0/), the decentralized identifier
+- [W3C DID 1.0](https://www.w3.org/TR/did-1.0/), the Decentralized Identifier
   (DID) data model and the shape of a DID Document.
 - [W3C DID Resolution](https://www.w3.org/TR/did-resolution/), the resolution
   contract DID Service answers against.
 - [did:webvh v1.0](https://identity.foundation/didwebvh/v1.0/), the DID method
-  every issuer, verifier, and Wallet Provider is named by: an append-only
+  every issuer, Relying Party, and Wallet Provider is named by: an append-only
   `did.jsonl` log the entity signs itself, with a self-certifying identifier,
-  pre-rotation, and a witness proof from Trust Authority on every entry. v1.0
+  pre-rotation, and a witness proof from DID Service on every entry. v1.0
   permits one cryptosuite for those proofs, `eddsa-jcs-2022`, which is the only
   place Ed25519 is used.
 - [Data Integrity EdDSA Cryptosuites v1.0](https://www.w3.org/TR/vc-di-eddsa/),
   the definition of `eddsa-jcs-2022`, the proof on every `did:webvh` log entry
   and witness.
 - [did:key](https://w3c-ccg.github.io/did-key-spec/), the method derived
-  entirely from a public key. In this phase a holder has one per wallet
+  entirely from a public key. A holder has one per wallet
   installation, shared by every credential it holds.
 - [RFC 7638](https://www.rfc-editor.org/rfc/rfc7638.html), JSON Web Key (JWK)
   thumbprints, which name a wallet or merchant device without ever transmitting
@@ -175,7 +173,7 @@ Where these appear: [Identifier](data-model-and-protocols/identifier.md).
 
 - [ETSI TS 119
   602](https://www.etsi.org/deliver/etsi_ts/119600_119699/119602/01.01.01_60/ts_119602v010101p.pdf),
-  the LoTE data model the trusted list is published as. IDCTF publishes the
+  the List of Trusted Entities (LoTE) data model the trusted list is published as. IDCTF publishes the
   JSON encoding only.
 - [ISO/IEC 18013-5](https://www.iso.org/standard/69084.html) Annex C, the
   Verified Issuer Certificate Authority List (VICAL), the signed list of
@@ -183,7 +181,7 @@ Where these appear: [Identifier](data-model-and-protocols/identifier.md).
 - [IETF Token Status
   List](https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/), the
   compressed status list SD-JWT VC and mdoc point at. It is still an
-  Internet-Draft.
+  Internet-Draft, pinned at draft -14.
 - [W3C Bitstring Status List](https://www.w3.org/TR/vc-bitstring-status-list/),
   the equivalent for `ldp_vc`.
 
@@ -220,6 +218,12 @@ Where these appear:
 - [KMIP](https://www.oasis-open.org/committees/kmip/), the Key Management
   Interoperability Protocol, which a Key Manager driver may use to reach a
   cloud key management service (KMS) or an HSM.
+- [FIPS 140-3](https://csrc.nist.gov/pubs/fips/140-3/final), the validation
+  standard for cryptographic modules. The HSM that holds Issuer Root CA is
+  validated to its Level 3.
+
+Where these appear:
+[Keys: who creates, who signs](trust-model/keys-who-creates-who-signs.md).
 
 ## Schema, display, and policy {#schema-display-and-policy}
 
@@ -227,7 +231,7 @@ Where these appear:
   Rulebook and the claims an institution's source system returns.
 - [SD-JWT VC Type Metadata](https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/),
   the metadata a `vct` resolves to, published alongside a Rulebook.
-- [Overlays Capture Architecture](https://oca.colossi.network/), the display
+- [Overlays Capture Architecture (OCA)](https://oca.colossi.network/), the display
   overlay that says how a credential is rendered to a citizen.
 - [Rego](https://www.openpolicyagent.org/docs/policy-language), the policy
   language a verifier evaluates its trust rules in.
@@ -235,26 +239,39 @@ Where these appear:
   notices and consent, the reference behind the consent receipt a verifier
   records with a verification.
 
-## Frameworks read as comparison {#frameworks-read-as-comparison}
+## Law and regulation {#law-and-regulation}
 
-- [Architecture and Reference Framework](https://eu-digital-identity-wallet.github.io/eudi-doc-architecture-and-reference-framework/),
-  the architecture behind the European Digital Identity (EUDI) Wallet. IDCTF
-  takes its verifier-side vocabulary from it, Relying Party, Relying Party
-  Instance, intermediary and intended use, so that the two ecosystems describe
-  the same arrangement with the same words. It is a comparison and not a binding
-  standard: where IDCTF diverges, in keeping one certificate instead of two and
-  in leaving Relying Party Service out as a layer, the divergence is stated
-  where it applies.
+- [UU No. 11 Tahun 2008](https://peraturan.bpk.go.id/Details/37589/uu-no-11-tahun-2008)
+  tentang Informasi dan Transaksi Elektronik, as amended by
+  [UU No. 19 Tahun 2016](https://peraturan.bpk.go.id/Details/37582/uu-no-19-tahun-2016),
+  the law on electronic information and transactions, the source of
+  *Electronic Information* and *Electronic Document*.
+- [UU No. 24 Tahun 2013](https://peraturan.bpk.go.id/Details/38985/uu-no-24-tahun-2013)
+  tentang Perubahan atas Undang-Undang Nomor 23 Tahun 2006 tentang Administrasi
+  Kependudukan, the population administration law, the source of *Population
+  Document* and *Population Identification Number (NIK)*.
+- [UU No. 8 Tahun 2016](https://peraturan.bpk.go.id/Details/37251/uu-no-8-tahun-2016)
+  tentang Penyandang Disabilitas, the law on persons with disabilities, which
+  obliges state administration and public services to provide accessibility
+  and reasonable accommodation.
+- [PP No. 71 Tahun 2019](https://peraturan.bpk.go.id/Details/122030/pp-no-71-tahun-2019)
+  tentang Penyelenggaraan Sistem dan Transaksi Elektronik, the government
+  regulation on electronic systems and transactions, the source of *Electronic
+  Certificate*, *Electronic Certification Provider (PSrE)*, and *Electronic
+  System Provider (PSE)*.
+- [Permendagri No. 72 Tahun 2022](https://peraturan.bpk.go.id/Details/247759)
+  tentang Standar dan Spesifikasi Perangkat Keras, Perangkat Lunak, dan Blangko
+  Kartu Tanda Penduduk Elektronik serta Penyelenggaraan Identitas Kependudukan
+  Digital, the ministerial regulation behind *Digital Population Identity
+  (IKD)*.
+- [UU No. 27 Tahun 2022](https://peraturan.bpk.go.id/Details/229798/uu-no-27-tahun-2022)
+  tentang Pelindungan Data Pribadi, the personal data protection law, the
+  source of *Personal Data*, *Personal Data Controller*, and *Personal Data
+  Processor*.
 
-Where this appears:
-[Role map](roles/role-map.md),
-[RP Intermediary and merchant](roles/rp-intermediary-and-merchant.md).
-
-## Document conventions {#document-conventions}
-
-- [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119.html), the requirement
-  keywords normative text is written with. Their capitalized form carries the
-  obligation; the same words uncapitalized do not.
+Where these appear:
+[Glossary](glossary.md),
+[Accessibility][accessibility].
 
 ## Where the ecosystem's own names are defined {#where-the-ecosystems-own-names-are-defined}
 
@@ -262,8 +279,8 @@ Some names in this document belong to IDCTF rather than to a standard. Each has
 one home page, and this list points at it:
 
 - Roles and the institutions that hold them, and the Relying Party Instance each
-  verifier role runs, in [Role map](roles/role-map.md).
-- Services and Modules, in
+  Relying Party runs, in [Role map](roles/role-map.md).
+- Services, in [Services](high-level-architecture/services.md), and Modules, in
   [Module Map](high-level-architecture/module-map.md).
 - Components inside a Module, in
   [Components inside a Module](software-architecture/components-inside-a-module.md).

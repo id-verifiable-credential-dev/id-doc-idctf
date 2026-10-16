@@ -20,35 +20,36 @@ IDCTF is five documents:
 
 ## Status
 
-Only the Architecture Framework is being written. Roles, High-Level Architecture,
-Data Model and Protocols, the Glossary, and References are done; Software
-Architecture is part written, and the Trust Model has not started. 23 of 41 pages
-carry prose.
+The Architecture Framework is done. Every chapter of it carries prose: Roles,
+High-Level Architecture, Software Architecture, Data Model and Protocols, the
+Trust Model, the Glossary, and References. Nothing it owes is still open; what
+its pages leave to a later document is owed by the other four, which are not
+started. 30 of 34 pages carry prose.
 
 
 | Document      | Chapter                           | Status                      |
 | ------------- | --------------------------------- | --------------------------- |
-| `IDCTF-AF`    | Roles                             | ![Written][written]         |
-| `IDCTF-AF`    | High-Level Architecture           | ![Written][written]         |
-| `IDCTF-AF`    | Software Architecture             | ![Drafting][drafting]       |
-| `IDCTF-AF`    | Data Model and Protocols          | ![Written][written]         |
-| `IDCTF-AF`    | Trust Model                       | ![Not started][not-started] |
-| `IDCTF-AF`    | Glossary                          | ![Written][written]         |
-| `IDCTF-AF`    | References                        | ![Written][written]         |
+| `IDCTF-AF`    | Roles                             | ![Done][done]               |
+| `IDCTF-AF`    | High-Level Architecture           | ![Done][done]               |
+| `IDCTF-AF`    | Software Architecture             | ![Done][done]               |
+| `IDCTF-AF`    | Data Model and Protocols          | ![Done][done]               |
+| `IDCTF-AF`    | Trust Model                       | ![Done][done]               |
+| `IDCTF-AF`    | Glossary                          | ![Done][done]               |
+| `IDCTF-AF`    | References                        | ![Done][done]               |
 | `IDCTF-TS-nn` | —                                 | ![Not started][not-started] |
 | `IDCTF-GF`    | —                                 | ![Not started][not-started] |
 | `IDCTF-CR`    | —                                 | ![Not started][not-started] |
 | `IDCTF-DL`    | —                                 | ![Not started][not-started] |
 
 
-![Written][written] every page has prose ·
+![Done][done] every page has prose and nothing owed is open ·
 ![Drafting][drafting] some pages still `(soon)` ·
 ![Not started][not-started] every page `(soon)`
 
 A page whose prose is unwritten carries a `(soon)` marker and holds section
 headings only.
 
-[written]: https://img.shields.io/badge/Written-✅-brightgreen
+[done]: https://img.shields.io/badge/Done-✅-brightgreen
 [drafting]: https://img.shields.io/badge/Drafting-🚧-yellow
 [not-started]: https://img.shields.io/badge/Not_started-📅-blue
 

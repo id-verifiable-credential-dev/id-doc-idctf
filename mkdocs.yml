@@ -192,7 +192,7 @@ nav:
       - architecture-framework/roles/rp-intermediary-and-merchant.md
     - "High-Level Architecture":
       - architecture-framework/high-level-architecture/index.md
-      - architecture-framework/high-level-architecture/system-models.md
+      - architecture-framework/high-level-architecture/services.md
       - architecture-framework/high-level-architecture/transaction-path-and-trust-path.md
       - architecture-framework/high-level-architecture/module-map.md
       - architecture-framework/high-level-architecture/flows-per-use-case.md
@@ -202,15 +202,8 @@ nav:
       - architecture-framework/software-architecture/index.md
       - architecture-framework/software-architecture/layers-inside-a-module.md
       - architecture-framework/software-architecture/components-inside-a-module.md
-      - architecture-framework/software-architecture/constraints-binding-implementations.md
-      - architecture-framework/software-architecture/typical-software-decisions.md
-      - architecture-framework/software-architecture/storage-sessions-and-archive.md
-      - architecture-framework/software-architecture/scale-and-resilience.md
-      - architecture-framework/software-architecture/quality-targets.md
-      - architecture-framework/software-architecture/technology-choices-per-layer.md
-      - architecture-framework/software-architecture/repository-and-package-structure.md
-      - architecture-framework/software-architecture/packaging-and-deployment.md
-      - architecture-framework/software-architecture/technology-risks-and-mitigation.md
+      - architecture-framework/software-architecture/constraints-decisions-and-targets.md
+      - architecture-framework/software-architecture/technology-stack.md
     - "Data Model and Protocols":
       - architecture-framework/data-model-and-protocols/index.md
       - architecture-framework/data-model-and-protocols/credential-formats.md

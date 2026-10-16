@@ -37,14 +37,15 @@ rather than one by one in [Primary roles][primary-roles].
 One difference is worth stating at the outset, because it runs against what the
 word intermediary suggests. An ordinary intermediary receives an answer and
 passes it on. Here it cannot read the answer at all: the response is encrypted
-to the merchant's own device key, so an RP Intermediary relays ciphertext it
-cannot open. For a merchant's online checks, it holds that ciphertext only long
-enough to pass it back, then deletes it and never logs what it relayed. The
+to the merchant's own device key, so an RP Intermediary relays an encrypted answer
+it cannot open. For a merchant's online checks, it holds that answer only long
+enough to pass it back, then deletes it and never logs it; the request side is
+what it may record. The
 party accountable for a merchant is deliberately not the party able to watch
 it.
 
 Reading nothing is not the same as seeing nothing. The relay is the
-intermediary's own endpoint, so it necessarily observes that one of its
+intermediary's own service, so it necessarily observes that one of its
 merchants ran a check and when, and the request it holds is signed rather than
 encrypted. That much is what lets an intermediary notice a merchant asking for
 more than its category allows, which is the thing it answers for. What it may
@@ -81,14 +82,18 @@ nothing, so an institution that was already a Relying Party keeps every
 attribute it could ask for before.
 
 What it may hand on is another matter. A merchant's scope may never carry the
-most sensitive class of attribute, whatever the intermediary itself was
+`restricted` class of attribute, whatever the intermediary itself was
 accredited for, because that class should not reach a party nobody has
-assessed. This limit is fixed by design and written into the certificate the
-merchant is given, so a wallet enforces it on sight rather than looking
-anything up; it is not something a governance decision could relax. What
-governance actually sets is narrower, covered in
-[what the three stages produce][what-the-three-stages-produce]. The three
-classes, open, normal and restricted, are set per attribute in the Credential
+assessed. The rule has two homes, and each does a different job. The
+Governance Framework carries it as an obligation of the intermediary: setting a
+merchant's scope without `restricted` is one of the things an intermediary
+answers for. The architecture carries it as a bound written into the
+certificate the merchant is given, so a wallet enforces it on sight rather than
+looking anything up. The obligation is what the intermediary is held to; the
+certificate is what stops an over-wide request from ever being served. What the
+Governance Profile sets is narrower, the numbers around that certificate,
+covered in [what the three stages produce][what-the-three-stages-produce]. The three
+classes, `open`, `normal` and `restricted`, are set per attribute in the Credential
 Rulebook, described in
 [The Credential Rulebook][the-credential-rulebook],
 and the review each one triggers is in [Authorization][authorization].
@@ -104,7 +109,7 @@ for it is an ordinary Relying Party.
 ## Three parties, side by side {#three-parties-side-by-side}
 
 The merchant is the only one of the three trusted through somebody else, and
-[A row-by-row comparison][tbl-three-verifier-parties] shows what follows from
+[a row-by-row comparison][tbl-three-verifier-parties] shows what follows from
 that.
 
 [](){ #tbl-three-verifier-parties }
@@ -113,13 +118,13 @@ that.
 
 |  | Relying Party | RP Intermediary | Merchant |
 |---|---|---|---|
-| Verifying infrastructure | Its own | Its own, for itself and its merchants | None of its own; Mobile Verifier on the device it holds |
-| [Relying Party Instance][relying-party-instance] | Remote, plus one on a device where it reads face to face | Remote and multi-tenant, plus one on a device where it reads face to face | On a device only; its online check is carried through its intermediary's infrastructure |
+| Verifying infrastructure | Its own | Its own, for itself and its merchants | None of its own; verifying software on the device it holds |
+| [Relying Party Instance][relying-party-instance] | Remote, plus one on a device where it reads face to face | Remote, serving many merchants, plus one on a device where it reads face to face | On a device only; its online check is carried through its intermediary's infrastructure |
 | Accreditation | Yes | Yes | No; registered by an RP Intermediary |
-| Trusted list | Listed | Listed, together with the authority it issues merchant certificates from | Never listed |
-| Authority | Its accreditation scope, up to restricted | The same, up to restricted | A subset of the intermediary's, never restricted, written into the certificate it is given |
-| How a wallet recognizes it | By its own entry in the trusted list | By its own entry in the trusted list | By the certificate its intermediary issued, traced back to that intermediary |
-| Keys | Held by the party itself | Held by the party itself, plus the authority that signs merchant certificates | Held on the merchant's own phone, and never leaving it |
+| Trusted list | Listed, plus the authority it certifies its own counter devices from, where it reads face to face | Listed, together with the authority it issues merchant certificates from | Never listed |
+| Authority | Its accreditation scope, up to `restricted` | The same, up to `restricted` | A subset of the intermediary's, never `restricted`, written into the certificate it is given |
+| How a wallet identifies it | By its own entry in the trusted list | By its own entry in the trusted list | By the certificate its intermediary issued, traced back to that intermediary |
+| Keys | Held by the party itself, plus the authority it certifies its own counter devices from, where it reads face to face | Held by the party itself, plus the authority that signs merchant certificates | Held on the merchant's own phone, and never leaving it |
 | Legal responsibility | Its own | Its own and every merchant's | Sits with the intermediary |
 | Citizen data | In its own infrastructure | On the merchant's device; the intermediary cannot read the response | On its own device |
 
@@ -179,9 +184,9 @@ nothing to revoke, because nothing was issued.
 
 ### Device activation {#device-activation}
 
-Activation binds the entry created above to one physical device. The merchant
-installs Mobile Verifier, and the application generates a key that is created on
-that device and never leaves it. The device then presents its public
+Activation binds the registration entry to one physical device. The merchant
+installs the verifying application, and the application generates a key on
+that device that never leaves it. The device then presents its public
 half to the intermediary, together with evidence from the platform about the
 state it is in.
 
@@ -247,7 +252,7 @@ a wallet with no network stops trusting it. Those belong to the Governance Profi
 which is free to start them short and loosen them once the operation has proved
 itself.
 
-## How the verifier group works {#how-the-verifier-group-works}
+## How the intermediated group works {#how-the-intermediated-group-works}
 
 One example carries the arrangement better than the rules do. A terminal
 provider is accredited as an RP Intermediary and registers three merchants
@@ -261,7 +266,7 @@ whose needs have nothing in common.
 
 Six things follow, and together they are the whole arrangement in miniature.
 
-**The provider registers a use per category it serves, not per merchant.** It
+**The RP Intermediary registers a use per category it serves, not per merchant.** It
 holds one registered use for the age check and a separate one for confirming an
 address, and none at all naming the shop, the practice, or the depot. The
 shop's device is bound to the age-check category, the depot's to the
@@ -269,51 +274,50 @@ address-confirmation category, and the person at the counter picks the category
 the transaction falls under; the request that goes out carries only that
 category's registered purpose. Registering by category rather than by merchant
 is what keeps the Root Authority from having to review a registered use for
-every merchant the provider ever takes on, potentially millions of them.
+every merchant the RP Intermediary ever takes on, potentially millions of them.
 
 **What the citizen sees at the counter comes from the merchant, not the
-provider.** The wallet shows the shop's own name, taken from the certificate
-the provider issued it, and the purpose of the category the cashier picked. The
-provider's name never reaches that screen; it appears only afterward, in the
+RP Intermediary.** The wallet shows the shop's own name, taken from the certificate
+the RP Intermediary issued it, and the purpose of the category the cashier picked. The
+RP Intermediary's name never reaches that screen; it appears only afterward, in the
 transaction history.
 
 **Each merchant gets its own scope, and none of them gets the intermediary's.**
 The shop is granted the age check alone, so the wallet refuses a request for a
 name from that device before the person is ever asked. The depot is
 granted the address and not the license. Each scope is a subset of what the
-terminal provider was accredited for, and the provider cannot grant what it
+RP Intermediary was accredited for, and the RP Intermediary cannot grant what it
 does not hold.
 
 **None of the three appears in the trusted list.** A wallet approached by the
 shop does not look the shop up, because there is nothing to look up. It reads
-the certificate the terminal provider issued to that device and follows it back
-to the provider, which is listed. The provider is the party the ecosystem
+the certificate the RP Intermediary issued to that device and follows it back
+to the RP Intermediary, which is listed. The RP Intermediary is the party the ecosystem
 knows.
 
-**The provider cannot read any of the three responses.** The answer the shop
-receives is encrypted to a key on the shop's own phone. Online, the terminal
-provider's own infrastructure carries the shop's signed request and that
-encrypted answer between the wallet and the shop, opens neither, and deletes
-both once the answer has been passed back. Face to face it carries nothing at
+**The RP Intermediary cannot read any of the three responses.** The answer the shop
+receives is encrypted to a key on the shop's own phone. Online, the RP Intermediary's own infrastructure carries the shop's signed request and that
+encrypted answer between the wallet and the shop, cannot open the answer, and deletes
+the answer once it has been passed back; the request side is what it records. Face to face it carries nothing at
 all. The party accountable for a merchant is deliberately not the party able to
 watch it.
 
 **If one of the three misbehaves, only that one stops.** Suppose the depot
-starts asking for more than an address. The terminal provider withdraws that
+starts asking for more than an address. The RP Intermediary withdraws that
 merchant's certificate, the shop and the practice are untouched, and the
-provider answers to the Root Authority for having let it happen. Nothing about
+RP Intermediary answers to the Root Authority for having let it happen. Nothing about
 the incident reaches the other two, and no citizen has to be told to distrust a
 list.
 
 The shop's counter makes the point again with no network at all. If it loses
 signal, the device still holds the one certificate it was given, still carries
 its category's registered use, and checks a presentation entirely from what it
-already has; nothing about the transaction has to reach the provider or the
+already has; nothing about the transaction has to reach the RP Intermediary or the
 Root Authority for the check to run. Provisioning happened once, and the
 counter does not depend on being online at the moment somebody is being served.
 
-The terminal provider's own scope may be wider than all three merchant scopes
+The RP Intermediary's own scope may be wider than all three merchant scopes
 together, and it may reach restricted attributes if it was accredited for
-them. None of the three merchants reaches that class, whatever the provider
+them. None of the three merchants reaches that class, whatever the RP Intermediary
 holds, for the reason given in
 [what the intermediary takes on][what-the-intermediary-takes-on].

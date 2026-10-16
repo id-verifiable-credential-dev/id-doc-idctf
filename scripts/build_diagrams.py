@@ -373,10 +373,10 @@ def fig_issuer_components():
     return component_figure(
         "component-issuer-services",
         "Components inside Issuer Services",
-        "Issuer Core in four layers: three controllers, four domain services including Key "
-        "Manager, three providers including Claims Provider, and one repository. Issuer "
+        "Issuer Core in four layers: three Controllers, four Domain Components including Key "
+        "Manager, three Providers including Claims Provider, and one Repository. Issuer "
         "Console below it "
-        "has three views and a single client that reaches the Admin Controller.",
+        "has three Views and a single Client that reaches the Admin Controller.",
         [("ISSUER CORE", "issuer", [
             ("Controller", ["Issuance Controller", "Authorization Controller", "Admin Controller"]),
             ("Domain", ["Credential Builder", "Status Manager", "Key Attestation Validator",
@@ -387,7 +387,7 @@ def fig_issuer_components():
          ("ISSUER CONSOLE", "issuer", [
              ("View", ["Configuration View", "Operations View", "Reporting View"]),
              ("Client", [("Core API Client", "no database connection")])])],
-        "Claims Provider is the only component whose contents differ at every installation.")
+        "Claims Provider is the only Component whose contents differ at every installation.")
 
 
 # ---------------------------------------------------------------- figure 4.4
@@ -396,14 +396,14 @@ def fig_wallet_components():
     return component_figure(
         "component-wallet-services",
         "Components inside Wallet Services",
-        "Mobile Wallet in four layers: four protocol clients, five domain components "
-        "including Trust Display and Consent UI, two providers, and the encrypted Credential "
-        "Store. Wallet Backend Service below it issues Key Attestations and keeps a device "
-        "registry that holds no credential data.",
+        "Mobile Wallet in five layers: four views including Trust Display and Consent UI, "
+        "four protocol clients, Credential Codec in Domain, two providers, and the encrypted "
+        "Credential Store. Wallet Backend Service below it issues Key Attestations and keeps "
+        "a device registry that holds no credential data.",
         [("MOBILE WALLET", "wallet", [
+            ("View", ["Trust Display", "Consent UI", "App Lock", "Credential Renderer"]),
             ("Client", ["Auth Client", "Issuance Client", "Presentation Client", "Attestation Client"]),
-            ("Domain", ["Trust Display", "Consent UI", "App Lock", "Credential Renderer",
-                        "Credential Codec"]),
+            ("Domain", ["Credential Codec"]),
             ("Provider", [("Keystore Manager", "device key, one credential key"), ("Trust SDK", "local cache")]),
             ("Repository", [("Credential Store", "SQLCipher, encrypted")])]),
          ("WALLET BACKEND SERVICE", "wallet", [
@@ -421,9 +421,9 @@ def fig_verifier_components():
     return component_figure(
         "component-verifier-services",
         "Components inside Verifier Services",
-        "Verifier Core with three controllers, four domain services including Trust "
-        "Evaluator and Key Manager, two providers and a repository. Verifier Console with "
-        "three views and a client. Mobile Verifier, which runs on a merchant or counter "
+        "Verifier Core with three Controllers, four Domain Components including Trust "
+        "Evaluator and Key Manager, two Providers and a Repository. Verifier Console with "
+        "three Views and a Client. Mobile Verifier, which runs on a merchant or counter "
         "device, reads in proximity through the Reader SDK, and whose Activity Repository "
         "holds no citizen attribute.",
         [("VERIFIER CORE", "verifier", [
@@ -438,9 +438,9 @@ def fig_verifier_components():
              ("View", ["Template View", "Merchant View", "Reporting View"]),
              ("Client", [("Core API Client", "no database connection")])]),
          ("MOBILE VERIFIER", "verifier", [
+             ("View", ["Result View"]),
              ("Client", ["Presentation Client", "Attestation Client"]),
              ("Domain", [("Credential Verifier", "SD-JWT VC and mdoc; ldp_vc phase 2")]),
-             ("View", ["Result View"]),
              ("Provider", [("Keystore Manager", "secure element"), ("Reader SDK", "BLE and NFC, ISO/IEC 18013-5"),
                            ("Trust SDK", "local cache")]),
              ("Repository", [("Activity Repository", "no citizen attribute")])])],
@@ -453,8 +453,8 @@ def fig_trust_components():
     return component_figure(
         "component-trust-infrastructure",
         "Components inside Trust Infrastructure",
-        "Trust Authority with its registrar controller, four domain services including the "
-        "Certificate Authority, and three repositories including the Public Key Registry. "
+        "Trust Authority with its registrar Controller, four Domain Components including the "
+        "Certificate Authority, and three Repositories including the Public Key Registry. "
         "Trust Registry, which answers TRQP and publishes the static artifacts. DID Service, "
         "which witnesses and resolves did:webvh.",
         [("TRUST AUTHORITY", "trust", [
@@ -484,7 +484,7 @@ def fig_trust_sdk():
         "The Trust SDK is a library rather than a Module. Six parts, of which the X.509 "
         "Validator carries the highest risk of the Go and Dart implementations drifting "
         "apart and the DID Resolver Client the next highest. It is embedded as a "
-        "Provider-layer component in "
+        "Provider-layer Component in "
         "Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier, and in no "
         "other Module.")
     parts = [("Trust Client", "TRQP", ""), ("Artifact Consumer", "trusted list, rulebook", "!"),
@@ -505,7 +505,7 @@ def fig_trust_sdk():
         c.text(px + BOX_W / 2, py + 40, sub, 10, "400", MUTED, "middle")
         c.text(px + BOX_W / 2, py + 56, f"drift risk: {label}", 9.5, "600", stroke, "middle")
     top = BAND_LABEL + 2 * 68 + 12 + BAND_PAD
-    c.text(0, top + 32, "embedded as a Provider-layer component in", 11, "600", INK)
+    c.text(0, top + 32, "embedded as a Provider-layer Component in", 11, "600", INK)
     ey = top + 48
     for i, (name, lang, kind) in enumerate([
             ("Issuer Core", "Go", "issuer"), ("Verifier Core", "Go", "verifier"),
@@ -599,7 +599,7 @@ def fig_protocol_per_interaction():
         "The protocol behind each interaction",
         "Seven interactions and the standard carrying each. Issuer Core issues to Mobile "
         "Wallet over OpenID4VCI. Mobile Wallet presents to Verifier Core over OpenID4VP and "
-        "to Mobile Verifier over ISO/IEC 18013-5, and exchanges a platform attestation with "
+        "to Mobile Verifier over ISO/IEC 18013-5, and exchanges an attestation platform with "
         "Wallet Backend Service for a Key Attestation. Issuer Core and Verifier Core query "
         "Trust Registry over ToIP TRQP. Mobile Verifier carries a Verifier Device "
         "Certificate from Verifier Core, which also relays a merchant's online check. "
@@ -611,7 +611,7 @@ def fig_protocol_per_interaction():
     c.box(620, 120, 200, 50, "Mobile Verifier", (), "verifier")
     c.box(0, 270, 200, 50, "Trust Registry", (), "trust")
     c.box(310, 270, 200, 50, "Verifier Core", (), "verifier")
-    c.box(310, 390, 200, 50, "Relying Party application", (), "off")
+    c.box(310, 390, 200, 50, "Business system", (), "off")
     c.edge([(200, 145), (255, 145), (310, 145)], "OpenID4VCI")
     c.edge([(410, 120), (410, 85), (410, 50)], "Key Attestation")
     c.edge([(510, 145), (565, 145), (620, 145)], "OpenID4VP / ISO/IEC 18013-5")
