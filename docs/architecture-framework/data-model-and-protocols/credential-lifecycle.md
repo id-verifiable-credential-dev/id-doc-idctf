@@ -16,10 +16,10 @@ each boundary works.
 
 A credential remains valid until its `exp` timestamp, unless it is revoked
 earlier through [status list checking][status-list-checking-and-revocation]. How long that
-window runs depends on the format. mdoc is governed by ISO/IEC 18013-5, which
+window runs depends on the format. mdoc is governed by ISO/IEC 18013-5:2021, which
 caps the lifetime of the [Document Signer
 Certificate][document-signer-certificate-verifier-issuing-ca-and-crl]
-that signs a Mobile Driving License (mDL) at 457 days. An SD-JWT-based Verifiable Credential (SD-JWT VC) carries no
+that signs a Mobile Driving License (mDL) at 457 days. An SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 carries no
 such fixed ceiling.
 
 In every format a credential has two validity periods. The administrative
@@ -39,7 +39,7 @@ or tracking any one citizen's activity.
 
 A credential's `issuance_record` points to the index that carries its
 status in the issuer's [status list][status-list]. Each entry is two bits
-wide, enough for the three states IETF Token Status List defines: valid,
+wide, enough for the three states IETF Token Status List draft -14 defines: valid,
 invalid, and suspended. To revoke the credential, the issuer's Status
 Manager sets its entry to invalid and republishes the Status List Token, the
 mechanism behind [citizen-initiated
@@ -48,7 +48,7 @@ revocation][citizen-initiated-revocation]. Revocation is final.
 Suspension is not. The Status Manager sets an entry to suspended while a
 doubt about the credential is being resolved, then back to valid or on to
 invalid once it is. A verifier refuses a suspended credential as it refuses
-a revoked one. For `ldp_vc`, W3C Bitstring Status List carries the same
+a revoked one. For `ldp_vc`, W3C Bitstring Status List v1.0 carries the same
 state as a second list, with the `suspension` purpose, beside the revocation
 list.
 
@@ -75,7 +75,7 @@ credential's life on that device, with nothing to carry over to the next
 one.
 
 What follows is [device migration][device-migration]: the old wallet
-installation is revoked and obtains no further [Key Attestation][key-attestation], the citizen
+installation is revoked under [revoking an installation][gf-revoking-an-installation] and obtains no further [Key Attestation][key-attestation], the citizen
 enrolls the new device, and the credential is requested again from the
 issuer rather than restored from a backup.
 

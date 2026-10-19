@@ -46,7 +46,7 @@ entries fill in.
 ### Issuer Core {#hla-issuer-core}
 
 Issuer Core is where a credential is created and then kept alive. It issues
-over [OpenID for Verifiable Credential Issuance (OpenID4VCI)][exchange-protocols] and assembles whichever of the three formats the Credential
+over [OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0][ref-openid4vci] and assembles whichever of the three formats the Credential
 Rulebook names for that credential type. It signs through its Key Manager, which
 generates and holds the issuer's keys on the issuer's own side. It also manages
 and hosts that issuer's status list, which is what tells a verifier later
@@ -104,13 +104,13 @@ own.
 
 Verifier Core is where a credential is checked and turned into a decision. It is
 a backend with no front end of its own: the web page, kiosk, or app in front of
-it belongs to the Relying Party. It requests over [OpenID for Verifiable Presentations (OpenID4VP)][exchange-protocols], tests what comes
+it belongs to the Relying Party. It requests over [OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp], tests what comes
 back against both chains of trust, and passes the result to the Relying Party's
-own business system over [OpenID Connect][exchange-protocols]
+own business system over [OpenID Connect Core 1.0][ref-openid-core]
 or [Security Assertion Markup Language
-(SAML)][exchange-protocols]. A deployment of it is the remote form of a
+(SAML) 2.0][ref-saml2]. A deployment of it is the remote form of a
 [Relying Party Instance][relying-party-instance], and it introduces itself to a
-wallet with the did:webvh of the entity running it.
+wallet with the did:webvh v1.0 of the entity running it.
 
 It reads nothing in proximity. A Relying Party that checks credentials face to
 face uses [Mobile Verifier][hla-mobile-verifier], or its own application built on the Reader SDK, on its own
@@ -176,12 +176,13 @@ Document Signer Certificate, and Verifier Issuing CA, and it publishes the
 revocation lists for the certificates it issues, each issued from
 a certificate request the entity sends. It keeps every entity's public keys in
 the Public Key Registry and holds none of their private keys, and it holds the
-governance registry, incident handling, and the transparency log. Its portal is the one part of it every
-entity touches.
+governance registry, incident handling, and the transparency log. Its portal
+is where every entity's staff work, and its entity endpoint is where every
+entity's Key Manager registers its keys.
 
 - **Service:** Trust Infrastructure
-- **Built as:** Web application, REST API, database, offline hardware security
-  module (HSM)
+- **Built as:** Web application, REST API, database, hardware security
+  modules (HSMs), the two roots in offline ones
 - **Run by:** Root Authority, though every entity uses its portal
 - **How many:** One
 - **Inside it:** [Trust Authority][sa-trust-authority]
@@ -190,10 +191,10 @@ entity touches.
 
 Trust Registry publishes what the rest of the ecosystem has to agree on. It
 answers [Trust Registry Query Protocol
-(TRQP)][exchange-protocols] for `authorization` and
+(TRQP) v2.0][ref-trqp] for `authorization` and
 `recognition`, publishes the trusted list as List of Trusted Entities (LoTE) JSON and publishes [Verified
 Issuer Certificate Authority List
-(VICAL)][trust-lists-and-credential-status], stores every
+(VICAL)][ref-iso-18013-5] (ISO/IEC 18013-5:2021), stores every
 Credential Rulebook, and runs the conformance crawler. What it publishes leaves
 as a static file through a content delivery network (CDN), which is what keeps
 it off the transaction path.
@@ -207,13 +208,16 @@ it off the transaction path.
 ### DID Service {#hla-did-service}
 
 Decentralized Identifier (DID) Service is the witness behind every entity's identifier. Each entity signs
-its own [`did:webvh`][identifiers-and-keys] log on its own domain; DID Service
+its own [`did:webvh`][ref-did-webvh] log on its own domain; DID Service
 validates each new entry and signs a witness proof using the witness key in
 Trust Authority's HSM. Without that proof, no resolver accepts the entry. It also
-resolves `did:webvh` and `did:key` for any Module that needs them, caching the
+resolves `did:webvh` and `did:key` v0.9 for the Modules of Trust Infrastructure,
+caching the
 results so resolution rarely touches the network, and serves the copy of each
 log it witnessed to a scheduled sync that cannot reach the entity's own
-domain. No DID artifacts sit on the
+domain. A verifying Module resolves from the copies its own cache holds,
+through [Trust SDK][sa-trust-sdk], and never calls DID Service inside a
+transaction. No DID artifacts sit on the
 central CDN; each entity hosts its own log.
 
 - **Service:** Trust Infrastructure
@@ -261,7 +265,9 @@ The *May not call* column names the specific prohibitions that are enforced
 automatically in the continuous integration pipeline and fail the build. In
 [the grid of permitted and forbidden calls][fig-module-call-matrix], blank
 cells represent calls that never arise under this rule. Trust Registry and DID
-Service share one row, because the rule is identical for both of them.
+Service take a row each, because one call separates them: Trust Registry
+reaches Trust Authority for the signature on every answer it returns, and DID
+Service reaches nothing.
 
 [](){ #tbl-permitted-calls }
 
@@ -269,15 +275,16 @@ Service share one row, because the rule is identical for both of them.
 
 | Module | May call | May not call |
 |---|---|---|
-| Issuer Core | The source system, through Claims Provider; Trust Registry; DID Service (cache); its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Wallet Backend Service, Verifier Core |
+| Issuer Core | The source system, through Claims Provider; Trust Registry; each entity's DID log (cache, a static file at the entity's domain, DID Service's copy as the fallback); its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Wallet Backend Service, Verifier Core |
 | Issuer Console | Issuer Core's Admin API | Any database, any other Module |
-| Mobile Wallet | Issuer Core, Verifier Core, Mobile Verifier, Wallet Backend Service, Trust Registry (cache), DID Service (cache), the identity provider | Trust Authority |
-| Wallet Backend Service | The identity provider, Trust Registry, DID Service (cache), the device platform, its own Key Manager; Trust Authority to register or rotate keys | Issuer Core, Verifier Core |
-| Verifier Core | Trust Registry (cache), DID Service (cache), the issuer's status list (cache, a static file), the Relying Party's business system, its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Issuer Core |
+| Mobile Wallet | Issuer Core, Verifier Core, Mobile Verifier, Wallet Backend Service, Trust Registry (cache), each entity's DID log (cache, a static file at the entity's domain, DID Service's copy as the fallback), the issuer's status list of each credential it holds (cache, a static file), the CRL of each Verifier Issuing CA (cache, a static file), the identity provider | Trust Authority |
+| Wallet Backend Service | The identity provider, Trust Registry, each entity's DID log (cache, a static file at the entity's domain, DID Service's copy as the fallback), the device platform, its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Issuer Core, Verifier Core |
+| Verifier Core | Trust Registry (cache), each entity's DID log (cache, a static file at the entity's domain, DID Service's copy as the fallback), the issuer's status list (cache, a static file), the Relying Party's business system, its own Key Manager; Trust Authority to register or rotate keys, never during a transaction | Issuer Core |
 | Verifier Console | Verifier Core's Admin API | Any database, any other Module |
-| Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); DID Service (cache); the issuer's status list (cache) | Trust Authority, Issuer Core |
+| Mobile Verifier | Verifier Core, for attestation and, online, the relayed `request_uri` and `response_uri`; Trust Registry (cache); each entity's DID log (cache, a static file at the entity's domain, DID Service's copy as the fallback); the issuer's status list (cache) | Trust Authority, Issuer Core |
 | Trust Authority | Trust Registry, DID Service | Any Module outside Trust Infrastructure |
-| Trust Registry, DID Service | Nothing | Any Module outside Trust Infrastructure; none of them ever calls an entity back |
+| Trust Registry | Trust Authority, to have an answer or a list signed | Any Module outside Trust Infrastructure; it never calls an entity back |
+| DID Service | Nothing | Any Module outside Trust Infrastructure; it never calls an entity back |
 
 </figure>
 
@@ -286,6 +293,13 @@ tests them automatically, and a violation fails the build: Verifier Core calling
 Issuer Core, Issuer Core calling Wallet Backend Service, a Console calling a
 database directly, and a Module inside Trust Infrastructure calling a Module
 outside it.
+
+A credential offer or an authorization request that reaches Mobile Wallet as a
+QR code or a deeplink is not a call. It is handed over on the citizen's
+screen, and Mobile Wallet makes every call that follows. Nothing on the
+transaction path calls Mobile Wallet: what it learns between transactions, a
+revoked credential or a withdrawn reader certificate, it fetches on its
+[trust cache sync][trust-cache-sync].
 
 [](){ #fig-module-call-matrix }
 
@@ -321,16 +335,27 @@ is.
 
 - **The dotted risers are one Module, not two.** Issuer Core, Verifier Core,
   and DID Service answer their protocol endpoints in the public zone and their
-  Admin API in the internal one, which is
+  Admin API in the internal one, and Trust Authority answers its entity
+  endpoint and its portal in the public zone and keeps its back office and its
+  signing interface in the internal one, which is
   [one application, two doors][one-application-two-doors]. DID Service's
   Publisher endpoint is internal as well: an entity never calls it, because
   Trust Authority collects the entity's log entry and is the endpoint's only
   caller, as [who may call whom][who-may-call-whom] records.
+- **Trust Registry reaches inward for a signature.** Its TRQP endpoint is
+  public, and the key that signs each answer is not its own, so it calls
+  Trust Authority's signing interface in the internal zone. That interface
+  takes nothing but a signing request, and it is the one call that crosses
+  from the public zone into the internal one.
 - **The secure zone admits Trust Authority and DID Service's Log Service.**
-  Trust Authority's HSM holds both CA roots, the trusted list and VICAL keys,
-  the Accreditation Credential key, the Use Statement key and its status list
-  key, the update key of Trust Authority's own did:webvh, and a separate
-  partition for the did:webvh witness key. Log Service is the sole user of that witness key partition;
+  Trust Authority's HSMs hold the fourteen keys
+  [Trust Authority's own keys][trust-authoritys-own-keys] names: both CA roots,
+  each in an offline HSM of its own, the trusted list and VICAL keys, the Accreditation Credential key and its
+  status list key, the Use Statement key and its status list key, the
+  Authority Statement key, the recognition statement key, the catalog key,
+  the Governance Profile key, the update key of Trust Authority's own
+  did:webvh, and, in a separate
+  partition, the did:webvh witness key. Log Service is the sole user of that witness key partition;
   everything else in the secure zone is reached by Trust Authority alone.
 - **The last zone is drawn detached** because it is not the ecosystem's
   network. Claims Provider is the one thing that enters it, and it only reads.
@@ -342,19 +367,20 @@ is.
 | Zone | What is in it | Who reaches it |
 |---|---|---|
 | Internet | Mobile Wallet, Mobile Verifier | Citizens, merchants, counter staff of a Relying Party |
-| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, DID Service's Resolver endpoint, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules |
-| Internal | Issuer Console, Verifier Console, Admin API (Issuer Core, Verifier Core, DID Service), DID Service's Publisher endpoint, Trust Authority (back office and portal), databases, caches, Claims Provider | An operator, over VPN or the office network; Trust Authority, for DID Service's Publisher endpoint |
-| Secure | Trust Authority's HSM: both offline CA roots, the trusted list and VICAL keys, the Accreditation Credential key, the Use Statement key and its status list key, the update key of Trust Authority's own did:webvh, and in a separate partition, the did:webvh witness key | Trust Authority; DID Service's Log Service (witness key partition only) |
+| Public | Issuer Core's OpenID4VCI endpoint, Verifier Core's OpenID4VP endpoint, Trust Registry's TRQP endpoint, DID Service's Resolver endpoint, Trust Authority's entity endpoint and portal, Wallet Backend Service's endpoint, the CDN for static artifacts, each issuer's status list | Mobile Wallet, Mobile Verifier, other Core Modules; Issuer Core, Verifier Core and Wallet Backend Service, for Trust Authority's entity endpoint; an entity's staff, for Trust Authority's portal |
+| Internal | Issuer Console, Verifier Console, Admin API (Issuer Core, Verifier Core, DID Service), DID Service's Publisher endpoint, Trust Authority (back office and signing interface), databases, caches, Claims Provider | An operator, over VPN or the office network; Trust Authority, for DID Service's Publisher endpoint; Trust Registry, for Trust Authority's signing interface |
+| Secure | Trust Authority's HSMs: both CA roots, each in an offline HSM of its own, the trusted list and VICAL keys, the Accreditation Credential key and its status list key, the Use Statement key and its status list key, the Authority Statement key, the recognition statement key, the catalog key, the Governance Profile key, the update key of Trust Authority's own did:webvh, and in a separate partition, the did:webvh witness key | Trust Authority; DID Service's Log Service (witness key partition only) |
 | Closed agency network | Source systems | Claims Provider only, and read-only |
 
 </figure>
 
-Only protocol endpoints are public. Nothing is placed in the public zone for
-convenience, which is why the databases, the Consoles, and the Admin API all
-sit one zone further in, and why Trust Authority's portal is internal even
-though the entities that use it are not.
+Only protocol endpoints are public, with one web application beside them:
+Trust Authority's portal, which the staff of every entity have to reach from
+outside. Nothing is placed in the public zone for convenience, which is why
+the databases, the Consoles, the Admin API, and Trust Authority's back office
+all sit one zone further in.
 
-Every issuer runs its own public endpoint for Issuer Core. What stands behind
+Every issuer runs its own [public endpoint][gf-issuer-reachability] for Issuer Core. What stands behind
 that endpoint, a reverse proxy, a gateway, or the server itself, is the
 issuer's choice, and no central intermediary relays issuance.
 
@@ -369,7 +395,8 @@ A Core Module or a Trust Infrastructure Module answers two kinds of caller that 
 common. A wallet arrives from the Internet with no credentials of its own; an
 operator arrives from the office network already authenticated. Issuer Core,
 Verifier Core, and DID Service therefore expose their public protocol endpoints
-on one ingress and their Admin API on a separate one.
+on one ingress and their Admin API on a separate one, and Trust Authority its
+entity endpoint and its portal on one and its back office on the other.
 
 The separation is what makes the placement enforceable. Without it, the Admin
 API would be reachable from wherever the protocol endpoint is reachable, and a

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/schema.json",
+  "title": "Kartu Nikah",
+  "description": "The type claims of id.idctf.kartu-nikah.1, in no format's encoding. Illustrative and not registered.",
+  "type": "object",
+  "properties": {
+    "nama_suami": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nama_istri": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tanggal_akad": {
+      "type": "string",
+      "format": "date"
+    },
+    "nomor_akta_nikah": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kua": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kabupaten_kota": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provinsi": {
+      "type": "string",
+      "minLength": 1
+    },
+    "foto_suami": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/jpeg",
+      "minLength": 1
+    },
+    "foto_istri": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/jpeg",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "nama_suami",
+    "nama_istri",
+    "tanggal_akad",
+    "nomor_akta_nikah",
+    "kua",
+    "kabupaten_kota",
+    "provinsi",
+    "foto_suami",
+    "foto_istri"
+  ]
+}

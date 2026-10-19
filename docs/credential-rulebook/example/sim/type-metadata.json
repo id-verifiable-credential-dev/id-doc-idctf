@@ -1,0 +1,283 @@
+{
+  "vct": "org.iso.18013.5.1.mDL.1",
+  "name": "SIM",
+  "description": "Surat Izin Mengemudi dalam bentuk mDL ISO/IEC 18013-5, yang diterbitkan oleh Korps Lalu Lintas Polri.",
+  "display": [
+    {
+      "locale": "id",
+      "name": "SIM",
+      "description": "Surat Izin Mengemudi dalam bentuk digital",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/logo.png",
+            "uri#integrity": "sha256-IhI3auX4dCXhEfGEiMcdRglKVQWozAffmvUGzlNsKWY=",
+            "alt_text": "Lambang Polri"
+          },
+          "background_color": "#DCE0E5",
+          "text_color": "#1A2029"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/card-light.svg",
+            "uri#integrity": "sha256-ZjEg1GL8k4SiblLPudgzFH2CpGmPvACID67cgVOtANM=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/card-dark.svg",
+            "uri#integrity": "sha256-4sV3VMgyMsqeslSSInoutU/7pzz7B76Me365XFQGSUg=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "en",
+      "name": "SIM",
+      "description": "Indonesian driving license as an mDL",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/logo.png",
+            "uri#integrity": "sha256-IhI3auX4dCXhEfGEiMcdRglKVQWozAffmvUGzlNsKWY=",
+            "alt_text": "Polri emblem"
+          },
+          "background_color": "#DCE0E5",
+          "text_color": "#1A2029"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/card-light.svg",
+            "uri#integrity": "sha256-ZjEg1GL8k4SiblLPudgzFH2CpGmPvACID67cgVOtANM=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/sim-v1/card-dark.svg",
+            "uri#integrity": "sha256-4sV3VMgyMsqeslSSInoutU/7pzz7B76Me365XFQGSUg=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "family_name"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama keluarga"
+        },
+        {
+          "locale": "en",
+          "label": "Family name"
+        }
+      ],
+      "svg_id": "family_name"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "given_name"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama depan"
+        },
+        {
+          "locale": "en",
+          "label": "Given name"
+        }
+      ],
+      "svg_id": "given_name"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "birth_date"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal lahir"
+        },
+        {
+          "locale": "en",
+          "label": "Date of birth"
+        }
+      ],
+      "svg_id": "birth_date"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "age_over_18"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Berusia di atas 18 tahun"
+        },
+        {
+          "locale": "en",
+          "label": "Age over 18"
+        }
+      ]
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "issue_date"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal penerbitan"
+        },
+        {
+          "locale": "en",
+          "label": "Date of issue"
+        }
+      ],
+      "svg_id": "issue_date"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "expiry_date"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal berakhir"
+        },
+        {
+          "locale": "en",
+          "label": "Date of expiry"
+        }
+      ],
+      "svg_id": "expiry_date"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "issuing_country"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Negara penerbit"
+        },
+        {
+          "locale": "en",
+          "label": "Issuing country"
+        }
+      ],
+      "svg_id": "issuing_country"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "issuing_authority"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Instansi penerbit"
+        },
+        {
+          "locale": "en",
+          "label": "Issuing authority"
+        }
+      ],
+      "svg_id": "issuing_authority"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "document_number"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nomor SIM"
+        },
+        {
+          "locale": "en",
+          "label": "License number"
+        }
+      ],
+      "svg_id": "document_number"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "driving_privileges"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Golongan SIM"
+        },
+        {
+          "locale": "en",
+          "label": "Driving privileges"
+        }
+      ],
+      "svg_id": "driving_privileges"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "un_distinguishing_sign"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanda pembeda kendaraan"
+        },
+        {
+          "locale": "en",
+          "label": "Distinguishing sign"
+        }
+      ],
+      "svg_id": "un_distinguishing_sign"
+    },
+    {
+      "path": [
+        "org.iso.18013.5.1",
+        "portrait"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Pas foto"
+        },
+        {
+          "locale": "en",
+          "label": "Portrait"
+        }
+      ]
+    }
+  ]
+}

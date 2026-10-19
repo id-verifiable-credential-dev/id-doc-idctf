@@ -29,10 +29,10 @@ The keys:
 | An entity signs only inside itself, through its Key Manager. Issuer Core never asks another party to sign for it | Non-repudiation, and no single party can sign on behalf of every entity |
 | The credential key is born and destroyed in the secure element of the citizen's device | Device binding in ISO/IEC 18013-5 and the `cnf` claim of SD-JWT VC depend on it |
 | Trust Authority holds no entity's private key | No single point can forge the whole ecosystem |
-| The root key and both root CAs sit in a Cryptographic Provider profile apart from entity keys | A compromise of one does not reach the other |
-| The device key and the credential key are two different keys | The key the vouching party knows never appears in a presentation, and the credential key can be replaced without re-enrolling the device |
+| Trust Authority's fourteen keys sit only in its own HSMs, never in an entity's Key Manager: each root in an offline HSM of its own, and the witness key in a separate partition | A compromise of an entity key, of one root, or of an online key does not reach the others |
+| The device key and the credential key are two different keys | The key the vouching party knows never appears in a presentation |
 | An mdoc issuer uses two keys, `issuance-jose` and `issuance-cose` | The Document Signer Certificate's validity, 457 days for an mDL, does not drag the key in the DID Document along with it |
-| `x5chain` goes in the unprotected header of `COSE_Sign1` | ISO/IEC 18013-5 clause 9.1.2.4 puts it there. This departs from RFC 9360 on purpose, because the protected header breaks interoperability |
+| `x5chain` goes in the unprotected header of `COSE_Sign1` | ISO/IEC 18013-5 clause 9.1.2.4 puts it there. [RFC 9360][ref-rfc9360] permits it, because the certificate authority issues the Document Signer Certificate from a certification request and so has proof of possession of the key |
 | A verifier never pins an issuer's Document Signer Certificate in its configuration. Its trust anchor is the Issuer Root CA | Every renewal of a pinned certificate would force every verifier to update |
 
 </figure>
@@ -73,7 +73,7 @@ What a verification checks:
 |---|---|
 | An artifact's signature is checked each time it is read from cache | A poisoned cache is still caught |
 | The entity chain and the transaction chain are both evaluated in full | Each chain closes a gap the other leaves open, as [entity chain and transaction chain][entity-chain-and-transaction-chain] explains |
-| Trust anchors are built in at build time, never downloaded | The chain of trust cannot loop back on itself |
+| Trust anchors are built in at build time, never downloaded. A root the VICAL carries counts only once the VICAL verifies against a built-in root, and never checks the next VICAL | The chain of trust cannot loop back on itself |
 | The wallet refuses a request for attributes outside the verifier's scope | The citizen is protected at the moment of the request, not only by a later audit |
 
 </figure>
@@ -93,9 +93,7 @@ that it does not.
 | Sessions and nonces live in a shared Redis, not in process memory | [The stack][the-stack] |
 | Trusted artifacts are static files behind a content delivery network | [Trusted list and cache][trusted-list-and-cache] |
 | Claims Provider is an extension point, not a fixed Module | [Issuer Core][sa-issuer-core] |
-| The Key Manager drivers (`software`, `cloudkms`, `hsm`) and Signing Provider are extension points | [Key storage interfaces][key-storage-interfaces] |
-| Diagrams are kept as text in the repository | Not covered elsewhere |
-| The Component list lives in one registry file, and the Component tables and diagrams are generated from it | [Components inside a Module](components-inside-a-module.md) |
+| The Key Manager drivers (`software`, `cloudkms`, `hsm`) and Signing Provider are extension points | [PKCS#11][ref-pkcs11] and [KMIP][ref-kmip] |
 
 </figure>
 
@@ -120,12 +118,12 @@ revoked when a signing key leaks: the key that signed each one, and where its
 status sits in the status list. Its columns are listed under
 [Issuer Core][sa-issuer-core].
 
-Retention is set by the
-[Governance Framework](../../governance-framework/index.md), not left to each
+[Retention][gf-retention] is set by the Governance Framework, not left to each
 institution. An `issuance_record` and its status list are kept at least as
 long as the longest-lived credential plus a dispute period, because a leaked
-key cannot be handled without them. A diploma never expires, so neither does
-its issuance archive. A `verification_record` is kept as long as the Relying
+key cannot be handled without them. A diploma never expires, so its archive
+never closes: each signed copy's record is kept until that copy's technical
+validity ends plus the dispute period, and renewal writes the next one. A `verification_record` is kept as long as the Relying
 Party's legal duty requires, usually far shorter. Sessions and nonces last
 minutes.
 
@@ -152,7 +150,7 @@ Witnessing is the one write DID Service takes. While it is down, entities
 cannot onboard or rotate a key, and resolution and containment carry on, as
 [Trust Infrastructure is not a role][trust-infrastructure-is-not-a-role]
 sets out. A second replica shortens that outage without adding a witness:
-`did:webvh` counts one approval per witness `did:key`, so replicas that share
+`did:webvh` v1.0 counts one approval per witness `did:key` v0.9, so replicas that share
 the witness key are still the one witness.
 
 DID Service keeps no queue of entries waiting for it. When the witness cannot
@@ -182,7 +180,7 @@ incident.
 | Algorithms and protocol versions | Set by the Governance Profile, never chosen per implementation |
 | Rate limits | On every public endpoint, and on `tx_code` against PIN guessing |
 | Issuance failure | Data not found, data found but not yet eligible, and a source system that cannot be reached are three different answers, never one message: the first sends the citizen to the institution, the third only asks them to wait |
-| Trust Registry errors | Problem Details, RFC 7807 |
+| Trust Registry and Trust Authority errors | Problem Details, RFC 9457 |
 | Logs | Structured, and correlated by `txId` |
 | Metrics | Issuance rate, verification rate, cache hit ratio, trusted list age, Key Manager driver latency, and `did:webvh` entries waiting for the witness |
 | Tracing | OpenTelemetry, across the Modules of one entity |
@@ -213,6 +211,6 @@ incident.
 
 </figure>
 
-The first target depends on a number nobody has set yet. How long a cache may
-be trusted belongs to the Governance Framework, and
-[the trust path][the-trust-path] states what follows while it is open.
+The first target depends on the tolerance limits the Governance Profile
+sets, one per cached artifact, and [the trust path][the-trust-path] states
+what each of them bounds.

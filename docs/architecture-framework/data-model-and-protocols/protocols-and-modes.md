@@ -29,13 +29,13 @@ Seven interactions cross the ecosystem, each carried by one standard.
 
 | Interaction | Protocol | Standards |
 |---|---|---|
-| Issuer to Wallet | Credential offer, authorization, then a credential request | [OpenID4VCI 1.0][exchange-protocols] (§8.2, §12.2.4, App. D.1, F.1, F.3), [OAuth 2.0][oauth-20-and-the-endpoints-it-secures], [RFC 9126][oauth-20-and-the-endpoints-it-secures], [RFC 7636][oauth-20-and-the-endpoints-it-secures], [RFC 9449][oauth-20-and-the-endpoints-it-secures] |
-| Wallet to Verifier, online | A signed request with DCQL, an encrypted response | [OpenID4VP 1.0][exchange-protocols] |
-| Wallet to Mobile Verifier, proximity | DeviceRequest with ReaderAuth and the Use Statement, DeviceResponse with DeviceAuth, over an encrypted BLE session | [ISO/IEC 18013-5][exchange-protocols] |
-| Entity to Trust Registry | `POST /authorization`, `POST /recognition` | [ToIP TRQP v2.0][exchange-protocols], [RFC 7807][oauth-20-and-the-endpoints-it-secures] |
-| Wallet to Wallet Backend Service | Installation enrollment, then an attestation platform exchanged for a Key Attestation | [OpenID4VCI 1.0 Appendix D.1][device-attestation-and-assurance], [Play Integrity][device-attestation-and-assurance], [App Attest][device-attestation-and-assurance] |
-| Mobile Verifier to Verifier Core | Device provisioning and renewal, and a relay for a merchant's online check | [ISO/IEC 18013-5 Annex B][certificates-and-revocation], OpenID4VP 1.0 `x509_hash` |
-| Verifier to business system | An OpenID Connect or SAML session | [OpenID Connect Core][exchange-protocols], [SAML 2.0][exchange-protocols] |
+| Issuer to Wallet | Credential offer, authorization, then a credential request | [OpenID4VCI 1.0][ref-openid4vci] (§8.2, §12.2.4, App. D.1, F.1, F.3), [OAuth 2.0][ref-rfc6749], [RFC 9126][ref-rfc9126], [RFC 7636][ref-rfc7636], [RFC 9449][ref-rfc9449] |
+| Wallet to Verifier, online | A signed request with DCQL, an encrypted response | [OpenID4VP 1.0][ref-openid4vp] |
+| Wallet to Mobile Verifier, proximity | DeviceRequest with ReaderAuth and the Use Statement, DeviceResponse with DeviceAuth, over an encrypted BLE session | [ISO/IEC 18013-5][ref-iso-18013-5] |
+| Entity to Trust Registry | `POST /authorization`, `POST /recognition` | [ToIP TRQP v2.0][ref-trqp], [RFC 9457][ref-rfc9457] |
+| Wallet to Wallet Backend Service | Installation enrollment, then an attestation platform exchanged for a Key Attestation | [OpenID4VCI 1.0 Appendix D.1][ref-openid4vci], [Android Key Attestation][ref-android-key-attestation], [Play Integrity][ref-play-integrity], [App Attest][ref-app-attest] |
+| Mobile Verifier to Verifier Core | Device provisioning and renewal, and a relay for a merchant's online check | [ISO/IEC 18013-5 Annex B][ref-iso-18013-5], OpenID4VP 1.0 `x509_hash` |
+| Verifier to business system | An OpenID Connect or SAML session | [OpenID Connect Core][ref-openid-core], [SAML 2.0][ref-saml2] |
 
 </figure>
 
@@ -47,7 +47,7 @@ is secured by Proof Key for Code Exchange (PKCE); depending on the offer, the
 wallet redeems either a pre-authorized code with the `tx_code` a citizen types
 in, or an authorization code. Either way, Demonstrating Proof of Possession
 (DPoP) binds the access token to the
-key that requested it, using a nonce the issuer's nonce endpoint supplies. An
+key that requested it, using a nonce the server returns in the `DPoP-Nonce` header. The `c_nonce` for the key proof comes from the issuer's nonce endpoint. An
 attestation plays no part in it: attestation-based client authentication at the
 PAR and token endpoints is still an Internet-Draft, so it stays out. Proof of
 the credential key waits
@@ -63,7 +63,7 @@ Presentation runs on OpenID for Verifiable Presentations (OpenID4VP) 1.0. The ve
 Digital Credentials Query Language (DCQL), which replaced Presentation
 Exchange, and sends the request as a `request_uri` with the response returned
 through `direct_post.jwt`. The wallet proves the presented credential is bound
-to a key it holds with a Key Binding JSON Web Token (KB-JWT). How the verifier
+to a key it holds with a Key Binding JWT (KB-JWT). How the verifier
 introduces itself is carried in the shape of `client_id`. A Relying Party or an
 RP Intermediary uses `decentralized_identifier` and resolves to a Decentralized
 Identifier (DID) from [Identifier](identifier.md). A merchant uses
@@ -83,7 +83,7 @@ here extends the protocol.
 
 ### Wallet to Mobile Verifier, proximity {#wallet-to-mobile-verifier-proximity}
 
-Proximity presentation runs on ISO/IEC 18013-5 between Mobile Wallet and
+Proximity presentation runs on ISO/IEC 18013-5:2021 between Mobile Wallet and
 Mobile Verifier (or a Relying Party's own application embedding the
 Reader SDK). The certificate Mobile Verifier presents is the Verifier Device
 Certificate, which ISO/IEC 18013-5 calls an mdoc reader authentication
@@ -117,23 +117,25 @@ that carries two different statements is refused whole, not partially.
 ### Entity to Trust Registry {#entity-to-trust-registry}
 
 Every entity asks Trust Registry questions over Trust Registry Query Protocol
-(TRQP) rather than downloading
+(TRQP) v2.0 rather than downloading
 an answer in advance. `POST /authorization` answers whether an entity holds a
 given permission, the same query that resolves an
 [Authority Statement][authority-statement]; how a
 permission is granted in the first place is in [Authorization][authorization].
 `POST /recognition` answers whether another ecosystem is recognized. Errors
-from either endpoint follow RFC 7807.
+from either endpoint follow RFC 9457.
 
 ### Wallet to Wallet Backend Service {#wallet-to-wallet-backend-service}
 
 A Mobile Wallet enrolls its installation with the Wallet Backend Service
-that issued it, then exchanges an attestation platform, Play Integrity on
-Android or App Attest on iOS, for a
+that issued it, then exchanges an attestation platform, Android Key
+Attestation with a Play Integrity verdict on Android or App Attest on iOS,
+for a
 [Key Attestation][key-attestation] built on
-OpenID4VCI 1.0 Appendix D.1. That exchange happens before each issuance,
-whatever assurance level the Credential Rulebook demands, and on the daily
-refresh. The Rulebook sets only the key storage the attestation has to report.
+OpenID4VCI Appendix D.1. That exchange happens before each issuance,
+whatever assurance level the Credential Rulebook demands, and the attestation
+carries the nonce of that issuance, so nothing mints one on a timer. The
+Rulebook sets only the key storage the attestation has to report.
 
 ### Mobile Verifier to Verifier Core {#mobile-verifier-to-verifier-core}
 
@@ -146,7 +148,9 @@ merchant's device gets an identity it does not otherwise have. Provisioning and
 every renewal hand over both at once: the certificate, and, for a merchant, the
 [Use Statement][use-statement]s for the business categories its device is
 bound to, with the certificate's `ReaderAuthRole` held to a subset of their
-union. A Relying Party
+union. Each also carries the platform evidence of the device key, Android Key
+Attestation with a Play Integrity verdict on Android or App Attest on iOS,
+which Verifier Core checks before it issues. A Relying Party
 that reads face to face issues the same certificate to its own counter devices,
 from its own Verifier Issuing CA, whether the device runs Mobile Verifier or
 that Relying Party's own application. The same
@@ -155,15 +159,15 @@ signed Request Object there, and the wallet fetches it through `request_uri`
 and posts an encrypted response to `response_uri`. Verifier Core hands the
 ciphertext to the device and deletes it, with a short lifetime and no logging.
 An accredited Relying Party operating online skips this exchange: it already has a
-DID, and OpenID4VP 1.0 lets its `client_id` carry the
-`decentralized_identifier` scheme with no certificate and no attestation at
+DID, and OpenID4VP lets its `client_id` carry the
+`decentralized_identifier` Client Identifier Prefix with no certificate and no attestation at
 all.
 
 ### Verifier to business system {#verifier-to-business-system}
 
 Once a verifier has checked a presentation, it hands the result to the
-Relying Party's business system that asked for it over an ordinary OpenID Connect or Security
-Assertion Markup Language (SAML)
+Relying Party's business system that asked for it over an ordinary OpenID Connect Core 1.0 or Security
+Assertion Markup Language (SAML) 2.0
 session. This is
 the one interaction among [the seven][tbl-protocols-per-interaction] that
 carries no ecosystem-specific artifact:
@@ -192,14 +196,15 @@ get, not whether it is used.
 Three things keep it current, and none of them runs inside a transaction. A
 [scheduled sync][trust-cache-sync] pulls the trusted list,
 the Verified Issuer Certificate Authority List (VICAL), the Use Statement
-status list, and, for a verifier, every issuer's credential status list on a
+status list, the Authority Statements it may need, the `did:webvh` log and
+witness file of every entity the trusted list names, the certificate revocation lists, and the credential status lists, every
+issuer's for a verifier and those of its own credentials for a wallet, on a
 jittered timer the Governance Profile sets and bounded by the
-`NextUpdate` the list carries, or when the device reaches an unmetered
+trusted list's `NextUpdate`, or when the device reaches an unmetered
 network. A Time to Live (TTL) set by the
 credential's risk profile decides how long a cached copy still counts, which
 is short for a verifier that is online anyway and runs to the tolerance limit
-the Governance Framework will set for one that is not, a limit nobody has set
-yet. And an incident waits for
+the Governance Profile sets for one that is not. And an incident waits for
 neither: on a key compromise the Root Authority revokes the key through
 Trust Authority and notifies
 Relying Parties, the notice sent by Trust Authority using its Incident Service
@@ -235,10 +240,11 @@ list naming the revoked key, all within the hour, the first phase of
 </figure>
 
 Three rows of [the row-by-row comparison][tbl-online-versus-offline] carry a
-cost the table alone does not spell out. SD-JWT-based Verifiable Credentials (SD-JWT VC), the primary format, have no
+cost the table alone does not spell out. SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13, the primary format, have no
 offline path: a credential type that has to be checked with no signal needs an
-mdoc representation in its Credential Rulebook alongside SD-JWT VC, the two
-bound to [one credential key][one-credential-two-representations]. Checking the verifier in proximity
+mdoc representation in its Credential Rulebook, and one that is checked online
+as well lists SD-JWT VC beside it, the two bound to
+[one credential key][one-credential-two-representations]. Checking the verifier in proximity
 needs an X.509 chain even for a Relying Party that is otherwise a fully
 accredited, DID-holding entity online. Online, such a Relying Party needs no
 artifact beyond its own DID, and only a merchant's certificate travels, in
@@ -250,8 +256,7 @@ hardest of the three, because a proximity transaction makes no network call in
 either direction. Both columns read it from cache, so the cost is the window
 between the last sync and the presentation: online that window is one short
 TTL, because the device is reachable and refreshes on its own; offline it runs
-to whatever tolerance limit the Governance Framework sets, and that number is
-not fixed yet. A credential revoked inside the window still verifies.
+to whatever tolerance limit the Governance Profile sets. A credential revoked inside the window still verifies.
 
 The purpose row carries no cost of its own. The wallet checks the
 citizen-facing purpose the same way face to face as it does online: the same

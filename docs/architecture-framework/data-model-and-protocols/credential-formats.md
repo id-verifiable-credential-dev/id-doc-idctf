@@ -3,7 +3,7 @@ title: "Credential formats"
 description: What a credential carries, the three shapes it can take, which participant issues and verifies each one, and the file that fixes the choice for a credential type.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.2 (Kep. 3, 5), §4.4, §2.5, §4.7, §10.1 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.2 (Kep. 3, 5), §4.4, §2.5, §4.7, §10.1; tracks/0208, tracks/0211, tracks/0213, tracks/0214, tracks/0219, tracks/0220, tracks/0228 -->
 
 # Credential formats {#credential-formats}
 
@@ -37,8 +37,8 @@ verifier that receives one checks all five.
   separate because the authority question attaches only to the second.
 - **The type identifier** says which Credential Rulebook governs the
   credential. [SD-JWT-based Verifiable Credentials (SD-JWT
-  VC)][credential-formats-and-their-signatures] carries it as
-  `vct`, [ISO mdoc][credential-formats-and-their-signatures]
+  VC)][ref-i-d-ietf-oauth-sd-jwt-vc] draft -13 carries it as
+  `vct`, [ISO mdoc][ref-iso-18013-5] (ISO/IEC 18013-5:2021)
   as `docType`, and both values come from the Rulebook rather than from the
   issuer's own software.
 - **The holder binding** names a key the citizen's device controls, so a
@@ -47,17 +47,18 @@ verifier that receives one checks all five.
   gives the three mechanisms.
 - **The status pointer** is how a verifier learns that a credential was
   withdrawn before it expired. SD-JWT VC and ISO mdoc point at an
-  [IETF Token Status List][trust-lists-and-credential-status],
+  [IETF Token Status List][ref-i-d-ietf-oauth-status-list] draft -14,
   `ldp_vc` at a
-  [W3C Bitstring Status List][trust-lists-and-credential-status].
+  [W3C Bitstring Status List][ref-bitstring-status-list] v1.0.
   Each issuer publishes its own on its own domain, described in
   [Status list][status-list].
 - **The issuer's signature** closes the envelope around the other four. SD-JWT
-  VC is a [JSON Web Signature (JWS)][encoding-and-signing],
+  VC is a [JSON Web Signature (JWS)][ref-rfc7515],
   ISO mdoc is [CBOR Object Signing and Encryption
-  (COSE)][encoding-and-signing], and `ldp_vc` carries a [Data
-  Integrity][credential-formats-and-their-signatures] proof
-  using the `ecdsa-jcs-2019` cryptosuite.
+  (COSE)][ref-rfc9052], and `ldp_vc` carries a [Data
+  Integrity][ref-vc-data-integrity] 1.0 proof
+  using the `ecdsa-rdfc-2019` cryptosuite, which canonicalizes the document
+  as Linked Data, as OpenID4VCI 1.0 defines `ldp_vc`.
 
 ## Three credential formats {#three-credential-formats}
 
@@ -65,16 +66,16 @@ verifier that receives one checks all five.
 
 | Format | Used for | Holder binding | Status |
 |---|---|---|---|
-| SD-JWT VC | The main online path, every credential type | `cnf` carrying a [did:key][identifiers-and-keys] | Token Status List |
+| SD-JWT VC | The main online path | `cnf` carrying the credential key as a JSON Web Key (`cnf.jwk`) | Token Status List |
 | ISO mdoc | Proximity, no signal, international verifiers | `DeviceKey` inside the MSO | Token Status List |
-| [W3C VCDM 2.0][credential-formats-and-their-signatures] (`ldp_vc`) | Interoperability with JSON-LD ecosystems | Data Integrity proof at presentation level, with `challenge` and `domain` | Bitstring Status List |
+| [W3C VCDM 2.0][ref-vc-data-2-0] (`ldp_vc`) | Interoperability with JSON-LD ecosystems | Data Integrity proof in `ecdsa-rdfc-2019` at presentation level, with `challenge` and `domain` | Bitstring Status List |
 
 </figure>
 
 Two of the three support selective disclosure, which lets a holder reveal one
 attribute without revealing the ones beside it. SD-JWT VC does it with salted
 hashes, ISO mdoc with digests in the Mobile Security Object (MSO). `ldp_vc`
-secured with `ecdsa-jcs-2019` has no such mechanism, and the ecosystem answers
+secured with `ecdsa-rdfc-2019` has no such mechanism, and the ecosystem answers
 by limiting where the format may be used rather than by accepting the
 disclosure. A credential type whose Rulebook classifies any attribute as
 `restricted` may not list `ldp_vc` among its formats at all, a rule
@@ -82,8 +83,22 @@ disclosure. A credential type whose Rulebook classifies any attribute as
 selective disclosure is issued as SD-JWT VC instead. The pilot does not move
 `ldp_vc` to a selective-disclosure cryptosuite; that is reopened only when two
 conditions hold together: a JSON-LD interoperability need for a credential type
-with restricted attributes, and mature Resource Description Framework (RDF)
-Dataset canonicalization libraries in Go and Dart.
+with restricted attributes, and mature `ecdsa-sd-2023` implementations in Go and
+Dart. `ecdsa-sd-2023` canonicalizes the way `ecdsa-rdfc-2019` does, so that move
+changes the proof and keeps the canonicalization.
+
+!!! note "Display of `ldp_vc` outside IDCTF"
+
+    A wallet outside IDCTF can verify an `ldp_vc` credential, but it cannot
+    draw the card. The card design lives in SD-JWT VC Type Metadata, which a
+    W3C credential has no `vct` to find, as
+    [the display field][rulebook-display-field] sets out. The W3C mechanism
+    for it, Verifiable Credential Rendering Methods, is still a Working Draft.
+    Such a wallet reads the issuer's OpenID4VCI metadata instead, where the
+    issuer copies the type's name, logo, colors and claim labels from the
+    Rulebook, so it shows those without the card design. The card waits until
+    a rendering method is final and a wallet IDCTF wants to reach implements
+    it.
 
 Several formats that would have fitted are deliberately absent: AnonCreds,
 JWT-VC 1.1 (`jwt_vc_json`), SD-JWT VCLD, and BBS signatures. Each one would
@@ -113,8 +128,9 @@ that happen to agree.
 
 This is not decoration. SD-JWT VC has no offline path, and ISO mdoc is not used
 online, so a credential type that has to be checked where there is no signal
-needs an mdoc representation or it cannot be checked at all. Which of the two
-modes applies where is in
+needs an mdoc representation or it cannot be checked at all. The reverse holds
+as well: a type whose Credential Rulebook lists mdoc alone is checked in
+proximity and never online. Which of the two modes applies where is in
 [online and offline][online-and-offline].
 
 The Credential Rulebook for a type names the formats that type must take, so
@@ -152,7 +168,7 @@ and the two issuer roles differ on one format only.
 </figure>
 
 An Identity Issuer does not use `ldp_vc` because a basic identity credential
-carries restricted attributes, and `ldp_vc` secured with `ecdsa-jcs-2019` has
+carries restricted attributes, and `ldp_vc` secured with `ecdsa-rdfc-2019` has
 no selective disclosure.
 
 ## Which format each role verifies {#which-format-each-role-verifies}
@@ -173,67 +189,46 @@ three formats.
 
 </figure>
 
-A merchant's Mobile Verifier reads `ldp_vc` like the other two. That costs
-little: the Dart Trust SDK already carries Data Integrity and JSON
-Canonicalization Scheme (JCS), because it verifies `did:webvh` logs signed
-with `eddsa-jcs-2022`, so verifying `ecdsa-jcs-2019` adds one signature
-algorithm.
+A merchant's Mobile Verifier reads `ldp_vc` like the other two, and that costs
+more than a new signature algorithm. `ecdsa-rdfc-2019` signs the Resource
+Description Framework (RDF) Dataset Canonicalization (RDFC-1.0) of the
+credential's JSON-LD expansion, so every verifier carries a JSON-LD 1.1
+processor and an RDFC-1.0 canonicalizer, in Go and in Dart. It reads every
+`@context` from cache and never fetches one while it verifies, because the
+context decides what the signature covers. Each context is checked against
+the digest its Rulebook carries, as [the formats field][rulebook-formats-field]
+sets out. It also stops canonicalizing at a complexity limit, which RDFC-1.0
+requires as a guard against poison graphs. A verifier rejects a document
+larger than 1 MiB or holding more than 64 blank nodes, and stops once the
+calls to the Hash N-Degree Quads algorithm outnumber the blank nodes. A
+credential built from a Rulebook stays far inside all three.
+
+The same profile covers the two other Data Integrity documents `ldp_vc`
+brings. The wallet signs the presentation in `ecdsa-rdfc-2019` too, with
+`proofPurpose` set to `authentication`, the verifier's `nonce` as
+`challenge`, and its `client_id` as `domain`, as OpenID4VP 1.0 shows for
+`ldp_vc`. The issuer's Bitstring Status List is a credential secured the
+same way, in `ecdsa-rdfc-2019`, because Bitstring Status List asks for the
+securing mechanism of the credentials it covers. Its terms come from the
+VCDM 2.0 context, so it adds no context to cache.
 
 ## The Credential Rulebook {#the-credential-rulebook}
 
 Everything above is a menu. The Credential Rulebook is where one credential type
 picks from it, and it is the single file an issuer's `.well-known` metadata is
-generated from:
+generated from. It names the formats the type is issued in, the schema and
+display of its claims, a minimization class for every attribute, `open`,
+`normal` or `restricted`, and the assurance it demands of the credential key
+and of the issuer's signing key. The fields, and the rule each one has to meet,
+are in [Rulebook structure](../../credential-rulebook/rulebook-structure.md),
+and worked examples are in
+[Examples](../../credential-rulebook/example/index.md).
 
-```json
-{
-  "id": "id.idctf.ktp.1",
-  "authority": "did:webvh:QmScid...:kemendagri.go.id",
-  "formats": {
-    "sd-jwt-vc": { "vct": "id.idctf.ktp.1" },
-    "mdoc": { "docType": "id.idctf.ktp.1" },
-    "ldp_vc": {
-      "context": "https://catalog.trust.go.id/ctx/ktp-v1.jsonld",
-      "cryptosuite": "ecdsa-jcs-2019"
-    }
-  },
-  "schema": "https://catalog.trust.go.id/schema/ktp-digital-v1.json",
-  "display": "https://catalog.trust.go.id/oca/ktp-digital-v1.json",
-  "attributes": [
-    { "name": "nik", "minimization": "restricted" },
-    { "name": "tanggal_lahir", "minimization": "normal" },
-    { "name": "usia_di_atas_17", "minimization": "open", "derived_from": "tanggal_lahir" }
-  ],
-  "min_assurance": "high",
-  "issuer_assurance": "high"
-}
-```
-
-Four fields carry weight beyond their own line.
-
-`min_assurance` binds the credential key: it sets the key storage the Key
-Attestation demanded at every issuance has to report. `issuer_assurance` binds
-the signing key on
-the other side, at the issuer.
-
-`minimization` sets the approval tier a Relying Party's request for that
-attribute takes: `open` is granted automatically, `normal` needs one
-reviewer, `restricted` needs a committee. It is also what decides whether the
-type may offer `ldp_vc` at all. A Rulebook that lists a restricted attribute
-alongside `ldp_vc` in its `formats` is refused at submission: the Root
-Authority approves no Rulebook pairing a `restricted` attribute with `ldp_vc`,
-and Trust Registry never publishes one. The restriction is enforced when the
-rules are filed rather than trusted to hold at runtime.
-
-`derived_from` marks an attribute computed rather than stored. The value
-`usia_di_atas_17` is calculated in Issuer Core from `tanggal_lahir`, not in
-Claims Provider, which reads the institution's source system read-only and
-hands over stored claims unchanged.
-
-A version is frozen when it is published, so two parties holding
-`id.idctf.ktp.1` hold the same rules. A change is a new version,
-never an edit. How that identifier is built is in
+Two of its rules reach back into this page. A Rulebook that lists a
+`restricted` attribute alongside `ldp_vc` is refused at submission, so the
+restriction is enforced when the rules are filed rather than trusted to hold
+at runtime. A version is frozen once it is published, and a change is a new
+version, never an edit. How the identifier is built is in
 [Identifier](identifier.md), how the file is distributed is in
-[Credential Rulebook][credential-rulebook],
-and the rulebooks themselves live in their own document,
-[Credential Rulebook Catalog](../../credential-rulebook/index.md).
+[Credential Rulebook][credential-rulebook], and the rulebooks themselves live in
+their own document, [Credential Rulebook Catalog](../../credential-rulebook/index.md).

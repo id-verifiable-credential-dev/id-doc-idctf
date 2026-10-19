@@ -3,7 +3,7 @@ title: "Chain of trust"
 description: Who accredits whom, the two routes a verifier takes to a trust anchor, and the two chains every verification has to evaluate.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5 (pengantar), §5.1, §5.2, §5.3, Kep. 8; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §5 (pengantar), §5.1, §5.2, §5.3, Kep. 8; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber); tracks/0213; tracks/0346 -->
 
 # Chain of trust {#chain-of-trust}
 
@@ -34,7 +34,7 @@ does not need to know the ecosystem exists.
 Another ecosystem, such as a partner country's trust registry, is tied in by
 recognition rather than by accreditation: the Root Authority recognizes the
 foreign authority, and a verifier asks Trust Registry over Trust Registry
-Query Protocol (TRQP) whether that ecosystem is recognized, which is
+Query Protocol (TRQP) v2.0 whether that ecosystem is recognized, which is
 [the second of the two registry queries][entity-to-trust-registry].
 
 [The chain of trust][fig-chain-of-trust] draws who vouches for whom, and
@@ -79,7 +79,7 @@ the X.509 route that proximity reading obliges every reader to hold as well.
 
 The DID route is the one every online transaction takes, and the pages on
 [the trusted list][trusted-list] and [the DID Document][did-document] cover
-its two artifacts. The X.509 route exists because ISO/IEC 18013-5 knows no
+its two artifacts. The X.509 route exists because ISO/IEC 18013-5:2021 knows no
 DID: an mdoc is signed under a certificate, and a reader authenticates with
 one. It is built from two certificate authority (CA) roots, one for each
 side of a proximity session, and the rest of this section describes them.
@@ -95,7 +95,7 @@ by side.
 
 - **Issuer Root CA** is Trust Authority's root for the issuer side.
 - **Document Signer Certificate** is the issuer's leaf, issued from a
-  certificate signing request (CSR).
+  [certificate signing request (CSR)][ref-rfc2986].
 - **mdoc** is what that leaf signs.
 - **Verifier Root CA** is Trust Authority's root for the reader side.
 - **Verifier Issuing CA** is the intermediate held by an RP Intermediary,
@@ -134,11 +134,26 @@ There is no intermediate certificate between the two. ISO/IEC 18013-5 Annex B
 limits the chain to the root and the leaf, and the Issuer Root CA is built
 with a path length of zero accordingly. The issuer appears in the trusted
 list as itself; its DSC reaches readers in two ways. A reader inside the
-ecosystem learns the Issuer Root CA at build time, through Trust SDK, and
-reads the issuer's standing from the cached trusted list. A reader abroad,
-which never sees the trusted list, learns the root from the Verified Issuer
-Certificate Authority List (VICAL) that Trust Registry publishes under
-ISO/IEC 18013-5 Annex C, and [the VICAL][vical] says what that list carries.
+ecosystem carries the Issuer Root CA from build time, through Trust SDK,
+learns the root of each recognized foreign authority from the Verified
+Issuer Certificate Authority List (VICAL) its sync caches, and checks the
+DSC against the cached CRL, because an mdoc carries no DID to look up in the
+trusted list. A reader abroad, which never sees the trusted list, reads the
+VICAL instead, which Trust Registry publishes under ISO/IEC 18013-5 Annex C,
+and checks it against the anchor it was [handed under recognition][gf-what-idctf-hands-over];
+[the VICAL][vical] says what that list carries.
+
+An issuer that issues in mdoc holds a second leaf, the **status list signer
+certificate**, over its `status-list` key. The CWT form of its status list
+carries it in `x5chain`, and its subject repeats the `organizationName` of
+the DSC, so a reader ties the list to the issuer of the mdoc it is checking.
+The Issuer Root CA signs two certificates that belong to no issuer. The
+**VICAL signer certificate** certifies the key that signs the VICAL, carries
+the EKU `1.0.18013.5.1.8`, and travels in the VICAL's own `x5chain`, so the
+list chains to the Issuer Root CA as a DSC does. A link certificate is signed
+by an old root over its replacement, as
+[how Trust Authority's keys are replaced][how-trust-authoritys-keys-are-replaced]
+sets out. Nothing else is signed under the Issuer Root CA.
 
 ### The reader side: Verifier Root CA, Verifier Issuing CA, Verifier Device Certificate {#the-reader-side}
 
@@ -192,15 +207,14 @@ to identify itself. The same party, reading online, introduces itself by its
 `did:webvh` instead and needs no certificate.
 
 The number inside the limited lifetime, and how long a stale CRL is still
-accepted offline, belong to the Governance Profile and are not yet set.
+accepted offline, belong to the Governance Profile.
 
 A wallet from another ecosystem reaches the reader side through the trusted
 list itself. The list is a List of Trusted Entities (LoTE) under
-ETSI TS 119 602, and a wallet that reads one finds each Verifier Issuing CA
+ETSI TS 119 602 V1.1.1, and a wallet that reads one finds each Verifier Issuing CA
 beside the entity that holds it. What such a
 wallet needs is a pointer to the IDCTF list and the Verifier Root CA to check
-the chain against, and both are handed over under recognition, which the
-Governance Framework governs. ISO/IEC 18013-5 is adding a reader-side
+the chain against, and both are handed over under recognition, [which the Governance Framework governs][gf-what-idctf-hands-over]. ISO/IEC 18013-5 is adding a reader-side
 counterpart of the VICAL in its second edition; the ecosystem will publish
 one for mdoc-native wallets once that edition is final, and not before, since
 [the technology map][technology-map] admits no draft as a normative basis.
@@ -280,20 +294,31 @@ is reached only when a credential comes from outside the ecosystem.
    that made the signature is in the DID Document and is not named revoked in
    the entity's trusted list entry. Without it, nothing ties
    the signature to a named party.
-2. **E2, the entity is on the trusted list with status granted.** The cached
-   list names it, and its status today is granted rather than suspended or
-   withdrawn. Without it, a DID anyone minted in five minutes would pass E1
+2. **E2, the entity was granted on the trusted list when it signed, and is
+   not suspended now.** The cached list names it, its history shows the
+   status granted at the signing time the signed object carries, and its
+   status today is not suspended. A withdrawal revokes no key, as
+   [what happens to the old key][what-happens-to-the-old-key] sets out, so
+   a credential signed before the entity's accreditation was withdrawn
+   keeps verifying; one signed after it, or while the entity was suspended,
+   fails, and a suspension stops every credential of the entity until it
+   is lifted. Without it, a DID anyone minted in five minutes would pass E1
    and be accepted.
-3. **E3, the entity is authorized for this credential type.** The cached
-   answer to a TRQP query says its Authority Statement covers this type.
-   Without it, an accredited university could sign a KTP Digital.
+3. **E3, the entity was authorized for this credential type when it
+   signed.** The cached answer to a TRQP query says its Authority Statement
+   covered this type, in the version the credential names, at the signing
+   time the credential carries rather than at the moment of verification.
+   A credential signed before the permission to issue its version was
+   withdrawn keeps verifying, as [Versions][rulebook-versions] sets out,
+   and one signed after it fails. Without it, an accredited university
+   could sign a KTP Digital.
 4. **E4, the X.509 certificate chains to the right root.** On the issuer
    side, the Document Signer Certificate in `x5chain` chains to the Issuer
    Root CA, or to a root in the VICAL; on the reader side, the Verifier
    Device Certificate chains to the Verifier Root CA, with the Verifier
    Issuing CA granted on the trusted list and not named revoked in its
    entry. This is the whole of the entity
-   chain for an mdoc read in proximity, where no DID exists.
+   chain for an mdoc, which carries no DID whether it is read in proximity or presented online.
 5. **E5, an authority from another ecosystem is recognized.** For a
    credential issued abroad, the cached answer to a recognition query says
    the Root Authority recognizes the foreign authority behind it.
@@ -307,12 +332,15 @@ advance, because each is about the presentation in front of the verifier.
    `exp` has not passed, and the bit the issuer's status list keeps for it is
    clear.
 3. **T3, the holder proves the key the credential is bound to.** The Key
-   Binding JWT (KB-JWT) is signed with the key in `cnf`, or DeviceAuth with
-   the `DeviceKey`. Without it, a copied credential presents as well as the
+   Binding JWT (KB-JWT) is signed with the key in `cnf`, the proof on an
+   `ldp_vc` presentation with the holder's `did:key`, or DeviceAuth with the
+   `DeviceKey`. Without it, a copied credential presents as well as the
    original.
 4. **T4, the nonce and the audience match the request.** The proof in T3 was
    made for this request and this verifier, so a presentation captured
-   elsewhere cannot be replayed here.
+   elsewhere cannot be replayed here. In proximity there is no nonce: the
+   proof is taken over the SessionTranscript of this session, which the
+   reader's ReaderAuth covers as well.
 5. **T5, the Relying Party is authorized to request these attributes.** The wallet
    checks the attributes asked for against the Use Statement the request
    carries and, for a device certificate, against its `ReaderAuthRole`, and

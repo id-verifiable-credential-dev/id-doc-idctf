@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.trust.go.id/type-metadata/ktp-v1/schema.json",
+  "title": "KTP Digital",
+  "description": "The type claims of id.idctf.ktp.1, in no format's encoding. Illustrative and not registered.",
+  "type": "object",
+  "properties": {
+    "nik": {
+      "type": "string",
+      "pattern": "^[0-9]{16}$"
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tempat_lahir": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tanggal_lahir": {
+      "type": "string",
+      "format": "date"
+    },
+    "usia_di_atas_17": {
+      "type": "boolean"
+    },
+    "jenis_kelamin": {
+      "type": "string",
+      "enum": [
+        "LAKI-LAKI",
+        "PEREMPUAN"
+      ]
+    },
+    "golongan_darah": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alamat": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rt_rw": {
+      "type": "string",
+      "pattern": "^[0-9]{3}/[0-9]{3}$"
+    },
+    "kelurahan_desa": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kecamatan": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kabupaten_kota": {
+      "type": "string",
+      "minLength": 1
+    },
+    "provinsi": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agama": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status_perkawinan": {
+      "type": "string",
+      "enum": [
+        "BELUM KAWIN",
+        "KAWIN",
+        "CERAI HIDUP",
+        "CERAI MATI"
+      ]
+    },
+    "pekerjaan": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kewarganegaraan": {
+      "type": "string",
+      "enum": [
+        "WNI"
+      ]
+    },
+    "tempat_dikeluarkan": {
+      "type": "string",
+      "minLength": 1
+    },
+    "issuance_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "foto": {
+      "type": "string",
+      "contentEncoding": "base64",
+      "contentMediaType": "image/jpeg",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "nik",
+    "nama",
+    "tempat_lahir",
+    "tanggal_lahir",
+    "usia_di_atas_17",
+    "jenis_kelamin",
+    "golongan_darah",
+    "alamat",
+    "rt_rw",
+    "kelurahan_desa",
+    "kecamatan",
+    "kabupaten_kota",
+    "provinsi",
+    "agama",
+    "status_perkawinan",
+    "pekerjaan",
+    "kewarganegaraan",
+    "tempat_dikeluarkan",
+    "issuance_date",
+    "foto"
+  ]
+}

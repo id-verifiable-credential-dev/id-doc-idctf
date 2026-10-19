@@ -22,12 +22,18 @@ minimized, and the assurance it demands. Its shape is in
 rulebooks themselves are a document of their own, [Credential Rulebook Catalog](../../credential-rulebook/index.md).
 Above it, a **Governance Profile** fixes the technical choices a standard
 leaves open across every credential type, such as algorithms, cache lifetimes,
-protocol versions, and how an assurance level maps onto an [ISO/IEC 18045][device-attestation-and-assurance] value.
+protocol versions, and how an assurance level maps onto an [ISO/IEC 18045:2022][ref-iso-18045] value.
 Above that, the **Governance Framework** covers institutions and people: who
-decides what, which approval a change has to walk through, and what happens
+decides what, [which approval a change has to walk through][gf-amendment], and what happens
 when a rule is broken. It is set out in [Governance Framework](../../governance-framework/index.md).
-The Governance Profile is a separate artifact, and where it is published is not
-yet decided; neither belongs to this document.
+The Governance Profile is a signed file rather than a document of this
+framework: Root Authority approves what it says, Trust Authority signs it, and
+Trust Registry publishes it on the central content delivery network (CDN)
+beside the trusted list. Its own address is the one address it does not carry,
+so an implementation holds that single value and reads out of the Profile
+every address of Trust Infrastructure it starts from; every other address it
+reads from the artifact that names it, a certificate, a credential, or a
+Decentralized Identifier (DID). Neither belongs to this document.
 
 ## Technology map {#technology-map}
 
@@ -42,13 +48,13 @@ later.
 
 | Category | Used | Deliberately dropped |
 |---|---|---|
-| Protocols | [OpenID4VCI][exchange-protocols], [OpenID4VP][exchange-protocols] with DCQL, [ISO/IEC 18013-5][exchange-protocols], [ToIP TRQP][exchange-protocols] | DIDComm, Presentation Exchange, SIOPv2 |
-| Credential formats | [SD-JWT VC][credential-formats-and-their-signatures], [mdoc][credential-formats-and-their-signatures], [W3C VCDM 2.0][credential-formats-and-their-signatures] (`ldp_vc`) | AnonCreds, JWT-VC 1.1 (`jwt_vc_json`), SD-JWT VCLD, BBS |
-| DID methods | [did:webvh][identifiers-and-keys], [did:key][identifiers-and-keys] | did:web, did:ebsi, did:ion, did:jwk |
+| Protocols | [OpenID4VCI][ref-openid4vci], [OpenID4VP][ref-openid4vp] with DCQL, [ISO/IEC 18013-5][ref-iso-18013-5], [ToIP TRQP][ref-trqp] | DIDComm, Presentation Exchange, SIOPv2 |
+| Credential formats | [SD-JWT VC][ref-i-d-ietf-oauth-sd-jwt-vc], [mdoc][ref-iso-18013-5], [W3C VCDM 2.0][ref-vc-data-2-0] (`ldp_vc`) | AnonCreds, JWT-VC 1.1 (`jwt_vc_json`), SD-JWT VCLD, BBS |
+| DID methods | [did:webvh][ref-did-webvh], [did:key][ref-did-key] | did:web, did:ebsi, did:ion, did:jwk |
 | Key algorithms | ES256 on P-256; Ed25519 for did:webvh log keys only | secp256k1, RSA; Ed25519 anywhere else |
 | Key storage | Secure element on devices; a Key Manager driver at each entity | Entity keys generated outside the entity; an unencrypted software key |
-| Status | [IETF Token Status List][trust-lists-and-credential-status], [W3C Bitstring Status List][trust-lists-and-credential-status], [CRL][certificates-and-revocation] | OCSP, a status register of its own |
-| Trust lists | LoTE JSON as in [ETSI TS 119 602][trust-lists-and-credential-status], [VICAL][trust-lists-and-credential-status] | TSL XML as in ETSI TS 119 612, OpenID Federation, a ledger |
+| Status | [IETF Token Status List][ref-i-d-ietf-oauth-status-list], [W3C Bitstring Status List][ref-bitstring-status-list], [CRL][ref-rfc5280] | OCSP, a status register of its own |
+| Trust lists | LoTE JSON as in [ETSI TS 119 602][ref-etsi-ts-119602], [VICAL][ref-iso-18013-5] | TSL XML as in ETSI TS 119 612, OpenID Federation, a ledger |
 
 </figure>
 
@@ -62,27 +68,16 @@ because it would tell Trust Infrastructure how many credentials are in
 circulation.
 
 Two rows of the used column carry detail the cell leaves out. The Ed25519
-exception covers only the update key and the witness key of a did:webvh log,
-because did:webvh v1.0 requires it there. Each entity's Key Manager runs one
+exception covers only the update key and the witness key of a did:webvh v1.0 log,
+because did:webvh requires it there. Each entity's Key Manager runs one
 driver: an encrypted software keystore by default, a cloud key management service
 (KMS), or a hardware security module (HSM) over
-[PKCS#11][key-storage-interfaces].
+[PKCS#11][ref-pkcs11] v3.1.
 
 ## Chapter contents {#dmp-chapter-contents}
 
-1. [Credential formats](credential-formats.md), what a credential
-   carries, the three shapes it can take, which participant issues and verifies
-   each one, and the Credential Rulebook that fixes the choice per credential
-   type
-2. [Identifier](identifier.md), what names an entity, a holder, a
-   credential type, an attribute, a registered use, and a device, and why the
-   holder uses one
-3. [Protocols and modes](protocols-and-modes.md), the protocol used
-   for each interaction in the ecosystem, and what changes between the online
-   path and the offline one
-4. [Artifacts exchanged](artifacts-exchanged.md), every artifact that
-   crosses between two parties, who publishes it, who reads it, where it sits,
-   and how long it lasts
-5. [Credential lifecycle](credential-lifecycle.md), what ends a
-   credential's life early: its own expiry, status list revocation, a
-   compromised signing key, and a lost or replaced device
+1. [Credential formats](credential-formats.md)
+2. [Identifier](identifier.md)
+3. [Protocols and modes](protocols-and-modes.md)
+4. [Artifacts exchanged](artifacts-exchanged.md)
+5. [Credential lifecycle](credential-lifecycle.md)

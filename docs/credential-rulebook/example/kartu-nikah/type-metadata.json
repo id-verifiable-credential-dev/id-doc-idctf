@@ -1,0 +1,232 @@
+{
+  "vct": "id.idctf.kartu-nikah.1",
+  "name": "Kartu Nikah",
+  "description": "Kartu nikah yang diterbitkan oleh Kementerian Agama bagi pasangan yang pernikahannya dicatat di Kantor Urusan Agama.",
+  "display": [
+    {
+      "locale": "id",
+      "name": "Kartu Nikah",
+      "description": "Kartu bukti pencatatan pernikahan",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/logo.png",
+            "uri#integrity": "sha256-dWft/cGSmz7zcRMKDCDNcENd85RdF7uGDmRCVtWL3r0=",
+            "alt_text": "Logo Kementerian Agama"
+          },
+          "background_color": "#F4F9F2",
+          "text_color": "#1B7A3E"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/card-light.svg",
+            "uri#integrity": "sha256-XYyvCHLCFOsBat5LB+UkfbLFAMK97pOxdFgkTOiBjD8=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/card-dark.svg",
+            "uri#integrity": "sha256-CS7WFCoGpjM5f8Idwm2FVFZhQrVG2DzKrHMxLR7ZNK4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "en",
+      "name": "Marriage Card",
+      "description": "Card recording a registered marriage",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/logo.png",
+            "uri#integrity": "sha256-dWft/cGSmz7zcRMKDCDNcENd85RdF7uGDmRCVtWL3r0=",
+            "alt_text": "Ministry of Religious Affairs logo"
+          },
+          "background_color": "#F4F9F2",
+          "text_color": "#1B7A3E"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/card-light.svg",
+            "uri#integrity": "sha256-XYyvCHLCFOsBat5LB+UkfbLFAMK97pOxdFgkTOiBjD8=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/card-dark.svg",
+            "uri#integrity": "sha256-CS7WFCoGpjM5f8Idwm2FVFZhQrVG2DzKrHMxLR7ZNK4=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "credentialSubject",
+        "nama_suami"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama Suami"
+        },
+        {
+          "locale": "en",
+          "label": "Husband's Name"
+        }
+      ],
+      "svg_id": "nama_suami"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "nama_istri"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama Istri"
+        },
+        {
+          "locale": "en",
+          "label": "Wife's Name"
+        }
+      ],
+      "svg_id": "nama_istri"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "tanggal_akad"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal Akad Nikah"
+        },
+        {
+          "locale": "en",
+          "label": "Date of Marriage"
+        }
+      ],
+      "svg_id": "tanggal_akad"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "nomor_akta_nikah"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Akta Nikah"
+        },
+        {
+          "locale": "en",
+          "label": "Marriage Certificate Number"
+        }
+      ],
+      "svg_id": "nomor_akta_nikah"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "kua"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "KUA"
+        },
+        {
+          "locale": "en",
+          "label": "Office of Religious Affairs"
+        }
+      ],
+      "svg_id": "kua"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "kabupaten_kota"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Kabupaten/Kota"
+        },
+        {
+          "locale": "en",
+          "label": "Regency or City"
+        }
+      ],
+      "svg_id": "kabupaten_kota"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "provinsi"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Provinsi"
+        },
+        {
+          "locale": "en",
+          "label": "Province"
+        }
+      ],
+      "svg_id": "provinsi"
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "foto_suami"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Foto Suami"
+        },
+        {
+          "locale": "en",
+          "label": "Husband's Photo"
+        }
+      ]
+    },
+    {
+      "path": [
+        "credentialSubject",
+        "foto_istri"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Foto Istri"
+        },
+        {
+          "locale": "en",
+          "label": "Wife's Photo"
+        }
+      ]
+    }
+  ]
+}

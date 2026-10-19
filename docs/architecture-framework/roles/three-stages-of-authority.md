@@ -36,7 +36,7 @@ The three stages in brief, before each gets a section of its own.
 
 | Stage | Question | What it means |
 |---|---|---|
-| **Registration** | Who are you? | The party becomes known and its file is opened, but it may still do nothing. Every institution passes through this stage, merchants included |
+| **Registration** | Who are you? | The party becomes known and its file is opened, but it may still do nothing. Every institution passes through this stage at the Root Authority; a merchant is registered by its RP Intermediary instead, in the intermediary's own records, and goes no further |
 | **Accreditation** | Are you fit? | The party is judged capable of taking part, and becomes visible to everyone else as a participant worth trusting. Only parties that run their own infrastructure reach it |
 | **Authorization** | What may you do? | The party is granted specific permissions, one at a time. Only accredited parties, and it repeats for as long as they take part |
 

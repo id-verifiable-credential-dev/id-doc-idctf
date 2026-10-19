@@ -48,9 +48,6 @@ implements them, are described in
 
 ## Chapter contents {#roles-chapter-contents}
 
-1. [Role map](role-map.md), the eight roles, what each is answerable
-   for, and the external systems and the citizen's wallet drawn beside them
-2. [Three stages of authority](three-stages-of-authority.md),
-   registration, accreditation and authorization, and what each one produces
-3. [RP Intermediary and merchant](rp-intermediary-and-merchant.md),
-   how a business too small to be accredited still verifies a credential
+1. [Role map](role-map.md)
+2. [Three stages of authority](three-stages-of-authority.md)
+3. [RP Intermediary and merchant](rp-intermediary-and-merchant.md)

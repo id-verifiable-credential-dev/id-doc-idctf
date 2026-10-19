@@ -121,7 +121,7 @@
 </mxCell>
 
 <!-- Trust Registry -> Protocol layer -->
-<mxCell id="e_tr_proto" value="trusted list, Rulebook,&lt;br&gt;VICAL (cached)" style="endArrow=classic;dashed=1;dashPattern=4 4;html=1;strokeColor=#5c7180;strokeWidth=1.2;fontSize=9.5;fontColor=#475569;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+<mxCell id="e_tr_proto" value="trusted list,&lt;br&gt;Rulebook (cached)" style="endArrow=classic;dashed=1;dashPattern=4 4;html=1;strokeColor=#5c7180;strokeWidth=1.2;fontSize=9.5;fontColor=#475569;labelBackgroundColor=#ffffff;" edge="1" parent="1">
   <mxGeometry relative="1" as="geometry">
     <mxPoint x="750" y="463" as="sourcePoint"/>
     <mxPoint x="636" y="370" as="targetPoint"/>

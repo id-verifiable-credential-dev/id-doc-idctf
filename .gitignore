@@ -11,3 +11,5 @@ specs/
 .env.*
 !.env.example
 .superpowers/
+.secrets/
+build/

@@ -1,0 +1,29 @@
+{
+  "id": "id.idctf.kartu-nikah.1",
+  "authority": "did:webvh:QmScid...:kemenag.go.id",
+  "legal_basis": "Peraturan Menteri Agama Nomor 20 Tahun 2019 tentang Pencatatan Pernikahan",
+  "formats": {
+    "ldp_vc": {
+      "context": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/context.jsonld",
+      "context_digest": "sha384-KDUCcr70a0bgOCAEX6VwDhZlhvD+fFdDX+EfAlMgeNp3rPknl1CPN311x1vUZPf2",
+      "type": "KartuNikah",
+      "cryptosuite": "ecdsa-rdfc-2019",
+      "credential_schema": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/credential-schema.json"
+    }
+  },
+  "schema": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/schema.json",
+  "display": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/type-metadata.json",
+  "attributes": [
+    { "name": "nama_suami", "minimization": "normal" },
+    { "name": "nama_istri", "minimization": "normal" },
+    { "name": "tanggal_akad", "minimization": "normal" },
+    { "name": "nomor_akta_nikah", "minimization": "normal" },
+    { "name": "kua", "minimization": "open" },
+    { "name": "kabupaten_kota", "minimization": "open" },
+    { "name": "provinsi", "minimization": "open" },
+    { "name": "foto_suami", "minimization": "normal" },
+    { "name": "foto_istri", "minimization": "normal" }
+  ],
+  "min_assurance": "substantial",
+  "issuer_assurance": "substantial"
+}

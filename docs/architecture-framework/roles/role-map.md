@@ -3,7 +3,7 @@ title: Role map
 description: What a role is, the role test, the eight roles of the ecosystem, the two subtypes of Relying Party, and the external systems and wallet drawn alongside them.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.1, §2.2, §2.4, §2.5, §2.6, §4.4, §4.6, §4.7, §5.1-§5.7, §7.1-§7.7, §9.4, §10; Peta Alur Penerbitan dan Presentasi, §1, §2.3, §3.1, §3.2, §4, §5.1, §6; Rincian Module dan Operasi, §1.1-§1.4, §2.3-§2.5; Glosarium dan Konvensi IDCTF, C.1-C.7, E, F, G, H -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §2.1, §2.2, §2.4, §2.5, §2.6, §4.4, §4.6, §4.7, §5.1-§5.7, §7.1-§7.7, §9.4, §10; Peta Alur Penerbitan dan Presentasi, §1, §2.3, §3.1, §3.2, §4, §5.1, §6; Rincian Module dan Operasi, §1.1-§1.4, §2.3-§2.5; Glosarium dan Konvensi IDCTF, C.1-C.7, E, F, G, H; tracks/0213 -->
 
 # Role map {#role-map}
 
@@ -65,7 +65,7 @@ describes it.
 | [Attribute Issuer][attribute-issuer] | Primary | An organization that already holds the records a credential would assert | Issues everything other than basic identity, from those records |
 | [Wallet Provider][wallet-provider] | Primary | Any accredited organization that provides a wallet | Publishes a wallet, and vouches that a device and its keys are genuine |
 | [Relying Party][relying-party] | Primary | An accredited organization that relies on a credential to serve someone | Requests and verifies credentials within its accreditation scope |
-| [Holder][holder] | Primary | The person the credentials are about | Holds the credentials, chooses what to disclose, and approves every presentation |
+| [Holder][holder] | Primary | The person the credentials are about | Holds the credentials, and approves or refuses every presentation, whole |
 
 </figure>
 
@@ -83,10 +83,8 @@ verification.
 The Root Authority is a designated state institution, and which one is still
 open. It decides both questions about every entity, directly: whether a party
 may take part, and what it may then do. There is no sectoral authority sitting
-between it and an entity; an earlier design gave each sector its own body with
-power to admit entities in its own field, and the ecosystem abandoned that
-arrangement in favor of registering institutions directly and absorbing the
-long tail of small businesses through merchant registration instead. What
+between it and an entity: institutions register directly, and the long tail
+of small businesses comes in through merchant registration. What
 registration reads and what accreditation then decides are set out in
 [Three stages of authority](three-stages-of-authority.md).
 
@@ -135,10 +133,8 @@ It sets the Governance Profile: the technical settings that apply across every
 credential type and every party, such as how long a certificate lives and how
 strong a key has to be for a given assurance level, and the point after which
 a request that was never registered is refused outright. It sets the
-Governance Framework: who decides what, what an entity owes the ecosystem, the
-approval tier each application takes, the sanctions available, and the deadline
-within which an intermediary must remove a merchant that abuses its
-arrangement. It reviews and approves every Credential Rulebook before
+Governance Framework: [who decides what][gf-who-decides], what an entity owes the ecosystem, the
+approval tier each application takes, [the sanctions available][gf-ladder-of-sanctions], and [the deadline within which an intermediary must remove a merchant][gf-withdrawing-a-merchant] that abuses its arrangement. It reviews and approves every Credential Rulebook before
 publishing it, the attribute list, the legal basis behind each attribute, the
 minimization class assigned to it, and the strength demanded of the credential
 key, then assigns the type's identifier and freezes that version. It can
@@ -152,27 +148,30 @@ look it up. The Root Authority keeps a record of every entity's public keys,
 what each is for, evidence of how it is stored, and its status, and it holds
 none of their private keys: its own hardware carries only its own two roots,
 its trusted-list signing key, the key that signs the list of issuer roots it
-publishes for face-to-face readers, its Accreditation Credential key, the key
+publishes for face-to-face readers, its Accreditation Credential key, a separate key for the list that revokes
+those credentials, the key
 that signs each registration of a verifier's intended use and a separate key
-for the list that revokes those registrations, the key that maintains its own
+for the list that revokes those registrations, the key that signs each answer
+about an entity's permissions, the key that signs each answer about a foreign
+authority's recognition, the key that signs the catalog of credential types,
+the key that maintains its own
 identifier, and its witness key. It also keeps a log of entity events that can only ever be added to,
 covering registrations, accreditations, key rotations, and incidents, and
 nothing about a citizen ever enters it.
 
 Approval up front is not the whole of how it works. **It monitors after the
 fact as well**, because front-loaded approval alone does not scale to every
-entity forever. It fetches what each issuer and each Relying Party publishes about
+entity forever. It fetches what each issuer publishes about
 itself, compares that against the scope actually granted, and watches for a
 key entry that arrived without its witness. A discrepancy goes into the
-incident process: a warning first, and suspension if the entity does not
-correct it.
+incident process: [a warning first, and suspension if the entity does not correct it][gf-ladder-of-sanctions].
 
 An incident runs to a schedule rather than to however long it takes to notice.
-Within an hour of being confirmed, the compromised key is revoked, its
-certificate goes on the withdrawal list, an emergency trusted list naming it
-goes out, issuance with that key stops, and
+Within an hour of being confirmed, the compromised key is revoked, an
+emergency trusted list naming it goes out, issuance with that key stops, and
 Relying Parties are notified directly rather than waiting for their next cache
-refresh. The entity stays accredited and its other keys keep working, because
+refresh. Its certificate goes on the withdrawal list within a day. The
+entity stays accredited and its other keys keep working, because
 suspending the entity itself is for misconduct, not for one stolen key. The same
 day, the entity rotates its key under an emergency procedure, and the witness
 refuses any further
@@ -187,9 +186,10 @@ It runs two separate faces. One is its own back office, reached only by its
 own staff under multi-factor sign-in, where registrations are approved, scope
 is granted, an accreditation is withdrawn, and the two roots are operated. The
 other is a self-service portal for entity staff: a body registers there,
-watches its own status, downloads its own certificates, requests a key
-rotation, applies for a registered use, reports an incident, and reads its own
-audit trail. A citizen has access to neither. The reason is deliberate: the
+watches its own status, downloads its own certificates, applies for a
+registered use or a further permission, reports an incident, and reads its own
+audit trail; its keys reach Trust Authority from its own software, not from a
+person. A citizen has access to neither. The reason is deliberate: the
 moment a citizen's wallet held a login to the Root Authority, every transaction that
 citizen made would become traceable back to them, and the ecosystem is built
 specifically so that it does not learn that.
@@ -237,9 +237,9 @@ its standing and everything else it does untouched.
 
 A leaked signing key shows the same authority reaching into a live incident
 rather than stopping at a certificate. Within the hour the Root Authority
-revokes the key, withdraws its certificate, publishes an emergency list naming it, and notifies Relying
+revokes the key, publishes an emergency list naming it, and notifies Relying
 Parties directly, so issuance with that key stops immediately while the entity
-stays accredited. The same day the
+stays accredited. The same day its certificate is withdrawn, the
 entity rotates under emergency procedure, and the witness refuses to countersign anything more from the compromised
 key. Every credential that key signed is revoked, which the issuer can do
 because it kept a record naming which key signed which credential, and
@@ -299,8 +299,7 @@ report lists defects, deciding whether they matter is not this role's to make.
 It runs no infrastructure, is not a regulator, never sees citizen data, is not
 itself listed as a transacting participant in the trusted list, and does not
 write the profile it measures against. The list of bodies it recognizes is the
-Root Authority's own decision, to be recorded in the
-[Governance Framework](../../governance-framework/index.md).
+Root Authority's own decision, to be recorded in [the list of recognized Assessment Bodies][gf-recognized-assessment-bodies].
 
 ### Credential Rulebook Provider {#credential-rulebook-provider}
 
@@ -456,11 +455,10 @@ certificate, a professional license, an account, an employment record, from
 records it already holds. Its arrow in [the role map figure][fig-role-map] is
 *issues attribute credential*, into the wallet. Registration is where a sector
 license is attached as evidence, never as authority in itself; nothing in the
-process depends on that license going unchanged afterward, which is a known gap
-worth naming rather than papering over. Nothing in the ecosystem currently
+process depends on that license going unchanged afterward. Nothing in the ecosystem currently
 notices when a sector regulator later withdraws a license it once relied on, so
 an institution whose sector accreditation lapses can keep issuing until its own
-accreditation is separately reviewed. That gap is recorded as unresolved technical debt.
+accreditation is separately reviewed. The Governance Framework holds the obligation in [sector license][gf-sector-license].
 
 **Its key storage may start at the lowest assurance level and rise later by an
 ordinary rotation, and rising is what widens what it may issue.** What it may
@@ -519,7 +517,7 @@ Party, which reads it from a cache and never asks the issuer.
 ### Wallet Provider {#wallet-provider}
 
 The Wallet Provider is answerable for the wallet a citizen carries. It publishes
-a wallet of its own, vouches at each issuance and daily that a device and the
+a wallet of its own, vouches at each issuance that a device and the
 keys held inside it are genuine, binds each installation to the citizen who
 enrolled it, sees that citizen through a change of phone by having every
 credential issued again, and revokes
@@ -540,8 +538,10 @@ report, and the Wallet Provider is added to the trusted list. Nothing in those s
 is particular to this role, so the first Wallet Provider and the tenth face one test
 written by neither of them. The stages are in
 [Three stages of authority](three-stages-of-authority.md), and what the test
-itself covers is a question for the Governance Framework rather than this
-document.
+covers is set by the Technical Specifications, in the version the Governance
+Profile names, as [Conformance testing][ts-00-conformance-testing] sets out.
+What a Wallet Provider files beyond that, and what it owes while it holds the
+role, is in [Wallet Providers][gf-wallet-providers].
 
 Enrollment is the one point where this role reaches outside the framework: a
 citizen signs in through an identity provider to enroll, and each Wallet
@@ -552,13 +552,13 @@ the device, and nothing about credentials, issuers, or verifiers; it is never
 called during an issuance and never called by a verifier at all, so it cannot
 learn what a citizen holds or where a citizen presents it.
 
-**Whether to vouch, asked every day, is where nearly all of its actual work
+**Whether to vouch, asked at every issuance, is where nearly all of its actual work
 sits.** It checks that the device's own platform evidence traces back to the
 manufacturer, that the application asking is the official build, and that the
 installation is still active, and it refuses if any of the three fails.
 **That refusal is the entire revocation design for a lost device, and it is
-worth a paragraph on its own.** A device that should be cut off simply stops
-receiving tomorrow's vouching. Nothing has to be published anywhere and
+worth a paragraph on its own.** A device that should be cut off is simply
+refused the next vouching it asks for. Nothing has to be published anywhere and
 nothing has to be distributed to anyone: every issuer that would otherwise
 have been asked to vouch for that device refuses on its own the next time it
 checks, on the same logic that lets a
@@ -571,18 +571,18 @@ in the first place, by design.
 rather than restored from anywhere**, because a hardware-bound key cannot be
 moved from one device to another. A citizen who enrolls, then later loses the
 phone, shows the whole arrangement in one pass: the Wallet Provider enrolls the
-installation and issues fresh vouching daily; the phone is lost and the
+installation and vouches for it at each issuance; the phone is lost and the
 citizen reports it; the Wallet Provider marks the installation revoked; and the next
-day's vouching simply does not arrive, so every issuer that would have been
+request for vouching gets nothing, so every issuer that would have been
 asked refuses without anyone publishing anything and without the Root Authority
 being told a thing happened. A second Wallet Provider appearing later changes
 nothing at any issuer, for the same reason many Wallet Providers already work: an
 issuer checks the signer against the list, never against a name.
 
 If the Wallet Provider itself becomes unreachable, credentials already held still
-present and still verify, because the current vouching is already inside the
-wallet; what stops is enrolling a new device, or issuing a credential that
-demands fresh vouching from that moment forward.
+present and still verify, because no verifier asks for the vouching; what
+stops is enrolling a new device and, from that moment forward, issuing any
+credential, because every issuance demands fresh vouching.
 
 It is a primary role because the wallet it publishes is on the path a
 credential travels, while the Wallet Provider itself never stands on it. It
@@ -655,7 +655,7 @@ presentation rather than the presentation itself**, enough to prove
 afterward that a citizen presented something without ever holding what was
 presented, and it records which version of the trusted list it was working
 from at the time. The reason for that last record is easy to forget and
-important to keep: in a dispute raised two years later, the question that
+important to keep: in a dispute raised long after the fact, the question that
 matters is whether the other party was trusted at that moment, not whether it
 is trusted now.
 
@@ -736,8 +736,8 @@ where this arrangement is described in full.
 
 The holder is the person the credentials are about, and the only role held by a
 person rather than an institution. They receive credentials into their wallet,
-keep them on their own device and nowhere else, choose which attributes to
-disclose, and approve every presentation. In [the role map figure][fig-role-map]
+keep them on their own device and nowhere else, and approve or refuse every
+request for a presentation. In [the role map figure][fig-role-map]
 they hold the wallet through the arrow *controls*, and every presentation they
 approve leaves the wallet along *presents credential*, to the Relying Party.
 They sign in through the identity provider of whichever wallet they chose,
@@ -791,8 +791,8 @@ the shop's name and the purpose. The citizen approves a single age flag. The
 shop learns nothing else, and never learns the birth date underneath it.
 
 Losing the phone shows what the absence of any central record costs, and
-what it buys. The Wallet Provider revokes the lost installation, tomorrow's vouching
-never arrives, and every credential is reissued onto the new device rather
+what it buys. The Wallet Provider revokes the lost installation, which gets no further
+vouching, and every credential is reissued onto the new device rather
 than restored from anywhere, because nothing was ever held centrally to
 restore it from. That is the price of there being no account anywhere for
 anyone to break into.
@@ -853,13 +853,14 @@ one step that uses it.
 The device platform is the dependency with no second supplier anywhere. Nothing
 in the ecosystem can substitute for it, and reaching a device's own hardware
 evidence from an application built to run on more than one kind of phone takes
-work specific to each platform; that is one of the three standing risks recorded
+work specific to each platform; that is one of the four standing risks recorded
 in [technology risks and
 mitigation][technology-risks-and-mitigation]. Its
 dashed arrow, *provides platform evidence*, reaches two boxes: the Wallet
 Provider, which checks the evidence before vouching for a citizen's phone, and
-the Relying Party, which checks it before certifying a counter device, described
-in [Device activation][device-activation]. A key management service (KMS) provider is a milder dependency
+the Relying Party, which checks it before certifying a reader device, a
+merchant's or its own counter device, in the same steps
+[Device activation][device-activation] describes for a merchant. A key management service (KMS) provider is a milder dependency
 by comparison, because one vendor can be exchanged for another without anything
 above it changing, and it is optional in the real sense: an entity that uses
 none of them keeps its keys in the encrypted key storage its own software ships
@@ -927,7 +928,7 @@ on both while a transaction is happening.
   other path. A source system supplies authoritative data to an issuer,
   read-only. The issuer sends the credential to the holder's wallet along
   *issues credential*. The holder presents it to a Relying Party along *presents
-  credential*, online or face to face, and chooses what to disclose each time.
+  credential*, online or face to face, and approves or refuses each request whole.
   Which subtype of Relying Party is on the other side changes how it proves who
   it is, not what the path looks like. Which role can handle which credential
   format is in [Credential

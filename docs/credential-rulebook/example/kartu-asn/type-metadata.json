@@ -1,0 +1,224 @@
+{
+  "vct": "id.idctf.kartu-asn.1",
+  "name": "Kartu ASN",
+  "description": "Kartu identitas Aparatur Sipil Negara yang diterbitkan oleh Badan Kepegawaian Negara.",
+  "display": [
+    {
+      "locale": "id",
+      "name": "Kartu ASN",
+      "description": "Kartu identitas Aparatur Sipil Negara",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/logo.png",
+            "uri#integrity": "sha256-+lXZpf4jDZqwroxb9IvZVnKFQG+xrxbsk5jodXPbIJs=",
+            "alt_text": "Lambang Garuda Pancasila"
+          },
+          "background_color": "#FFFFFF",
+          "text_color": "#8A1B3D"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/card-light.svg",
+            "uri#integrity": "sha256-AHdt22lGSTBqAnwMYbA618diajjtnHncT72ecmJiFKU=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/card-dark.svg",
+            "uri#integrity": "sha256-K8B5x9iShgOIYFhGhZ9gqwh2d8OeljbZxgephsIqFlA=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "en",
+      "name": "Civil Servant Card",
+      "description": "Identity card of an Indonesian civil servant",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/logo.png",
+            "uri#integrity": "sha256-+lXZpf4jDZqwroxb9IvZVnKFQG+xrxbsk5jodXPbIJs=",
+            "alt_text": "Garuda Pancasila emblem"
+          },
+          "background_color": "#FFFFFF",
+          "text_color": "#8A1B3D"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/card-light.svg",
+            "uri#integrity": "sha256-AHdt22lGSTBqAnwMYbA618diajjtnHncT72ecmJiFKU=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/card-dark.svg",
+            "uri#integrity": "sha256-K8B5x9iShgOIYFhGhZ9gqwh2d8OeljbZxgephsIqFlA=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "nama"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama"
+        },
+        {
+          "locale": "en",
+          "label": "Name"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "nama"
+    },
+    {
+      "path": [
+        "nip"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "NIP"
+        },
+        {
+          "locale": "en",
+          "label": "Civil Servant ID Number"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "nip"
+    },
+    {
+      "path": [
+        "golongan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Golongan"
+        },
+        {
+          "locale": "en",
+          "label": "Rank"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "golongan"
+    },
+    {
+      "path": [
+        "status_kepegawaian"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Status Kepegawaian"
+        },
+        {
+          "locale": "en",
+          "label": "Employment Status"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "status_kepegawaian"
+    },
+    {
+      "path": [
+        "jabatan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Jabatan"
+        },
+        {
+          "locale": "en",
+          "label": "Position"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "jabatan"
+    },
+    {
+      "path": [
+        "unit_kerja"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Unit Kerja"
+        },
+        {
+          "locale": "en",
+          "label": "Work Unit"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "unit_kerja"
+    },
+    {
+      "path": [
+        "instansi"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Instansi"
+        },
+        {
+          "locale": "en",
+          "label": "Agency"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "instansi"
+    },
+    {
+      "path": [
+        "foto"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Foto"
+        },
+        {
+          "locale": "en",
+          "label": "Photo"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always"
+    }
+  ]
+}

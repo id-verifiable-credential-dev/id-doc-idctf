@@ -14,8 +14,7 @@ maps the Modules and their dependencies, then works down to Components and
 the tech stack.
 </p>
 
-The software architecture that once stood on its own as a separate document is now
-part of this one, as
+Its software architecture is a chapter of this document,
 [Software Architecture](software-architecture/index.md). Rules that bind implementations are
 not written here but in
 [Technical Specifications](../technical-specifications/index.md); the rules for
@@ -24,14 +23,12 @@ joining the ecosystem and what each participant owes are in
 
 ## Document Standing {#document-standing}
 
-This document is IDCTF-AF, the first of the five IDCTF documents to be written.
+This document is IDCTF-AF, one of the five IDCTF documents.
 It declares what gets built: the roles and who holds them, the
 four Services that group their functions, the ten Modules that implement
 those Services, which parties are accredited and which are only registered, the
 trust model, and one flow per use case. Architects change it, and rarely.
-
-Software Architecture is on loan. It describes software rather than
-architecture, and moves to a document of its own once it is stable. A version of this document is written
+A version of this document is written
 `IDCTF-AF-1.0`.
 
 ## System boundary {#system-boundary}
@@ -47,11 +44,6 @@ each wallet, the device platforms, and the key management service (KMS) provider
 through a fixed interface, and each is described in
 [External systems][external-systems].
 
-!!! note "Status"
-    The Architecture Framework is done: every page carries prose, and nothing
-    it owes is still open. The four other IDCTF documents are each one page
-    marked `(soon)`.
-
 ## Chapter contents {#af-chapter-contents}
 
 1. [Roles](roles/index.md)
@@ -60,4 +52,3 @@ through a fixed interface, and each is described in
 4. [Data Model and Protocols](data-model-and-protocols/index.md)
 5. [Trust Model](trust-model/index.md)
 6. [Glossary](glossary.md)
-7. [References](references.md)

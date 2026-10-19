@@ -1,0 +1,23 @@
+{
+  "id": "id.idctf.kartu-asn.1",
+  "authority": "did:webvh:QmScid...:bkn.go.id",
+  "legal_basis": "Undang-Undang Nomor 20 Tahun 2023 tentang Aparatur Sipil Negara",
+  "formats": {
+    "sd-jwt-vc": { "vct": "id.idctf.kartu-asn.1" },
+    "mdoc": { "docType": "id.idctf.kartu-asn.1" }
+  },
+  "schema": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/schema.json",
+  "display": "https://catalog.trust.go.id/type-metadata/kartu-asn-v1/type-metadata.json",
+  "attributes": [
+    { "name": "nama", "minimization": "normal" },
+    { "name": "nip", "minimization": "restricted" },
+    { "name": "golongan", "minimization": "normal" },
+    { "name": "status_kepegawaian", "minimization": "open" },
+    { "name": "jabatan", "minimization": "normal" },
+    { "name": "unit_kerja", "minimization": "normal" },
+    { "name": "instansi", "minimization": "open" },
+    { "name": "foto", "minimization": "restricted" }
+  ],
+  "min_assurance": "substantial",
+  "issuer_assurance": "substantial"
+}

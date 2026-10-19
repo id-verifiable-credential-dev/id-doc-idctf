@@ -3,11 +3,9 @@ title: Flows per use case
 description: The minimum path through each use case, from entity onboarding to citizen-initiated revocation, and which of them run without reaching Trust Infrastructure.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, Section 7, Kep. 5, 9, 28, 30; Peta Alur Penerbitan dan Presentasi §5.1; Rincian Module dan Operasi §2.5, §6.2, §7.3, §8; tracks/0094, tracks/0096, tracks/0133, tracks/0155 (pembaruan kredensial dari OpenID4VCI 1.0 §14.5 dan EUDI ARF ISSU_42, ISSU_50, ISSU_65; tidak ada di sumber). Saluran laporan kehilangan ke issuer tidak disebut sumber mana pun (debt/0072); tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, Section 7, Kep. 5, 9, 28, 30; Peta Alur Penerbitan dan Presentasi §5.1; Rincian Module dan Operasi §2.5, §6.2, §7.3, §8; tracks/0094, tracks/0096, tracks/0133, tracks/0155 (pembaruan kredensial dari OpenID4VCI 1.0 §14.5 dan EUDI ARF ISSU_42, ISSU_50, ISSU_65; tidak ada di sumber). Saluran laporan kehilangan ke issuer tidak disebut sumber mana pun (debt/0072); tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber), tracks/0213, tracks/0220, tracks/0355 -->
 
 # Flows per use case {#flows-per-use-case}
-
-*This section is informative.*
 
 Each flow below is the minimum path, not a complete protocol trace. The steps
 name who acts and what they send, and stop where the
@@ -51,8 +49,8 @@ sequenceDiagram
 <figcaption><span class="ekdn-fignum"></span> Entity onboarding, from the request to Trust Authority through to the DID Document the entity publishes.</figcaption>
 </figure>
 
-1. The entity sends `POST /entities` to Trust Authority, supplying the
-   documents that establish it as a legal body and a conformance test.
+1. The entity's staff register it in Trust Authority's portal, supplying
+   the documents that establish it as a legal body and a conformance test.
 
 2. The entity generates `issuance-jose`, `issuance-cose`, `status-list`, and
    an Ed25519 update key using its Key Manager Component, in whichever driver
@@ -63,8 +61,10 @@ sequenceDiagram
 
 3. The entity submits its keys to Trust Authority in one request, through
    `POST /entities/me/keys`: the genesis `did.jsonl` entry, a proof of
-   possession for each key, the `keyStorage` value, and a certificate signing
-   request (CSR) from the `issuance-cose` key, for the mdoc path. Trust
+   possession for each key the entry publishes, the `keyStorage` value, and, for the mdoc path, a
+   certificate signing request (CSR) from the `issuance-cose` key. The CSR
+   from the `status-list` key comes with it, or later, when the issuer first
+   publishes the form of its status list an mdoc reader checks. Trust
    Authority checks the `keyStorage` value against the `issuer_assurance` its
    requested credential types demand, and the CSR against the certificate profile.
 
@@ -88,8 +88,8 @@ sequenceDiagram
 9. The entity publishes its DID Document on its own domain.
 
 Rotation follows the same path, through the same door: a new log entry, signed
-with the current update key and matching the pre-rotation hash, is submitted
-to Trust Authority and witnessed before it counts. The entity never submits an
+with the update key it carries, which matches the hash the previous entry
+announced, is submitted to Trust Authority and witnessed before it counts. The entity never submits an
 entry to DID Service itself. After onboarding, the entity signs using its own
 Key Manager Component, and Trust Infrastructure is not called once
 transactions start.
@@ -166,7 +166,7 @@ sequenceDiagram
 
 7. Verifier Core issues the merchant's first Verifier Device Certificate,
    cut from the RP Intermediary's Verifier Issuing CA, and hands it over
-   together with the Use Statement of the merchant's category. Its `Subject`
+   together with the Use Statements of the merchant's categories. Its `Subject`
    names the merchant, and its `ReaderAuthRole` extension carries the
    attribute scope set at registration. The instance is now active.
 
@@ -202,7 +202,9 @@ sequenceDiagram
     MV->>VC: Leave the signed request, one customer after another
     VC->>VC: Compare what the merchant asks for with the category its device was bound to
     VC->>VC: Withdraw the merchant's device certificate
-    VC-->>MW: Publish the revoked certificate to the list wallets read
+    VC->>VC: Publish the withdrawn certificate on its revocation list
+    MW->>VC: Fetch the revocation list on the next sync
+    VC-->>MW: Return the list
     MW->>MW: Refuse the next request from that device
 ```
 
@@ -219,15 +221,22 @@ sequenceDiagram
    that asks beyond its category is refused by every wallet it approaches, and
    without this comparison nobody would learn that it kept trying.
 
-3. Verifier Core withdraws that merchant's Verifier Device Certificate, within
-   the deadline the Governance Framework sets, and the merchant's other
+3. Verifier Core withdraws that merchant's Verifier Device Certificate, [within the deadline the Governance Framework sets][gf-withdrawing-a-merchant], and the merchant's other
    permissions are untouched because it has none beyond that certificate.
 
 4. Verifier Core publishes the withdrawn certificate to the CRL it
    maintains for the certificates it issues. Nothing
    is published centrally, and no other merchant is affected.
 
-5. Mobile Wallet checks the certificate against its cached copy of that list
+5. Mobile Wallet fetches that CRL on its next
+   [trust cache sync][trust-cache-sync], from the address the merchant's
+   device certificate names. Verifier Core never calls the wallet; the
+   wallet comes for the list.
+
+6. Verifier Core returns the list, a static file served without
+   authentication and without any identifier of the reader.
+
+7. Mobile Wallet checks the certificate against its cached copy of that list
    and refuses the next request from the device. The refusal happens on the
    citizen's phone, so no part of it waits on Trust Infrastructure.
 
@@ -252,7 +261,7 @@ sequenceDiagram
     MW->>MW: Create the device key, the credential key, and an attestation platform
     MW->>WBS: Enroll the wallet installation
     WBS-->>MW: Confirm the enrollment
-    loop Before each issuance or daily refresh
+    loop Before each issuance
         MW->>WBS: Request a Key Attestation
         WBS-->>MW: Return the Key Attestation, or refuse
     end
@@ -261,7 +270,7 @@ sequenceDiagram
 <figcaption><span class="ekdn-fignum"></span> Wallet enrollment and attestation, from the login at the identity provider through to the Key Attestation Wallet Backend Service issues.</figcaption>
 </figure>
 
-1. Mobile Wallet logs in to the wallet's identity provider over OpenID Connect.
+1. Mobile Wallet logs in to the wallet's identity provider over OpenID Connect Core 1.0.
 
 2. The identity provider returns an `id_token` for the citizen's account.
 
@@ -276,10 +285,12 @@ sequenceDiagram
 5. Wallet Backend Service confirms the enrollment, marking the installation
    active.
 
-6. Before each issuance, at any assurance level, and on a daily refresh,
-   Mobile Wallet requests a new Key Attestation from
-   Wallet Backend Service, sending PoP of the device key, the
-   credential key to be attested, an integrity token, and the issuer's nonce.
+6. Before each issuance, at any assurance level, Mobile Wallet requests a new
+   Key Attestation from Wallet Backend Service, sending PoP of the device
+   key, the credential key to be attested, an integrity token, and the
+   issuer's nonce. An attestation carries the nonce of the issuance it was
+   made for, so nothing mints one on a timer; the day it lives is a ceiling
+   on how long one may be used, not a schedule.
 
 7. Wallet Backend Service returns the Key Attestation, attesting the
    credential key in `attested_keys`, or refuses if the device is marked
@@ -319,7 +330,9 @@ sequenceDiagram
     IC->>IC: Set the status bits and republish the status list
     Note over TA,MW: Phase 4, reissue
     TA-->>Ent: Issue a new certificate
-    IC->>MW: Reissue the affected credentials
+    MW->>MW: Find the credential revoked on the status list its sync fetched
+    MW->>IC: Request the replacement credential
+    IC-->>MW: Return the reissued credential
     Note over Ent: Phase 5, file the post-mortem
     Ent->>TA: File the post-mortem
 ```
@@ -328,10 +341,11 @@ sequenceDiagram
 </figure>
 
 1. The Root Authority revokes the compromised key, and Trust Authority
-   records it as `REVOKED` in its Public Key Registry and, for an X.509 key
-   such as the DSC, adds the certificate to the CRL, within an hour of the
-   compromise being confirmed. The entity stays accredited and its status
-   stays granted.
+   records it as `REVOKED` in its Public Key Registry, within an hour of the
+   compromise being confirmed. For an X.509 key such as the DSC, Trust
+   Authority also adds the certificate to the CRL within 24 hours of the
+   revocation, the limit [ETSI EN 319 411-1 V1.4.1][ref-etsi-en-319411-1] sets for revocation status, in
+   phase 2. The entity stays accredited and its status stays granted.
 
 2. Trust Authority orders Trust Registry to publish an emergency trusted
    list naming the revoked key, and the Root Authority notifies Relying
@@ -364,25 +378,34 @@ sequenceDiagram
    the status list.
 
 8. Issuer Core, using its Status Manager Component, sets the status bit for
-   each flagged index and republishes the Status List Token, signed with the
-   separate `status-list` key so that it still works.
+   each flagged index and republishes the Status List Token and the
+   Bitstring Status List v1.0, both signed with the separate `status-list` key so
+   that they still work.
 
 9. Trust Authority issues the entity a new DSC.
 
-10. Issuer Core reissues the affected credentials; Mobile Wallet can receive a
-    push notice to update.
+10. Mobile Wallet finds the credential marked revoked on the status list its
+    [trust cache sync][trust-cache-sync] fetched. No one tells the wallet:
+    Issuer Core may not call it, and the wallet reads the list the same way
+    a verifier does.
 
-11. The entity files a post-mortem to Trust Authority's transparency log, and
-    the driver of its Key Manager Component is reviewed.
+11. Mobile Wallet asks Issuer Core for a replacement with the refresh token
+    it holds, as [credential renewal][credential-renewal] runs.
+
+12. Issuer Core reissues the credential, signed with the new key.
+
+13. The entity files the post-mortem in Trust Authority's portal, Trust
+    Authority writes it into its transparency log, and the driver of the
+    entity's Key Manager Component is reviewed.
 
 <figure markdown="1" class="ekdn-table">
 
 | Phase | Target | Action |
 |---|---|---|
-| **1. Revoke the key** | Under 1 hour | The Root Authority revokes the key through Trust Authority, which records it `REVOKED` and, for an X.509 key, adds the certificate to the CRL; Trust Registry publishes an emergency trusted list naming the key; the Root Authority notifies Relying Parties directly, through Trust Authority's Incident Service Component; Issuer Core stops signing with the key. |
-| **2. Rotate** | Same day | The entity rotates the key at once using its Key Manager Component, with pre-rotation in `did:webvh` and DID Service's witness; the entity submits a new certificate request; the old key leaves `assertionMethod` without the entry being deleted; the witness refuses any new entry signed by the revoked key. |
-| **3. Revoke credentials** | No fixed target | Every credential signed with the compromised key is revoked: `issuance_record` points to that credential's index in the status list, and Issuer Core, using its Status Manager Component, sets the bit and republishes the Status List Token. Periodic key rotation limits how many credentials this reaches. |
-| **4. Reissue** | No fixed target | Trust Authority issues a new DSC, and Issuer Core reissues the affected credentials; the wallet can receive a push notice to update its credential. |
+| **1. Revoke the key** | Under 1 hour | The Root Authority revokes the key through Trust Authority, which records it `REVOKED`; Trust Registry publishes an emergency trusted list naming the key; the Root Authority notifies Relying Parties directly, through Trust Authority's Incident Service Component; Issuer Core stops signing with the key. |
+| **2. Rotate** | Same day | Trust Authority adds an X.509 key's certificate to the CRL within 24 hours of the revocation; the entity rotates the key at once using its Key Manager Component, with pre-rotation in `did:webvh` and DID Service's witness; the entity submits a new certificate request; the old key leaves `assertionMethod` without the entry being deleted; the witness refuses any new entry signed by the revoked key. |
+| **3. Revoke credentials** | No fixed target | Every credential signed with the compromised key is revoked: `issuance_record` points to that credential's index in the status list, and Issuer Core, using its Status Manager Component, sets the bit and republishes the Status List Token and the Bitstring Status List. Periodic key rotation limits how many credentials this reaches. |
+| **4. Reissue** | No fixed target | Trust Authority issues a new DSC; each wallet finds its credential revoked on the status list its sync fetches and asks Issuer Core for a replacement, which Issuer Core issues under the new key. |
 | **5. File post-mortem** | No fixed target | A post-mortem is filed to the transparency log; the driver of the issuer's Key Manager Component is reviewed. |
 
 </figure>
@@ -392,11 +415,11 @@ Two things have to exist from phase 1 for this flow to run at all: an
 Service that keeps history and holds two active keys at once. Scheduled key
 rotation, with a DSC valid at most 457 days for a Mobile Driving License
 (mDL), decides how many credentials get caught up when one key leaks: the
-more often a key rotates, the fewer credentials need reissuing. Phase 1
-stops every credential the key signed, in both formats: an offline mdoc
+more often a key rotates, the fewer credentials need reissuing. Phases 1
+and 2 stop every credential the key signed, in every format: an offline mdoc
 presentation fails the CRL check once the DSC is on it, and an online
-SD-JWT-based Verifiable Credential (SD-JWT VC) fails once the verifier's
-cached trusted list names the key. Phase 3 then marks each of those
+SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 or `ldp_vc` fails once the
+verifier's cached trusted list names the key. Phase 3 then marks each of those
 credentials in the status list.
 
 Revoking a key leaves the entity accredited, and its other keys keep working.
@@ -405,7 +428,7 @@ Authority decides it through Trust Authority and uses the same emergency
 trusted list and notice. A suspension reaches that one registration only. In a
 severe incident the Root Authority may suspend every registration of the same
 legal body at once, found on the trusted list by the legal identifier they
-share, and the Governance Framework sets what counts as severe.
+share, and the Governance Framework sets [what counts as severe][gf-body-wide-suspension].
 
 ### Trust cache sync {#trust-cache-sync}
 
@@ -413,22 +436,26 @@ Nothing on the transaction path asks Trust Infrastructure anything while a
 transaction runs, so every verifying party works from a local cache this sync
 fills. Mobile Wallet and Mobile Verifier need it because they present and
 verify with no network. Verifier Core holds the same copies and refreshes
-them well before the `NextUpdate` each list carries, on the short Time to
+them well before the trusted list's `NextUpdate`, on the short Time to
 Live (TTL) a reachable Module is given, as [the three rules for reading the
 copy][three-rules-for-reading-the-copy] set out: being reachable shortens how
 stale its copy may get and does not let it query Trust Infrastructure
 mid-transaction. Mobile Wallet runs the sync shown here. A verifier's run
-adds one fetch the wallet's skips: the credential status list of every issuer
-the trusted list names, downloaded whole from the address where that issuer
-publishes it, so no fetch is tied to a presentation.
+differs in three places. It also fetches the Verified Issuer Certificate
+Authority List (VICAL), which only an mdoc verifier reads. It asks only for
+the issuers' Authority Statements, for each type it accepts. And it
+downloads the credential status list of every issuer the trusted list names,
+where the wallet downloads only the lists its own credentials point to. Both download a list whole, from the address where the
+issuer publishes it, so no fetch is tied to a presentation.
 
 The same sync fetches the `did:webvh` log of every entity the trusted list
-names. The entity's own domain is the source, and DID Service's copy of the
-log is the fallback when that domain cannot be reached. The fallback belongs
+names, with the witness file that holds DID Service's proofs on its entries.
+The entity's own domain is the source, and DID Service's copy of the two
+files is the fallback when that domain cannot be reached. The fallback belongs
 to the sync alone. A log missing from the cache mid-transaction, which
-happens only for an entity added since the last sync, is fetched from the
-entity's domain and nowhere else, and the transaction is refused if that
-fails.
+happens only for an entity added since the last sync, is not fetched: that
+entity is absent from the cached trusted list as well, so the transaction is
+refused until the next sync brings both.
 
 [](){ #fig-trust-cache-sync }
 
@@ -442,16 +469,25 @@ sequenceDiagram
     participant Dom as Entity's domain
     participant DID as DID Service
     MW->>MW: Trigger the scheduled sync
-    MW->>TR: Fetch the trusted list, the VICAL, and the Use Statement status list
+    MW->>TR: Fetch the trusted list, the Use Statement status list, and the root revocation list
     TR-->>MW: Return the three lists
     MW->>MW: Verify the signatures on all three
-    MW->>Dom: Fetch the entity's DID log
-    Dom-->>MW: Return the log
+    MW->>TR: Fetch the published Rulebooks, with their contexts and schemas
+    TR-->>MW: Return the Rulebooks and their files
+    MW->>MW: Verify each Rulebook and check its context against its digest
+    MW->>TR: Ask for the Authority Statements it may need
+    TR-->>MW: Return the signed statements
+    MW->>Dom: Fetch the entity's DID log and witness file
+    Dom-->>MW: Return the two files
     opt The domain cannot be reached
-        MW->>DID: Fetch the copy of the entity's DID log
-        DID-->>MW: Return the copy
+        MW->>DID: Fetch the copy of the entity's DID log and witness file
+        DID-->>MW: Return the copies
     end
-    MW->>MW: Verify every DID log
+    MW->>Dom: Fetch the status list of each credential it holds
+    Dom-->>MW: Return the status lists
+    MW->>Dom: Fetch the revocation list of each Verifier Issuing CA
+    Dom-->>MW: Return the revocation lists
+    MW->>MW: Verify every DID log, statement, status list, and revocation list
     MW->>MW: Update the local cache
 ```
 
@@ -459,44 +495,80 @@ sequenceDiagram
 </figure>
 
 1. Mobile Wallet triggers a scheduled background sync, on a jittered timer
-   the Governance Profile sets and bounded by the `NextUpdate` the list
-   carries, or when it detects an unmetered network connection.
+   the Governance Profile sets and bounded by the trusted list's
+   `NextUpdate`, or when it detects an unmetered network connection.
 
 2. Mobile Wallet requests Trust Registry for the latest trusted list, the
-   Verified Issuer Certificate Authority List (VICAL), and the Use Statement
-   status list. The credential status lists are not among them: those are
-   read by verifiers, and a wallet learns of its own revoked credential by
-   push from the issuer.
+   Use Statement status list, and the CRL of the Verifier Root CA. The credential status
+   lists come from each issuer, at step 14.
 
-3. Trust Registry returns the trusted list of accredited entities; the VICAL,
-   the signed list of mdoc issuer root
-   certificates from ISO/IEC 18013-5 Annex C; and the Use Statement status
-   list, the Token Status List in which Trust Registry publishes each Use
-   Statement that the Root Authority has withdrawn.
+3. Trust Registry returns the trusted list of accredited entities; the Use
+   Statement status
+   list, the Token Status List draft -14 in which Trust Registry publishes each Use
+   Statement that the Root Authority has withdrawn; and the Verifier Root
+   CA's CRL, which names every Verifier Issuing CA certificate withdrawn
+   early.
 
-4. Mobile Wallet verifies the signatures on the trusted list, the VICAL, and
-   the Use Statement status list, confirming each comes from its legitimate
-   authority and has not been tampered with.
+4. Mobile Wallet verifies the signatures on all three lists, confirming each
+   comes from its legitimate authority and has not been tampered with.
 
-5. Mobile Wallet fetches the `did.jsonl` log of each entity the trusted list
-   names from that entity's own domain, the address `did:webvh` derives from
-   the identifier itself.
+5. Mobile Wallet requests Trust Registry for every published Credential
+   Rulebook, with the JSON-LD context and the credential schema of each one
+   that lists `ldp_vc`. Both are needed before any `ldp_vc` credential is
+   verified or presented, because neither is fetched mid-transaction.
 
-6. The entity's domain returns its log.
+6. Trust Registry returns the Rulebooks and their files.
 
-7. When a domain is unreachable or answers with an error, Mobile Wallet asks
-   DID Service's Resolver endpoint for the copy of that entity's log it kept
-   while witnessing each entry. This is the only place the fallback runs.
+7. Mobile Wallet verifies the signature on each Rulebook and checks each
+   context against the `context_digest` the Rulebook carries. A context that
+   fails the check is discarded and the last-known-good copy kept.
 
-8. DID Service returns the copy.
+8. Mobile Wallet asks Trust Registry over Trust Registry Query Protocol
+   (TRQP) v2.0 for each Authority Statement
+   it may need and holds no current copy of: whether each issuer on the
+   trusted list may `issue` each credential type in the catalog, and whether
+   each Relying Party on the list may `request` each type the wallet holds
+   and each attribute of it. One query names one entity, one action, and one
+   resource, and none names a citizen or a transaction.
 
-9. Mobile Wallet, using its Trust SDK, replays each log and verifies the hash
-   chain, pre-rotation, the entity's signatures, and the witness proof on
-   every entry, whichever source the log came from, so the fallback adds no
+9. Trust Registry returns each answer with its Authority Statement, signed by
+   Trust Authority.
+
+10. Mobile Wallet fetches the `did.jsonl` log and the `did-witness.json`
+   witness file of each entity the trusted list names from that entity's own
+   domain, the address `did:webvh` derives from the identifier itself.
+
+11. The entity's domain returns its log and its witness file.
+
+12. When a domain is unreachable or answers with an error, Mobile Wallet asks
+   DID Service's Resolver endpoint for the copy of that entity's log and
+   witness file it kept while witnessing each entry. This is the only place the fallback runs.
+
+13. DID Service returns the copy.
+
+14. Mobile Wallet fetches, from each issuer's own domain, the whole status
+   list that each credential it holds points to. This is how a wallet learns
+   that one of its own credentials was revoked: no issuer calls it.
+
+15. Each issuer's domain returns its status list.
+
+16. Mobile Wallet fetches the CRL of each Verifier Issuing CA the trusted
+   list names, from the address its device certificates name, so that it can
+   check a reader in proximity with no network.
+
+17. Each holder of a Verifier Issuing CA returns its CRL.
+
+18. Mobile Wallet, using its Trust SDK, replays each log and verifies the hash
+   chain, pre-rotation, the entity's signatures, and the witness proof the
+   witness file holds for every entry, whichever source the log came from, so the fallback adds no
    trust in DID Service. A log neither source returned keeps its
-   last-known-good copy until the tolerance limit.
+   last-known-good copy until the tolerance limit. It then verifies each
+   status list against the issuer's DID Document and each CRL against the
+   certificate of the authority that signed it, and each Authority Statement
+   against Trust Authority's DID Document. A statement that does not verify
+   is discarded and the last-known-good copy kept.
 
-10. Mobile Wallet overwrites its local cache with the fresh data, ready for
+19. Mobile Wallet overwrites its local cache with the fresh data, ready for
    the next offline presentation.
 
 ## Credential issuance {#credential-issuance}
@@ -504,7 +576,7 @@ sequenceDiagram
 ### Authorization Code flow {#authorization-code-flow}
 
 This flow issues a credential to a citizen's wallet over
-[OpenID for Verifiable Credential Issuance (OpenID4VCI)][exchange-protocols], online, using the Authorization Code flow.
+[OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0][ref-openid4vci], online, using the Authorization Code flow.
 The wallet redirects the citizen to the issuer's portal to log in and prove
 their identity before requesting a token. Mobile Wallet, Wallet Backend
 Service, Issuer Core, and the source system take part, and the trusted list
@@ -523,17 +595,17 @@ sequenceDiagram
     participant SS as Source system
     IC->>MW: Send the credential offer
     MW->>IC: Fetch the issuer's configuration
-    MW->>MW: Resolve the issuer and its scope against the cached trusted list
+    MW->>MW: Check the issuer's standing and scope in the cache
     MW->>IC: Authorize the citizen and request a token
     MW->>IC: Request a nonce
     MW->>MW: Obtain an attestation platform
     MW->>WBS: Exchange the attestation and the issuer's nonce
     WBS-->>MW: Return the Key Attestation
     MW->>IC: Request the credential
-    IC->>IC: Check the cached trusted list for the signer and for its own status
+    IC->>IC: Check the Key Attestation, its signer, and its own status
     IC->>SS: Request the citizen's claims
     SS-->>IC: Return the claims
-    IC->>IC: Assemble and sign every format the Rulebook names
+    IC->>IC: Assemble and sign the representation requested
     IC-->>MW: Return the issued credential
 ```
 
@@ -544,12 +616,15 @@ sequenceDiagram
    a deeplink.
 
 2. Mobile Wallet sends `GET /.well-known/openid-credential-issuer` to Issuer
-   Core, reading `proof_types_supported` and `key_attestations_required`
-   from the response.
+   Core, asking for the metadata signed with the issuer's `issuance-jose`
+   key, and reads from it the issuer's DID, `proof_types_supported`, and
+   `key_attestations_required`.
 
-3. Mobile Wallet resolves the issuer's identity and authority against its
-   local cache of the trusted list, and refuses the offer when the entry is
-   not granted or the offered type is outside the issuer's scope.
+3. Mobile Wallet resolves the DID the signed metadata names against its
+   local cache of the trusted list, and reads from the same cache the Authority Statement
+   its sync obtained on whether the issuer may `issue` the offered type. It
+   refuses the offer when the entry is not granted, or when the statement is
+   missing, past its tolerance limit, or answers `false`.
 
 4. Mobile Wallet authorizes and requests a token through the Authorization
    Code flow, sending a pushed authorization request (PAR) and a Proof Key
@@ -569,11 +644,17 @@ sequenceDiagram
    `attested_keys` and `key_storage`.
 
 9. Mobile Wallet requests the credential, sending `POST /credential` to
-   Issuer Core with `proofs.attestation` attached.
+   Issuer Core for one representation, with the proof the issuer announced:
+   the Key Attestation itself, or a `jwt` proof carrying it.
 
-10. Issuer Core checks its local cache of the trusted list to confirm the
-    Key Attestation's signer is present and that its own entry still reads
-    granted; a suspended issuer stops here.
+10. Issuer Core checks its local cache of the trusted list to confirm that
+    the Key Attestation's signer is a Wallet Provider whose entry reads
+    granted, since a withdrawn provider stays on the list, and that its own
+    entry still reads granted; a suspended issuer stops here. Using its Key
+    Attestation Validator Component, it also checks that the attestation
+    carries the nonce it issued at step 5, which it accepts in one credential
+    request only, and a `user_authentication` value it announced for the
+    credential type.
 
 11. Issuer Core requests the citizen's claims from the source system,
     calling `getClaims(subjectRef, credentialType)` on its Claims Provider
@@ -582,8 +663,9 @@ sequenceDiagram
 12. The source system returns the claims, which Issuer Core receives through
     its Claims Provider Component with a `data_as_of` value.
 
-13. Issuer Core assembles and signs the credential locally, in every format
-    the [Credential Rulebook][the-credential-rulebook] names for that
+13. Issuer Core assembles and signs the credential locally, in the
+    representation the request names, one of those the
+    [Credential Rulebook][the-credential-rulebook] names for that
     credential type. There are three to choose from: an SD-JWT VC carrying `cnf`, an mdoc carrying a Mobile Security Object
     (MSO) and a DeviceKey, and a W3C Verifiable Credentials Data Model (VCDM)
     credential in `ldp_vc` form carrying a Data Integrity proof. The common
@@ -593,8 +675,11 @@ sequenceDiagram
     and which role may issue each, is in
     [Credential formats](../data-model-and-protocols/credential-formats.md).
 
-14. Issuer Core returns the issued credential to Mobile Wallet, in each
-    format it signed.
+14. Issuer Core returns the issued credential to Mobile Wallet, in that
+    representation. Steps 5 to 10, 13 and 14 run again for each other
+    representation the Credential Rulebook names, each with a new nonce and a
+    new Key Attestation, and Issuer Core builds every representation from the
+    claims it read once, with the same credential key and status entry.
 
 [](){ #subjectref-origin }
 
@@ -609,7 +694,7 @@ answers slowly, issuance is deferred and Issuer Core returns a
 ### Pre-Authorized Code flow {#pre-authorized-code-flow}
 
 This flow issues a credential over OpenID4VCI using the Pre-Authorized Code
-flow, for when Issuer Core already knows the citizen's identity and pushes
+flow, for when Issuer Core already knows the citizen's identity and sends
 a credential offer on its own. Instead of redirecting the citizen to a
 login page, Mobile Wallet exchanges the offer's `pre-authorized_code` and
 an out-of-band factor, such as an SMS PIN or a One-Time Password (OTP),
@@ -628,17 +713,17 @@ sequenceDiagram
     participant SS as Source system
     IC->>MW: Send the credential offer carrying a pre-authorized code
     MW->>IC: Fetch the issuer's configuration
-    MW->>MW: Resolve the issuer and its scope against the cached trusted list
+    MW->>MW: Check the issuer's standing and scope in the cache
     MW->>IC: Redeem the code with the out-of-band factor
     MW->>IC: Request a nonce
     MW->>MW: Obtain an attestation platform
     MW->>WBS: Exchange the attestation and the issuer's nonce
     WBS-->>MW: Return the Key Attestation
     MW->>IC: Request the credential
-    IC->>IC: Check the cached trusted list for the signer and for its own status
+    IC->>IC: Check the Key Attestation, its signer, and its own status
     IC->>SS: Request the citizen's claims
     SS-->>IC: Return the claims
-    IC->>IC: Assemble and sign every format the Rulebook names
+    IC->>IC: Assemble and sign the representation requested
     IC-->>MW: Return the issued credential
 ```
 
@@ -649,12 +734,15 @@ sequenceDiagram
    Mobile Wallet, using a QR code or a deeplink.
 
 2. Mobile Wallet sends `GET /.well-known/openid-credential-issuer` to Issuer
-   Core, reading `proof_types_supported` and `key_attestations_required`
-   from the response.
+   Core, asking for the metadata signed with the issuer's `issuance-jose`
+   key, and reads from it the issuer's DID, `proof_types_supported`, and
+   `key_attestations_required`.
 
-3. Mobile Wallet resolves the issuer's identity and authority against its
-   local cache of the trusted list, and refuses the offer when the entry is
-   not granted or the offered type is outside the issuer's scope.
+3. Mobile Wallet resolves the DID the signed metadata names against its
+   local cache of the trusted list, and reads from the same cache the Authority Statement
+   its sync obtained on whether the issuer may `issue` the offered type. It
+   refuses the offer when the entry is not granted, or when the statement is
+   missing, past its tolerance limit, or answers `false`.
 
 4. Mobile Wallet bypasses the authorization endpoint and requests a token
    directly, sending `POST /token` to Issuer Core with the
@@ -674,11 +762,17 @@ sequenceDiagram
    `attested_keys` and `key_storage`.
 
 9. Mobile Wallet requests the credential, sending `POST /credential` to
-   Issuer Core with `proofs.attestation` attached.
+   Issuer Core for one representation, with the proof the issuer announced:
+   the Key Attestation itself, or a `jwt` proof carrying it.
 
-10. Issuer Core checks its local cache of the trusted list to confirm the
-    Key Attestation's signer is present and that its own entry still reads
-    granted; a suspended issuer stops here.
+10. Issuer Core checks its local cache of the trusted list to confirm that
+    the Key Attestation's signer is a Wallet Provider whose entry reads
+    granted, since a withdrawn provider stays on the list, and that its own
+    entry still reads granted; a suspended issuer stops here. Using its Key
+    Attestation Validator Component, it also checks that the attestation
+    carries the nonce it issued at step 5, which it accepts in one credential
+    request only, and a `user_authentication` value it announced for the
+    credential type.
 
 11. Issuer Core requests the citizen's claims from the source system,
     calling `getClaims(subjectRef, credentialType)` on its Claims Provider
@@ -687,12 +781,14 @@ sequenceDiagram
 12. The source system returns the claims, which Issuer Core receives through
     its Claims Provider Component with a `data_as_of` value.
 
-13. Issuer Core assembles and signs the credential locally, in every format
-    the Credential Rulebook names for that credential type, exactly as on the
-    interactive path.
+13. Issuer Core assembles and signs the credential locally, in the
+    representation the request names, exactly as on the interactive path.
 
-14. Issuer Core returns the issued credential to Mobile Wallet, in each
-    format it signed.
+14. Issuer Core returns the issued credential to Mobile Wallet, in that
+    representation. Steps 5 to 10, 13 and 14 run again for each other
+    representation the Credential Rulebook names, each with a new nonce and a
+    new Key Attestation, and Issuer Core builds every representation from the
+    claims it read once, with the same credential key and status entry.
 
 Issuer Core already knows the citizen before it creates the offer; [how
 `subjectRef` reaches Issuer Core][subjectref-origin] applies the same way
@@ -703,7 +799,7 @@ here.
 ### Online verification {#online-verification}
 
 This flow lets a Relying Party's business system verify a credential over
-[OpenID for Verifiable Presentations (OpenID4VP)][exchange-protocols], with Verifier Core mediating between it and
+[OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp], with Verifier Core mediating between it and
 Mobile Wallet. The trusted list and the status list are both read from cache.
 
 [](){ #fig-online-verification }
@@ -718,7 +814,7 @@ sequenceDiagram
     participant MW as Mobile Wallet
     RP->>VC: Request a verification
     VC->>MW: Present the authorization request and the signed request
-    MW->>MW: Resolve the Relying Party and its scope against the cached trusted list
+    MW->>MW: Check the Relying Party's standing and scope in the cache
     MW->>MW: Verify the Use Statement carried in the request
     MW->>MW: Prompt for consent and sign the presentation
     MW->>VC: Send the encrypted presentation
@@ -737,34 +833,42 @@ sequenceDiagram
    deeplink) carrying `request_uri` and `client_id`, prefixed with
    `decentralized_identifier:`. Mobile Wallet retrieves the signed Request
    Object via `GET request_uri`, which carries the Digital Credentials Query
-   Language (DCQL) query, the nonce, the verifier's encryption key, and the
+   Language (DCQL) query, the nonce, the encryption key Verifier Core drew
+   for this request, and the
    Use Statement in `verifier_info`.
 
-3. Mobile Wallet resolves `client_id` against the trusted list and checks the
-   requested scope through Trust Registry Query Protocol (TRQP), reading both
-   from the local cache.
+3. Mobile Wallet resolves `client_id` against the cached trusted list, and
+   reads from the same cache the Authority Statements its sync obtained on
+   whether that Relying Party may `request` what the query names. It refuses
+   the request when the entry is not granted, or when a statement is
+   missing, past its tolerance limit, or answers `false`.
 
 4. Mobile Wallet reads the Use Statement out of `verifier_info` in the signed
    Request Object it fetched at step 2, verifies Trust Authority's signature
-   on it, checks its revocation against the cached status list, and confirms
-   the requested attributes are a subset of the ones it lists.
+   on it, checks that its `sub` is the DID in `client_id`, so that one
+   verifier cannot borrow another's registration, refuses it when its `exp`
+   has passed, checks its revocation against the cached status list, and
+   confirms
+   the requested attributes are a subset of the ones it lists: T5, the
+   scope, checked by the wallet before the citizen is asked.
 
 5. Mobile Wallet shows the citizen the consent request (for example, that Bank
    XYZ asks to confirm age over 17, per the purpose in the Use Statement) and
    signs a Key Binding JWT (KB-JWT) over the nonce and the
-   audience.
+   audience, or, for an `ldp_vc`, a presentation proof over the same values as
+   `challenge` and `domain`.
 
 6. Mobile Wallet delivers the `vp_token` to Verifier Core's `response_uri` via
    `direct_post.jwt`, encrypted as JSON Web Encryption (JWE) using the verifier's key from
    `client_metadata.jwks`.
 
-7. Verifier Core verifies the issuer chain by running the entity chain against
+7. Verifier Core verifies the issuer chain by running the [entity chain][entity-chain-and-transaction-chain] against
    the cached trusted list, checking E1 through E3.
 
 8. Verifier Core verifies the presentation and status by running the
-   transaction chain against the trusted list: T1 (the signature), T2 (the status list), T3
-   (the KB-JWT against `cnf`), T4 (the nonce and audience), and T5 (the
-   scope).
+   transaction chain against the trusted list: T1 (the signature), T2 (the
+   status list), T3 (the KB-JWT against `cnf`, or the presentation proof
+   against the holder's `did:key`), and T4 (the nonce and audience).
 
 9. Verifier Core records the transaction internally, keeping the transaction
    ID, the `use_id` the request ran under, and the consent receipt as T6,
@@ -779,7 +883,7 @@ business system's responsibility.
 
 ### Offline verification {#offline-verification}
 
-This flow verifies a credential over [ISO/IEC 18013-5][exchange-protocols], in
+This flow verifies a credential over [ISO/IEC 18013-5][ref-iso-18013-5], in
 proximity, between Mobile Verifier and Mobile Wallet. The verifying
 application is always on a device: Mobile Verifier on a merchant's phone or a
 Relying Party's counter device, or a Relying Party's own application built on the
@@ -795,7 +899,7 @@ sequenceDiagram
     autonumber
     participant MV as Mobile Verifier
     participant MW as Mobile Wallet
-    MV->>MW: Engage by QR code or NFC tap
+    MW->>MV: Hand over the engagement by QR code or NFC tap
     MV->>MW: Establish the proximity session
     MV->>MW: Send the verification request
     MW->>MW: Validate the request and prompt for consent
@@ -806,8 +910,8 @@ sequenceDiagram
 <figcaption><span class="ekdn-fignum"></span> Offline verification, from the proximity engagement through to Mobile Verifier's check of the response.</figcaption>
 </figure>
 
-1. Mobile Verifier engages Mobile Wallet with a QR code or a Near Field
-   Communication (NFC) tap.
+1. Mobile Wallet hands Mobile Verifier the device engagement, shown as a QR
+   code or read off a Near Field Communication (NFC) tap.
 
 2. Mobile Verifier and Mobile Wallet establish a session over Bluetooth Low
    Energy (BLE), using ephemeral Elliptic Curve Diffie-Hellman (ECDH).
@@ -819,22 +923,24 @@ sequenceDiagram
    request and the SessionTranscript).
 
 4. Mobile Wallet validates the certificate chain up to the Verifier Root CA
-   embedded at build time, confirms from the cached trusted list that the
-   Verifier Issuing CA is granted, and verifies that the Use Statement holds:
-   its `sub` names the entity holding that Verifier Issuing CA.
+   embedded at build time, refusing a certificate its cached revocation list
+   names, confirms from the cached trusted list that the Verifier Issuing CA
+   is granted, and verifies that the Use Statement holds: its `sub` names the
+   entity holding that Verifier Issuing CA, its `exp` has not passed, and the
+   cached Use Statement status list does not mark it revoked.
    It then checks that the requested attributes are a subset of both
-   `ReaderAuthRole` and the Use Statement, and asks the citizen to select which
-   attributes to release.
+   `ReaderAuthRole` and the Use Statement, and asks the citizen to approve
+   the attributes requested, or to refuse.
 
 5. Mobile Wallet returns the mdoc and DeviceAuth encapsulated in a
    DeviceResponse.
 
-6. Mobile Verifier chains `x5chain` to the Issuer Root CA from its cache to
-   validate IssuerAuth, recomputes the digest, checks DeviceAuth against the
+6. Mobile Verifier chains `x5chain` to an Issuer Root CA that its cached
+   VICAL carries, once that VICAL has verified, to validate IssuerAuth, recomputes the digest, checks DeviceAuth against the
    SessionTranscript, and checks the status list from its cache.
 
 Zero network calls happen during this flow. The status list can be stale by
-the time it runs, up to the tolerance limit the Governance Framework sets;
+the time it runs, up to the tolerance limit the Governance Profile sets;
 the trusted list is good until the `NextUpdate` Trust
 Registry wrote into it and is discarded after. DeviceAuth is a
 `deviceSignature`; `deviceMac` is out of scope. The consequence is that a
@@ -904,8 +1010,8 @@ sequenceDiagram
    category Use Statement.
 
 8. Mobile Wallet sends the encrypted presentation to Verifier Core via
-   `direct_post.jwt`, keeping the data encrypted to the merchant's device
-   key.
+   `direct_post.jwt`, keeping the data encrypted to the key the merchant's
+   device drew for this request.
 
 9. Verifier Core relays the ciphertext back to Mobile Verifier and deletes
    it, so Mobile Verifier decrypts and verifies the data locally on the
@@ -915,7 +1021,7 @@ The key is born on the merchant's own device and signs there too. The RP
 Intermediary's Verifier Core holds only the Request Object and the encrypted
 response, for a short time. It may record the request side, which it can
 already read, and never logs the response; it vouches for the merchant but
-never sees the citizen's data. OpenID4VP 1.0 permits the
+never sees the citizen's data. OpenID4VP permits the
 relay: for a `client_id` with the `x509_hash` prefix, the wallet checks the
 certificate hash, the request signature, and the chain, and the specification
 binds `response_uri` to a host name only for the `x509_san_dns` prefix, so the
@@ -999,7 +1105,7 @@ any other. Renewal is what keeps presentations working past that date
 without sending the citizen through a new authorization: Mobile Wallet
 exchanges the refresh token Issuer Core gave it at issuance for a fresh
 access token and asks for the credential again, the credential refresh
-OpenID4VCI 1.0 describes, run with no action from the citizen. The refresh
+OpenID4VCI describes, run with no action from the citizen. The refresh
 token is bound with DPoP to the installation that received it, so renewal
 serves the same phone only; a new phone goes through
 [device migration][device-migration], which is a fresh issuance with the
@@ -1014,9 +1120,13 @@ sequenceDiagram
     autonumber
     participant MW as Mobile Wallet
     participant IC as Issuer Core
+    participant WBS as Wallet Backend Service
     participant SS as Source system
     MW->>MW: Notice the credential nearing expiry
     MW->>IC: Exchange the refresh token for a new access token
+    MW->>IC: Request a nonce
+    MW->>WBS: Exchange the attestation and the issuer's nonce
+    WBS-->>MW: Return a new Key Attestation
     MW->>IC: Request the credential again with proof of the same key
     IC->>SS: Read the citizen's current claims
     SS-->>IC: Return the current claims
@@ -1037,18 +1147,29 @@ sequenceDiagram
    shortcut, and the wallet falls back to the
    [Authorization Code flow][authorization-code-flow].
 
-3. Mobile Wallet sends a credential request to Issuer Core with a proof of
-   the same credential key and a current Key Attestation for it.
+3. Mobile Wallet requests a nonce, sending `POST /nonce` to Issuer Core.
 
-4. Issuer Core reads the citizen's current claims from the source system,
+4. Mobile Wallet exchanges the attestation platform of its credential key and
+   the issuer's nonce with Wallet Backend Service, as before each issuance.
+
+5. Wallet Backend Service returns a new Key Attestation for the same
+   credential key. An attestation serves one credential request, so renewal
+   never reuses the one from the first issuance.
+
+6. Mobile Wallet sends a credential request to Issuer Core with the new Key
+   Attestation as the proof itself, for the same credential key, which Issuer
+   Core checks as at first issuance. No signature by the credential key is
+   asked for, because only the citizen's authentication releases that key.
+
+7. Issuer Core reads the citizen's current claims from the source system,
    using its Claims Provider Component, as it does at first issuance.
 
-5. The source system returns the current claims, which Issuer Core receives
+8. The source system returns the current claims, which Issuer Core receives
    through its Claims Provider Component with the current `data_as_of`
    value. A claim that has changed since the first issuance is carried as
    it now stands; it is the credential that is renewed, not the record.
 
-6. Issuer Core signs the credential again in each format its Rulebook names,
+9. Issuer Core signs the credential again in each format its Rulebook names,
    with a new technical validity period that it chooses within the
    Governance Profile's ceiling and never past the administrative period,
    and returns it to Mobile Wallet. The credential it replaces needs no revocation: it expires on its
@@ -1059,12 +1180,16 @@ sequenceDiagram
 A citizen can have their credentials revoked before replacing a lost or
 compromised device, by reporting the loss to the issuer. The phone is gone,
 so the report runs outside Mobile Wallet, on a channel the issuer provides;
-which channels count, and how the citizen proves who they are on one, is
-for the Governance Framework to set. The same loss is reported to the Wallet
+which channels count, and how the citizen proves who they are on one, is set out in the Governance Framework under [loss reports][gf-loss-reports]. The same loss is reported to the Wallet
 Provider, which revokes the installation so that it obtains no further Key
 Attestation, the path [device migration][device-migration] shows. The two
-reports reach different parties: the issuer's revocation is what reaches
-credentials already held, and the Wallet Provider's stops new issuance.
+reports reach different parties: the issuer's status change is what reaches
+credentials already held, and the Wallet Provider's stops new issuance. The
+issuer suspends first, because a loss report is a doubt being checked rather
+than a finding, as [credential lifecycle][credential-lifecycle] explains; the
+entry becomes invalid once the citizen holds the credential on another
+installation, or when the suspension period the Governance Profile sets runs
+out.
 
 [](){ #fig-citizen-initiated-revocation }
 
@@ -1077,7 +1202,7 @@ sequenceDiagram
     participant IC as Issuer Core
     Cit->>IC: Report the lost device and request revocation
     IC->>IC: Find the records for the citizen's active credentials
-    IC->>IC: Revoke those credentials
+    IC->>IC: Suspend those credentials
     IC->>IC: Publish a new status list
 ```
 
@@ -1090,15 +1215,16 @@ sequenceDiagram
 2. Issuer Core retrieves the `issuance_record` for the citizen's active
    credentials, identifying their index positions in the status list.
 
-3. Issuer Core flips the status bit for those indices to revoked, using
-   its Status Manager Component.
+3. Issuer Core sets the entries at those indices to suspended, using its
+   Status Manager Component, within the time [loss reports][gf-loss-reports]
+   allows it.
 
-4. Issuer Core publishes a new Status List Token reflecting the revoked
-   status.
+4. Issuer Core publishes a new Status List Token, and for an `ldp_vc` a new
+   Bitstring Status List, reflecting the suspended status.
 
 Verifiers do not see the change right away. They pick up the new
 Status List Token at their next
 [Trust cache sync][trust-cache-sync]
 and reject presentations from the lost device from that point on. Mobile
-Wallet fetches no credential status list; it learns that its own credential
-is revoked by push from the issuer.
+Wallet learns that its own credential is suspended the same way, from the
+status list its sync fetches.

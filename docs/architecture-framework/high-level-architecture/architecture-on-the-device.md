@@ -29,13 +29,15 @@ credential the wallet carries. The component-by-component breakdown of both appl
   <figcaption><span class="ekdn-fignum"></span> The four parts on the device, their connections, and their external counterparties.</figcaption>
 </figure>
 
-- **Solid arrows are interfaces set by the Governance Profile.** OpenID for Verifiable Credential Issuance (OpenID4VCI) from
-  Issuer Core, OpenID for Verifiable Presentations (OpenID4VP) and ISO/IEC 18013-5 to verifiers, and OpenID Connect from
-  the identity provider are ecosystem standards that every implementation must meet.
-- **Dashed arrows are internal or platform interfaces.** The storage interface to
-  Credential Store, the Keystore Manager interface to the secure element, the
-  cache feed from Trust Registry, and the proprietary protocol to Wallet Backend
-  Service are internal to each Wallet Provider.
+- **Solid arrows are protocols the device speaks with a party outside the
+  Wallet Provider.** OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0 from
+  Issuer Core, OpenID for Verifiable Presentations (OpenID4VP) 1.0 and ISO/IEC 18013-5:2021 to verifiers, and OpenID Connect Core 1.0 from
+  the identity provider. Which of them the Governance Profile sets is in
+  [the interface table][tbl-interfaces-and-standards].
+- **Dashed arrows are reads from cache or interfaces inside the device or the
+  Wallet Provider.** The storage interface to Credential Store, the Keystore
+  Manager interface to the secure element, the cache feed from Trust Registry,
+  and the proprietary protocol to Wallet Backend Service.
 - **The protocol part does not import the interface part.** The dependency runs
   strictly inward from the UI, keeping the protocol part extractable as a
   standalone SDK.
@@ -48,18 +50,17 @@ Manager, and the Credential Store. What that one part talks to falls into four
 kinds.
 
 1. The transaction itself, which reaches three counterparties. The identity
-   provider authenticates the citizen over [OpenID Connect][exchange-protocols]. Issuer Core delivers a
-   credential over [OpenID4VCI][exchange-protocols]. The verifier side receives a presentation in two
-   forms: Verifier Core over [OpenID4VP][exchange-protocols], and Mobile Verifier, at a merchant or
+   provider authenticates the citizen over [OpenID Connect][ref-openid-core]. Issuer Core delivers a
+   credential over [OpenID4VCI][ref-openid4vci]. The verifier side receives a presentation in two
+   forms: Verifier Core over [OpenID4VP][ref-openid4vp], and Mobile Verifier, at a merchant or
    at a Relying Party's counter, over OpenID4VP online, relayed by the RP
-   Intermediary's Verifier Core for a merchant, and over [ISO/IEC 18013-5][exchange-protocols]
+   Intermediary's Verifier Core for a merchant, and over [ISO/IEC 18013-5][ref-iso-18013-5]
    in proximity.
 2. The application's own backing. Wallet Backend Service carries Key
    Attestation, device binding, recovery, and push notification, and no issuer
    or verifier is party to any of it.
-3. A read-only feed. Trust Registry supplies the trusted list, the Credential
-   Rulebook, and [Verified Issuer Certificate Authority List
-   (VICAL)][trust-lists-and-credential-status], all of which
+3. A read-only feed. Trust Registry supplies the trusted list and the
+   Credential Rulebook, both of which
    the application reads from its local cache
    rather than fetching mid-transaction.
 4. What is not remote at all. The secure element and the Credential Store are
@@ -131,9 +132,9 @@ interface runs on.
 | Issuer Core to Mobile Wallet | OpenID4VCI 1.0 | Yes |
 | Mobile Wallet to Verifier Core | OpenID4VP 1.0 | Yes |
 | Mobile Wallet to Mobile Verifier | OpenID4VP 1.0, ISO/IEC 18013-5 | Yes |
-| Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, [TRQP][exchange-protocols], Credential Rulebook, VICAL | Yes |
-| Mobile Wallet to Wallet Backend Service | Key Attestation, [OpenID4VCI Appendix D.1][device-attestation-and-assurance] | Partly |
-| Mobile Verifier to Verifier Core | Verifier Device Certificate and the category Use Statements bound to the device, [ISO/IEC 18013-5 Annex B][certificates-and-revocation]; relayed `request_uri` and `response_uri` for a merchant's online check | Partly |
+| Mobile Wallet and Mobile Verifier to Trust Registry | LoTE JSON, [TRQP][ref-trqp], Credential Rulebook, VICAL | Yes |
+| Mobile Wallet to Wallet Backend Service | Key Attestation, [OpenID4VCI Appendix D.1][ref-openid4vci] | Partly |
+| Mobile Verifier to Verifier Core | Verifier Device Certificate and the category Use Statements bound to the device, [ISO/IEC 18013-5 Annex B][ref-iso-18013-5]; relayed `request_uri` and `response_uri` for a merchant's online check | Partly |
 | Mobile Wallet to the identity provider | OpenID Connect | Set by the identity provider |
 | Application to secure element | Google and Apple platform APIs | No |
 
@@ -146,7 +147,16 @@ another party verifies it: an issuer reads the attestation a wallet sends, and a
 wallet reads the certificate a Mobile Verifier presents. The rest stays with
 the party that runs it: how a Wallet Provider enrolls and recovers its own
 installations, and how a Verifier Core provisions the devices it answers for.
-Nobody outside that party ever sees those messages.
+Nobody outside that party ever sees those messages. What a wallet's messages
+have to prove is fixed all the same, because every Key Attestation rests on
+it: [Enrolling a wallet installation and attesting its key](../../technical-specifications/enrolling-a-wallet-installation-and-attesting-its-key.md)
+binds the evidence an enrollment and a request carry and the checks Wallet
+Backend Service runs, and leaves the transport, the endpoints and the
+encoding to the Wallet Provider. The same holds for a reader device:
+[Issuing and validating the X.509 certificates and the VICAL](../../technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md)
+binds the evidence a reader device's activation and renewal carry and the
+checks Verifier Core runs, and leaves the transport to whoever runs Verifier
+Core.
 
 The last two rows are fixed somewhere else entirely. The identity provider's
 interface belongs to whoever runs it, and OpenID Connect is the one thing the

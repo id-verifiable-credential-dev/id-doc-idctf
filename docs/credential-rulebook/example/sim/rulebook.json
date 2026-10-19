@@ -1,0 +1,29 @@
+{
+  "id": "org.iso.18013.5.1.mDL.1",
+  "authority": "did:webvh:QmScid...:korlantas.polri.go.id",
+  "legal_basis": "Undang-Undang Nomor 22 Tahun 2009 tentang Lalu Lintas dan Angkutan Jalan",
+  "formats": {
+    "mdoc": {
+      "docType": "org.iso.18013.5.1.mDL",
+      "namespace": "org.iso.18013.5.1"
+    }
+  },
+  "schema": "https://catalog.trust.go.id/type-metadata/sim-v1/schema.json",
+  "display": "https://catalog.trust.go.id/type-metadata/sim-v1/type-metadata.json",
+  "attributes": [
+    { "name": "family_name", "minimization": "normal" },
+    { "name": "given_name", "minimization": "normal" },
+    { "name": "birth_date", "minimization": "normal" },
+    { "name": "age_over_18", "minimization": "open", "derived_from": "birth_date" },
+    { "name": "issue_date", "minimization": "normal" },
+    { "name": "expiry_date", "minimization": "normal" },
+    { "name": "issuing_country", "minimization": "open" },
+    { "name": "issuing_authority", "minimization": "normal" },
+    { "name": "document_number", "minimization": "restricted" },
+    { "name": "driving_privileges", "minimization": "normal" },
+    { "name": "un_distinguishing_sign", "minimization": "open" },
+    { "name": "portrait", "minimization": "restricted" }
+  ],
+  "min_assurance": "high",
+  "issuer_assurance": "high"
+}

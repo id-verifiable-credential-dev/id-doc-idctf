@@ -1,14 +1,14 @@
 ---
 title: "Artifacts exchanged"
-description: The thirteen artifacts of the ecosystem, one section each, with who publishes it, what reads it, where it lives, and how long a copy stays good.
+description: The fourteen artifacts of the ecosystem, one section each, with who publishes it, what reads it, where it lives, and how long a copy stays good.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.6, §5.7 (Kep. 9, 28, 30); Rincian Module dan Operasi, siklus scope verifier; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.6, §5.7 (Kep. 9, 28, 30); Rincian Module dan Operasi, siklus scope verifier; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber); tracks/0213; tracks/0305, tracks/0368, tracks/0376 (Governance Profile) -->
 
 # Artifacts exchanged {#artifacts-exchanged}
 
 An artifact is something one party produces and another relies on: a signed
-list, a certificate, a credential, an answer to a query. Thirteen of them exist
+list, a certificate, a credential, an answer to a query. Fourteen of them exist
 in the ecosystem and there are no others.
 
 [The table of artifacts][tbl-artifacts] names each one and says what it is. The section it points to answers
@@ -27,9 +27,10 @@ published anywhere.
 | Trusted list | The roll of accredited entities, naming each one along with the certificate authorities it issues from. A party absent from it is rejected however well everything else about it checks out. | [See Details][trusted-list] |
 | Credential Rulebook | The rules for one credential type: its schema, its attributes, and the assurance each side has to meet. A version is frozen when it is published, so two parties holding the same version hold the same rules. | [See Details][credential-rulebook] |
 | VICAL | The signed list of certificate roots allowed to sign an mdoc. It is what lets an offline verifier accept a credential from an issuer it has never met. | [See Details][vical] |
+| Governance Profile | The numbers and algorithms the ecosystem may change without changing an interface, and the address of everything Trust Infrastructure serves. It is the first thing every Module fetches, from the one address it is built with. | [See Details][governance-profile] |
 | DID Document | An entity's public keys and the methods for verifying against them. It proves a signature belongs to the entity that claims it, and answers nothing else. | [See Details][did-document] |
 | Status list | Which of one issuer's credentials have been revoked. Each issuer publishes its own, so revocation data never accumulates in a single national service. | [See Details][status-list] |
-| Authority Statement | One permission granted to one entity, an `action` on a `resource`. It is asked for over TRQP rather than published, and an entity holding several roles has several statements. | [See Details][authority-statement] |
+| Authority Statement | A signed answer on one permission of one entity, an `action` on a `resource`. It is built for a TRQP query rather than published, and an entity holding several permissions is the subject of several statements. | [See Details][authority-statement] |
 | Use Statement | One registered use of one Relying Party: the purpose shown to the citizen, its legal basis, and the attributes that use may reach. The verifier carries it in its own request, so a wallet reads an approved purpose without asking anyone. | [See Details][use-statement] |
 | Accreditation Credential | An entity's own proof that it was accredited, carried by that entity. It is evidence about itself, and everyone else checks the trusted list instead. | [See Details][accreditation-credential] |
 | Key Attestation | Proof that a wallet installation's keys sit in storage the device platform vouches for. An issuer demands one before issuing any credential, and the Rulebook sets the storage it must report. | [See Details][key-attestation] |
@@ -47,7 +48,7 @@ Which identifier appears inside which artifact is in
 [Identifier](identifier.md), and the message each protocol wraps them
 in is in [Protocols per interaction][protocols-per-interaction].
 
-The four groups that follow take the thirteen one at a time, grouped by where each
+The four groups that follow take the fourteen one at a time, grouped by where each
 one lives. There are four places: fetched from Trust Infrastructure, fetched from the
 entity, asked for and answered, or never fetched at all. Where an artifact
 lives is what decides how it behaves when something is unreachable. Which of
@@ -58,27 +59,29 @@ and what each does for that crossing, is a different question, answered in
 [](){ #fig-where-artifacts-live }
 
 <figure markdown="1">
-  ![Four stacked groups, one per place an artifact can live, holding thirteen artifacts between them](../../images/architecture-framework/data-model-and-protocols/where-artifacts-live.svg){ loading=lazy }
+  ![Four stacked groups, one per place an artifact can live, holding fourteen artifacts between them](../../images/architecture-framework/data-model-and-protocols/where-artifacts-live.svg){ loading=lazy }
   <figcaption><span class="ekdn-fignum"></span> The four places an artifact can live.</figcaption>
 </figure>
 
 ## Published to the central CDN {#published-to-the-central-cdn}
 
-Three artifacts are published once for everyone. Trust Registry publishes all
-three and puts them behind a content delivery network (CDN), and every Module
-that needs one keeps its own copy. None of the three carries citizen data, and
+Six artifacts are published once for everyone: the four below, and the Use
+Statement status list and the accreditation status list that
+[Status list][status-list] covers. Trust Registry publishes all of them and
+puts them behind a content delivery network (CDN), and every Module
+that needs one keeps its own copy. None of them carries citizen data, and
 a static file behind a CDN fails more gracefully than an
 interface does.
 
 ### Trusted list {#trusted-list}
 
 - **Published by** Trust Registry, as a List of Trusted Entities (LoTE) JSON document signed with a [JSON
-  Web Signature (JWS)][encoding-and-signing].
+  Web Signature (JWS)][ref-rfc7515].
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   each from its own cached copy.
 - **Where it lives** on the central CDN, as a static file anyone may fetch.
 - **Lifetime** until the `NextUpdate` it carries, then discarded with no grace
-  period, as ETSI TS 119 602 requires. How that date is chosen is in
+  period, as ETSI TS 119 602 V1.1.1 requires. How that date is chosen is in
   [Trusted list and cache][trusted-list-and-cache].
 
 The trusted list is the roll of accredited entities, naming each one along with
@@ -120,7 +123,7 @@ sits among the three levels of rules is in
 ### VICAL {#vical}
 
 - **Published by** Trust Registry, as a `COSE_Sign1` structure defined in
-  [ISO/IEC 18013-5 Annex C][trust-lists-and-credential-status].
+  [ISO/IEC 18013-5:2021 Annex C][ref-iso-18013-5].
 - **Read by** any mdoc verifier, including one operated in another country.
 - **Where it lives** on the central CDN.
 - **Lifetime** one registration period at a time.
@@ -135,6 +138,27 @@ It is also the one artifact here written for verifiers outside the ecosystem as
 well as inside it, which is how a verifier in another country can check an
 Indonesian mdoc.
 
+### Governance Profile {#governance-profile}
+
+- **Published by** Trust Registry, as a JWS that Trust Authority signs with
+  its Governance Profile key.
+- **Read by** every Module that applies one of its values, each from its own
+  cached copy, Trust Infrastructure's own Modules included.
+- **Where it lives** on the central CDN, at the one address every Module is
+  built with.
+- **Lifetime** until the `next_update` it carries, plus seven days, after
+  which a Module holding no newer edition refuses every check that depends on
+  it.
+
+The Governance Profile holds what the specifications leave open: the version
+of each Technical Specification in force, the algorithms each key may use,
+the lifetimes, tolerances and intervals, and the address of everything Trust
+Infrastructure serves. Every edition is complete and carries a sequence
+number, so a Module never applies half of one. The Root Authority approves
+what it says, and where it sits among the levels of rules is in
+[Data Model and Protocols](index.md). Its members and how a copy is read are
+in [Publishing and reading the Governance Profile](../../technical-specifications/publishing-and-reading-the-governance-profile.md).
+
 ## Hosted by the entity that owns it {#hosted-by-the-entity-that-owns-it}
 
 Two artifacts are never published centrally. Each is served by the entity it
@@ -148,7 +172,7 @@ describes, so neither depends on Trust Infrastructure being reachable.
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   through the Trust SDK embedded in each.
 - **Where it lives** at the entity's own domain rather than the central CDN,
-  because [`did:webvh`][identifiers-and-keys] derives the address from the
+  because [`did:webvh`][ref-did-webvh] v1.0 derives the address from the
   DID itself. DID Service keeps the copy it witnessed as a fallback.
 - **Lifetime** versioned, with a history a resolver can follow through a key
   rotation.
@@ -169,15 +193,29 @@ take to an anchor are in
 
 ### Status list {#status-list}
 
-- **Published by** Issuer Core, one list per issuer.
-- **Read by** Verifier Core and Mobile Verifier.
-- **Where it lives** at the issuer's own domain.
+- **Published by** Issuer Core for the credentials an issuer signed, and
+  Trust Registry for the Use Statements and the accreditations Trust
+  Authority signed.
+- **Read by** Verifier Core and Mobile Verifier for a credential, Mobile
+  Wallet for the credentials it holds and for a Use Statement, and whoever
+  is shown an Accreditation Credential.
+- **Where it lives** at the issuer's own domain for an issuer's lists, and on
+  the central CDN for the two Trust Registry
+  publishes.
 - **Lifetime** a time to live set by how much risk a stale answer carries.
 
-A status list says which of an issuer's credentials have been revoked. The
-encoding follows [IETF Token Status List][trust-lists-and-credential-status] for SD-JWT-based Verifiable Credentials (SD-JWT VC) and mdoc, and
-[W3C Bitstring Status List][trust-lists-and-credential-status] for `ldp_vc`. Only issuers have one, since only they
-issue credentials that can be revoked.
+A status list says which of the artifacts it covers have been revoked. The
+encoding follows [IETF Token Status List][ref-i-d-ietf-oauth-status-list] draft -14 for SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13 and mdoc, and
+[W3C Bitstring Status List][ref-bitstring-status-list] v1.0 for `ldp_vc`.
+
+Four kinds exist. An issuer publishes one list for the credentials it issued
+in SD-JWT VC and mdoc, and one more per purpose for those it issued in
+`ldp_vc`, because a Bitstring Status List entry is one bit and revocation and
+suspension are two purposes. Trust Registry publishes the list that revokes a
+Use Statement and the list that revokes an Accreditation Credential. What is
+revoked differs; the mechanism does not, and
+[Publishing and reading a status list](../../technical-specifications/publishing-and-reading-a-status-list.md)
+fixes all four.
 
 Publishing it per issuer rather than centrally buys three things at once.
 Revocation data scales with the number of issuers instead of accumulating
@@ -196,31 +234,40 @@ answered.
 
 ### Authority Statement {#authority-statement}
 
-- **Published by** Trust Authority, which writes one each time the Root
-  Authority grants a role.
+- **Published by** nobody. Trust Registry builds one for each query, and
+  Trust Authority signs it with its Authority Statement key, from its own
+  record of the permission the Root Authority granted.
 - **Read by** any participant, through a [Trust Registry Query Protocol
-  (TRQP)][exchange-protocols] query that Trust Registry
-  answers.
-- **Where it lives** as a row in the registry's own database. It is never a file
-  and nobody hosts it.
-- **Lifetime** until it is withdrawn. An answer is cached like everything else.
+  (TRQP)][ref-trqp] v2.0 query that Trust Registry
+  answers, asked on the participant's [trust cache sync][trust-cache-sync].
+- **Where it lives** in the answer to that query, and in the reader's cache
+  after it. It is never a file and nobody hosts it.
+- **Lifetime** from the `iat` to the `exp` it carries, then as a
+  last-known-good copy up to the tolerance limit, past which a reader refuses
+  it.
 
-An Authority Statement records a single permission granted to a single entity:
-an `action` on a `resource`. Because each statement covers one permission, an
-entity holding several roles receives several statements rather than one
-combined record.
+An Authority Statement answers whether a single entity may perform a single
+`action` on a single `resource`, as a token of type
+`vnd.id.idctf.authority-statement+jwt` that Trust Authority signs. Because each answer
+covers one permission, an entity holding several permissions is the subject
+of several statements rather than one combined record. The permission itself
+stays in Trust Authority's record until the Root Authority withdraws it.
 
-Caching the answer is what lets a verifier still check a permission while the
-registry is unreachable. What a statement covers, and how one is granted, is in
+Caching the signed answer is what lets a verifier still check a permission
+while the registry is unreachable. What a statement covers, and how one is granted, is in
 [Authorization][authorization].
 
 ## Carried in the exchange itself {#carried-in-the-exchange-itself}
 
 The remaining seven reach the party that needs them inside the exchange, rather
-than being fetched from an address beforehand. Nobody publishes them to a place
-a participant goes looking, so there is nothing about them that can be unreachable.
-The one thing published about any of them is the status list that revokes a Use
-Statement, and a wallet reads that from cache like every other list.
+than being fetched from an address beforehand. Everything in this group except
+the certificate revocation list travels with the message that relies on it, so
+it cannot be unreachable. What withdraws one is published, and is fetched: the
+issuer's status list for a credential, the status lists that revoke a Use
+Statement and an Accreditation Credential, Trust Authority's certificate
+revocation lists, which Trust Registry serves, and each Verifier Issuing CA's,
+which its holder serves at its own domain. A reader takes all of them on its
+[trust cache sync][trust-cache-sync] and never during a transaction.
 
 Three of the seven have three parties rather than two, and that is the easy
 thing to misread. A Key Attestation is carried by Mobile Wallet and read by
@@ -235,11 +282,11 @@ deliberately not the Module that reads it. The mechanism is in
 ### Use Statement {#use-statement}
 
 - **Published by** Trust Authority, as a JSON Web Token (JWT) of type
-  `use-statement+jwt`, when the Root Authority approves one use.
+  `vnd.id.idctf.use-statement+jwt`, when the Root Authority approves one use.
 - **Read by** Mobile Wallet, before it shows the consent screen, and by Verifier
   Console, which validates each request template against the use it names.
 - **Where it lives** with the verifier, which attaches it to its own request: in
-  the OpenID for Verifiable Presentations (OpenID4VP) `verifier_info` parameter online, and in the `requestInfo` map of
+  the OpenID for Verifiable Presentations (OpenID4VP) 1.0 `verifier_info` parameter online, and in the `requestInfo` map of
   the ISO/IEC 18013-5 `ItemsRequest` offline, under the key `idUseStatement`, as
   the same JWT wrapped in a byte string. Only the status list that revokes it
   sits on the central CDN.
@@ -282,11 +329,13 @@ cut-off the Governance Profile sets.
 
 ### Accreditation Credential {#accreditation-credential}
 
-- **Published by** Trust Authority, as an [SD-JWT VC][credential-formats-and-their-signatures], when an accreditation is
+- **Published by** Trust Authority, as an [SD-JWT VC][ref-i-d-ietf-oauth-sd-jwt-vc], when an accreditation is
   granted.
-- **Read by** the entity it was issued to, and by nobody else.
+- **Read by** the entity it was issued to. Nothing in the ecosystem reads one,
+  and a party outside it that is shown one decides on the trusted list.
 - **Where it lives** with that entity, carried rather than published.
-- **Lifetime** the accreditation period.
+- **Lifetime** the accreditation period, with a `status` reference into the
+  accreditation status list that ends it earlier.
 
 An Accreditation Credential is evidence the entity holds about itself rather
 than something others rely on, and that is why the only consumer recorded for it
@@ -299,7 +348,7 @@ presents.
 ### Key Attestation {#key-attestation}
 
 - **Published by** Wallet Backend Service, as a JWT of type
-  `keyattestation+jwt`, to each wallet installation.
+  `key-attestation+jwt`, to each wallet installation.
 - **Read by** Issuer Core, before it issues any credential.
 - **Where it lives** with the Mobile Wallet installation it was issued to.
 - **Lifetime** one day.
@@ -309,25 +358,26 @@ platform vouches for, and it carries the resistance values the Governance
 Profile maps assurance onto. A Rulebook that asks only for `low` lowers the
 storage it accepts, not the need for the attestation.
 
-The daily cadence is itself the revocation mechanism, and it reaches issuance
-alone. An installation that stops being reissued can obtain no further
-credential once its current attestation expires, with no revocation list to
-distribute and no message that has to arrive. The credentials it already holds
+The refusal to mint is itself the revocation mechanism, and it reaches
+issuance alone. An attestation is minted for one issuance and lives a day at
+most, so an installation the Wallet Provider has disowned obtains no further
+credential from its next issuance on, with no revocation list to distribute
+and no message that has to arrive. The credentials it already holds
 go on being presented: no verifier reads a Key Attestation, so reaching those is
 the issuer's job, through the status list its own revocation sets.
 
 ### Verifier Device Certificate {#verifier-device-certificate}
 
 - **Published by** the Verifier Core that answers for the device, as an
-  [X.509][certificates-and-revocation] certificate bound to
+  [X.509][ref-rfc5280] certificate bound to
   one device and issued from that Verifier Core's own Verifier Issuing CA: an
   RP Intermediary's for a merchant's device, a Relying Party's own for its
   counter device.
 - **Read by** Mobile Wallet, before it releases an attribute to that device.
 - **Where it lives** on that device: with Mobile Verifier, or a
   Relying Party's own application built on the Reader SDK.
-- **Lifetime** set by the Governance Profile, and withdrawn early through a
-  certificate revocation list (CRL).
+- **Lifetime** set by the Governance Profile, at most 1187 days, and
+  withdrawn early through a certificate revocation list (CRL).
 
 A Verifier Device Certificate carries the `ReaderAuthRole` that bounds which
 attributes the party behind the device may ask for, which is how a limit
@@ -342,9 +392,9 @@ a CRL and the wallet checks its cached copy. The arrangement is set out in
 
 ### Credential {#credential}
 
-- **Published by** Issuer Core, signed as a JWS or as [CBOR Object Signing and
-  Encryption (COSE)][encoding-and-signing] depending on the
-  format.
+- **Published by** Issuer Core, signed as a JWS, as [CBOR Object Signing and
+  Encryption (COSE)][ref-rfc9052], or with a Data Integrity 1.0 proof,
+  depending on the format.
 - **Read by** Verifier Core and Mobile Verifier.
 - **Where it lives** on the citizen's device, and in no register anywhere.
 - **Lifetime** until its `exp` passes or its issuer revokes it.
@@ -362,8 +412,9 @@ revocation is read from that issuer's status list rather than from Trust Infrast
 
 - **Published by** Mobile Wallet, built from a credential when somebody asks.
 - **Read by** Verifier Core or Mobile Verifier, once.
-- **Where it lives** nowhere. A verifier keeps a digest for its archive and not
-  the attributes themselves.
+- **Where it lives** nowhere. A verifier keeps a digest of an online
+  presentation for its archive, nothing derived from one in proximity, and
+  never the attributes themselves.
 - **Lifetime** one use, bound to one session.
 
 A presentation carries the attributes the citizen agreed to disclose, bound to
@@ -378,7 +429,8 @@ somewhere else.
 - **Read by** Issuer Core, Verifier Core, Mobile Wallet and Mobile Verifier,
   through the Trust SDK.
 - **Where it lives** with the entity's Key Manager and inside the `x5chain` of a
-  message. The Verifier Issuing CA also appears in the trusted list.
+  message; the CRL at the address its certificates name, which Trust Registry
+  serves. The Verifier Issuing CA also appears in the trusted list.
 - **Lifetime** 457 days for a signer certificate for a Mobile Driving License
   (mDL), 3650 days
   otherwise.

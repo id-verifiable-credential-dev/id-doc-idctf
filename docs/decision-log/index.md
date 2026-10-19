@@ -14,6 +14,3 @@ temporary, or still open. Kept by the architecture committee.
 </p>
 
 <p class="ekdn-soon">(soon)</p>
-
-The decisions currently live in section 1 of the Architecture Framework draft
-and move here once this document exists.

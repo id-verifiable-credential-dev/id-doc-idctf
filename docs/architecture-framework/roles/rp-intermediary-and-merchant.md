@@ -37,7 +37,7 @@ rather than one by one in [Primary roles][primary-roles].
 One difference is worth stating at the outset, because it runs against what the
 word intermediary suggests. An ordinary intermediary receives an answer and
 passes it on. Here it cannot read the answer at all: the response is encrypted
-to the merchant's own device key, so an RP Intermediary relays an encrypted answer
+to a key the merchant's own device drew for that request, so an RP Intermediary relays an encrypted answer
 it cannot open. For a merchant's online checks, it holds that answer only long
 enough to pass it back, then deletes it and never logs it; the request side is
 what it may record. The
@@ -48,10 +48,11 @@ Reading nothing is not the same as seeing nothing. The relay is the
 intermediary's own service, so it necessarily observes that one of its
 merchants ran a check and when, and the request it holds is signed rather than
 encrypted. That much is what lets an intermediary notice a merchant asking for
-more than its category allows, which is the thing it answers for. What it may
-keep from a relayed request, what it may never keep, and for how long, belongs
-to the Governance Framework; the architecture settles only that the request
-side is readable to it and the response side is not.
+more than its category allows, which is the thing it answers for. The Technical
+Specifications fix what it keeps of a relayed request, refused requests
+included, and the Governance Profile fixes for how long; the architecture
+settles only that the request side is readable to it and the response side is
+not.
 
 This arrangement exists on the verifying side only. Every Identity Issuer and
 every Attribute Issuer runs its own issuing infrastructure, signs with its own
@@ -65,8 +66,7 @@ registering it, and grants it authority that is a subset of its own, never
 wider. It registers a use for each business category it serves, such as an age
 check on restricted goods or confirming an address at delivery, rather than a
 use for each merchant, and binds a merchant's device to one or more of those
-categories. It revokes a merchant that abuses the arrangement, within the
-deadline the Governance Framework sets. It keeps an inventory of its active
+categories. It revokes a merchant that abuses the arrangement, [within the deadline the Governance Framework sets][gf-withdrawing-a-merchant]. It keeps an inventory of its active
 merchants so the Root Authority can see who is acting under its name at any
 time. And it carries the consequences when a merchant breaks the rules.
 
@@ -85,7 +85,7 @@ What it may hand on is another matter. A merchant's scope may never carry the
 `restricted` class of attribute, whatever the intermediary itself was
 accredited for, because that class should not reach a party nobody has
 assessed. The rule has two homes, and each does a different job. The
-Governance Framework carries it as an obligation of the intermediary: setting a
+Governance Framework [carries it as an obligation of the intermediary][gf-merchant-scope]: setting a
 merchant's scope without `restricted` is one of the things an intermediary
 answers for. The architecture carries it as a bound written into the
 certificate the merchant is given, so a wallet enforces it on sight rather than
@@ -246,11 +246,10 @@ face, signed along with the rest of that request, and the wallet runs the same
 check on it either way. The sequence a merchant runs at the counter is in
 [verification by a merchant][verification-by-a-merchant].
 
-What is left open is the numbers: how long a merchant certificate lives, how
+The numbers are the Governance Profile's: how long a merchant certificate lives, how
 often the withdrawal list is published, and how stale that list may be before
-a wallet with no network stops trusting it. Those belong to the Governance Profile,
-which is free to start them short and loosen them once the operation has proved
-itself.
+a wallet with no network stops trusting it. The Profile may loosen them once the
+operation has proved itself.
 
 ## How the intermediated group works {#how-the-intermediated-group-works}
 

@@ -3,7 +3,7 @@ title: "High-Level Architecture"
 description: What the ecosystem is made of, how its parts are kept apart, and the principles that separation serves.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pembuka), §1 (Kep. 21). Di luar source-data, disadur dari EUDI ARF 3.0.0 §4.2 (tracks/0007): Minimal disclosure §4.2.4, Security by design §4.2.5, The citizen decides §4.2.1, Accessibility §4.2.2 dan UU No. 8 Tahun 2016 Pasal 18–19 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pembuka), §1 (Kep. 21); tracks/0212. Di luar source-data, disadur dari EUDI ARF 3.0.0 §4.2 (tracks/0007): Minimal disclosure §4.2.4, Security by design §4.2.5, The citizen decides §4.2.1, Accessibility §4.2.2 dan UU No. 8 Tahun 2016 Pasal 18–19 -->
 
 # High-Level Architecture {#high-level-architecture}
 
@@ -78,35 +78,40 @@ rather than the network.
 The measurable targets live in
 [quality targets][quality-targets], and how
 long a cache may be trusted belongs to the
-[Governance Framework](../../governance-framework/index.md), not here. Nothing
+Governance Profile, not here. Nothing
 has set it there yet, which [the trust path][the-trust-path] states in full.
 
 ### Finished specifications only {#finished-specifications-only}
 
 Only final specifications bind implementations in this ecosystem. A draft does
-not, however widely it is implemented elsewhere. Two drafts are the exception,
+not, however widely it is implemented elsewhere. Four drafts are the exception,
 and this section names them. A profile over those specifications, such as the
-[OpenID4VC High Assurance Interoperability Profile (HAIP)][exchange-protocols],
+[OpenID4VC High Assurance Interoperability Profile (HAIP) 1.0][ref-openid4vc-haip],
 is read as a comparison rather than as a requirement.
 
-The rule has already cost the architecture something, which is what makes it a
-rule rather than a preference. A draft mechanism for proving that a wallet
-installation is genuine would have fitted neatly, and it is not used. The same
-job is done with
-mechanisms the final issuance specification already defines. Which specification
+A wallet installation is proven genuine with mechanisms the final issuance
+specification defines, not with a draft mechanism. Which specification
 is fixed for which job is set out in
 [the technology map][technology-map].
 
-Two drafts are admitted, because the credential formats cannot work without
-them. [SD-JWT-based Verifiable Credentials (SD-JWT VC)][credential-formats-and-their-signatures] defines the credential that [OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0][exchange-protocols] and [OpenID for Verifiable Presentations (OpenID4VP) 1.0][exchange-protocols]
+Four drafts are admitted, because the credential formats and the identifiers
+cannot work without them. [SD-JWT-based Verifiable Credentials (SD-JWT VC)][ref-i-d-ietf-oauth-sd-jwt-vc] defines the credential that [OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0][ref-openid4vci] and [OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp]
 carry as `dc+sd-jwt`. Those two specifications fix the format identifier and
 how it is requested, and they leave the contents of the credential to the
 SD-JWT VC draft. The salted-hash mechanism underneath is already final as
-[RFC 9901][credential-formats-and-their-signatures]. [IETF Token Status List][trust-lists-and-credential-status] is the revocation mechanism for SD-JWT VC and
-mdoc, and it is waiting in the RFC Editor queue. Each of the two is pinned to
-the revision HAIP 1.0 references, draft -13 of SD-JWT VC and draft -14 of
-Token Status List, and moves to the RFC once it is published. No other draft
-is admitted on the same grounds.
+[RFC 9901][ref-rfc9901]. [IETF Token Status List][ref-i-d-ietf-oauth-status-list] is the revocation mechanism for SD-JWT VC and
+mdoc, and it is waiting in the RFC Editor queue. Each of those two is pinned to
+the revision HAIP references, draft -13 of SD-JWT VC and draft -14 of
+Token Status List, and moves to the RFC once it is published.
+[W3C VC JSON Schema][ref-vc-json-schema] is the third. It is the only
+way a W3C Verifiable Credentials Data Model (VCDM) 2.0 credential names its
+schema, in `credentialSchema`, and it is still a Candidate Recommendation
+Draft. It is pinned to the draft of 4 February 2025 and moves to the
+Recommendation once one is published. [did:key][ref-did-key] v0.9 is the
+fourth. It is a Community Group draft, and
+the holder's identifier, the witness keys, and the trusted list key are all
+written in it. It is pinned to the commit of 2 November 2025. No other draft is admitted on the same
+grounds.
 
 Interoperability also has to survive two codebases. The Trust SDK exists twice,
 once for the server Modules and once for the two applications, and the two are
@@ -208,10 +213,7 @@ verifier's own wording off as approved.
 
 What was consented to is recorded afterward as a consent receipt, so the
 decision is auditable later by someone other than the party that benefited from
-it. The record's format will be specified in the
-[Technical Specifications](../../technical-specifications/index.md), and the
-retention rules belong to the
-[Governance Framework](../../governance-framework/index.md).
+it. The record's format is fixed in [what the verifier keeps][ts-5-11-what-the-verifier-keeps], and how long it is kept is set by the Governance Profile, as a value the Governance Framework holds participants to under [retention][gf-retention].
 
 The citizen keeps a record too, and it is made of what the verifier already
 signed. Every request arrives signed, under the Relying Party's own key or under a
@@ -219,41 +221,24 @@ merchant's device certificate, and carries the Use Statement Trust Authority
 signed for that use. The wallet holds both before anyone is asked to decide, so
 it keeps them afterward alongside the outcome and the time. Nothing is signed
 anew for this, and no attribute value is ever written down: what the wallet
-stores is the asking, never the answering. Format and retention sit where the
-verifier's receipt puts them.
+stores is the asking, never the answering. [What the wallet keeps][ts-5-11-what-the-wallet-keeps] fixes its format, the Governance Profile sets the longest it is kept, and the citizen may delete it sooner.
 
 ### Accessibility {#accessibility}
 
 Every surface a person touches has to be usable by people with disabilities: the
 Mobile Wallet, the Mobile Verifier, both Consoles, and the Trust Authority
-portal. In Indonesia this is not a preference. UU No. 8 Tahun 2016 tentang
-Penyandang Disabilitas, the 2016 law on persons with disabilities, obliges
+portal. In Indonesia this is not a preference. [UU No. 8 Tahun 2016 tentang
+Penyandang Disabilitas][ref-uu-8-2016], the 2016 law on persons with disabilities, obliges
 state administration and public services to provide accessibility and
 reasonable accommodation. A national credential ecosystem is both.
 
-This is the one principle here that the architecture does not currently enforce.
-The draft names no accessibility standard, sets no requirement on any
-user-facing Module, and defines no test. Nothing elsewhere in this repository
-fills the gap either. Six of the seven principles can be checked against
-something; this one cannot.
-
-Where it belongs is the Governance Framework rather than this document, for the
-same reason the retention rules do: it binds participants and is verified by
-assessment, not by architecture. Until it is written there, treat this section as
-a statement of the obligation and not as evidence that anything satisfies it.
+The Governance Framework binds every surface a person uses to WCAG 2.2 Level AA and has an Assessment Body audit it, as [accessibility][gf-accessibility] sets out.
 
 ## Chapter contents {#hla-chapter-contents}
 
-1. [Services](services.md), what each Service groups, who
-   runs it, and why one of the four is single
-2. [The transaction path and the trust path](transaction-path-and-trust-path.md),
-   which Module sits on which plane, and what passes between them
-3. [Module Map](module-map.md), the ten Modules, what each is
-   built as and who runs it, who may call whom, and the network zone each is
-   placed in
-4. [Flows per use case](flows-per-use-case.md), the fourteen flows, from
-   entity onboarding and incident key revocation through issuance,
-   verification, and the lifetime of a wallet on one citizen's phone
-5. [Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md),
-   the four parts of an application, and what the Governance Profile fixes
+1. [Services](services.md)
+2. [The transaction path and the trust path](transaction-path-and-trust-path.md)
+3. [Module Map](module-map.md)
+4. [Flows per use case](flows-per-use-case.md)
+5. [Architecture on the device: Mobile Wallet and Mobile Verifier](architecture-on-the-device.md)
 

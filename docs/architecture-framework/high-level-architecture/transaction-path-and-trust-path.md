@@ -3,7 +3,7 @@ title: The transaction path and the trust path
 description: How the ten Modules divide into a data plane, a control plane, and an operations group, and what passes between them.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), §4.6, Kep. 9, 12, 28, 30; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber) -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3 (pengantar dan diagram), §4.6, Kep. 9, 12, 28, 30; tracks/0169 (fallback log DID ke DID Service, tidak ada di sumber); tracks/0382 (Governance Profile di band Artifacts) -->
 
 # The transaction path and the trust path {#the-transaction-path-and-the-trust-path}
 
@@ -44,12 +44,12 @@ and each of its four bands has a section:
 [the transaction path][the-transaction-path], and
 [the operations group][the-operations-group].
 
-The band Artifacts draws the seven artifacts that settle a question before a
-transaction runs. Five are fetched from an address and cached, which is what its
+The band Artifacts draws the eight artifacts that settle a question before a
+transaction runs. Six are fetched from an address and cached, which is what its
 dashed arrows mean; one is answered over Trust Registry Query
-Protocol (TRQP) rather than published as a file; and one, the Use Statement, is
+Protocol (TRQP) v2.0 rather than published as a file; and one, the Use Statement, is
 carried by the verifier inside the request itself. Six more are never fetched at
-all, traveling with a party or with a message instead. All thirteen are in
+all, traveling with a party or with a message instead. All fourteen are in
 [Artifacts exchanged](../data-model-and-protocols/artifacts-exchanged.md).
 
 ## The transaction path {#the-transaction-path}
@@ -61,9 +61,9 @@ no others.
 
 | From | To | Protocol |
 |---|---|---|
-| Issuer Core | Mobile Wallet | [OpenID4VCI][exchange-protocols] |
-| Mobile Wallet | Verifier Core | [OpenID4VP][exchange-protocols], online only |
-| Mobile Wallet | Mobile Verifier | OpenID4VP for online, relayed by the RP Intermediary's Verifier Core; [ISO/IEC 18013-5][exchange-protocols] for proximity |
+| Issuer Core | Mobile Wallet | [OpenID4VCI][ref-openid4vci] |
+| Mobile Wallet | Verifier Core | [OpenID4VP][ref-openid4vp], online only |
+| Mobile Wallet | Mobile Verifier | OpenID4VP for online, relayed by the RP Intermediary's Verifier Core; [ISO/IEC 18013-5][ref-iso-18013-5] for proximity |
 
 </figure>
 
@@ -93,11 +93,12 @@ certificate requests. The direction is one way in a second sense too: no Module 
 Infrastructure ever calls a Module outside it, and none of them calls an entity
 back.
 
-One call runs the other way. A Core calls Trust Authority only to register or
-rotate its own keys, never during a transaction, and Trust Authority hands
-the entry to DID Service for its witness; a Core reads DID Service from cache
-and never submits to it. That is the one call the transaction path makes into
-the trust path, stated for each Core Module in
+One call runs the other way. Issuer Core, Verifier Core and Wallet Backend
+Service each call Trust Authority only to register or rotate their own keys,
+never during a transaction, and Trust Authority hands the entry to DID Service
+for its witness; they read DID Service from cache and never submit to it. That
+call is the only one that enters the trust path, from the transaction path or
+the operations group, and it is stated for each of the three in
 [who may call whom][who-may-call-whom].
 
 This is why the plane can be one instance nationally without being a single
@@ -119,8 +120,8 @@ reports, and every one of those actions travels the same documented API that
 any other client would use.
 
 Wallet Backend Service does something different. It vouches. It issues a Key
-Attestation to each Mobile Wallet daily, binds the installation to its
-device, and can revoke that device. It holds no credentials, which is the point:
+Attestation to a Mobile Wallet before each issuance, binds the installation
+to its device, and can revoke that device. It holds no credentials, which is the point:
 it can disown a wallet without being able to read what the wallet carries.
 Verifier Core does the same vouching toward Mobile Verifier. It issues a
 Verifier Device Certificate to each device it answers for, a merchant's or the
@@ -135,14 +136,15 @@ reads it before issuing a credential that demands one. Verifier Core issues a
 Verifier Device Certificate, Mobile Verifier carries it, and Mobile Wallet
 reads it before releasing an attribute to that device.
 
-On the wallet side the daily cadence is itself the revocation mechanism, and it
-reaches issuance alone. An installation that stops being reissued can obtain no
-further credential once its current attestation expires, with no revocation list
-to distribute and no message that has to arrive. The credentials it already
+On the wallet side the refusal to mint is itself the revocation mechanism, and
+it reaches issuance alone. An attestation is minted for one issuance and lives
+a day at most, so an installation the Wallet Provider has disowned obtains no
+further credential from its next issuance on, with no revocation list to
+distribute and no message that has to arrive. The credentials it already
 holds go on being presented, because no verifier reads a Key Attestation, and
 reaching those is the issuer's job through its status list. A merchant
 certificate lives longer than a day, so it is
-withdrawn the ordinary [X.509][certificates-and-revocation]
+withdrawn the ordinary [X.509][ref-rfc5280]
 way instead: the intermediary publishes a certificate revocation list (CRL),
 and the wallet checks its cached copy.
 
@@ -153,7 +155,7 @@ artifact a verifier carries into the transaction itself. All three are settled
 before a transaction begins, so nothing reaches across while a credential is
 being issued or verified.
 
-Seven artifacts carry that connection, and they are the ones drawn in the
+Eight artifacts carry that connection, and they are the ones drawn in the
 band Artifacts of [the diagram of the two planes][fig-planes-and-artifact-lane].
 Each does the same job in a different form: it settles a question the trust path
 decided earlier, so that no Module has to call the trust path to ask.
@@ -187,20 +189,25 @@ decided earlier, so that no Module has to call the trust path to ask.
   purpose out of the message already in front of it; only the status list that
   withdraws one sits on the central CDN. See [Use
   Statement][use-statement].
+- The Governance Profile, from the central CDN like the trusted list, carries
+  the numbers and algorithms the Root Authority set and the address of
+  everything Trust Infrastructure serves, so every check on the transaction
+  path runs on values decided on the trust path. See [Governance
+  Profile][governance-profile].
 
 No artifact on the central CDN carries citizen data.
 
-Two of the seven are not files a participant fetches, and they fail differently for
+Two of the eight are not files a participant fetches, and they fail differently for
 it. The Authority Statement is the query: a participant asks Trust Registry over
-[TRQP][exchange-protocols] whether a given party may do a given thing and caches the answer like
-everything else, so a permission check survives an unreachable registry exactly
+[TRQP][ref-trqp] whether a given party may do a given thing, on its
+[trust cache sync][trust-cache-sync], and caches the answer like everything else, so a permission check survives an unreachable registry exactly
 as a cached file does. The Use Statement is neither fetched nor asked for; it
 arrives inside the request, which is what lets a wallet check an approved purpose
 without Trust Infrastructure learning that the transaction happened. What each covers, and
 how one is granted, is in [Authorization][authorization] and
 [Registered use][registered-use].
 
-What each of the seven contains, and the six further artifacts that nobody
+What each of the eight contains, and the six further artifacts that nobody
 publishes to an address at all, are in
 [Artifacts exchanged](../data-model-and-protocols/artifacts-exchanged.md).
 
@@ -215,22 +222,25 @@ limit expires, and the limit is a policy decision rather than a network
 condition. The targets are in
 [quality targets][quality-targets], and the tolerance
 belongs to the
-[Governance Framework](../../governance-framework/index.md).
+Governance Profile.
 
-That limit does not exist yet. No number has been set, here or anywhere else,
-which makes it an open question rather than a delegation: a cache with no stated
-ceiling is a cache that never ages out. Read the tolerance as named and not as
-given, and read a claim that a transaction survives an outage as true for as
-long as whoever sets the number decides.
+Every limit is set for the pilot: the Governance Profile carries one
+tolerance for each cached artifact, a TRQP answer, the catalog, a status list,
+a CRL, the VICAL, an Authority Statement and a `did:webvh` log, and
+[constraints on the values of the Governance Profile][gf-constraints-on-the-governance-profile]
+keeps each of them inside the trusted list horizon. A cache with no stated
+ceiling would be a cache that never ages out, which is why no artifact is
+read without one, and why a claim that a transaction survives an outage is
+true for exactly as long as the number says.
 
-What the limit bounds is how long a revocation can go unseen. An emergency
-trusted list reaches a verifier that is online within the hour. A device
+What the limit bounds is how long a revocation can go unseen. The notice that
+goes with an emergency trusted list reaches a Relying Party within the hour,
+and the list reaches every cache at its next sync. A device
 verifying in proximity learns of it only at its next successful sync, and a
 device that cannot sync keeps working from its copy until that copy expires:
 the trusted list at its `NextUpdate`, every other cached artifact at the
 tolerance limit. That expiry sets the longest a revoked key can still be
-accepted face to face, and the one-hour response does not shorten it. Whoever
-sets the number is setting that exposure. A limit longer than a credential type
+accepted face to face, and the one-hour response does not shorten it. [Whoever sets the number][gf-constraints-on-the-governance-profile] is setting that exposure. A limit longer than a credential type
 can bear leaves the emergency response reaching only the verifiers that are
 online.
 

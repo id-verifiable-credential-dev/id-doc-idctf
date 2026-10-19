@@ -1,0 +1,419 @@
+{
+  "vct": "id.idctf.ktp.1",
+  "name": "KTP Digital",
+  "description": "Kartu Tanda Penduduk elektronik dalam bentuk digital, yang diterbitkan oleh Direktorat Jenderal Kependudukan dan Pencatatan Sipil.",
+  "display": [
+    {
+      "locale": "id",
+      "name": "KTP Digital",
+      "description": "Kartu Tanda Penduduk digital",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/logo.png",
+            "uri#integrity": "sha256-+lXZpf4jDZqwroxb9IvZVnKFQG+xrxbsk5jodXPbIJs=",
+            "alt_text": "Lambang Garuda Pancasila"
+          },
+          "background_color": "#DDEBFA",
+          "text_color": "#0B1F3A"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/card-light.svg",
+            "uri#integrity": "sha256-vG1ufDSfbW08eKAPCIwROXvytkpQnMJevo5FrwPpFKg=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/card-dark.svg",
+            "uri#integrity": "sha256-Z/N2kHHgcKMZd4oDHSAudnRifgOOF0ni6MATdiXHGpM=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "en",
+      "name": "Digital Identity Card",
+      "description": "Indonesian resident identity card",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/logo.png",
+            "uri#integrity": "sha256-+lXZpf4jDZqwroxb9IvZVnKFQG+xrxbsk5jodXPbIJs=",
+            "alt_text": "Garuda Pancasila emblem"
+          },
+          "background_color": "#DDEBFA",
+          "text_color": "#0B1F3A"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/card-light.svg",
+            "uri#integrity": "sha256-vG1ufDSfbW08eKAPCIwROXvytkpQnMJevo5FrwPpFKg=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/ktp-v1/card-dark.svg",
+            "uri#integrity": "sha256-Z/N2kHHgcKMZd4oDHSAudnRifgOOF0ni6MATdiXHGpM=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "nik"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "NIK"
+        },
+        {
+          "locale": "en",
+          "label": "Population Identification Number"
+        }
+      ],
+      "svg_id": "nik"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "nama"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama"
+        },
+        {
+          "locale": "en",
+          "label": "Name"
+        }
+      ],
+      "svg_id": "nama"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "tempat_lahir"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tempat Lahir"
+        },
+        {
+          "locale": "en",
+          "label": "Place of Birth"
+        }
+      ],
+      "svg_id": "tempat_lahir"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "tanggal_lahir"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal Lahir"
+        },
+        {
+          "locale": "en",
+          "label": "Date of Birth"
+        }
+      ],
+      "svg_id": "tanggal_lahir"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "usia_di_atas_17"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Berusia 17 Tahun ke Atas"
+        },
+        {
+          "locale": "en",
+          "label": "Aged 17 or Over"
+        }
+      ]
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "jenis_kelamin"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Jenis Kelamin"
+        },
+        {
+          "locale": "en",
+          "label": "Sex"
+        }
+      ],
+      "svg_id": "jenis_kelamin"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "golongan_darah"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Golongan Darah"
+        },
+        {
+          "locale": "en",
+          "label": "Blood Type"
+        }
+      ],
+      "svg_id": "golongan_darah"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "alamat"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Alamat"
+        },
+        {
+          "locale": "en",
+          "label": "Address"
+        }
+      ],
+      "svg_id": "alamat"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "rt_rw"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "RT/RW"
+        },
+        {
+          "locale": "en",
+          "label": "Neighborhood Unit"
+        }
+      ],
+      "svg_id": "rt_rw"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "kelurahan_desa"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Kelurahan/Desa"
+        },
+        {
+          "locale": "en",
+          "label": "Urban Village/Village"
+        }
+      ],
+      "svg_id": "kelurahan_desa"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "kecamatan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Kecamatan"
+        },
+        {
+          "locale": "en",
+          "label": "District"
+        }
+      ],
+      "svg_id": "kecamatan"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "kabupaten_kota"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Kabupaten/Kota"
+        },
+        {
+          "locale": "en",
+          "label": "Regency/City"
+        }
+      ],
+      "svg_id": "kabupaten_kota"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "provinsi"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Provinsi"
+        },
+        {
+          "locale": "en",
+          "label": "Province"
+        }
+      ],
+      "svg_id": "provinsi"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "agama"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Agama"
+        },
+        {
+          "locale": "en",
+          "label": "Religion"
+        }
+      ],
+      "svg_id": "agama"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "status_perkawinan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Status Perkawinan"
+        },
+        {
+          "locale": "en",
+          "label": "Marital Status"
+        }
+      ],
+      "svg_id": "status_perkawinan"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "pekerjaan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Pekerjaan"
+        },
+        {
+          "locale": "en",
+          "label": "Occupation"
+        }
+      ],
+      "svg_id": "pekerjaan"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "kewarganegaraan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Kewarganegaraan"
+        },
+        {
+          "locale": "en",
+          "label": "Citizenship"
+        }
+      ],
+      "svg_id": "kewarganegaraan"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "tempat_dikeluarkan"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tempat Dikeluarkan"
+        },
+        {
+          "locale": "en",
+          "label": "Place of Issuance"
+        }
+      ],
+      "svg_id": "tempat_dikeluarkan"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "issuance_date"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal Dikeluarkan"
+        },
+        {
+          "locale": "en",
+          "label": "Date of Issuance"
+        }
+      ],
+      "svg_id": "issuance_date"
+    },
+    {
+      "path": [
+        "id.idctf.ktp.1",
+        "foto"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Foto"
+        },
+        {
+          "locale": "en",
+          "label": "Photo"
+        }
+      ]
+    }
+  ]
+}

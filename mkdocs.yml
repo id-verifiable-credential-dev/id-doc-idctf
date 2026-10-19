@@ -91,8 +91,13 @@ extra_css:
 
 extra_javascript:
   - javascripts/ask.js
+  - javascripts/code-collapse.js
 
 copyright: Copyright &copy; 2026 Indonesia Digital Credential Trust Framework
+
+# Hooks
+hooks:
+  - hooks/strip_source_comments.py
 
 # Plugins
 plugins:
@@ -168,7 +173,10 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.mark
   - pymdownx.smartsymbols
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      # Fails the build when an included file is missing, instead of
+      # rendering an empty block.
+      check_paths: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -218,14 +226,59 @@ nav:
       - architecture-framework/trust-model/two-assurance-levels.md
       - architecture-framework/trust-model/keys-who-creates-who-signs.md
     - architecture-framework/glossary.md
-    - architecture-framework/references.md
-  # The four documents below are parked: each is one page carrying its title
-  # and a `(soon)` marker, so the tab is visible and says what it will hold.
+  # Governance Framework and Decision Log are parked: each is one page
+  # carrying its title and a `(soon)` marker, so the tab is visible and says
+  # what it will hold.
   - Technical Specifications:
     - technical-specifications/index.md
+    - "[TS-00] Common provisions": technical-specifications/common-provisions.md
+    - "[TS-01] Finding a signer's key from its DID": technical-specifications/finding-a-signers-key-from-its-did.md
+    - "[TS-02] Publishing and reading the Governance Profile": technical-specifications/publishing-and-reading-the-governance-profile.md
+    - Issuer Services:
+      - "[TS-1-01] Issuing a credential via OpenID4VCI": technical-specifications/issuing-a-credential-via-openid4vci.md
+    - Wallet Services:
+      - "[TS-2-01] Enrolling a wallet installation and attesting its key": technical-specifications/enrolling-a-wallet-installation-and-attesting-its-key.md
+    - Verifier Services:
+      - "[TS-3-01] Verifying a credential online via OpenID4VP": technical-specifications/verifying-a-credential-online-via-openid4vp.md
+      - "[TS-3-02] Verifying a credential in proximity via ISO/IEC 18013-5": technical-specifications/verifying-a-credential-in-proximity-via-iso-iec-18013-5.md
+    - Trust Infrastructure:
+      - "[TS-4-01] Witnessing a log entry and serving its copy": technical-specifications/witnessing-a-log-entry-and-serving-its-copy.md
+      - "[TS-4-02] Answering a permission query and serving the catalog": technical-specifications/answering-a-permission-query-and-serving-the-catalog.md
+      - "[TS-4-03] Onboarding an entity and registering its keys": technical-specifications/onboarding-an-entity-and-registering-its-keys.md
+    - Artifacts:
+      - "[TS-5-01] Publishing and reading the trusted list": technical-specifications/publishing-and-reading-the-trusted-list.md
+      - "[TS-5-02] Publishing and resolving a did:webvh identifier": technical-specifications/publishing-and-resolving-a-did-webvh-identifier.md
+      - "[TS-5-03] Deriving a did:key and a device identifier": technical-specifications/deriving-a-did-key-and-a-device-identifier.md
+      - "[TS-5-04] Issuing and validating the X.509 certificates and the VICAL": technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md
+      - "[TS-5-05] Answering with an Authority Statement": technical-specifications/answering-with-an-authority-statement.md
+      - "[TS-5-06] Registering and carrying a Use Statement": technical-specifications/registering-and-carrying-a-use-statement.md
+      - "[TS-5-07] Issuing and carrying an Accreditation Credential": technical-specifications/issuing-and-carrying-an-accreditation-credential.md
+      - "[TS-5-08] Issuing and reading a Key Attestation": technical-specifications/issuing-and-reading-a-key-attestation.md
+      - "[TS-5-09] Publishing and reading a status list": technical-specifications/publishing-and-reading-a-status-list.md
+      - "[TS-5-10] Issuing a credential in SD-JWT VC, mdoc, and ldp_vc": technical-specifications/issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md
+      - "[TS-5-11] Building and verifying a presentation": technical-specifications/building-and-verifying-a-presentation.md
   - Governance Framework:
     - governance-framework/index.md
+    - Who decides: governance-framework/who-decides.md
+    - Assessment and supervision: governance-framework/assessment-and-supervision.md
+    - Obligations:
+      - governance-framework/obligations/index.md
+      - Issuers: governance-framework/obligations/issuers.md
+      - Wallet Providers: governance-framework/obligations/wallet-providers.md
+      - Relying Parties and merchants: governance-framework/obligations/relying-parties-and-merchants.md
+    - Incidents and sanctions: governance-framework/incidents-and-sanctions.md
+    - Recognition: governance-framework/recognition.md
   - Credential Rulebook Catalog:
     - credential-rulebook/index.md
+    - Rulebook structure: credential-rulebook/rulebook-structure.md
+    - Admission and versions: credential-rulebook/admission-and-versions.md
+    - Examples:
+      - credential-rulebook/example/index.md
+      - KTP Digital: credential-rulebook/example/rulebook-ktp-digital.md
+      - Kartu Indonesia Sehat: credential-rulebook/example/rulebook-kartu-indonesia-sehat.md
+      - Kartu ASN: credential-rulebook/example/rulebook-kartu-asn.md
+      - Kartu Nikah: credential-rulebook/example/rulebook-kartu-nikah.md
+      - SIM: credential-rulebook/example/rulebook-sim.md
   - Decision Log:
     - decision-log/index.md
+  - References: references/index.md

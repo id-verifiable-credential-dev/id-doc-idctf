@@ -101,15 +101,15 @@ The rule is about calls. What makes it hold is a division of knowledge, which
 
 </figure>
 
-Issuance Controller knows that OpenID for Verifiable Credential Issuance (OpenID4VCI) requires a `/credential` endpoint
+Issuance Controller knows that OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0 requires a `/credential` endpoint
 that accepts a `proof`. It does not know what selective disclosure is.
-Credential Builder knows that an SD-JWT-based Verifiable Credential (SD-JWT VC) needs a salt per disclosure and a
+Credential Builder knows that an SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 needs a salt per disclosure and a
 `cnf` claim. It does not know that HTTP exists.
 
 !!! info "A change does not spread"
 
     What each layer does not know is what keeps a change from spreading.
-    Moving to a new version of OpenID for Verifiable Presentations (OpenID4VP) changes the Controller, because only
+    Moving to a new version of OpenID for Verifiable Presentations (OpenID4VP) 1.0 changes the Controller, because only
     the Controller knows the shape of the messages. Changing a minimization
     rule changes the Domain, because only the Domain knows the rules. The two
     changes never meet.
@@ -134,7 +134,7 @@ three.
 Presentation Controller accepts
 the response the wallet posts back. Signing Provider decrypts it, through Key
 Manager. Credential Verifier, in Domain, checks the credential's signature,
-its Key Binding JSON Web Token (KB-JWT), and its disclosures, and Trust Evaluator, also in Domain,
+its Key Binding JWT (KB-JWT), and its disclosures, and Trust Evaluator, also in Domain,
 walks the entity chain and the transaction chain. Both read the trusted list
 and the status list through the Trust SDK, from cache, so no call leaves for
 Trust Registry while the citizen waits. Verification Repository writes the

@@ -1,0 +1,20 @@
+{
+  "id": "id.idctf.kartu-indonesia-sehat.1",
+  "authority": "did:webvh:QmScid...:bpjs-kesehatan.go.id",
+  "legal_basis": "Undang-Undang Nomor 24 Tahun 2011 tentang Badan Penyelenggara Jaminan Sosial",
+  "formats": {
+    "sd-jwt-vc": { "vct": "id.idctf.kartu-indonesia-sehat.1" }
+  },
+  "schema": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/schema.json",
+  "display": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/type-metadata.json",
+  "attributes": [
+    { "name": "nomor_kartu", "minimization": "restricted" },
+    { "name": "nama", "minimization": "normal" },
+    { "name": "alamat", "minimization": "normal" },
+    { "name": "tanggal_lahir", "minimization": "normal" },
+    { "name": "nik", "minimization": "restricted" },
+    { "name": "faskes", "minimization": "normal" }
+  ],
+  "min_assurance": "substantial",
+  "issuer_assurance": "substantial"
+}

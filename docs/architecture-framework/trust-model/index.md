@@ -65,16 +65,7 @@ answerable for it.
 
 ## Chapter contents {#tm-chapter-contents}
 
-1. [Chain of trust](chain-of-trust.md), who accredits whom with no authority
-   in between, the two routes a verifier takes to a trust anchor, and the two
-   chains every verification has to evaluate
-2. [Trusted list and short-lived attestations](trusted-list-and-short-lived-attestations.md),
-   what the trusted list answers and how a cached copy of it is trusted, and
-   the four signed statements whose limited lifetime does the work of a
-   revocation list
-3. [Two assurance levels](two-assurance-levels.md), the one scale borrowed
-   from eIDAS and the two unrelated questions it answers, about the issuer's
-   signing key and about the credential key on a citizen's device
-4. [Keys: who creates, who signs](keys-who-creates-who-signs.md), every key
-   in the ecosystem, where it is born, who signs with it, how it is rotated,
-   and how each is replaced
+1. [Chain of trust](chain-of-trust.md)
+2. [Trusted list and short-lived attestations](trusted-list-and-short-lived-attestations.md)
+3. [Two assurance levels](two-assurance-levels.md)
+4. [Keys: who creates, who signs](keys-who-creates-who-signs.md)

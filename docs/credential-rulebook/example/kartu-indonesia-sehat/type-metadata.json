@@ -1,0 +1,189 @@
+{
+  "vct": "id.idctf.kartu-indonesia-sehat.1",
+  "name": "Kartu Indonesia Sehat",
+  "description": "Kartu peserta Jaminan Kesehatan Nasional yang diterbitkan oleh BPJS Kesehatan.",
+  "display": [
+    {
+      "locale": "id",
+      "name": "Kartu Indonesia Sehat",
+      "description": "Kartu peserta Jaminan Kesehatan Nasional",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/logo.png",
+            "uri#integrity": "sha256-WXEdF8HJ2dKZegpeiSSCiIj8yXJhI6vrtwJj+K/w9Ic=",
+            "alt_text": "Logo Kartu Indonesia Sehat"
+          },
+          "background_color": "#2E8A57",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/card-light.svg",
+            "uri#integrity": "sha256-oOtbD/86p8R/5Zug4C1+ozsOYZ1WO6GzA3oPr+5+KYE=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/card-dark.svg",
+            "uri#integrity": "sha256-EaPnZFbBRs0K/l2jebEK5J6l4xTRDJg+UUO+uFt1eJk=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "locale": "en",
+      "name": "Indonesia Health Card",
+      "description": "Membership card of the National Health Insurance",
+      "rendering": {
+        "simple": {
+          "logo": {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/logo.png",
+            "uri#integrity": "sha256-WXEdF8HJ2dKZegpeiSSCiIj8yXJhI6vrtwJj+K/w9Ic=",
+            "alt_text": "Kartu Indonesia Sehat logo"
+          },
+          "background_color": "#2E8A57",
+          "text_color": "#FFFFFF"
+        },
+        "svg_templates": [
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/card-light.svg",
+            "uri#integrity": "sha256-oOtbD/86p8R/5Zug4C1+ozsOYZ1WO6GzA3oPr+5+KYE=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "light",
+              "contrast": "normal"
+            }
+          },
+          {
+            "uri": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/card-dark.svg",
+            "uri#integrity": "sha256-EaPnZFbBRs0K/l2jebEK5J6l4xTRDJg+UUO+uFt1eJk=",
+            "properties": {
+              "orientation": "landscape",
+              "color_scheme": "dark",
+              "contrast": "normal"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "claims": [
+    {
+      "path": [
+        "nomor_kartu"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nomor Kartu"
+        },
+        {
+          "locale": "en",
+          "label": "Card Number"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "nomor_kartu"
+    },
+    {
+      "path": [
+        "nama"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Nama"
+        },
+        {
+          "locale": "en",
+          "label": "Name"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "nama"
+    },
+    {
+      "path": [
+        "alamat"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Alamat"
+        },
+        {
+          "locale": "en",
+          "label": "Address"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "alamat"
+    },
+    {
+      "path": [
+        "tanggal_lahir"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Tanggal Lahir"
+        },
+        {
+          "locale": "en",
+          "label": "Date of Birth"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "tanggal_lahir"
+    },
+    {
+      "path": [
+        "nik"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "NIK"
+        },
+        {
+          "locale": "en",
+          "label": "Population Identification Number"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "nik"
+    },
+    {
+      "path": [
+        "faskes"
+      ],
+      "display": [
+        {
+          "locale": "id",
+          "label": "Faskes"
+        },
+        {
+          "locale": "en",
+          "label": "Primary Health Facility"
+        }
+      ],
+      "mandatory": true,
+      "sd": "always",
+      "svg_id": "faskes"
+    }
+  ]
+}

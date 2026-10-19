@@ -1,0 +1,34 @@
+{
+  "id": "id.idctf.ktp.1",
+  "authority": "did:webvh:QmScid...:kemendagri.go.id",
+  "legal_basis": "Undang-Undang Nomor 24 Tahun 2013 tentang Perubahan atas Undang-Undang Nomor 23 Tahun 2006 tentang Administrasi Kependudukan",
+  "formats": {
+    "mdoc": { "docType": "id.idctf.ktp.1" }
+  },
+  "schema": "https://catalog.trust.go.id/type-metadata/ktp-v1/schema.json",
+  "display": "https://catalog.trust.go.id/type-metadata/ktp-v1/type-metadata.json",
+  "attributes": [
+    { "name": "nik", "minimization": "restricted" },
+    { "name": "nama", "minimization": "normal" },
+    { "name": "tempat_lahir", "minimization": "normal" },
+    { "name": "tanggal_lahir", "minimization": "normal" },
+    { "name": "usia_di_atas_17", "minimization": "open", "derived_from": "tanggal_lahir" },
+    { "name": "jenis_kelamin", "minimization": "normal" },
+    { "name": "golongan_darah", "minimization": "restricted" },
+    { "name": "alamat", "minimization": "normal" },
+    { "name": "rt_rw", "minimization": "normal" },
+    { "name": "kelurahan_desa", "minimization": "normal" },
+    { "name": "kecamatan", "minimization": "normal" },
+    { "name": "kabupaten_kota", "minimization": "normal" },
+    { "name": "provinsi", "minimization": "normal" },
+    { "name": "agama", "minimization": "restricted" },
+    { "name": "status_perkawinan", "minimization": "normal" },
+    { "name": "pekerjaan", "minimization": "normal" },
+    { "name": "kewarganegaraan", "minimization": "open" },
+    { "name": "tempat_dikeluarkan", "minimization": "open" },
+    { "name": "issuance_date", "minimization": "open" },
+    { "name": "foto", "minimization": "restricted" }
+  ],
+  "min_assurance": "high",
+  "issuer_assurance": "high"
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://catalog.trust.go.id/type-metadata/kartu-indonesia-sehat-v1/schema.json",
+  "title": "Kartu Indonesia Sehat",
+  "description": "The type claims of id.idctf.kartu-indonesia-sehat.1, in no format's encoding. Illustrative and not registered.",
+  "type": "object",
+  "properties": {
+    "nomor_kartu": {
+      "type": "string",
+      "pattern": "^[0-9]{13}$"
+    },
+    "nama": {
+      "type": "string",
+      "minLength": 1
+    },
+    "alamat": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tanggal_lahir": {
+      "type": "string",
+      "format": "date"
+    },
+    "nik": {
+      "type": "string",
+      "pattern": "^[0-9]{16}$"
+    },
+    "faskes": {
+      "type": "string",
+      "minLength": 1
+    }
+  },
+  "required": [
+    "nomor_kartu",
+    "nama",
+    "alamat",
+    "tanggal_lahir",
+    "nik",
+    "faskes"
+  ]
+}

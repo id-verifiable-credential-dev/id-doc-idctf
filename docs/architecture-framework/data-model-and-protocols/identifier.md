@@ -20,18 +20,18 @@ without ever exposing the key that installation holds.
 
 | Object | Identifier | Why this shape |
 |---|---|---|
-| Entity (issuer, Relying Party, Wallet Provider) | [did:webvh][identifiers-and-keys] | An append-only `did.jsonl` log with pre-rotation, so a resolver can walk a key through its full history |
-| Holder | One [did:key][identifiers-and-keys] per wallet installation, shared by every credential | The simplest binding to build and to recover from |
+| Entity (issuer, Relying Party, Wallet Provider) | [did:webvh][ref-did-webvh] | An append-only `did.jsonl` log with pre-rotation, so a resolver can walk a key through its full history |
+| Holder | One [did:key][ref-did-key] per wallet installation, shared by every credential | The simplest binding to build and to recover from |
 | Credential type | `id.idctf.<type>.<N>`, or `<reverse-domain>.<type>.<N>` for a private party | A name that stays fixed for one version, and changes only by becoming a new version |
 | Attribute in scope | `<type>#<attribute>`, for example `id.idctf.ktp.1#usia_di_atas_17` | Names one attribute wherever a rule needs to point at it without pointing at the whole credential |
 | Registered use of a Relying Party | `use_id`, set by Trust Authority when the use is approved, unique within one entity | Lets a request template and a verification record name the approved use they were run under |
-| Wallet installation or verifier device | JWK thumbprint of the device key ([RFC 7638][identifiers-and-keys]) | Identifies the device without transmitting the key it names |
+| Wallet installation or verifier device | JWK thumbprint of the device key ([RFC 7638][ref-rfc7638]) | Identifies the device without transmitting the key it names |
 
 </figure>
 
 ## Entities: did:webvh {#entities-didwebvh}
 
-Every issuer, Relying Party, and Wallet Provider identifies itself with did:webvh.
+Every issuer, Relying Party, and Wallet Provider identifies itself with did:webvh v1.0.
 Its address is not looked up in a directory: `did:webvh:<scid>:<domain>`
 resolves at the entity's own domain, backed by a signed, append-only log
 called `did.jsonl`. The self-certifying identifier inside the address is
@@ -56,7 +56,7 @@ be asked for, not by did:webvh itself.
 
 ## Holder: one did:key per wallet installation {#holder-one-didkey-per-wallet-installation}
 
-did:key needs nothing did:webvh needs. It is derived entirely from a public
+did:key v0.9 needs nothing did:webvh needs. It is derived entirely from a public
 key, so there is no log to sign, no domain to host it on, and no resolver
 call beyond decoding the identifier itself. The wallet generates one key pair
 in the secure element at the citizen's first login to the wallet, and the
@@ -74,8 +74,8 @@ without either one reading a single disclosed attribute.
   <figcaption><span class="ekdn-fignum"></span> One citizen, three credentials, one holder identifier.</figcaption>
 </figure>
 
-- **Every credential** carries the same did:key, so the wallet holds one holder
-  identifier however many credentials it holds.
+- **Every credential** is bound to the same credential key, so the wallet holds
+  one holder identifier however many credentials it holds.
 - **Each verifier** sees that identifier.
 - **Comparing notes** lets two verifiers match the holder, which is the exposure
   IDCTF accepts.
@@ -85,30 +85,30 @@ per wallet installation, used for holder binding and for presentation, kept
 separate from the device key that identifies the installation itself (covered in
 [devices][devices]). Each credential format asserts the same holder
 binding differently. [SD-JWT-based Verifiable Credentials (SD-JWT
-VC)][credential-formats-and-their-signatures] carries it in the
-`cnf` claim. [ISO
-mdoc][credential-formats-and-their-signatures] carries the
+VC)][ref-i-d-ietf-oauth-sd-jwt-vc] draft -13 carries the key as a JSON Web
+Key in the `cnf` claim, under `jwk`. [ISO
+mdoc][ref-iso-18013-5] (ISO/IEC 18013-5:2021) carries the
 same key as the `DeviceKey` field inside the Mobile Security Object (MSO), a
 name that belongs to the mdoc specification's own vocabulary rather than to the
 physical device. [W3C Verifiable Credentials Data Model (VCDM)
-2.0][credential-formats-and-their-signatures] (`ldp_vc`) has
-no claim to carry it in at all, so it proves possession with a [Data
-Integrity][credential-formats-and-their-signatures] proof at
+2.0][ref-vc-data-2-0] (`ldp_vc`) names the
+holder by the did:key itself, in `credentialSubject.id`, and proves possession
+with a [Data Integrity][ref-vc-data-integrity] 1.0 proof at
 the presentation level, signed over a `challenge` and a `domain` the verifier
 supplies.
 
 Because the credential key is shared across formats as well, a
 credential type that ships as both SD-JWT VC and ISO mdoc, per
 [one credential, two representations][one-credential-two-representations],
-binds both representations to the same did:key. The wallet does not mint a
+binds both representations to the same credential key. The wallet does not mint a
 second identifier just because a Credential Rulebook demands a second format.
 
 ## Credential types and attributes {#credential-types-and-attributes}
 
 A credential type is named `id.idctf.<type>.<N>`. The type is lowercase and
 the version is a bare integer, so the national ID digital credential is
-`id.idctf.ktp.1` and never `id.idctf.KTPDigital.v1`. One identifier serves all
-three places a type is named: the `vct` of an SD-JWT VC, the `docType` of an
+`id.idctf.ktp.1` and never `id.idctf.KTPDigital.v1`. For a type the ecosystem
+names, one identifier serves all three places a type is named: the `vct` of an SD-JWT VC, the `docType` of an
 mdoc, and the mdoc namespace its attributes sit in. The two representations of
 one credential therefore carry the same name, which is what keeps them
 identifiable as the same credential.
@@ -118,8 +118,18 @@ credential type name cannot come from whoever happens to write a Credential
 Rulebook. It says nothing about who issues: an Attribute Issuer may be a
 university, a hospital, or a bank, and which institution issued a given
 credential is carried in the issuer's DID, never in
-the type. A type another body already owns keeps that body's namespace, so a
-mobile driving license stays `org.iso.18013.5.1.mDL`.
+the type.
+
+A type another body already owns is the exception. The credential keeps that
+body's names, so software built to its standard reads it unchanged: a mobile
+driving license carries the `docType` `org.iso.18013.5.1.mDL` and the
+namespace `org.iso.18013.5.1`. Its Rulebook still takes an identifier with a
+version, `org.iso.18013.5.1.mDL.1`, and that is the name a permission, a
+registered use, and an accreditation scope point at, so a second version of
+the Rulebook can be told apart even though the `docType` stays the same. A
+wallet or a verifier reads a `docType` as the `id` of the Rulebook whose mdoc
+format names it, and the `ReaderAuthRole` extension, which follows the
+standard, keeps the `docType`.
 
 A private party names its type under a domain it declares it owns, written in
 reverse as `<reverse-domain>.<type>.<N>`, so a bank holding `example.co.id`
@@ -130,7 +140,13 @@ the name has to be unique across the ecosystem. Every private type has to be
 registered in the Credential Rulebook Catalog.
 
 This identifier anchors the Credential Rulebook that governs the type: it is
-the value of the Rulebook's own `id` field, for example `"id.idctf.ktp.1"`. A
+the value of the Rulebook's own `id` field, for example `"id.idctf.ktp.1"`.
+One type is named this way and has no Rulebook:
+`id.idctf.accreditation.1`, the Accreditation Credential an entity carries
+about itself, which no citizen holds and no verifier asks for. Its claims are
+fixed by
+[Issuing and carrying an Accreditation Credential](../../technical-specifications/issuing-and-carrying-an-accreditation-credential.md)
+instead. A
 version is frozen once its Rulebook is published, so `.1` never changes meaning
 underneath a party that already checked it. A schema change, a new attribute,
 or a different assurance requirement is published as `.2` instead. What else a
@@ -144,7 +160,8 @@ whole credential. This is what lets a rule point at a single
 attribute instead of at the credential that carries it. An Authority Statement
 can grant a role permission over one attribute, a Use Statement can narrow that
 down to the attribute a registered use is approved for, and the `ReaderAuthRole`
-extension can bind a Verifier Device Certificate to that same attribute. None of the
+extension can bind a Verifier Device Certificate to that same attribute, which
+it writes as the bare `docType` and element name the standard uses. None of the
 three has to enumerate the whole credential type.
 
 ## Registered use of a Relying Party {#registered-use-of-a-relying-party}

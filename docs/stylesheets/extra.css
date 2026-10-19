@@ -59,7 +59,7 @@
   --md-mermaid-label-bg-color: var(--ekdn-surface);
   --md-mermaid-label-fg-color: var(--ekdn-ink);
 
-  /* Sequence diagrams: the step flows in flows-per-use-case (tracks/0092).
+  /* Sequence diagrams: the step flows in flows-per-use-case.
      Mermaid's own defaults put a pale digit on a pale circle for `autonumber`
      and a light gray on white for the message text, both of which are
      unreadable at the size the figure renders at. These are set once and not
@@ -596,20 +596,20 @@
 .md-header__button.md-logo svg,
 .md-nav__title .md-nav__button.md-logo img,
 .md-nav__title .md-nav__button.md-logo svg {
-  height: 2.2rem;
-  width: 2.2rem;
+  height: 2.4rem;
+  width: 2.4rem;
 }
 
 /* Berkas lambang sudah dipangkas sampai tepi gambarnya, jadi bantalan tombol
    bawaan — 0,4rem di keempat sisi, warisan dari tombol ikon di sebelahnya —
    tinggal menyisakan ruang kosong.
 
-   Baris header tingginya 2,4rem dan itu batas kerasnya: lambang 2,2rem hanya
-   muat kalau bantalannya nol dan margin tegaknya 0,1rem. Margin datarnya
+   Baris header tingginya 2,4rem dan itu batas kerasnya: lambang 2,4rem
+   mengisi baris penuh, jadi bantalan dan margin tegaknya nol. Margin datarnya
    dipertahankan 0,2rem supaya jarak ke nama situs tidak ikut menyempit. */
 .md-header__button.md-logo {
   padding: 0;
-  margin-block: 0.1rem;
+  margin-block: 0;
   margin-inline: 0.2rem;
 }
 
@@ -777,6 +777,26 @@ html {
   height: auto;
 }
 
+/* Two figures side by side, for a pair the reader compares, such as the light
+   and dark variant of one card. Each keeps its own caption and number. The
+   pair stacks again on a phone, where half the column is too narrow to read. */
+.md-typeset .ekdn-fig-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1em 0;
+}
+
+.md-typeset .ekdn-fig-pair figure {
+  margin: 0;
+}
+
+@media screen and (max-width: 30em) {
+  .md-typeset .ekdn-fig-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
 .md-typeset figure figcaption {
   max-width: none;
   margin: 0.9em 0 0;
@@ -858,6 +878,36 @@ html {
   font-size: 0.64rem;
   letter-spacing: 0.04em;
   margin: 0 0 -0.4em;
+}
+
+/* Daftar persyaratan normatif (REQ-CR-001 dan seterusnya). Tiap butir satu
+   persyaratan, tanpa bulatan daftar, dengan garis kiri tipis. Pengenalnya
+   ditulis di baris sendiri dengan huruf mono, seperti `.ekdn-docid`, karena
+   itulah kode yang dirujuk laporan asesmen dan dokumen lain. */
+.md-typeset .ekdn-reqs > ul {
+  list-style: none;
+  margin: 1em 0 1.6em;
+  padding: 0;
+}
+
+.md-typeset .ekdn-reqs > ul > li {
+  margin: 0 0 0.6em;
+  padding: 0.15em 0 0.15em 0.9em;
+  border-left: 2px solid var(--ekdn-tint-line);
+}
+
+.md-typeset .ekdn-reqs > ul > li > strong:first-of-type,
+.md-typeset .ekdn-reqs > ul > li > p:first-child > strong:first-of-type {
+  display: block;
+  color: var(--ekdn-muted);
+  font-family: var(--md-code-font-family, "IBM Plex Mono", monospace);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.md-typeset .ekdn-reqs > ul > li > ul {
+  margin-top: 0.3em;
 }
 
 /* Penanda bagian yang kerangkanya sudah ada tapi naskahnya belum ditulis.
@@ -1895,5 +1945,152 @@ html.ekdn-ask-open body {
   .ekdn-ask,
   .ekdn-ask-backdrop {
     display: none;
+  }
+}
+
+/* Blok kode sebagai kartu. javascripts/code-collapse.js memasang kepala
+   (judul di kiri, format dari data-format di kanan) dan, bila lebih dari
+   sepuluh baris, kaki berisi sakelar yang membuka seluruh baris. Tanpa
+   JavaScript blok tampil utuh, dengan judul bawaan Material. */
+.md-typeset .ekdn-code {
+  margin: 1em 0;
+  overflow: hidden;
+  background: var(--md-code-bg-color);
+  border: 1px solid var(--ekdn-tint-line);
+  border-radius: 14px;
+}
+
+.md-typeset .ekdn-code pre {
+  margin: 0;
+}
+
+.md-typeset .ekdn-code pre > code {
+  border-radius: 0;
+  background: transparent;
+}
+
+.md-typeset .ekdn-code__head,
+.md-typeset .ekdn-code__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.md-typeset .ekdn-code__head {
+  border-bottom: 1px solid var(--ekdn-tint-line);
+}
+
+.md-typeset .ekdn-code__title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+  color: var(--ekdn-ink);
+}
+
+.md-typeset .ekdn-code__format {
+  flex: none;
+  padding: 0.05rem 0.45rem;
+  font-family: var(--md-code-font-family, "IBM Plex Mono", monospace);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--md-primary-fg-color);
+  border: 1px solid var(--ekdn-tint-line);
+  border-radius: 999px;
+}
+
+/* Baris ke-11 dan seterusnya disembunyikan per baris (line_spans), jadi
+   yang tampil tepat sepuluh baris walau baris panjang membungkus, dan
+   tombol salin tetap menyalin seluruh isi. */
+.md-typeset .ekdn-code--collapsed pre {
+  position: relative;
+}
+
+.md-typeset .ekdn-code--collapsed pre > code > span:nth-child(n + 11) {
+  display: none;
+}
+
+.md-typeset .ekdn-code--collapsed pre::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2.4em;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, var(--md-code-bg-color));
+}
+
+.md-typeset .ekdn-code__foot {
+  border-top: 1px solid var(--ekdn-tint-line);
+}
+
+.md-typeset .ekdn-code__count {
+  font-family: var(--md-code-font-family, "IBM Plex Mono", monospace);
+  font-size: 0.62rem;
+  color: var(--ekdn-muted);
+}
+
+.md-typeset .ekdn-code__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.15rem 0.2rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--ekdn-body);
+  background: transparent;
+  border: 0;
+  border-radius: 0.3rem;
+  cursor: pointer;
+}
+
+.md-typeset .ekdn-code__switch:focus-visible {
+  outline: 2px solid var(--md-primary-fg-color);
+  outline-offset: 2px;
+}
+
+.md-typeset .ekdn-code__track {
+  position: relative;
+  flex: none;
+  width: 1.6rem;
+  height: 0.9rem;
+  background: var(--ekdn-label);
+  border-radius: 999px;
+  transition: background-color 150ms;
+}
+
+.md-typeset .ekdn-code__thumb {
+  position: absolute;
+  top: 0.1rem;
+  left: 0.1rem;
+  width: 0.7rem;
+  height: 0.7rem;
+  background: var(--ekdn-surface);
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(11, 26, 38, 0.25);
+  transition: transform 150ms;
+}
+
+.md-typeset .ekdn-code__switch[aria-checked="true"] .ekdn-code__track {
+  background: var(--md-primary-fg-color);
+}
+
+.md-typeset .ekdn-code__switch[aria-checked="true"] .ekdn-code__thumb {
+  transform: translateX(0.7rem);
+}
+
+.md-typeset .ekdn-code__switch:hover .ekdn-code__track {
+  box-shadow: 0 0 0 3px var(--ekdn-tint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .md-typeset .ekdn-code__track,
+  .md-typeset .ekdn-code__thumb {
+    transition: none;
   }
 }

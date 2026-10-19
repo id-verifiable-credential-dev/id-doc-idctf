@@ -1,9 +1,9 @@
 ---
 title: "Technology stack"
-description: The language, database, cache, key store, and policy engine behind each building block of a Module, which of those choices something else depends on, how each Module is packaged and shipped, and the three risks the stack carries.
+description: The language, database, cache, key store, and policy engine behind each building block of a Module, which of those choices something else depends on, how each Module is packaged and shipped, and the four risks the stack carries.
 ---
 
-<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §6 (Kep. 15, 16, 17), §6.2; Rincian Perangkat Lunak dan Deployment §3, §4, §5. Trust Authority satu image atas keputusan user (13 Oktober 2026), bukan dua seperti Rincian §3 -->
+<!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §6 (Kep. 15, 16, 17), §6.2; Rincian Perangkat Lunak dan Deployment §3, §4, §5. Trust Authority satu image atas keputusan user (13 Oktober 2026), bukan dua seperti Rincian §3; tracks/0211, tracks/0407 -->
 
 # Technology stack {#technology-stack}
 
@@ -25,18 +25,18 @@ one page rather than ten entries.
 
 | Building block | Where it applies | Technology | Why this one |
 |---|---|---|---|
-| REST API | Issuer Core, Verifier Core, Trust Registry, DID Service, Wallet Backend Service, Trust Authority's API | Go | A static binary in a small image, a mature `crypto/x509`, and [PKCS#11][key-storage-interfaces] bindings that already exist |
-| Web application | Issuer Console, Verifier Console, Trust Authority's portal | React | Widely known, so a team is easy to staff, and each console calls its Admin Controller and nothing else |
+| REST API | Issuer Core, Verifier Core, Trust Registry, DID Service, Wallet Backend Service, Trust Authority's API | Go | A static binary in a small image, a mature `crypto/x509`, and [PKCS#11][ref-pkcs11] bindings that already exist |
+| Web application | Issuer Console, Verifier Console, Trust Authority's portal | React | Widely known, so a team is easy to staff, and each console calls its Admin Controller, and the portal its Registrar Controller, and nothing else |
 | Mobile application | Mobile Wallet, Mobile Verifier | Flutter, on Android and iOS | One codebase for two platforms. The secure element and the BLE session still need Kotlin and Swift plugins underneath |
 | Library | [Trust SDK][sa-trust-sdk] | Go and Dart, two implementations | A server runtime and a mobile runtime share nothing, so the library is written twice and held together by shared test vectors |
 | Extension point | Claims Provider | Follows Issuer Core, or anything the institution runs when it is deployed on its own | It reaches into a source system nobody in the ecosystem governs |
 | Database | Every server Module | PostgreSQL | `jsonb` and `bytea` carry the record shapes these Modules store, and the engine is mature |
 | Cache and session | Issuer Core, Verifier Core, Trust SDK on the server | Redis | A nonce issued by one instance has to be readable by the next, which is what lets these Modules scale sideways |
-| Entity keys | Key Manager in Issuer Core, Verifier Core, and Wallet Backend Service; Trust Authority | An encrypted software keystore by default, a cloud KMS, or an HSM over [PKCS#11][key-storage-interfaces]; P-256 and Ed25519. Trust Authority runs on an HSM and has no software option | The driver holding the transaction keys is recorded as `keyStorage`, and that value sets the entity's `issuer_assurance`; the Ed25519 update key may stay in the software keystore whatever the other keys use |
+| Entity keys | Key Manager in Issuer Core, Verifier Core, and Wallet Backend Service; Trust Authority | An encrypted software keystore by default, a cloud KMS, or an HSM over [PKCS#11][ref-pkcs11]; P-256 and Ed25519. Trust Authority runs on an HSM and has no software option | The driver holding the transaction keys is recorded as `keyStorage`, and that value sets the entity's `issuer_assurance`; the Ed25519 update key may stay in the software keystore whatever the other keys use |
 | Device keys | Mobile Wallet, Mobile Verifier | Android Keystore and StrongBox, iOS Secure Enclave | The key cannot be extracted, and the platform attests to where it lives |
 | Storage on the device | Mobile Wallet | SQLCipher, keyed from the platform keystore | The credential store is encrypted at rest |
 | Static artifacts | Trust Registry | Object storage behind a CDN | The trusted list, the Credential Rulebook, VICAL, and the Use Statement status list are files on the central CDN; a DID Document sits on the entity's own domain |
-| Policy | Trust Evaluator | [OPA with Rego][schema-display-and-policy] | The entity chain, the transaction chain, and accreditation scope are written as rules rather than as branches in Go |
+| Policy | Trust Evaluator | [OPA with Rego][ref-rego] | The entity chain, the transaction chain, and accreditation scope are written as rules rather than as branches in Go |
 
 </figure>
 
@@ -93,7 +93,9 @@ together would pull the Console into the public zone, which the
 Two rows need a word. Running in an image of its own does not make Claims
 Provider a Module: it still belongs to Issuer Core, as
 [Module Map](../high-level-architecture/module-map.md) says. Trust Authority is
-one image holding both its API and its portal. Both sit in the internal zone,
+one image holding both its API and its portal. The entity endpoint and the
+portal answer in the public zone and the back office in the internal one,
+which is [one application, two doors][one-application-two-doors] as for Issuer Core,
 so placement gives no reason to split them, and one image per Module holds
 without exception. The Go binary embeds the portal's React build and serves
 it, so the image needs no web server and takes the same distroless base as
@@ -155,7 +157,7 @@ Four rules complete the [network zones][network-zones-and-placement].
 | Concern | Rule |
 |---|---|
 | Configuration | Environment variables, following the twelve-factor method, plus one mounted file for configuration with nested structure, such as a Cryptographic Provider profile |
-| Secrets | From a secret manager. Never baked into an image, and never in an environment variable that ends up in a log |
+| Secrets | From a secret manager, or from a file mounted at run time, such as a Docker Compose secret on deployment profile A. Never baked into an image, and never in an environment variable |
 | Database migration | A separate job holding a lock, never run when the application starts, so that adding instances cannot start two migrations at once |
 | Image version | Semantic versioning, per Module |
 | Release train | One manifest of the Module versions tested together. It is needed because Trust SDK compatibility cuts across every Module |
@@ -164,7 +166,7 @@ Four rules complete the [network zones][network-zones-and-placement].
 
 ## Technology risks and mitigation {#technology-risks-and-mitigation}
 
-Three risks come with the stack itself. Each has a mitigation that starts
+Four risks come with the stack itself. Each has a mitigation that starts
 before the choice it threatens is locked.
 
 <figure markdown="1" class="ekdn-table">
@@ -173,6 +175,7 @@ before the choice it threatens is locked.
 |---|---|
 | Go libraries for OpenID4VCI, OpenID4VP, SD-JWT VC, and mdoc are immature; the mature ones are written in Kotlin, Java, or Python | Credential Builder and Credential Verifier are split out as Go libraries of their own, and conformance tests run from the start |
 | The secure element, Key Attestation, and BLE reach Flutter only through platform-specific plugins | A proof of concept of all three, on both platforms, before the decision is locked |
-| Few did:webvh libraries in Go and Dart support `eddsa-jcs-2022` | Evaluate the implementations registered with the Decentralized Identity Foundation (DIF), wrap the library inside Key Manager and the Trust SDK, and hold the two implementations together with shared test vectors |
+| Few did:webvh libraries in Go and Dart support [`eddsa-jcs-2022`][ref-vc-di-eddsa] | Evaluate the implementations registered with the Decentralized Identity Foundation (DIF), wrap the library inside Key Manager and the Trust SDK, and hold the two implementations together with shared test vectors |
+| No JSON-LD 1.1 processor or RDFC-1.0 canonicalizer in Go or Dart appears in the W3C implementation reports, and none carries the complexity limit RDFC-1.0 requires against poison graphs | Run the W3C RDF canonicalization and Data Integrity ECDSA test suites against the chosen libraries in the pipeline, add the complexity limit where a library lacks one, and hold the two implementations together with shared test vectors |
 
 </figure>

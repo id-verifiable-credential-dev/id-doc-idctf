@@ -27,7 +27,7 @@ inside one another.
   at which responsibility is assigned. A role runs a Service. It is not
   something anyone deploys: naming a Service says who answers for a part of the
   ecosystem, not what is installed on a machine. The same word also closes the
-  names of two Modules, DID Service and Wallet Backend Service, and of some
+  names of two Modules, Decentralized Identifier (DID) Service and Wallet Backend Service, and of some
   Components, such as Log Service; the capital letter and the word before it
   tell a Module or Component name apart from the tier.
 - **Module** is the tier at which software is deployed and operated. One
@@ -176,7 +176,7 @@ path does.
 
 Two things off that path do wait, and saying so is part of the claim rather
 than a qualification of it. An entity cannot onboard and cannot rotate a key
-while Decentralized Identifier (DID) Service is unreachable, because an entry nobody witnessed is an entry
+while DID Service is unreachable, because an entry nobody witnessed is an entry
 every resolver rejects. Containment is the part that does not wait: the
 Root Authority revokes the key through Trust Authority, Trust Registry publishes an emergency trusted
 list naming it, and issuance with that key stops, so a compromised key is cut off

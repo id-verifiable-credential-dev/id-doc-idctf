@@ -20,8 +20,8 @@ A digital credential issued by one institution, accepted by another. Five
 documents say what gets built, how it is specified, who may join, what each
 credential type requires, and which decisions are already closed.
 
-[Read the Architecture Framework](architecture-framework/index.md){ .md-button .md-button--primary }
-[See what is written][progress]{ .md-button }
+[Architecture Framework](architecture-framework/index.md){ .md-button .md-button--primary }
+[See what is written][what-the-five-documents-hold]{ .md-button }
 
 <div class="ekdn-verstrip" markdown="span">
 <span class="dot"></span> Version **0.0.1** &nbsp;·&nbsp; Status: early draft, structure and terminology may still change
@@ -71,16 +71,6 @@ credential issued by one institution be trusted by another.
 The word *ecosystem* is used throughout these documents as an ordinary noun,
 as in the IDCTF ecosystem or an ecosystem participant. It is not a name.
 
-Three names are fixed and used consistently across all five documents.
-
-- The wallet on the citizen's phone is a Module called **Mobile Wallet**.
-  Every accredited Wallet Provider publishes one of its own, and a citizen
-  chooses among them.
-- Credential types are named in the `id.idctf.<type>.<N>` namespace, or,
-  for a private party, under a domain it owns as `<reverse-domain>.<type>.<N>`.
-- The technical profile that applies across credential types is called the
-  **Governance Profile**.
-
 ## What the five documents hold {#what-the-five-documents-hold}
 
 IDCTF is five documents. They are split by the kind of question each answers
@@ -88,50 +78,28 @@ and by who is allowed to change it.
 
 <figure markdown="1" class="ekdn-table">
 
-| Code | Document | Answers | Who changes it |
-| --- | --- | --- | --- |
-| `IDCTF-AF` | [Architecture Framework](architecture-framework/index.md) | What and why: roles, Services, Modules, tenancy, trust model, flows | Architects, rarely |
-| `IDCTF-TS-nn` | [Technical Specifications](technical-specifications/index.md) | How exactly, in a form that can be tested | The technical team, per version |
-| `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | Who decides, what participants owe, what the sanctions are | The Root Authority, through a formal process |
-| `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | The rules for each credential type | The Credential Rulebook Provider for that type |
-| `IDCTF-DL` | [Decision Log](decision-log/index.md) | Numbered decisions and their status | The architecture committee |
+| Code | Document | Answers | Who changes it | Progress |
+| --- | --- | --- | --- | --- |
+| `IDCTF-AF` | [Architecture Framework](architecture-framework/index.md) | What and why: roles, Services, Modules, tenancy, trust model, flows | Architects, rarely | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-TS-g-nn` | [Technical Specifications](technical-specifications/index.md) | How exactly, in a form that can be tested | The technical team, per version | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | Who decides, what participants owe, what the sanctions are | The Root Authority, through a formal process | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | The rules for each credential type | The Credential Rulebook Provider for that type | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-DL` | [Decision Log](decision-log/index.md) | Numbered decisions and their status | The architecture committee | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 
 </figure>
 
 A version is written with its document code, so `IDCTF-AF-1.0` is a version of
-the Architecture Framework and `IDCTF-TS-06-1.2` is a version of one technical
+the Architecture Framework and `IDCTF-TS-5-01-1.0` is a version of one technical
 specification.
 
-## Progress {#progress}
-
-The Architecture Framework is done. Every chapter of it carries prose: Roles,
-High-Level Architecture, Software Architecture, Data Model and Protocols, the
-Trust Model, the Glossary, and References. Nothing it owes is still open; what
-its pages leave to a later document is owed by the other four, which are not
-started. 30 of 34 pages carry prose. A page whose prose is unwritten carries a `(soon)` marker and holds
-section headings only.
-
-<figure markdown="1" class="ekdn-table">
-
-| Document | Chapter | Status |
-| --- | --- | --- |
-| `IDCTF-AF` | [Roles](architecture-framework/roles/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [High-Level Architecture](architecture-framework/high-level-architecture/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [Software Architecture](architecture-framework/software-architecture/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [Data Model and Protocols](architecture-framework/data-model-and-protocols/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [Trust Model](architecture-framework/trust-model/index.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [Glossary](architecture-framework/glossary.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-AF` | [References](architecture-framework/references.md) | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-TS-nn` | [Technical Specifications](technical-specifications/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-| `IDCTF-DL` | [Decision Log](decision-log/index.md) | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
-
-</figure>
+The Architecture Framework, the Technical Specifications, the Governance
+Framework and the Credential Rulebook Catalog are done: every page of each
+carries prose. The Decision Log is not started. 70 of 71 pages carry prose. A page whose prose is unwritten carries a
+`(soon)` marker and holds section headings only.
 
 <p class="ekdn-legend">
 <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> every page has prose and nothing owed is open &nbsp;·&nbsp;
-<span class="ekdn-status ekdn-status--drafting"><span class="dot"></span>Drafting</span> some pages still <code>(soon)</code> &nbsp;·&nbsp;
+<span class="ekdn-status ekdn-status--drafting"><span class="dot"></span>Drafting</span> pages still being written, or still <code>(soon)</code> &nbsp;·&nbsp;
 <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> every page <code>(soon)</code>
 </p>
 

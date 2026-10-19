@@ -10,7 +10,7 @@ IDCTF is five documents:
 | Code          | Document                    | What it holds                                                                  |
 | ------------- | --------------------------- | ------------------------------------------------------------------------------ |
 | `IDCTF-AF`    | Architecture Framework      | Roles, modules, data model, trust model, use-case flows, software architecture |
-| `IDCTF-TS-nn` | Technical Specifications    | Normative rules binding implementations                                        |
+| `IDCTF-TS-g-nn` | Technical Specifications  | Normative rules binding implementations                                        |
 | `IDCTF-GF`    | Governance Framework        | Who may join, obligations, assessment, incidents, sanctions                    |
 | `IDCTF-CR`    | Credential Rulebook Catalog | Rules per credential type                                                      |
 | `IDCTF-DL`    | Decision Log                | Numbered decisions and their status                                            |
@@ -20,11 +20,10 @@ IDCTF is five documents:
 
 ## Status
 
-The Architecture Framework is done. Every chapter of it carries prose: Roles,
-High-Level Architecture, Software Architecture, Data Model and Protocols, the
-Trust Model, the Glossary, and References. Nothing it owes is still open; what
-its pages leave to a later document is owed by the other four, which are not
-started. 30 of 34 pages carry prose.
+The Architecture Framework, the Technical Specifications, the Governance
+Framework and the Credential Rulebook Catalog are done: every page of each
+carries prose. The Decision Log is parked on one `(soon)` page. References is
+its own tab, shared by the five documents. 70 of 71 pages carry prose.
 
 
 | Document      | Chapter                           | Status                      |
@@ -35,11 +34,11 @@ started. 30 of 34 pages carry prose.
 | `IDCTF-AF`    | Data Model and Protocols          | ![Done][done]               |
 | `IDCTF-AF`    | Trust Model                       | ![Done][done]               |
 | `IDCTF-AF`    | Glossary                          | ![Done][done]               |
-| `IDCTF-AF`    | References                        | ![Done][done]               |
-| `IDCTF-TS-nn` | —                                 | ![Not started][not-started] |
-| `IDCTF-GF`    | —                                 | ![Not started][not-started] |
-| `IDCTF-CR`    | —                                 | ![Not started][not-started] |
+| `IDCTF-TS-g-nn` | `docs/technical-specifications/` | ![Done][done]              |
+| `IDCTF-GF`    | `docs/governance-framework/`      | ![Done][done]               |
+| `IDCTF-CR`    | `docs/credential-rulebook/`       | ![Done][done]               |
 | `IDCTF-DL`    | —                                 | ![Not started][not-started] |
+| —             | References                        | ![Done][done]               |
 
 
 ![Done][done] every page has prose and nothing owed is open ·
