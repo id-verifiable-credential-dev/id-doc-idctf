@@ -1045,7 +1045,7 @@ def check_presentations(issued: dict) -> None:
         json.loads(block(TS_5_11, "The vp_token of an SD-JWT VC")) == {"kartu-asn": [text]}
         and json.loads(block(TS_5_11, "Key Binding JWT header")) == kb_header
         and json.loads(block(TS_5_11, "Key Binding JWT claims")) == kb_claims
-        and sorted(d for d, _ in disclosure_pairs(block(TS_5_11, "The disclosures that travelled")))
+        and sorted(d for d, _ in disclosure_pairs(block(TS_5_11, "The disclosures that traveled")))
         == sorted(travelling),
         "SD-JWT VC presentation: vp_token, header, claims and disclosure blocks agree",
     )

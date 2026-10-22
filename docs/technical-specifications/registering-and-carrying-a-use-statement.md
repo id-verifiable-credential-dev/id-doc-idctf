@@ -10,10 +10,10 @@ description: The Use Statement Trust Authority issues for one registered use, wh
 # Registering and carrying a Use Statement {#ts-5-06-registering-and-carrying-a-use-statement}
 
 <p class="ekdn-lead" markdown="span">
-A Use Statement is one registered use of one Relying Party, signed by Trust
-Authority. Nobody fetches it: the verifier carries it inside its own request,
-and the wallet reads the approved purpose from it before it asks the citizen
-for anything.
+A Use Statement is one registered use of one Relying Party, signed by
+Trust Authority. Nobody fetches it: the verifier carries it inside its own
+request, and the wallet reads the approved purpose from it before it asks the
+citizen for anything.
 </p>
 
 Every sentence on this page binds Trust Authority, the Modules that carry a
@@ -24,41 +24,58 @@ The key words and the identifier `REQ-TS-5-06-nnn` follow
 
 ## Who runs this and what it needs {#ts-5-06-who-runs-this-and-what-it-needs}
 
-This specification fixes the Use Statement: the claims it carries, the
-attributes a use may reach, the signature Trust Authority puts on it, how
-long it lives and how it is revoked, how a verifier carries it in an online
-request and in a proximity request, and what Mobile Wallet checks before it
-acts on one.
+This specification fixes the Use Statement:
 
-Its conformance targets are Trust Authority, which records each use and
-signs the statement; Trust Registry, which publishes the status that revokes
-one; Verifier Core, which carries a statement in the requests it builds and
-hands the category statements to a device it onboards; Verifier Console,
-which validates each request template against the use it names; Mobile
-Verifier, which carries a statement in proximity; and Mobile Wallet, which
-reads one. The requirements that name an RP Intermediary bind it as it
-registers one use per business category, and no conformance target is tested
-against them, because an RP Intermediary is a participant and not a Module.
-A reader meets its requirements through Trust SDK where the library performs
-the check.
+- The claims it carries.
+- The attributes a use may reach.
+- The signature Trust Authority puts on it.
+- How long it lives and how it is revoked.
+- How a verifier carries it in an online request and in a proximity request.
+- What Mobile Wallet checks before it acts on one.
 
-It leaves to other documents: who may register a use and on what grounds,
-[the approval tiers][gf-approval-tiers] behind one, and [the sanctions behind a withdrawal][gf-ladder-of-sanctions], which
-the Governance Framework holds; the validity period of a statement, the
-signature algorithms allowed, the tolerance limit, and the cut-off after
-which a request carrying no statement is refused, which the Governance
-Profile holds; the submission and collection interface an entity uses, which
-[Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) holds; the
-format, the signature and the publication of the status list a statement
-points into, which [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
-holds; the permission that is the ceiling over a use, which
-[Answering with an Authority Statement](answering-with-an-authority-statement.md)
-holds; the keys of Trust Authority and the log they live in, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; the Verifier Device Certificate and its `ReaderAuthRole`, which
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-holds; and the rest of the request the statement travels in, which the
-presentation specifications hold.
+Its conformance targets are:
+
+- Trust Authority, which records each use and signs the statement.
+- Trust Registry, which publishes the status that revokes one.
+- Verifier Core, which carries a statement in the requests it builds and
+  hands the category statements to a device it onboards.
+- Verifier Console, which validates each request template against the use it
+  names.
+- Mobile Verifier, which carries a statement in proximity.
+- Mobile Wallet, which reads one.
+
+The requirements that name an RP Intermediary bind it as it registers one use
+per business category, and no conformance target is tested against them,
+because an RP Intermediary is a participant and not a Module. A reader meets
+its requirements through Trust SDK where the library performs the check.
+
+It leaves to other documents:
+
+- Who may register a use and on what grounds,
+  [the approval tiers][gf-approval-tiers] behind one, and
+  [the sanctions behind a withdrawal][gf-ladder-of-sanctions], which the
+  Governance Framework holds.
+- The validity period of a statement, the signature algorithms allowed, the
+  tolerance limit, and the cut-off after which a request carrying no
+  statement is refused, which the Governance Profile holds.
+- The submission and collection interface an entity uses, which
+  [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+  holds.
+- The format, the signature, and the publication of the status list a
+  statement points into, which
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  holds.
+- The permission that is the ceiling over a use, which
+  [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  holds.
+- The keys of Trust Authority and the log they live in, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- The Verifier Device Certificate and its `ReaderAuthRole`, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The rest of the request the statement travels in, which the presentation
+  specifications hold.
 
 Before the first exchange, each target holds what the rules below assume:
 
@@ -77,7 +94,7 @@ Before the first exchange, each target holds what the rules below assume:
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-06-001 }**REQ-TS-5-06-001** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the Use Statement, with its protected header, its claims and its signature.
+- [](){ #req-ts-5-06-001 }**REQ-TS-5-06-001** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the Use Statement, with its protected header, its claims, and its signature.
 - [](){ #req-ts-5-06-002 }**REQ-TS-5-06-002** Trust Registry MUST meet every requirement on this page that names Trust Registry, and every requirement on what Trust Registry writes: the Use Statement status list.
 - [](){ #req-ts-5-06-003 }**REQ-TS-5-06-003** Verifier Core MUST meet every requirement on this page that names Verifier Core, and every requirement on what Verifier Core writes: the `verifier_info` entry that carries a Use Statement, with its `format` and `data` members.
 - [](){ #req-ts-5-06-004 }**REQ-TS-5-06-004** Mobile Verifier MUST meet every requirement on this page that names Mobile Verifier, and every requirement on what Mobile Verifier writes: the `requestInfo` entry that carries a Use Statement in each `ItemsRequest` of its `DeviceRequest`.
@@ -89,21 +106,13 @@ Before the first exchange, each target holds what the rules below assume:
 
 ## What a registered use is {#ts-5-06-what-a-registered-use-is}
 
-An Authority Statement says what attributes an entity may ask for. It says
-nothing about what the entity may ask for them for, so a Relying Party
-holding a wide permission could put any purpose it liked on the consent
-screen. A Use Statement closes that gap: one use, one purpose, one legal
-basis, and the attributes that use may reach, as
-[Registered use][registered-use] sets out. An entity holds one ceiling and
-as many registered uses as it runs, and every use is a subset of the
-ceiling.
+A Use Statement names one use: one purpose, one legal basis, and the
+attributes that use may reach, as [Registered use][registered-use] sets out.
 
 The statement travels with the verifier rather than with the citizen or the
 registry. Trust Authority signs it once, the verifier collects it and
 attaches it to each request it sends, and Mobile Wallet checks it from its
-own cache. Nothing about the transaction reaches Trust Authority, which is
-the reason for carrying it rather than resolving it, as
-[Use Statement][use-statement] explains.
+own cache, as [Use Statement][use-statement] explains.
 
 A merchant registers no use of its own. It works under a business category
 its RP Intermediary registered, handed to the device at provisioning, which
@@ -111,33 +120,42 @@ is the same shape as every other authority a merchant borrows.
 
 ## Use Statements as issued {#ts-5-06-use-statements-as-issued}
 
-Five statements of one entity: a business category a merchant device reads
-under, bounded to one attribute of the KTP Digital and one of a mobile
-driving license, because the same age check serves a resident and a visitor;
-a use the entity runs itself, bounded to two
-attributes of the KTP Digital; a second use it runs itself, bounded to three
-attributes of the Kartu ASN, which the online request in
-[Carrying it online][ts-5-06-carrying-it-online] carries; a third,
-bounded to every attribute of the Kartu Nikah, which the second request there
-carries; and a second business category, bounded to two attributes of the
-Kartu ASN, which a merchant's online request in
-[the Kartu ASN, from a merchant][ts-3-01-the-kartu-asn-from-a-merchant]
-carries. A use of a type issued only in
+The five statements, all of one entity, are:
+
+- A business category a merchant device reads under, bounded to one
+  attribute of the KTP Digital and one of a mobile driving license, because
+  the same age check serves a resident and a visitor.
+- A use the entity runs itself, bounded to two attributes of the KTP Digital.
+- A second use it runs itself, bounded to three attributes of the Kartu ASN,
+  which the online request in
+  [Carrying it online][ts-5-06-carrying-it-online] carries.
+- A third use, bounded to every attribute of the Kartu Nikah, which the
+  second request there carries.
+- A second business category, bounded to two attributes of the Kartu ASN,
+  which a merchant's online request in
+  [the Kartu ASN, from a merchant][ts-3-01-the-kartu-asn-from-a-merchant]
+  carries.
+
+A use of a type issued only in
 `ldp_vc` names every attribute, because an `ldp_vc` presentation discloses the
 whole credential and cannot withhold one. A use may reach more than one
 credential type, as the business category does, and `claims` names each
 attribute under the type it belongs to.
 
-The statements are an illustration: the entity, its domain, the uses and the
+The statements are an illustration: the entity, its domain, the uses, and the
 keys are invented, and no registration has been approved. Every field is
 exact. All five were signed with the Use Statement key of the Trust Authority
 DID in `iss`, and every signature verifies, so an implementation can parse
-them and find what the clauses below require. The entity is the Relying
-Party [the trusted list][ts-5-01-trusted-list-payload]
-carries, with the same DID, and the attributes the category reaches are the
-ones the Verifier Device Certificate of
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-bounds its device to.
+them and find what the clauses below require.
+
+The statements agree with the other examples on two points:
+
+- The entity is the Relying Party [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same DID.
+- The attributes the category reaches are the ones the
+  Verifier Device Certificate of
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  bounds its device to.
 
 ``` { .json title="The Use Statement of a business category, decoded" data-format="JSON" }
 {
@@ -268,9 +286,7 @@ eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6
     "id.idctf.kartu-nikah.1#nomor_akta_nikah",
     "id.idctf.kartu-nikah.1#kua",
     "id.idctf.kartu-nikah.1#kabupaten_kota",
-    "id.idctf.kartu-nikah.1#provinsi",
-    "id.idctf.kartu-nikah.1#foto_suami",
-    "id.idctf.kartu-nikah.1#foto_istri"
+    "id.idctf.kartu-nikah.1#provinsi"
   ],
   "status": {
     "status_list": {
@@ -284,7 +300,7 @@ eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6
 ```
 
 ``` { .text title="The same statement, as the verifier carries it" data-format="JWT" }
-eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI3VzZS1zdGF0ZW1lbnQtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsInN1YiI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsInVzZV9pZCI6InBlbmNhdGF0YW4tYWhsaS13YXJpcyIsInB1cnBvc2UiOnsiaWQiOiJWZXJpZmlrYXNpIHN0YXR1cyBwZXJrYXdpbmFuIHVudHVrIHBlbmNhdGF0YW4gYWhsaSB3YXJpcyIsImVuIjoiVmVyaWZpY2F0aW9uIG9mIG1hcml0YWwgc3RhdHVzIGZvciByZWNvcmRpbmcgYSBiZW5lZmljaWFyeSJ9LCJsZWdhbF9iYXNpcyI6IlBlcmphbmppYW4gbGF5YW5hbiBkZW5nYW4gcGVuZ2d1bmEgdW50dWsgcGVuY2F0YXRhbiBhaGxpIHdhcmlzIiwiY2xhaW1zIjpbImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9pc3RyaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjdGFuZ2dhbF9ha2FkIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNub21vcl9ha3RhX25pa2FoIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNrdWEiLCJpZC5pZGN0Zi5rYXJ0dS1uaWthaC4xI2thYnVwYXRlbl9rb3RhIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNwcm92aW5zaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjZm90b19zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjZm90b19pc3RyaSJdLCJzdGF0dXMiOnsic3RhdHVzX2xpc3QiOnsiaWR4Ijo3NDA4LCJ1cmkiOiJodHRwczovL3JlZ2lzdHJ5LnRydXN0LmdvLmlkL3N0YXR1cy91c2Utc3RhdGVtZW50cy0xIn19LCJpYXQiOjE3ODI4NjQwMDAsImV4cCI6MTgxNDQwMDAwMH0.3D5_Cry8wIeJypqTBCx_1cQ30xxcwj_83CjahWCXd9eMqj-9ThdHyQCAKNt_fgLPQlzau3fHl28kVCX74t976g
+eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI3VzZS1zdGF0ZW1lbnQtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsInN1YiI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsInVzZV9pZCI6InBlbmNhdGF0YW4tYWhsaS13YXJpcyIsInB1cnBvc2UiOnsiaWQiOiJWZXJpZmlrYXNpIHN0YXR1cyBwZXJrYXdpbmFuIHVudHVrIHBlbmNhdGF0YW4gYWhsaSB3YXJpcyIsImVuIjoiVmVyaWZpY2F0aW9uIG9mIG1hcml0YWwgc3RhdHVzIGZvciByZWNvcmRpbmcgYSBiZW5lZmljaWFyeSJ9LCJsZWdhbF9iYXNpcyI6IlBlcmphbmppYW4gbGF5YW5hbiBkZW5nYW4gcGVuZ2d1bmEgdW50dWsgcGVuY2F0YXRhbiBhaGxpIHdhcmlzIiwiY2xhaW1zIjpbImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9pc3RyaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjdGFuZ2dhbF9ha2FkIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNub21vcl9ha3RhX25pa2FoIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNrdWEiLCJpZC5pZGN0Zi5rYXJ0dS1uaWthaC4xI2thYnVwYXRlbl9rb3RhIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNwcm92aW5zaSJdLCJzdGF0dXMiOnsic3RhdHVzX2xpc3QiOnsiaWR4Ijo3NDA4LCJ1cmkiOiJodHRwczovL3JlZ2lzdHJ5LnRydXN0LmdvLmlkL3N0YXR1cy91c2Utc3RhdGVtZW50cy0xIn19LCJpYXQiOjE3ODI4NjQwMDAsImV4cCI6MTgxNDQwMDAwMH0.5S_yyD9YggWHDErmxf-XXd3McjcfLYUXU0jeJgWkH0pCRFXje_PvfgQBQoL6g1ER7KRE2bq0Kkr1TBbZ5S2q1Q
 ```
 
 ``` { .json title="The Use Statement of a second business category, decoded" data-format="JSON" }
@@ -356,19 +372,19 @@ claim of its payload.
 - [](){ #req-ts-5-06-010 }**REQ-TS-5-06-010** `iss` MUST be the `did:webvh` of Trust Authority.
 - [](){ #req-ts-5-06-011 }**REQ-TS-5-06-011** `sub` MUST be the `did:webvh` of the entity that registered the use.
 - [](){ #req-ts-5-06-092 }**REQ-TS-5-06-092** The entity named in `sub` MUST hold the Relying Party service on the trusted list.
-- [](){ #req-ts-5-06-012 }**REQ-TS-5-06-012** `use_id` MUST be unique within the entity named in `sub`.
-- [](){ #req-ts-5-06-013 }**REQ-TS-5-06-013** Trust Authority MUST NOT allocate a `use_id` that entity has held before.
+- [](){ #req-ts-5-06-012 }**REQ-TS-5-06-012** `use_id` MUST be unique to one use within the entity named in `sub`.
+- [](){ #req-ts-5-06-013 }**REQ-TS-5-06-013** Trust Authority MUST NOT allocate a `use_id` to a second use of that entity, including one a withdrawn or expired use held.
 - [](){ #req-ts-5-06-014 }**REQ-TS-5-06-014** A Use Statement MUST name one use.
 - [](){ #req-ts-5-06-093 }**REQ-TS-5-06-093** Trust Authority MUST issue one Use Statement for each use rather than one statement listing several.
 - [](){ #req-ts-5-06-015 }**REQ-TS-5-06-015** Trust Authority MUST NOT carry a citizen's data, a transaction identifier, or the identity of a merchant in a Use Statement.
 
 </div>
 
-The last rule is what keeps the statement small enough to travel in every
-request and keeps a merchant out of Trust Authority's records. A merchant is
+[REQ-TS-5-06-015][req-ts-5-06-015] keeps the statement small enough to
+travel in every request and keeps a merchant out of Trust Authority's records. A merchant is
 named by the Subject of its Verifier Device Certificate, never by the
 statement it reads under, as
-[what the intermediary takes on][what-the-intermediary-takes-on] sets out.
+[what the RP Intermediary takes on][what-the-intermediary-takes-on] sets out.
 
 ## What a use names {#ts-5-06-what-a-use-names}
 
@@ -379,7 +395,7 @@ the entity relies on, and what the use may reach.
 
 `purpose` is the sentence Mobile Wallet shows the citizen before consent. It
 comes from the statement rather than from the request, so a verifier cannot
-word it afresh for each transaction, and it is written in both languages of
+word it afresh for each transaction. It is written in both languages of
 the ecosystem, as the trusted list writes every string a person reads.
 
 <div class="ekdn-reqs" markdown="1">
@@ -412,10 +428,9 @@ built from.
 `claims` is the list of attributes, each written as a credential type
 followed by `#` and an attribute name, in the form
 [Identifier](../architecture-framework/data-model-and-protocols/identifier.md)
-fixes. A use that reaches every attribute of a type lists each of them, so
-that reading the statement never requires reading a Credential Rulebook as
-well, and so that adding an attribute to a type widens no registration that
-already exists.
+fixes. A use that reaches every attribute of a type lists each of them. Reading the
+statement then never requires reading a Credential Rulebook as well, and adding
+an attribute to a type widens no registration that already exists.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -426,11 +441,12 @@ already exists.
 - [](){ #req-ts-5-06-026 }**REQ-TS-5-06-026** Every entry of `claims` MUST be covered by a permission the entity named in `sub` holds, as [Answering with an Authority Statement](answering-with-an-authority-statement.md) records it.
 - [](){ #req-ts-5-06-027 }**REQ-TS-5-06-027** Trust Authority MUST NOT issue a Use Statement carrying an attribute the entity's permissions do not cover.
 - [](){ #req-ts-5-06-028 }**REQ-TS-5-06-028** A permission over a credential type MUST be read as covering every attribute of that type for the purpose of [REQ-TS-5-06-026][req-ts-5-06-026].
+- [](){ #req-ts-5-06-119 }**REQ-TS-5-06-119** A use that reaches a credential type issued in `ldp_vc` MUST name every attribute of that type in `claims`, because an `ldp_vc` presentation discloses the whole credential, as [REQ-TS-5-11-010][req-ts-5-11-010] sets out.
 
 </div>
 
 Two bounds therefore apply to one request, and they are read together: the
-permission is the ceiling for the entity, and the statement is the limit for
+entity's permissions are the ceiling, and the statement is the limit for
 the use in hand. An attribute inside the ceiling and outside the statement
 is refused, as
 [three questions, three answers][three-questions-three-answers] sets out.
@@ -457,19 +473,20 @@ a reader finds it by resolving the SCID it carries from build time.
 
 </div>
 
-The Use Statement key and the key that signs the list revoking a statement
-are deliberately two keys. A list that revokes what a compromised key signed
-cannot be signed by that same key, which is why Trust Authority holds a Use
-Statement status list key beside this one.
+The Use Statement key and the key that signs the list revoking a statement are
+deliberately two keys. A list that revokes what a compromised key signed cannot
+be signed by that same key, which is why Trust Authority holds a Use Statement
+status list key beside this one.
 
 ## Lifetime and status {#ts-5-06-lifetime-and-status}
 
-A statement is valid until the `exp` it carries. It is withdrawn before that
-by flipping its bit in the Use Statement status list, which Trust Registry
-publishes as a Status List Token in the form
-[IETF Token Status List draft -14][ref-i-d-ietf-oauth-status-list] fixes and signs with
-the Use Statement status list key. A reader reads the bit from its cached
-copy of that list and never fetches it inside a transaction.
+A statement is valid until the `exp` it carries. Trust Registry withdraws it
+before that by flipping its bit in the Use Statement status list.
+Trust Registry publishes that list as a Status List Token in the form
+[IETF Token Status List draft -14][ref-i-d-ietf-oauth-status-list] fixes, and
+Trust Authority signs it with the Use Statement status list key. A reader reads the
+bit from its cached copy of that list and never fetches it inside a
+transaction.
 
 [](){ #tbl-ts-5-06-status-members }
 
@@ -491,7 +508,7 @@ copy of that list and never fetches it inside a transaction.
 - [](){ #req-ts-5-06-038 }**REQ-TS-5-06-038** `status.status_list.uri` MUST be the address of the Use Statement status list Trust Registry publishes.
 - [](){ #req-ts-5-06-039 }**REQ-TS-5-06-039** Trust Registry MUST allocate each statement its own index.
 - [](){ #req-ts-5-06-096 }**REQ-TS-5-06-096** Trust Registry MUST NOT allocate one index to two statements.
-- [](){ #req-ts-5-06-040 }**REQ-TS-5-06-040** Trust Registry MUST set the index of a statement to revoked when the Root Authority withdraws that use.
+- [](){ #req-ts-5-06-040 }**REQ-TS-5-06-040** Trust Registry MUST set the index of a statement to revoked when that statement is withdrawn, whether on the Root Authority's withdrawal of the use or on a withdrawal under [REQ-TS-5-06-083][req-ts-5-06-083], [REQ-TS-5-06-118][req-ts-5-06-118], or [REQ-TS-5-06-084][req-ts-5-06-084].
 - [](){ #req-ts-5-06-097 }**REQ-TS-5-06-097** Trust Registry MUST publish the Use Statement status list again once it has set the index of a statement to revoked.
 - [](){ #req-ts-5-06-041 }**REQ-TS-5-06-041** Trust Registry MUST keep the index of a withdrawn statement allocated to it, so that the index is never read as the status of another statement.
 - [](){ #req-ts-5-06-042 }**REQ-TS-5-06-042** Mobile Wallet MUST read the status of a statement from its cached copy of the Use Statement status list.
@@ -501,9 +518,9 @@ copy of that list and never fetches it inside a transaction.
 
 </div>
 
-The last rule is the one that costs a transaction, and it is deliberate. A
-statement whose status cannot be established is a statement that may have
-been withdrawn weeks ago, and the only safe reading of it is none, as
+[REQ-TS-5-06-044][req-ts-5-06-044] costs a transaction: a statement whose
+status cannot be established may have been withdrawn weeks ago, so
+Mobile Wallet refuses it, as
 [three rules for reading the copy][three-rules-for-reading-the-copy] sets
 out.
 
@@ -515,7 +532,9 @@ Request Object, which OpenID for Verifiable Presentations
 about the verifier. A Use Statement is a claim-bound attestation in the
 sense that specification gives the term: it is not signed by the verifier,
 it is bound to it by `sub`, and the wallet checks that binding against the
-identifier the request came under.
+identifier the request came under. How the wallet fetches the Request Object
+is fixed by
+[Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md).
 
 1. **Verifier Core builds the request.** It takes the template the operator
    chose, reads the `use_id` that template names, and loads the statement
@@ -526,12 +545,12 @@ identifier the request came under.
    along with the rest of the request, so neither the statement nor the
    attributes asked for can be edited in transit.
 
-The request below runs the civil servant fare check: it points at three
-attributes of a Kartu ASN in SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13, the online format, and carries the
-statement of that use, which names the same three. Its `claim_sets` asks
-for one of two combinations of them, `nama` and `instansi` first and
-`nama`, `nip` and `instansi` second, so that the `restricted` `nip` travels
-only where the first cannot be answered.
+The first request runs the civil servant fare check: it points at three
+attributes of a Kartu ASN in SD-JWT-based Verifiable Credential (SD-JWT VC)
+draft -13, the online format, and carries the statement of that use, which names
+the same three. Its `claim_sets` asks for one of two combinations of them,
+`nama` and `instansi` first and `nama`, `nip`, and `instansi` second, so that
+the `restricted` `nip` travels only where the first cannot be answered.
 
 ``` { .json title="The Use Statement in a Request Object, online" data-format="JSON" }
 {
@@ -598,33 +617,26 @@ only where the first cannot be answered.
 
 Three of these claims matter to the statement: the identifier the verifier
 came under, the query the statement bounds, and the signature over both.
-The others are what
+The others, `aud`, `response_uri`, `client_metadata`, `state`, `iat`, and
+`exp`, are what
 [Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md)
-requires of a signed Request Object answered by `direct_post.jwt`: `aud`,
-the static value a wallet without dynamic discovery is addressed by;
-`response_uri`, where the wallet posts its answer; `client_metadata`, whose
-`jwks` holds the key, drawn for this request alone, that the answer is
-encrypted to, and whose
-`vp_formats_supported` names the formats the verifier accepts, because under
-the `decentralized_identifier` prefix every verifier metadata value other
-than the signing key comes from `client_metadata`; `state`, which the
-answer returns; and `iat` and `exp`, which bound the request in time.
+requires of a signed Request Object answered by `direct_post.jwt`.
 
 A credential query may offer the claims it points at in more than one
 combination through `claim_sets`, as [OpenID4VP][ref-openid4vp] section
 6.4.1 defines it. The wallet answers the first option it can, and an option
 is a whole answer the verifier set out, never a choice left to the citizen.
 The statement bounds every option, so `claims` names each attribute any
-option reaches. The options are ordered for least disclosure, by the
+option reaches.
+
+The options are ordered for least disclosure, by the
 minimization class [the attributes field][rulebook-attributes-field] gives
 each attribute: an option that reaches a `restricted` attribute comes after
 every option that reaches none. Under a type whose schema requires every
 attribute, as every illustrative type's does, the first option can always
-be answered; a later one serves a credential that cannot answer it, such as
+be answered. A later one serves a credential that cannot answer it, such as
 one issued under a version of the type without that attribute. An `ldp_vc`
-query offers no options, because the credential travels whole. How the wallet fetches the
-Request Object is fixed by
-[Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md).
+query offers no options, because the credential travels whole.
 
 The second request runs the beneficiary record, a further use of the same
 entity. It asks for the Kartu Nikah in `ldp_vc`, and its query names all nine
@@ -632,7 +644,9 @@ attributes, as the statement it carries does, because the credential travels
 whole. Under OpenID4VP, `type_values` holds the types of the credential as
 fully expanded Internationalized Resource Identifiers (IRIs), after its
 `@context` is applied, and each claim path starts at `credentialSubject`.
-Everything else is the request above, with a `nonce`, a `state` and times of its own.
+Everything else is the first request of
+[Carrying it online][ts-5-06-carrying-it-online], with a `nonce`, a `state`,
+and times of its own.
 
 ``` { .json title="The Use Statement of the Kartu Nikah use in a Request Object, online" data-format="JSON" }
 {
@@ -688,9 +702,7 @@ Everything else is the request above, with a `nonce`, a `state` and times of its
           { "path": ["credentialSubject", "nomor_akta_nikah"] },
           { "path": ["credentialSubject", "kua"] },
           { "path": ["credentialSubject", "kabupaten_kota"] },
-          { "path": ["credentialSubject", "provinsi"] },
-          { "path": ["credentialSubject", "foto_suami"] },
-          { "path": ["credentialSubject", "foto_istri"] }
+          { "path": ["credentialSubject", "provinsi"] }
         ]
       }
     ]
@@ -698,7 +710,7 @@ Everything else is the request above, with a `nonce`, a `state` and times of its
   "verifier_info": [
     {
       "format": "vnd.id.idctf.use-statement+jwt",
-      "data": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI3VzZS1zdGF0ZW1lbnQtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsInN1YiI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsInVzZV9pZCI6InBlbmNhdGF0YW4tYWhsaS13YXJpcyIsInB1cnBvc2UiOnsiaWQiOiJWZXJpZmlrYXNpIHN0YXR1cyBwZXJrYXdpbmFuIHVudHVrIHBlbmNhdGF0YW4gYWhsaSB3YXJpcyIsImVuIjoiVmVyaWZpY2F0aW9uIG9mIG1hcml0YWwgc3RhdHVzIGZvciByZWNvcmRpbmcgYSBiZW5lZmljaWFyeSJ9LCJsZWdhbF9iYXNpcyI6IlBlcmphbmppYW4gbGF5YW5hbiBkZW5nYW4gcGVuZ2d1bmEgdW50dWsgcGVuY2F0YXRhbiBhaGxpIHdhcmlzIiwiY2xhaW1zIjpbImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9pc3RyaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjdGFuZ2dhbF9ha2FkIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNub21vcl9ha3RhX25pa2FoIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNrdWEiLCJpZC5pZGN0Zi5rYXJ0dS1uaWthaC4xI2thYnVwYXRlbl9rb3RhIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNwcm92aW5zaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjZm90b19zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjZm90b19pc3RyaSJdLCJzdGF0dXMiOnsic3RhdHVzX2xpc3QiOnsiaWR4Ijo3NDA4LCJ1cmkiOiJodHRwczovL3JlZ2lzdHJ5LnRydXN0LmdvLmlkL3N0YXR1cy91c2Utc3RhdGVtZW50cy0xIn19LCJpYXQiOjE3ODI4NjQwMDAsImV4cCI6MTgxNDQwMDAwMH0.3D5_Cry8wIeJypqTBCx_1cQ30xxcwj_83CjahWCXd9eMqj-9ThdHyQCAKNt_fgLPQlzau3fHl28kVCX74t976g"
+      "data": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYudXNlLXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI3VzZS1zdGF0ZW1lbnQtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsInN1YiI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsInVzZV9pZCI6InBlbmNhdGF0YW4tYWhsaS13YXJpcyIsInB1cnBvc2UiOnsiaWQiOiJWZXJpZmlrYXNpIHN0YXR1cyBwZXJrYXdpbmFuIHVudHVrIHBlbmNhdGF0YW4gYWhsaSB3YXJpcyIsImVuIjoiVmVyaWZpY2F0aW9uIG9mIG1hcml0YWwgc3RhdHVzIGZvciByZWNvcmRpbmcgYSBiZW5lZmljaWFyeSJ9LCJsZWdhbF9iYXNpcyI6IlBlcmphbmppYW4gbGF5YW5hbiBkZW5nYW4gcGVuZ2d1bmEgdW50dWsgcGVuY2F0YXRhbiBhaGxpIHdhcmlzIiwiY2xhaW1zIjpbImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9zdWFtaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjbmFtYV9pc3RyaSIsImlkLmlkY3RmLmthcnR1LW5pa2FoLjEjdGFuZ2dhbF9ha2FkIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNub21vcl9ha3RhX25pa2FoIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNrdWEiLCJpZC5pZGN0Zi5rYXJ0dS1uaWthaC4xI2thYnVwYXRlbl9rb3RhIiwiaWQuaWRjdGYua2FydHUtbmlrYWguMSNwcm92aW5zaSJdLCJzdGF0dXMiOnsic3RhdHVzX2xpc3QiOnsiaWR4Ijo3NDA4LCJ1cmkiOiJodHRwczovL3JlZ2lzdHJ5LnRydXN0LmdvLmlkL3N0YXR1cy91c2Utc3RhdGVtZW50cy0xIn19LCJpYXQiOjE3ODI4NjQwMDAsImV4cCI6MTgxNDQwMDAwMH0.5S_yyD9YggWHDErmxf-XXd3McjcfLYUXU0jeJgWkH0pCRFXje_PvfgQBQoL6g1ER7KRE2bq0Kkr1TBbZ5S2q1Q"
     }
   ],
   "iat": 1792221250,
@@ -724,9 +736,9 @@ Everything else is the request above, with a `nonce`, a `state` and times of its
 </div>
 
 A merchant's online request is the same request, relayed. Mobile Verifier
-builds and signs it with the device key, the RP Intermediary's Verifier Core
-holds it at the address the wallet fetches it from, and the statement in it
-is the category statement, issued to the intermediary rather than to the
+builds and signs it with the device key. The RP Intermediary's Verifier Core
+holds it at the address the wallet fetches it from. The statement in it
+is the category statement, issued to the RP Intermediary rather than to the
 merchant. That is why the wallet's check on `sub` has two forms, one per
 identifier the request came under.
 
@@ -746,7 +758,7 @@ session and to the device certificate that signed the request.
 2. **It builds each `ItemsRequest`.** The statement goes into `requestInfo`
    under `idUseStatement`, as a byte string holding the compact statement.
 3. **It signs each one.** ReaderAuth covers the `ItemsRequest`, and with it
-   the statement, the document type and the data elements asked for.
+   the statement, the document type, and the data elements asked for.
 4. **A request for two documents repeats the statement.** `requestInfo` is
    per `ItemsRequest`, so each one carries the same statement.
 
@@ -879,8 +891,9 @@ a367646f6354797065756f72672e69736f2e31383031332e352e312e6d444c6a
 A wallet outside IDCTF ignores a `requestInfo` key it does not know, which
 the standard requires of it, and falls back to the `ReaderAuthRole` of the
 certificate alone. That is why the extension is a second bound in proximity
-rather than a substitute for the statement, as
-[REQ-TS-5-04-057][req-ts-5-04-057] keeps it a subset of the registered uses bound to the device.
+rather than a substitute for the statement.
+[REQ-TS-5-04-057][req-ts-5-04-057] keeps it a subset of the registered uses
+bound to the device.
 
 ## Reading it {#ts-5-06-reading-it}
 
@@ -894,33 +907,28 @@ before the consent screen.
 2. **Check the signature.** Resolve Trust Authority's DID Document from the
    SCID carried at build time, take the key the `kid` names, and verify the
    JWS. A statement whose signature does not verify is no statement.
-3. **Check who it was issued to.** `sub` has to name the party the request
-   came from: online from an accredited Relying Party, the DID in
+3. **Check who it was issued to.** [REQ-TS-5-06-062][req-ts-5-06-062] and
+   [REQ-TS-5-06-063][req-ts-5-06-063] require `sub` to name the party the
+   request came from: online from an accredited Relying Party, the DID in
    `client_id`; from a merchant, and in proximity, the entity holding the
    Verifier Issuing CA in the certificate chain of the request.
 4. **Check the time and the status.** The statement is valid until `exp`,
-   and its bit in the cached Use Statement status list has to be unset.
+   [REQ-TS-5-06-065][req-ts-5-06-065], and its bit in the cached Use Statement
+   status list is unset, [REQ-TS-5-06-066][req-ts-5-06-066].
 5. **Check the attributes.** A request names an attribute in the form its
    own protocol uses, never as the identifier `claims` carries, so the
    wallet builds that identifier first: the `id` of the Rulebook of the
    credential it would present, then `#`, then the name of the attribute.
    The type comes from the credential the wallet holds rather than from the
    request, because a type another body named keeps that body's `docType`
-   without the Rulebook's version: the mobile driving license is
-   `org.iso.18013.5.1.mDL` in a request and `org.iso.18013.5.1.mDL.1` in
-   `claims`. Online the name comes from the claim the query asks for; in
-   proximity it is the data element identifier. Each identifier so built has to appear in `claims`, compared
-   one attribute at a time rather than as a hash over the query, so that a
-   verifier may reword a request without invalidating its registration. An
+   without the Rulebook's version. Online the name comes from the claim the query asks for; in
+   proximity it is the data element identifier. Each identifier so built is
+   looked for in `claims`, [REQ-TS-5-06-067][req-ts-5-06-067], one attribute
+   at a time rather than as a hash over the query, so that a verifier may
+   reword a request without invalidating its registration. An
    attribute outside `claims` is refused, and the wallet then treats it as
-   a claim it cannot deliver. Online, a credential is presented only where
-   the claims its query asks for, or one option of its `claim_sets`, need
-   no refused attribute, and an answer that would leave out a credential
-   the request requires is not sent at all, as
-   [OpenID4VP][ref-openid4vp] sets out for a claim or a credential the
-   wallet cannot deliver. In proximity, a document is returned only where
-   no data element asked for in it was refused, here or under the
-   `ReaderAuthRole` of the certificate that signed the request.
+   a claim it cannot deliver. [REQ-TS-5-06-110][req-ts-5-06-110] to
+   [REQ-TS-5-06-112][req-ts-5-06-112] fix what is then presented.
 6. **Show the purpose.** The consent screen names the requester and the
    `purpose` of the statement, in the citizen's language.
 
@@ -928,7 +936,7 @@ before the consent screen.
 
 - [](){ #req-ts-5-06-058 }**REQ-TS-5-06-058** Mobile Wallet MUST verify the statement against a key published in the DID Document of the SCID it carries from build time.
 - [](){ #req-ts-5-06-059 }**REQ-TS-5-06-059** Mobile Wallet MUST refuse a statement whose signature does not verify, whose `typ` is not `vnd.id.idctf.use-statement+jwt`, or whose `iss` is not the Trust Authority it carries the SCID of.
-- [](){ #req-ts-5-06-060 }**REQ-TS-5-06-060** Mobile Wallet MUST refuse a request carrying more than one Use Statement.
+- [](){ #req-ts-5-06-060 }**REQ-TS-5-06-060** Mobile Wallet MUST refuse a request carrying more than one distinct Use Statement, which in a `DeviceRequest` is what [REQ-TS-5-06-061][req-ts-5-06-061] states for the statement each `ItemsRequest` repeats.
 - [](){ #req-ts-5-06-061 }**REQ-TS-5-06-061** Mobile Wallet MUST refuse a `DeviceRequest` whose `ItemsRequest` structures do not all carry the same statement.
 - [](){ #req-ts-5-06-062 }**REQ-TS-5-06-062** Mobile Wallet MUST check that `sub` is the DID in `client_id`, where the request came under a DID.
 - [](){ #req-ts-5-06-063 }**REQ-TS-5-06-063** Mobile Wallet MUST check that `sub` is the entity holding the Verifier Issuing CA of the certificate chain, where the request came under a Verifier Device Certificate.
@@ -938,7 +946,7 @@ before the consent screen.
 - [](){ #req-ts-5-06-067 }**REQ-TS-5-06-067** Mobile Wallet MUST refuse every attribute the request asks for that `claims` does not carry.
 - [](){ #req-ts-5-06-110 }**REQ-TS-5-06-110** In an OpenID4VP request, Mobile Wallet MUST NOT present a credential unless the claims its query asks for, or the claims of one option of its `claim_sets`, include no attribute refused under [REQ-TS-5-06-067][req-ts-5-06-067].
 - [](){ #req-ts-5-06-111 }**REQ-TS-5-06-111** In an OpenID4VP request, Mobile Wallet MUST NOT present any credential where a credential the request requires is left out under [REQ-TS-5-06-110][req-ts-5-06-110].
-- [](){ #req-ts-5-06-112 }**REQ-TS-5-06-112** In proximity, Mobile Wallet MUST NOT return a document of a `DeviceRequest` where a data element asked for in it was refused under [REQ-TS-5-06-067][req-ts-5-06-067] or [REQ-TS-5-04-101][req-ts-5-04-101].
+- [](){ #req-ts-5-06-112 }**REQ-TS-5-06-112** In proximity, Mobile Wallet MUST NOT return any document of a `DeviceRequest` where a data element asked for in any of its documents was refused under [REQ-TS-5-06-067][req-ts-5-06-067] or [REQ-TS-5-04-101][req-ts-5-04-101].
 - [](){ #req-ts-5-06-068 }**REQ-TS-5-06-068** Mobile Wallet MUST build the identifier of each attribute a request asks for as the `id` of the Rulebook of the credential it would present, followed by `#` and the name of the attribute.
 - [](){ #req-ts-5-06-069 }**REQ-TS-5-06-069** Mobile Wallet MUST take the attribute name from the claim the query asks for in an online request and from the data element identifier of an `ItemsRequest` in proximity.
 - [](){ #req-ts-5-06-070 }**REQ-TS-5-06-070** Mobile Wallet MUST compare the identifier it built with an entry of `claims` byte for byte, after no further transformation of any kind.
@@ -952,11 +960,11 @@ before the consent screen.
 </div>
 
 A request carrying no statement at all is a case of its own, and it survives
-only as long as the transition does. Before the cut-off the Governance
-Profile sets, the wallet serves the request and tells the citizen it is not
-registered; from the cut-off on it refuses it. The permission check through
-the Authority Statement runs either way, and an attribute outside the
-statement is refused from the first day, transition or not.
+only as long as the transition does. Before the cut-off the Governance Profile
+sets, the wallet serves the request and tells the citizen it is not registered;
+from the cut-off on it refuses it. The permission check through the
+Authority Statement runs either way, and an attribute outside the statement is
+refused from the first day, transition or not.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -969,15 +977,15 @@ statement is refused from the first day, transition or not.
 
 ## Registering, renewing, and withdrawing a use {#ts-5-06-registering-renewing-and-withdrawing-a-use}
 
-A use is submitted by the entity, approved by the Root Authority through the
-tier its most sensitive attribute sets, and issued by Trust Authority as one
-statement. It does not change after that: a new purpose or a different list
+A use does not change once issued: a new purpose or a different list
 of attributes is a new use with a new `use_id`, and the statement already
 issued is withdrawn or left to expire. A renewal is the same use again, the
 same `use_id` and the same content, with new times and a new index.
 
 1. **Submission.** The entity submits the purpose, the legal basis, and the
-   attributes it asks for, through the interface [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) fixes.
+   attributes it asks for, through the interface
+   [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+   fixes.
 2. **Approval.** The Root Authority approves the use, in full or narrowed,
    through the tier the most sensitive attribute in it sets.
 3. **Issuance.** Trust Authority allocates the `use_id`, Trust Registry
@@ -1013,13 +1021,12 @@ An RP Intermediary registers one use per business category it serves, age
 verification for the sale of tobacco products among them, and binds each
 merchant device to one or more of those categories when it onboards the
 device. The cashier picks the category the transaction falls under, and the
-request carries that one statement. The intermediary answers for putting a
+request carries that one statement. The RP Intermediary answers for putting a
 merchant in the right category, and the `ReaderAuthRole` of the device
 certificate keeps the device inside the categories it was given.
 
-IDCTF registers a purpose per category rather than per merchant. The reason
-is arithmetic: a Root
-Authority that registered a use for every warung in the country would be
+IDCTF registers a purpose per category rather than per merchant, because a
+Root Authority that registered a use for every warung in the country would be
 approving millions of registrations that all say the same thing.
 
 <div class="ekdn-reqs" markdown="1">
@@ -1036,8 +1043,6 @@ approving millions of registrations that all say the same thing.
 </div>
 
 ## Security considerations {#ts-5-06-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A statement edited on the way to the wallet.** The signature covers
   every claim a wallet acts on, [REQ-TS-5-06-007][req-ts-5-06-007], and the
@@ -1085,27 +1090,26 @@ Each threat below is answered by the requirement named with it.
 
 ## Privacy considerations {#ts-5-06-privacy-considerations}
 
-Carrying the statement rather than fetching it is the privacy property of
-this specification. A wallet that resolved a registration at request time
-would tell Trust Authority which citizen was dealing with which Relying
-Party at what moment, every time anyone showed a credential. Nothing of the
-kind reaches Trust Authority here: the statement arrives with the request
-and is checked against artifacts the wallet already holds,
-[REQ-TS-5-06-073][req-ts-5-06-073], as
-[what connects the two planes][what-connects-the-two-planes] sets out.
+Carrying the statement rather than fetching it is the privacy property of this
+specification. A wallet that resolved a registration at request time would tell
+Trust Authority which citizen was dealing with which Relying Party at what
+moment, every time anyone showed a credential. Nothing of the kind reaches
+Trust Authority here: the statement arrives with the request and is checked
+against artifacts the wallet already holds, [REQ-TS-5-06-073][req-ts-5-06-073],
+as [what connects the two planes][what-connects-the-two-planes] sets out.
 
 The statement itself carries nothing about a citizen,
 [REQ-TS-5-06-015][req-ts-5-06-015]. It names an entity, a purpose, a legal
 basis, and a list of attributes, and the same statement goes to every wallet
 the entity asks, so nothing in it marks one transaction apart from another.
 
-What a use reaches is what minimization is enforced on. The list in `claims`
+Minimization is enforced on what a use reaches. The list in `claims`
 is the one an approval was given for, and the wallet refuses anything
 outside it, [REQ-TS-5-06-067][req-ts-5-06-067], so a verifier cannot widen a
 request by rewording it. Showing the registered purpose rather than the one
 the request carries, [REQ-TS-5-06-071][req-ts-5-06-071],
-[REQ-TS-5-06-100][req-ts-5-06-100], is what makes
-consent informed by something that was reviewed.
+[REQ-TS-5-06-100][req-ts-5-06-100], makes consent informed by something
+that was reviewed.
 
 ## Changelog {#ts-5-06-changelog}
 
@@ -1113,6 +1117,6 @@ consent informed by something that was reviewed.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

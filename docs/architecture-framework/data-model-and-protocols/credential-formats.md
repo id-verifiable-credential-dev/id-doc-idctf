@@ -9,12 +9,12 @@ description: What a credential carries, the three shapes it can take, which part
 
 A credential is the set of signed statements an issuer hands to a citizen, and
 it lives on that citizen's device rather than in a register anyone can query.
-This section says what one carries, which three shapes it may take, which
-participant handles which shape, and where the choice is written down.
+Which of the three shapes it takes, and which participant handles that shape,
+is written down in its Credential Rulebook.
 
 Nothing here was designed for this ecosystem. All three formats are published
-standards with implementations outside Indonesia, which is what makes a
-credential issued here readable by software nobody here wrote.
+standards with implementations outside Indonesia, so a credential issued here
+is readable by software nobody here wrote.
 
 ## What one credential carries {#what-one-credential-carries}
 
@@ -31,16 +31,14 @@ verifier that receives one checks all five.
 - **Claims** are the data inside: the values an institution holds about the
   citizen, supplied by Claims Provider from that institution's own source
   system and assembled by Credential Builder. Claims and attributes are the
-  same values seen from opposite sides. A claim is what the issuer put in. An
-  attribute is what a verifier asks for, and what the Relying Party's accreditation
-  is measured against. One claim can be an attribute, and the two words stay
-  separate because the authority question attaches only to the second.
-- **The type identifier** says which Credential Rulebook governs the
-  credential. [SD-JWT-based Verifiable Credentials (SD-JWT
-  VC)][ref-i-d-ietf-oauth-sd-jwt-vc] draft -13 carries it as
-  `vct`, [ISO mdoc][ref-iso-18013-5] (ISO/IEC 18013-5:2021)
-  as `docType`, and both values come from the Rulebook rather than from the
-  issuer's own software.
+  same values seen from opposite sides, a claim being what the issuer put in
+  and an attribute what a verifier asks for. The two words stay separate
+  because the authority question attaches only to the second.
+- **The type identifier** says which Credential Rulebook governs the credential.
+  [SD-JWT-based Verifiable Credentials (SD-JWT VC)][ref-i-d-ietf-oauth-sd-jwt-vc]
+  draft -13 carries it as `vct`, [ISO mdoc][ref-iso-18013-5]
+  (ISO/IEC 18013-5:2021) as `docType`, and both values come from the Rulebook
+  rather than from the issuer's own software.
 - **The holder binding** names a key the citizen's device controls, so a
   credential copied off that device proves nothing on its own. Each format
   binds differently, and [three credential formats][three-credential-formats]
@@ -52,13 +50,12 @@ verifier that receives one checks all five.
   [W3C Bitstring Status List][ref-bitstring-status-list] v1.0.
   Each issuer publishes its own on its own domain, described in
   [Status list][status-list].
-- **The issuer's signature** closes the envelope around the other four. SD-JWT
-  VC is a [JSON Web Signature (JWS)][ref-rfc7515],
-  ISO mdoc is [CBOR Object Signing and Encryption
-  (COSE)][ref-rfc9052], and `ldp_vc` carries a [Data
-  Integrity][ref-vc-data-integrity] 1.0 proof
-  using the `ecdsa-rdfc-2019` cryptosuite, which canonicalizes the document
-  as Linked Data, as OpenID4VCI 1.0 defines `ldp_vc`.
+- **The issuer's signature** closes the envelope around the other four.
+  SD-JWT VC is a [JSON Web Signature (JWS)][ref-rfc7515], ISO mdoc is
+  [CBOR Object Signing and Encryption (COSE)][ref-rfc9052], and `ldp_vc` carries
+  a [Data Integrity][ref-vc-data-integrity] 1.0 proof using the
+  `ecdsa-rdfc-2019` cryptosuite, which canonicalizes the document as Linked
+  Data, as OpenID4VCI 1.0 defines `ldp_vc`.
 
 ## Three credential formats {#three-credential-formats}
 
@@ -74,18 +71,21 @@ verifier that receives one checks all five.
 
 Two of the three support selective disclosure, which lets a holder reveal one
 attribute without revealing the ones beside it. SD-JWT VC does it with salted
-hashes, ISO mdoc with digests in the Mobile Security Object (MSO). `ldp_vc`
-secured with `ecdsa-rdfc-2019` has no such mechanism, and the ecosystem answers
-by limiting where the format may be used rather than by accepting the
+hashes, ISO mdoc with digests in the Mobile Security Object (MSO).
+
+`ldp_vc` secured with `ecdsa-rdfc-2019` has no such mechanism, and the ecosystem
+answers by limiting where the format may be used rather than by accepting the
 disclosure. A credential type whose Rulebook classifies any attribute as
 `restricted` may not list `ldp_vc` among its formats at all, a rule
-[the Credential Rulebook][the-credential-rulebook] returns to. A credential type that needs
-selective disclosure is issued as SD-JWT VC instead. The pilot does not move
-`ldp_vc` to a selective-disclosure cryptosuite; that is reopened only when two
-conditions hold together: a JSON-LD interoperability need for a credential type
-with restricted attributes, and mature `ecdsa-sd-2023` implementations in Go and
-Dart. `ecdsa-sd-2023` canonicalizes the way `ecdsa-rdfc-2019` does, so that move
-changes the proof and keeps the canonicalization.
+[the Credential Rulebook][the-credential-rulebook] returns to. A credential type
+that needs selective disclosure is issued as SD-JWT VC instead.
+
+The pilot does not move `ldp_vc` to a selective-disclosure cryptosuite. Two
+conditions reopen it together: a JSON for Linked Data (JSON-LD) interoperability
+need for a credential type with restricted attributes, and mature
+`ecdsa-sd-2023` implementations in Go and Dart. `ecdsa-sd-2023` canonicalizes
+the way `ecdsa-rdfc-2019` does, so that move changes the proof and keeps the
+canonicalization.
 
 !!! note "Display of `ldp_vc` outside IDCTF"
 
@@ -95,23 +95,23 @@ changes the proof and keeps the canonicalization.
     [the display field][rulebook-display-field] sets out. The W3C mechanism
     for it, Verifiable Credential Rendering Methods, is still a Working Draft.
     Such a wallet reads the issuer's OpenID4VCI metadata instead, where the
-    issuer copies the type's name, logo, colors and claim labels from the
+    issuer copies the type's name, logo, colors, and claim labels from the
     Rulebook, so it shows those without the card design. The card waits until
     a rendering method is final and a wallet IDCTF wants to reach implements
     it.
 
 Several formats that would have fitted are deliberately absent: AnonCreds,
 JWT-VC 1.1 (`jwt_vc_json`), SD-JWT VCLD, and BBS signatures. Each one would
-have added a second way of doing something one of the three above already does,
+have added a second way of doing something one of the three formats already does,
 and a second way is a second implementation in every wallet and every verifier.
 
 ## One credential, two representations {#one-credential-two-representations}
 
 A citizen holds one credential in the ordinary sense of the word, and the wallet
 may hold it twice. The same credential can exist as an SD-JWT VC and as an ISO
-mdoc at the same time, bound to a single credential key, so the two
-representations are provably the same credential rather than two credentials
-that happen to agree.
+mdoc at the same time. The two carry the same claim values and point at the same
+status entry, which makes them provably one credential rather than two that
+happen to agree, and the credential key binds both to the same device.
 
 [](){ #fig-one-credential-two-representations }
 
@@ -124,18 +124,18 @@ that happen to agree.
   format and for every credential.
 - **SD-JWT VC** is the representation the online path reads.
 - **ISO mdoc** is the representation a verifier in proximity reads, and the only
-  one that works with no signal.
+  one that can be presented with no signal.
 
-This is not decoration. SD-JWT VC has no offline path, and ISO mdoc is not used
+SD-JWT VC has no offline path, and ISO mdoc is not used
 online, so a credential type that has to be checked where there is no signal
 needs an mdoc representation or it cannot be checked at all. The reverse holds
 as well: a type whose Credential Rulebook lists mdoc alone is checked in
 proximity and never online. Which of the two modes applies where is in
 [online and offline][online-and-offline].
 
-The Credential Rulebook for a type names the formats that type must take, so
-whether a citizen gets one representation or two is settled per credential type
-and not per wallet.
+Whether a citizen gets one representation or two is settled per credential type
+and not per wallet, as [the Credential Rulebook][the-credential-rulebook]
+fixes.
 
 ## Which format each role issues {#which-format-each-role-issues}
 
@@ -143,10 +143,10 @@ No participant handles all three formats in every direction, and
 [which format each role issues][tbl-formats-each-role-issues] and
 [which each verifies][tbl-formats-each-role-verifies] say who handles what.
 
-Both tables read as **capability**, not authority: who is able to issue a
-format, and who has to be able to read one. Neither answers what a party is
-allowed to ask for, which is settled by its accreditation and, per request, by
-the registered use it runs under, covered in
+Both tables read as capability, not authority: who is able to issue a
+format, and who has to be able to read one. What a party is allowed to ask for
+is settled by its accreditation and, per request, by the registered use it runs
+under, covered in
 [Three stages of authority](../roles/three-stages-of-authority.md).
 Both bind implementations, and both are announced in metadata so the other side
 knows from the first request. Issuers announce theirs in
@@ -167,9 +167,8 @@ and the two issuer roles differ on one format only.
 
 </figure>
 
-An Identity Issuer does not use `ldp_vc` because a basic identity credential
-carries restricted attributes, and `ldp_vc` secured with `ecdsa-rdfc-2019` has
-no selective disclosure.
+An Identity Issuer does not use `ldp_vc`, because a basic identity credential
+carries restricted attributes.
 
 ## Which format each role verifies {#which-format-each-role-verifies}
 
@@ -193,15 +192,18 @@ A merchant's Mobile Verifier reads `ldp_vc` like the other two, and that costs
 more than a new signature algorithm. `ecdsa-rdfc-2019` signs the Resource
 Description Framework (RDF) Dataset Canonicalization (RDFC-1.0) of the
 credential's JSON-LD expansion, so every verifier carries a JSON-LD 1.1
-processor and an RDFC-1.0 canonicalizer, in Go and in Dart. It reads every
-`@context` from cache and never fetches one while it verifies, because the
-context decides what the signature covers. Each context is checked against
-the digest its Rulebook carries, as [the formats field][rulebook-formats-field]
-sets out. It also stops canonicalizing at a complexity limit, which RDFC-1.0
-requires as a guard against poison graphs. A verifier rejects a document
-larger than 1 MiB or holding more than 64 blank nodes, and stops once the
-calls to the Hash N-Degree Quads algorithm outnumber the blank nodes. A
-credential built from a Rulebook stays far inside all three.
+processor and an RDFC-1.0 canonicalizer, in Go and in Dart.
+
+It reads every `@context` from cache and never fetches one while it verifies,
+because the context decides what the signature covers. Each context is checked
+against the digest its Rulebook carries, as
+[the formats field][rulebook-formats-field] sets out.
+
+It also stops canonicalizing at a complexity limit, which RDFC-1.0 requires as a
+guard against poison graphs. A verifier rejects a document larger than 1 MiB or
+holding more than 64 blank nodes, and stops once the calls to the Hash N-Degree
+Quads algorithm outnumber the blank nodes. A credential built from a Rulebook
+stays far inside all three.
 
 The same profile covers the two other Data Integrity documents `ldp_vc`
 brings. The wallet signs the presentation in `ecdsa-rdfc-2019` too, with
@@ -210,15 +212,15 @@ brings. The wallet signs the presentation in `ecdsa-rdfc-2019` too, with
 `ldp_vc`. The issuer's Bitstring Status List is a credential secured the
 same way, in `ecdsa-rdfc-2019`, because Bitstring Status List asks for the
 securing mechanism of the credentials it covers. Its terms come from the
-VCDM 2.0 context, so it adds no context to cache.
+Verifiable Credentials Data Model (VCDM) 2.0 context, so it adds no context to cache.
 
 ## The Credential Rulebook {#the-credential-rulebook}
 
-Everything above is a menu. The Credential Rulebook is where one credential type
+The formats, the representations, and the modes are a menu. The Credential Rulebook is where one credential type
 picks from it, and it is the single file an issuer's `.well-known` metadata is
 generated from. It names the formats the type is issued in, the schema and
 display of its claims, a minimization class for every attribute, `open`,
-`normal` or `restricted`, and the assurance it demands of the credential key
+`normal`, or `restricted`, and the assurance it demands of the credential key
 and of the issuer's signing key. The fields, and the rule each one has to meet,
 are in [Rulebook structure](../../credential-rulebook/rulebook-structure.md),
 and worked examples are in

@@ -95,9 +95,9 @@ def mask(text: str) -> str:
 def opener_before(line: str, col: int) -> bool:
     prefix = line[:col].rstrip()
     # A link's text is a title slot, so it keeps a title's capital wherever the
-    # link sits in the sentence. Two forms count: the title alone, as in
-    # [Trusted list and cache](...), and the cross-reference form CLAUDE.md
-    # section 5 requires, [Section 6.1.1, Trusted list](...).
+    # link sits in the sentence: [Trusted list and cache](...). The numbered
+    # form [Section 6.1.1, Trusted list](...) predates tracks/0072, which took
+    # numbers out of link text; it is still accepted.
     opened = prefix.rfind("[")
     if opened != -1 and "]" not in prefix[opened:]:
         inner = prefix[opened + 1:]
@@ -106,12 +106,44 @@ def opener_before(line: str, col: int) -> bool:
     prefix = prefix.rstrip(DECOR).rstrip()
     if not prefix:
         return True
-    # Every body heading in this repository opens with its section number
-    # (CLAUDE.md section 5), so `### 6.1.1 Trusted list` is a heading slot and
-    # the capital is correct there.
+    # A heading is a title slot, so `### Trusted list` keeps its capital. Since
+    # tracks/0072 headings carry no number; the numbered `### 6.1.1 Trusted
+    # list` is still accepted.
     if re.fullmatch(r"\s*(#{1,6}|[-*+]|\d+\.|>)[\s\d.]*", prefix):
         return True
     return prefix[-1] in OPENERS
+
+
+def split_terms(plain: str, canonicals: list[str]) -> list[tuple[int, int, str]]:
+    """Canonical terms broken by a line wrap.
+
+    Every search in this script runs inside one line, and
+    `scripts/build_graph.py` matches the same way, so a term whose first word
+    ends one line and whose second opens the next is seen by neither: its
+    casing stops being checked, and where that is the term's only appearance
+    on the page, the page's `uses-term` edge is dropped from the map without a
+    word (`tracks/0594`). The comparison ignores case, because a `umum` term
+    legally carries a capital at the head of a slot, and it allows a plural,
+    because a broken `Use Statements` is as invisible as a broken `Use
+    Statement`. Longest first, so a break inside `trusted list payload` is
+    reported once and not again as `trusted list`.
+    """
+    lines = plain.splitlines()
+    out = []
+    for n in range(len(lines) - 1):
+        head, tail = lines[n].rstrip(), lines[n + 1].lstrip()
+        joined, low_head, low_tail = f"{head} {tail}".lower(), head.lower(), tail.lower()
+        found: list[str] = []
+        for canonical in canonicals:
+            if any(canonical.lower() in f.lower() for f in found):
+                continue
+            for form in (canonical, canonical + "s", canonical + "es"):
+                form = form.lower()
+                if form in joined and form not in low_head and form not in low_tail:
+                    out.append((n + 1, len(head) + 1, canonical))
+                    found.append(canonical)
+                    break
+    return out
 
 
 def variants(canonical: str) -> tuple[str, str]:
@@ -129,6 +161,9 @@ def check() -> int:
     # Only the canonical spellings shield, never their Title Cased variants,
     # because for a common noun that variant is exactly what we are hunting.
     shields = sorted({t["canonical"] for t in terms}, key=len, reverse=True)
+    # Only a multi-word term can be broken by a wrap, and the longest is
+    # reported first so a shorter name inside it is not reported twice.
+    unbroken = [s for s in shields if " " in s]
     findings = []
 
     for path in sorted(DOCS.rglob("*.md")):
@@ -140,6 +175,9 @@ def check() -> int:
         # A spelling listed in D.1 is wrong wherever it appears, so it is
         # searched unshielded. A case slip on a common noun is derived from the
         # canonical form instead, and searched with the long names masked out.
+        for n, col, canonical in split_terms(plain, unbroken):
+            findings.append((path.relative_to(ROOT), n, col, "", canonical, "split"))
+
         plain_lines, shielded_lines = plain.splitlines(), shielded.splitlines()
         for term in terms:
             checks: list[tuple[str, bool, list[str]]] = [
@@ -165,7 +203,10 @@ def check() -> int:
 
     findings.sort()
     for rel, n, col, form, canonical, klass in findings:
-        print(f"{rel}:{n}:{col}: {form!r} -> {canonical!r}  [{klass}]")
+        if klass == "split":
+            print(f"{rel}:{n}:{col}: {canonical!r} broken by a line wrap  [split]")
+        else:
+            print(f"{rel}:{n}:{col}: {form!r} -> {canonical!r}  [{klass}]")
     print(f"\n{len(terms)} terms from D.1, {len(findings)} finding(s) in docs/")
     return 1 if findings else 0
 

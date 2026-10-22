@@ -7,18 +7,17 @@ description: Every key in the ecosystem, where it is born, who signs with it, ho
 
 # Keys: who creates, who signs {#keys-who-creates-who-signs}
 
-A key is born in one of three places and never leaves it. An entity's keys
-are born in its own Key Manager. Trust Authority's keys are born in its own
-hardware security module (HSM). A citizen's keys, and a merchant device's, are
-born in the secure element of the phone. Nobody generates a key on behalf of
-somebody else, and nobody holds a private key that is not their own. Trust
-Authority in particular receives public keys only, through the witness on a
-`did:webvh` log entry and through a [certificate signing request (CSR)][ref-rfc2986], and
+A key is born in one of three places and never leaves it. An entity's keys are
+born in its own Key Manager. Trust Authority's keys are born in its own hardware
+security module (HSM). A citizen's keys, and a merchant device's, are born in
+the secure element of the phone. Trust Authority in
+particular receives public keys only, through the witness on a `did:webvh` log
+entry and through a [certificate signing request (CSR)][ref-rfc2986], and
 records them in its Public Key Registry.
 
-What follows is the whole inventory, by the place a key lives. Where a
-lifetime or an interval is a number, the Governance Profile sets it, and this
-page says so rather than setting one.
+Where a lifetime or an interval is a number, the Governance Profile sets it
+unless a standard or a Technical Specification fixes it as a constant, and
+this page says which of the two holds it rather than setting one.
 
 ## Three places a key can live {#three-places-a-key-can-live}
 
@@ -38,17 +37,16 @@ and the list under it says what each one holds.
   the private key physically sits, and the private key never leaves the
   driver: Signing Provider asks Key Manager to sign, and gets a signature
   back, never the key.
-- **Trust Authority's HSMs.** They hold Trust Authority's own keys and
-  nothing else. The two roots each sit in an offline HSM of their own.
-  Trust Authority's HSM, drawn here, holds the rest: in its main partition
-  the trusted list key, the Verified Issuer Certificate Authority List
-  (VICAL) key, the Accreditation Credential key and the key of its status
-  list, the Authority Statement key, the recognition statement key, the
-  catalog key, the Governance Profile key, the Use Statement key and the key
-  of its status list, and Trust Authority's own `did:webvh` update key; in a partition of its own,
-  the witness key. Trust Authority has no software keystore option.
-- **The device's secure element.** A citizen's phone holds a credential key
-  and a device key. A merchant's Mobile Verifier holds a device key. These
+- **Trust Authority's HSMs.** They hold Trust Authority's own keys and nothing
+  else: the two roots each in an offline HSM of their own, and the rest in the
+  HSM drawn here, with the witness key in a partition of its own.
+  [Trust Authority's own keys][trust-authoritys-own-keys] names every one of
+  them, and Trust Authority has no software keystore option.
+- **The device's secure element.** A citizen's phone holds a credential key,
+  a device key, and one Demonstrating Proof of Possession (DPoP) key for
+  each issuer it has dealt with. A
+  merchant's Mobile Verifier holds a device key, and on iOS the App Attest
+  key beside it. These
   keys cannot be exported or backed up, so a replaced device means new keys
   and reissued credentials.
 
@@ -68,8 +66,8 @@ one place, the keys of the later sections of this page included.
 </figure>
 
 - **Issuer, Relying Party, and Wallet Provider** hold the keys born in their
-  own Key Manager, drawn green, and each is described under its own heading
-  below. The Verifier Issuing CA key belongs only to an RP Intermediary and
+  own Key Manager, drawn green, and each is described under its own heading.
+  The Verifier Issuing CA key belongs only to an RP Intermediary and
   to a Relying Party that reads credentials in proximity.
 - **Trust Authority** holds the fourteen keys of its HSMs, drawn yellow, described
   under [Trust Authority's own keys][trust-authoritys-own-keys].
@@ -91,7 +89,7 @@ looks like.
 | Key | Published or carried in | Specified in |
 |---|---|---|
 | The `did:webvh` update key of every entity and of Trust Authority | `updateKeys` of the entity's log | TS-5-02 [Publishing and resolving a did:webvh identifier](../../technical-specifications/publishing-and-resolving-a-did-webvh-identifier.md) |
-| `issuance-jose`, `status-list`, the Request Object key, the Key Attestation key, and Trust Authority's Accreditation Credential, accreditation status list, Authority Statement, recognition statement, catalog, Use Statement and Use Statement status list keys | The DID Document | TS-5-02 [Publishing and resolving a did:webvh identifier](../../technical-specifications/publishing-and-resolving-a-did-webvh-identifier.md); what each signs, in the specification of that artifact |
+| `issuance-jose`, `status-list`, the Request Object key, the Key Attestation key, and Trust Authority's Accreditation Credential, accreditation status list, Authority Statement, recognition statement, catalog, Use Statement, and Use Statement status list keys | The DID Document | TS-5-02 [Publishing and resolving a did:webvh identifier](../../technical-specifications/publishing-and-resolving-a-did-webvh-identifier.md); what each signs, in the specification of that artifact |
 | `issuance-cose`, the Verifier Issuing CA key, the two roots, the VICAL key, the device key of a Mobile Verifier, and the `status-list` key of an issuer that issues in mdoc, which is in its DID Document as well | The Document Signer Certificate, the CA certificates, the VICAL signer certificate the VICAL carries, the Verifier Device Certificate, and the status list signer certificate the CWT form of a status list carries | TS-5-04 [Issuing and validating the X.509 certificates and the VICAL](../../technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md) |
 | The response encryption key, drawn for one request | The Request Object, as a JWK in `jwks` | TS-3-01 [Verifying a credential online via OpenID4VP](../../technical-specifications/verifying-a-credential-online-via-openid4vp.md) |
 | The trusted list key and the witness key | The trusted list, as `did:key` | TS-5-01 [Publishing and reading the trusted list](../../technical-specifications/publishing-and-reading-the-trusted-list.md); the witness proof in TS-4-01 [Witnessing a log entry and serving its copy](../../technical-specifications/witnessing-a-log-entry-and-serving-its-copy.md) |
@@ -103,21 +101,23 @@ looks like.
 
 An issuer holds four keys, all generated at onboarding in the driver it chose:
 
-1. **`issuance-jose`**, a P-256 key published in its Decentralized
-   Identifier (DID) Document as a [`Multikey`][ref-cid] (Controlled Identifiers 1.0) verification method, the form
-   the ECDSA cryptosuites define for a Data Integrity 1.0 proof. It signs SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13 and the Data
+1. **`issuance-jose`**, a P-256 key published in its Decentralized Identifier
+   (DID) Document as a [`Multikey`][ref-cid] (Controlled Identifiers 1.0)
+   verification method, the form the Elliptic Curve Digital Signature Algorithm
+   (ECDSA) cryptosuites define for a Data Integrity 1.0 proof. It signs
+   SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13 and the Data
    Integrity proof of `ldp_vc`.
-2. **`issuance-cose`**, a P-256 key that never appears in the DID Document.
-   It signs the Mobile Security Object (MSO) of an ISO mdoc, and the
-   verifier learns it from the Document Signer Certificate (DSC) carried in
-   `x5chain`. Trust Authority issues that certificate from a CSR the Key
-   Manager signs with the key itself, which is the proof that the issuer
-   holds it.
+2. **`issuance-cose`**, a P-256 key that never appears in the DID Document. It
+   signs the Mobile Security Object (MSO) of an ISO mdoc, and the verifier
+   learns it from the Document Signer Certificate (DSC) carried in `x5chain`.
+   Trust Authority issues that certificate from a CSR the Key Manager signs with
+   the key itself, which is the proof that the issuer holds it.
 3. **`status-list`**, a P-256 key published in the DID Document beside
    `issuance-jose`, also as a `Multikey`. It signs the issuer's Status List Token and its
    Bitstring Status List v1.0, and nothing else. Where the issuer issues in
    mdoc, Trust Authority also certifies it under the Issuer Root CA in a
-   status list signer certificate, which the CWT form of the list carries,
+   status list signer certificate, which the Concise Binary Object
+   Representation (CBOR) Web Token (CWT) form of the list carries,
    so an mdoc reader checks the list through the root it checks the mdoc
    through.
 4. **The `did:webvh` update key**, an Ed25519 key described under
@@ -126,16 +126,19 @@ An issuer holds four keys, all generated at onboarding in the driver it chose:
 The two credential signing keys are deliberately not one key, for three
 reasons, in order of weight:
 
-- **Their lifetimes differ by an order of magnitude.** A DSC lives at most
-  457 days when the mdoc is a Mobile Driving License (mDL) and at most
-  3650 days for any other type, and never beyond its root. A key in a DID
-  Document carries no such ceiling. One shared key would drag the DID
-  Document through every certificate renewal.
+- **Their lifetimes differ by an order of magnitude.** A DSC lives at most 457
+  days when the mdoc is a mobile driving license (mDL), the ceiling
+  [ISO/IEC 18013-5:2021][ref-iso-18013-5] Annex B fixes, and at most 3650 days
+  for any other type, the constant TS-5-04
+  [Issuing and validating the X.509 certificates and the VICAL](../../technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  fixes, and never beyond its root. A key in a DID Document carries no such
+  ceiling. One shared key would drag the DID Document through every certificate
+  renewal.
 - **Their blast radius stays separate.** A defect in the CBOR Object Signing
   and Encryption (COSE) path does not take the JSON Object Signing and
   Encryption (JOSE) path down with it, and the reverse.
-- **The certificate stays honest.** The `keyUsage` and extended key usage in
-  the DSC describe a key that really is used for that and nothing else.
+- **The certificate describes one use.** The `keyUsage` and extended key usage
+  in the DSC describe a key that is used for that and nothing else.
 
 The status list key is separate from both for one reason that outweighs the
 cost of a third key. When a credential signing key leaks, the key is revoked
@@ -162,29 +165,29 @@ The key a wallet encrypts the presentation to is not one of them. Verifier
 Core draws a fresh key pair for each request, carries its public half in the
 signed request, decrypts the one response with it, and then discards it, so
 that a leaked key opens one response and never a stored history of them.
-The key is not registered, rotated or held by Key Manager.
+The key is not registered, rotated, or held by Key Manager.
 
 An RP Intermediary, and a Relying Party that reads credentials in proximity,
 holds one key more:
 
-2. **The Verifier Issuing CA key**, with which it issues a Verifier Device
-   Certificate to each reader device it vouches for, and signs the
-   certificate revocation list (CRL) that withdraws one. Trust Authority
+2. **The Verifier Issuing CA key**, with which it issues a
+   Verifier Device Certificate to each reader device it vouches for, and signs
+   the certificate revocation list (CRL) that withdraws one. Trust Authority
    issues the Verifier Issuing CA certificate from a CSR, chaining it to the
    Verifier Root CA. The device certificates themselves are described under
    [keys on devices][keys-on-devices]. This key is a certificate authority (CA)
    key, and a leak of it mints reader devices under a granted CA until the
-   trusted list strikes the CA, so the Governance Profile requires it to live
-   in a cloud Key Management Service (KMS) or an HSM, the `cloudkms` or
-   `hsm` driver, and never in the software keystore. The Relying Party's other
-   keys may stay in whichever driver its grade allows.
+   trusted list strikes the CA, so the Governance Profile requires it to live in
+   a cloud Key Management Service (KMS) or an HSM, the `cloudkms` or `hsm`
+   driver, and never in the software keystore. The Relying Party's other keys
+   may stay in whichever driver its grade allows.
 
 ### A Wallet Provider's keys {#a-wallet-providers-keys}
 
 A Wallet Provider holds one transaction key beside its update key: the
 **Key Attestation key**, a P-256 key with which Wallet Backend Service signs
-the daily Key Attestation that tells an issuer a wallet installation's credential key
-really sits in a secure element. It is registered the same way as an issuer's
+the Key Attestation that tells an issuer a wallet installation's credential key
+sits in a secure element. It is registered the same way as an issuer's
 `issuance-jose`: through the DID log and the trusted list, with no
 certificate.
 
@@ -201,22 +204,20 @@ follow from the log being append-only and signed:
   the log, so a resolver can replay the log and answer which key was valid
   on a given date. An old signature stays verifiable after the key that made
   it has been retired.
-- **Pre-rotation closes the door on a thief.** Each entry announces the hash
+- **Pre-rotation binds the next key.** Each entry announces the hash
   of the next update key in `nextKeyHashes`. An attacker who steals the
   current update key cannot rotate to a key of their own choosing, because
   the key they would sign in does not match the hash already committed.
-- **Nothing counts without the witness.** An entry is valid only when it
-  carries DID Service's witness proof, signed [`eddsa-jcs-2022`][ref-vc-di-eddsa] over the entry's
-  `versionId`, which carries the hash of the entry's
-  [RFC 8785][ref-rfc8785] canonical form, with Trust Authority's witness key. Every resolver built on Trust SDK rejects an entry
-  without one.
+- **Nothing counts without the witness.** An entry is valid only when it carries
+  DID Service's witness proof, signed [`eddsa-jcs-2022`][ref-vc-di-eddsa] over
+  the entry's `versionId`, which carries the hash of the entry's
+  [RFC 8785][ref-rfc8785] canonical form, with Trust Authority's witness key.
+  Every resolver built on Trust SDK rejects an entry without one.
 
-The update key is Ed25519 where every other entity key is P-256, and
+The update key is Ed25519 where every other entity key is P-256, because
+`did:webvh` v1.0 requires Ed25519 for the log keys, and
 [where an entity key lives][where-an-entity-key-lives] says what that asks of
-a driver. That is the one exception in the
-ecosystem: every signature elsewhere is ECDSA on P-256, ES256 in JOSE terms, and
-Ed25519 is allowed for the `did:webvh` log keys alone, the update key and the witness
-key, because `did:webvh` v1.0 requires it there.
+a driver.
 [The technology map][technology-map] lists what was rejected with it:
 secp256k1, RSA, Ed25519 anywhere else, a key generated anywhere but at the
 entity, and an unencrypted software key.
@@ -239,30 +240,18 @@ operations, `generate`, `sign`, `publicKey`, and `rotate`:
 3. **`hsm`**, optional, an HSM reached over PKCS#11 v3.1, for a large
    institution or a high-risk credential type. Recorded as `keyStorage: hsm`.
 
-The `keyStorage` value is submitted with the key and recorded in the Public
-Key Registry, together with evidence that the key lives where the value says,
-and it is what the issuer's
-[`issuer_assurance`][issuer-assurance] grade is read from: `software` for
-`low`, `cloudkms` for `substantial`, `hsm` for `high`, with the final
-mapping set by the Governance Profile. Trust Authority writes no Authority
-Statement for a credential type whose Credential Rulebook demands a higher
-grade than the issuer's driver gives it, and Trust Registry answers a
-permission query accordingly; KTP Digital at `high` can only be issued from
-an HSM.
-
-An entity may start on the software driver and move up later. Moving driver
-is an ordinary rotation: a new key born in the new driver, a new log entry,
-and a new DSC. No code in Issuer Core changes, because the driver sits behind
-a service provider interface.
+The `keyStorage` value is submitted with the key and recorded in the
+Public Key Registry, together with evidence that the key lives where the value
+says. [`issuer_assurance`][issuer-assurance] is read from that value, and what
+the grade then decides is in
+[Two assurance levels](two-assurance-levels.md).
 
 The update key is the one key the grade does not read. It may stay in the
 software driver whatever driver the transaction keys use, because not every
 HSM and not every cloud KMS can hold an Ed25519 key, and an entity whose
 chosen driver cannot must still be able to maintain its identifier. The grade
-loses nothing by it: the update key signs nothing a wallet or verifier ever
-sees, and a thief who takes it is held by pre-rotation and by the witness, as
-[the update key][the-update-key] explains. `keyStorage` is therefore
-recorded, and graded, for the transaction keys.
+loses nothing by it, as [the update key][the-update-key] explains.
+`keyStorage` is therefore recorded for the transaction keys alone.
 
 ## How an entity rotates a key {#how-an-entity-rotates-a-key}
 
@@ -304,24 +293,29 @@ sequenceDiagram
    where the new key is born in it.
 
 2. The entity submits one request to Trust Authority, through
-   `POST /entities/me/keys`, signed with the update key of the latest
-   witnessed entry, or, once that key is revoked, with the next one. For a key in the DID Document it carries the new
-   `did.jsonl` entry, signed with the update key the entry itself carries,
-   the one the previous entry committed to, naming the new key and
-   announcing the hash of the next update key, and a proof of possession of
-   each key the entry publishes, a signature over a nonce Trust Authority
-   supplied. It carries the `keyStorage` evidence of the driver each new
-   key lives in, and, when the rotated key is `issuance-cose`, the
-   `status-list` key of an issuer that issues in mdoc, or a Verifier Issuing
-   CA key, a CSR signed with the new key. A rotation of `issuance-cose` or
-   of a Verifier Issuing CA key, neither of which is in the DID Document,
-   carries no entry and is countersigned by a key the DID Document lists.
+   `POST /entities/me/keys`, signed with the update key of the latest witnessed
+   entry, or, once that key is revoked, with the next one. The request carries:
 
-3. Trust Authority checks the governance side: the `keyStorage` evidence
-   against the driver it names, the `keyStorage` value against the
-   `issuer_assurance` the entity holds, so that the new key gives no lower
-   grade than its authorizations demand, and the CSR, if there is one,
-   against the certificate profile.
+    - for a key in the DID Document, the new `did.jsonl` entry, signed with the
+      update key the entry itself carries, the one the previous entry committed
+      to, naming the new key and announcing the hash of the next update key;
+    - a proof of possession of each key the entry publishes, a signature over a
+      nonce Trust Authority supplied;
+    - the `keyStorage` evidence of the driver each new key lives in;
+    - a CSR signed with the new key, when the rotated key is `issuance-cose`,
+      the `status-list` key of an issuer that issues in mdoc, or a
+      Verifier Issuing CA key.
+
+    A rotation of `issuance-cose` or of a Verifier Issuing CA key, neither of
+    which is in the DID Document, carries no entry and is countersigned by a
+    key the DID Document lists.
+
+3. Trust Authority checks the governance side:
+
+    - the `keyStorage` evidence against the driver it names;
+    - the `keyStorage` value against the `issuer_assurance` the entity holds,
+      so that the new key gives no lower grade than its authorizations demand;
+    - the CSR, where there is one, against the certificate profile.
 
 4. Trust Authority hands the entry to DID Service's Log Service. The entity
    never submits an entry to DID Service itself.
@@ -331,8 +325,8 @@ sequenceDiagram
    pre-rotation hash the previous entry announced, and each proof of
    possession.
 
-6. DID Service returns the witness proof, signed `eddsa-jcs-2022`, to Trust
-   Authority. Without it, the entry is rejected by every resolver.
+6. DID Service returns the witness proof, signed `eddsa-jcs-2022`, to
+   Trust Authority. Without it, the entry is rejected by every resolver.
 
 7. Trust Authority issues the replacement DSC, status list signer
    certificate, or Verifier Issuing CA certificate, chained to the matching root, when a CSR was submitted. It
@@ -355,19 +349,20 @@ sequenceDiagram
 
 ### What happens to the old key {#what-happens-to-the-old-key}
 
-A rotated key is not deleted, and it is not marked. W3C DID 1.0 has no
-`status` property on a verification method, and a standard resolver ignores
-one that is written in. The DID Document says the same thing another way: the
-old key stays listed under `verificationMethod`, so that a signature it made
-last year still verifies, and it leaves `assertionMethod`, so that it can no
-longer sign anything new. How long the key was valid is not the DID
-Document's business either, and a key retired in good standing needs no
-answer: its old signatures stay verifiable. A key revoked early is another
-matter. For the DID route, the entity's trusted list entry names it, with the
-time from which it is revoked, and a verifier refuses any signature made with
-it whatever date the signature claims, because a thief can backdate. For the
-X.509 route, the CRL answers it, and the entity's entry names the key by
-its subject key identifier as well, for a reader that holds the list.
+A rotated key is not deleted, and it is not marked. W3C DID 1.0 has no `status`
+property on a verification method, and a standard resolver ignores one that is
+written in. In the DID Document the old key stays listed under
+`verificationMethod`, so that a signature it made last year still verifies, and
+it leaves `assertionMethod`, so that it can no longer sign anything new. How
+long the key was valid is not the DID Document's business either, and a key
+retired in good standing needs no answer: its old signatures stay verifiable.
+
+A key revoked early is answered two ways. For the DID route, the entity's
+trusted list entry names it, with the time from which it is revoked, and a
+verifier refuses any signature made with it whatever date the signature claims,
+because a thief can backdate. For the X.509 route, the CRL answers it, and the
+entity's entry names the key by its subject key identifier as well, for a reader
+that holds the list.
 
 In the entity's own records a key moves through four states:
 
@@ -389,7 +384,7 @@ and each one catches an entity that skipped the one before it:
 
 1. **The rotation path runs through one door.** Key Manager calls Trust
    Authority as a step of the `rotate` operation itself, and Trust Authority
-   is what hands the entry to the witness. There is no local-only rotation
+   hands the entry to the witness. There is no local-only rotation
    to perform by mistake, and no second door to pick instead.
 2. **The witness requirement.** An entity that publishes a log entry without
    submitting it first has published an entry without a witness proof, and
@@ -398,29 +393,30 @@ and each one catches an entity that skipped the one before it:
    `did.jsonl` and every issuer's `.well-known` metadata. An unwitnessed
    entry is detected and handed to the incident process.
 
-The same requirement sets what waits when the witness is down. An entity
-cannot onboard and cannot rotate a key while DID Service is unreachable,
-because an entry nobody witnessed is an entry nobody accepts. Resolution does
-not wait, because every resolver replays the log from cache, and containment
-does not wait either, because revoking the key is the Root Authority's
-decision, recorded by Trust Authority, and publishing the emergency trusted
-list that names it is Trust Registry's. What waits for the witness is the
-replacement key.
+The same requirement sets what waits when the witness is down. An entity cannot
+onboard and cannot rotate a key while DID Service is unreachable, because an
+entry nobody witnessed is an entry nobody accepts. Resolution does not wait,
+because every resolver replays the log from cache, and containment does not wait
+either, because revoking the key is the Root Authority's decision, recorded by
+Trust Authority, and publishing the emergency trusted list that names it is
+Trust Registry's. Only the replacement key waits for the witness.
 [Trust Infrastructure is not a role][trust-infrastructure-is-not-a-role]
 explains why the witness stays a single one on that reasoning.
 
 ### Emergency rotation and scheduled rotation {#emergency-rotation-and-scheduled-rotation}
 
 When a signing key leaks, rotation is the second phase of
-[entity key revocation][entity-key-revocation]: the same path as above,
-run the same day, with the old DSC placed on the CRL and the witness refusing
+[entity key revocation][entity-key-revocation], run the same day, with the old
+DSC placed on the CRL and the witness refusing
 any further entry signed with the compromised key. Every credential that key
 signed is then revoked, which the issuer can do because each
 `issuance_record` names the `signing_key_ref` that signed it, and
-[scheduled key rotation][scheduled-key-rotation-and-blast-radius] is what
-keeps that list short. How often an entity rotates on schedule is a number
+[scheduled key rotation][scheduled-key-rotation-and-blast-radius] keeps that
+list short.
+
+How often an entity rotates on schedule is a number
 per key purpose, and the Governance Profile sets it. The architecture fixes
-only that rotation is scheduled, that it runs the same path as above, and
+only that rotation is scheduled, that it runs that same path, and
 that the DSC ceilings bound `issuance-cose` whatever the schedule says.
 
 ## Trust Authority's own keys {#trust-authoritys-own-keys}
@@ -429,7 +425,7 @@ Trust Authority holds the keys that every other key chains to, and holds them
 in HSMs of its own. Each is used for one thing.
 
 1. **Issuer Root CA.** The self-signed root of the issuing side, under the
-   ISO/IEC 18013-5:2021 name that
+   ISO/IEC 18013-5 name that
    [the naming section][naming-and-its-isoiec-18013-5-equivalents] maps. It
    signs every DSC and the CRL that withdraws one. It lives in an offline HSM
    validated to [FIPS 140-3][ref-fips-140-3] Level 3, so no software
@@ -455,9 +451,8 @@ in HSMs of its own. Each is used for one thing.
 6. **The accreditation status list key.** It signs the status list that
    revokes an Accreditation Credential before it expires, which Trust
    Registry publishes on the central content delivery network. It is
-   separate from the Accreditation Credential key for the same reason the
-   Use Statement's two keys are separate: a list that revokes what a
-   compromised key signed cannot be signed by that key.
+   separate from the Accreditation Credential key for the reason
+   [an issuer's status list key][an-issuers-keys] gives.
 7. **The Use Statement key.** It signs each Use Statement, the statement
    that registers one intended use of a Relying Party or an RP Intermediary,
    and nothing else. Accreditation Service issues the Use Statement and the
@@ -467,10 +462,8 @@ in HSMs of its own. Each is used for one thing.
    accreditation, and one shared key would put both at risk at once.
 8. **The Use Statement status list key.** It signs the status list that
    revokes Use Statements, which Trust Registry publishes on the central
-   content delivery network. It is separate from the Use Statement key for
-   the reason [an issuer's status list key][an-issuers-keys] is separate
-   from its signing key: when the Use Statement key is revoked, the list that revokes
-   what it signed still has to be republished.
+   content delivery network. It is separate from the Use Statement key for the
+   reason [an issuer's status list key][an-issuers-keys] gives.
 9. **The Authority Statement key.** It signs each answer Trust Registry
    returns to a permission query, the statement that records what one entity
    may do, and nothing else. It and the recognition statement key are the
@@ -483,12 +476,11 @@ in HSMs of its own. Each is used for one thing.
    other thirteen, and DID Service's Log Service is the only user of that
    partition.
 11. **Trust Authority's own update key.** Trust Authority has a `did:webvh`
-    identifier of its own, maintained with the same kind of Ed25519 key as
-    any entity's, because the Accreditation Credential, the Authority
-    Statement and the Use Statement it signs carry an issuer field a
-    verifier resolves. Its log is
-    countersigned by its own witness key, which proves nothing. What anchors
-    Trust Authority is the self-certifying identifier (SCID) of that
+    identifier of its own, maintained with the same kind of Ed25519 key as any
+    entity's, because the Accreditation Credential, the Authority Statement, and
+    the Use Statement it signs carry an issuer field a verifier resolves. Its
+    log is countersigned by its own witness key, which proves nothing. What
+    anchors it instead is the self-certifying identifier (SCID) of that
     `did:webvh`, which Trust SDK carries at build time the way it carries the
     two roots: a Trust Authority signature is checked against the keys that
     SCID's log resolves to.
@@ -502,7 +494,7 @@ in HSMs of its own. Each is used for one thing.
 13. **The catalog key.** It signs each published version of the catalog
     list, which names every Rulebook version with the digest of its file.
     One signature covers every Rulebook, so a
-    Rulebook stays the file its Provider proposed.
+    Rulebook stays the file its Credential Rulebook Provider proposed.
 14. **The Governance Profile key.** It signs each edition of the
     Governance Profile, the signed file that holds the numbers and
     algorithms the ecosystem may change without changing an interface, and
@@ -517,35 +509,39 @@ because they are self-signed.
 ### How Trust Authority's keys are replaced {#how-trust-authoritys-keys-are-replaced}
 
 Each of the fourteen keys is replaced by a mechanism the parties that verify
-against it already understand. None of them is replaced by asking every
-verifier to trust a new key on sight.
+against it already understand.
 
-- **The two roots.** A root reaches the field at build time, so a replacement
-  is planned long before it is needed and cut while the old root is still
-  valid. The old root signs a link certificate over the new one, the
-  mechanism ISO/IEC 18013-5 Annex B defines for an Issuing Authority
-  Certificate Authority (IACA) re-key, so a reader that trusts the old root
-  can follow it to the new. The new root travels through the VICAL and
-  through the next release of Mobile Wallet, Mobile
-  Verifier, and Trust SDK. Every DSC and every Verifier Issuing CA
-  certificate under the old root runs to its own expiry; new ones are issued
-  under the new root. ISO/IEC 18013-5 sets the arithmetic for a root's
-  lifetime: the longest end-entity certificate it will sign, plus the period
-  during which it signs, plus the lead time to distribute it on both ends.
-  The numbers that go into that sum are the Governance Profile's.
-- **The trusted list key, the VICAL key, and the Governance Profile key.**
+- **The two roots.** A root reaches the field at build time, so a replacement is
+  planned long before it is needed and cut while the old root is still valid.
+  The old root signs a link certificate over the new one, the mechanism
+  ISO/IEC 18013-5 Annex B defines for an Issuing Authority Certificate Authority
+  (IACA) re-key, so a reader that trusts the old root can follow it to the new.
+  The new root travels through the VICAL and through the next release of
+  Mobile Wallet, Mobile Verifier, and Trust SDK. Every DSC and every
+  Verifier Issuing CA certificate under the old root runs to its own expiry; new
+  ones are issued under the new root. ISO/IEC 18013-5 sets the arithmetic for a
+  root's lifetime: the longest end-entity certificate it will sign, plus the
+  period during which it signs, plus the lead time to distribute it on both
+  ends. The numbers that go into that sum are the Governance Profile's.
+- **The VICAL key.** A new VICAL key reaches a reader as a new VICAL signer
+  certificate, carried in the `x5chain` of the next list. A reader that already
+  holds the root follows the chain to it, so nothing has to be announced ahead
+  of the signature.
+- **The trusted list key and the Governance Profile key.**
   Each list, and each edition of the Profile, announces its next signing key
   before that key signs anything. Trust SDK accepts a list or a Profile under
   a new key only when one it has already verified announced that key. A
-  key that appears unannounced is refused, which is what keeps a stolen key
-  from publishing a list of its own.
-- **The Accreditation Credential key and its status list key, the Authority
-  Statement key, the recognition statement key, the catalog key, the two Use
-  Statement keys, and Trust Authority's own update key.** All eight are keys
-  in Trust Authority's
-  `did:webvh`, so they rotate the way an
-  entity's keys do: a new log entry, pre-rotation, and the SCID that Trust
-  SDK carries unchanged.
+  key that appears unannounced is refused, which keeps a stolen key from
+  publishing a list of its own. An announced key that is stolen is
+  struck by the next list signed with an accepted key, and a reader that
+  saw that list refuses the struck key from then on; a reader that never
+  saw it is reached only by a new release.
+- **The Accreditation Credential key and its status list key, the
+  Authority Statement key, the recognition statement key, the catalog key, the
+  two Use Statement keys, and Trust Authority's own update key.** All eight are
+  keys in Trust Authority's `did:webvh`, so they rotate the way an entity's keys
+  do: a new log entry, pre-rotation, and the SCID that Trust SDK carries
+  unchanged.
 - **The witness key.** Described under [the witness key][the-witness-key],
   because its proofs live in every entity's log.
 
@@ -576,8 +572,9 @@ one rule carries the whole lifecycle:
 - **Compromise.** A stolen witness key forges nothing on its own, because
   every entry is also signed by the entity's update key and chained to the
   entry before it. What it could do is witness an entry the entity never
-  submitted through Trust Authority. Containment is the rotation above run
-  the same day, with the stolen `did:key` struck from the trusted list rather
+  submitted through Trust Authority. Containment is the rotation
+  [emergency rotation and scheduled rotation][emergency-rotation-and-scheduled-rotation]
+  sets out, run the same day, with the stolen `did:key` struck from the trusted list rather
   than left beside the new one, so that no resolver built on Trust SDK counts
   its proofs on any entry after the strike.
 
@@ -612,47 +609,49 @@ every credential on the installation at once.
 
 A wallet installation and a Mobile Verifier each hold one device key, minted
 when the installation enrolls or the reader device is provisioned. The party
-that vouches for the device knows it by the JSON Web Key (JWK) thumbprint of
-this key, computed the way RFC 7638 defines it. That party receives the
-public half once, when the installation enrolls or the reader device is
-activated, and the thumbprint stands for the device in every message and
-every log afterwards; the private key never leaves the secure element it was
-generated in. [Devices][devices] covers the identifier. What the key does beyond
-that differs between the two applications.
+that vouches for the device receives the public half once, and
+[Identifier](../data-model-and-protocols/identifier.md) covers the JSON Web Key
+(JWK) thumbprint it knows the device by. What the key does beyond that differs
+between the two applications.
 
 On a wallet, the device key serves the installation's dealings with Wallet
 Backend Service and nothing else. It never appears in a presentation; the
-credential key does that work. A phone carrying ten credentials has one
-credential key beside one device key, and the two are never the same key.
+credential key does that work.
 
 On a Mobile Verifier, the device key is also the reader's transaction key,
-because the device holds no other key a wallet reads. It is the public key the Verifier Device
-Certificate carries, so it signs the ReaderAuth of a DeviceRequest in
-proximity, and signs the Request Object online. It is not the key a wallet
-encrypts the online response to: the device draws a fresh key pair for each
-request, as Verifier Core does, keeps it on the device, and discards it once
-it has decrypted the response, which is why the RP Intermediary that relays
-that response cannot read it. The certificate certifies the device key for
-signing alone. The wallet keeps two keys so that the key its
-vouching party knows never appears in a presentation. A reader
-holds no credential, and ISO/IEC 18013-5 has ReaderAuth signed with the key
-in the reader's certificate, so there is nothing to split. On iOS a Mobile Verifier also holds the App
-Attest key through which Apple vouches for the build. That key signs only
-assertions to Verifier Core and cannot sign a ReaderAuth, so it is not the
-device key there.
+because the device holds no other key a wallet reads. It is the public key the
+Verifier Device Certificate carries, so it signs the ReaderAuth of a
+DeviceRequest in proximity, and signs the Request Object online.
+
+It is not the key a wallet encrypts the online response to; the device draws
+that one per request, as [a Relying Party's keys][a-relying-partys-keys] sets
+out, which is why the RP Intermediary that relays the response cannot read it.
+The certificate certifies the device key for signing alone.
+
+The wallet keeps two keys so that the key its vouching party knows never
+appears in a presentation. A reader holds no credential, and
+ISO/IEC 18013-5 has ReaderAuth signed with the key in the reader's certificate,
+so there is nothing to split.
+
+On iOS a Mobile Verifier also holds the App Attest
+key through which Apple vouches for the build. That key signs only assertions to
+Verifier Core and cannot sign a ReaderAuth, so it is not the device key there.
 
 ### The DPoP key {#the-dpop-key}
 
 A wallet installation also holds a DPoP key for each issuer it receives
-credentials from. It signs the Demonstrating Proof of Possession (DPoP) proof
-of every request the wallet sends that issuer, so the access token and the
-refresh token the issuer hands out work only on the installation that holds
-the key, which is what keeps [credential renewal][credential-renewal] on the
-same phone. It is neither of the two keys above. The credential key is
+credentials from. It signs the DPoP proof of every request the wallet sends that
+issuer. The access token and the refresh token the issuer hands out therefore
+work only on the installation that holds the key. That keeps
+[credential renewal][credential-renewal] on the same phone.
+
+It is neither the credential key nor the device key. The credential key is
 released only by the citizen's authentication, and renewal runs without the
 citizen; the device key is known to Wallet Backend Service and to nobody else.
-The wallet keeps a DPoP key while it holds a refresh token from that issuer,
-signs nothing else with it, and nobody vouches for it.
+
+The wallet generates it in the secure element like the other two, keeps it
+while it holds a refresh token from that issuer, signs nothing else with it,
+and nobody vouches for it.
 
 ### What vouches for a key on a device {#what-vouches-for-a-key-on-a-device}
 
@@ -662,27 +661,26 @@ claims to be and that it may do what it asks:
 
 1. **The attestation platform**, issued by the phone's chip, Google's or
    Apple's, as an X.509 chain that lives as long as the key. It says the key
-   really sits in the hardware the chip vouches for, and the vouching party
-   decides what resistance that supports. Only the
-   vouching party reads it: Wallet Backend Service before issuing a Key
-   Attestation, Verifier Core before issuing a Verifier Device Certificate.
-   Apple's chain covers only the App Attest key, which is an iOS wallet's
-   device key but not an iOS Mobile Verifier's, so for the iOS credential key the attestation platform is the
-   App Attest attestation that commits to that key, and the official build it
-   shows running stands behind where the key sits. For an iOS Mobile
-   Verifier's device key the attestation platform is likewise the App Attest
-   attestation that commits to that key.
-2. **The Key Attestation**, issued by Wallet Backend Service for each issuance and signed
-   with the Wallet Provider's Key Attestation key. It names the credential
-   key and the strength of its storage, and travels with the key to the
-   issuer's credential endpoint. An installation whose attestation has
-   expired obtains no further credential; what it already holds goes on
-   being presented, because expiry
-   [blocks issuance only][key-attestation].
+   sits in the hardware the chip vouches for, and the vouching party
+   decides what resistance that supports. Only the vouching party reads it:
+   Wallet Backend Service before issuing a Key Attestation, Verifier Core before
+   issuing a Verifier Device Certificate. Apple's chain covers only the App
+   Attest key, which is an iOS wallet's device key but not an iOS
+   Mobile Verifier's, so for the iOS credential key the attestation platform is
+   the App Attest attestation that commits to that key, and the official build
+   it shows running stands behind where the key sits. For an iOS
+   Mobile Verifier's device key the attestation platform is likewise the App
+   Attest attestation that commits to that key.
+2. **The Key Attestation**, issued by Wallet Backend Service for each issuance
+   and signed with the Wallet Provider's Key Attestation key. It names the
+   credential key and the strength of its storage, and travels with the key to
+   the issuer's credential endpoint. An installation whose attestation has
+   expired obtains no further credential; what it already holds goes on being
+   presented, because expiry [blocks issuance only][key-attestation].
 3. **The Verifier Device Certificate**, issued per reader device over its
    device key, from the Verifier Issuing CA of the RP Intermediary, or of the
-   Relying Party that owns the counter device, with a limited lifetime and a
-   CRL for a device withdrawn before it expires. The wallet checks it against the Verifier
-   Root CA built into the wallet, and
+   Relying Party that owns the counter device, with a limited lifetime and a CRL
+   for a device withdrawn before it expires. The wallet checks it against the
+   Verifier Root CA built into the wallet, and
    [short-lived attestations][short-lived-attestations] explains why a
    certificate rather than a DID identifies a merchant.

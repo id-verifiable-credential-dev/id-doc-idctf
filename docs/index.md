@@ -80,11 +80,11 @@ and by who is allowed to change it.
 
 | Code | Document | Answers | Who changes it | Progress |
 | --- | --- | --- | --- | --- |
-| `IDCTF-AF` | [Architecture Framework](architecture-framework/index.md) | What and why: roles, Services, Modules, tenancy, trust model, flows | Architects, rarely | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-TS-g-nn` | [Technical Specifications](technical-specifications/index.md) | How exactly, in a form that can be tested | The technical team, per version | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-AF` | [Architecture Framework](architecture-framework/index.md) | What and why: roles, Services, Modules, trust model, flows | The Root Authority, on the technical team's draft | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-TS-g-nn` | [Technical Specifications](technical-specifications/index.md) | How exactly, in a form that can be tested | The Root Authority, on the technical team's draft, per version | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
 | `IDCTF-GF` | [Governance Framework](governance-framework/index.md) | Who decides, what participants owe, what the sanctions are | The Root Authority, through a formal process | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | The rules for each credential type | The Credential Rulebook Provider for that type | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
-| `IDCTF-DL` | [Decision Log](decision-log/index.md) | Numbered decisions and their status | The architecture committee | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
+| `IDCTF-CR` | [Credential Rulebook Catalog](credential-rulebook/index.md) | The rules for each credential type | The Credential Rulebook Provider for that type proposes, the Root Authority approves | <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> |
+| `IDCTF-DL` | [Decision Log](decision-log/index.md) | Numbered decisions and their status | The Root Authority | <span class="ekdn-status ekdn-status--todo"><span class="dot"></span>Not started</span> |
 
 </figure>
 
@@ -92,10 +92,8 @@ A version is written with its document code, so `IDCTF-AF-1.0` is a version of
 the Architecture Framework and `IDCTF-TS-5-01-1.0` is a version of one technical
 specification.
 
-The Architecture Framework, the Technical Specifications, the Governance
-Framework and the Credential Rulebook Catalog are done: every page of each
-carries prose. The Decision Log is not started. 70 of 71 pages carry prose. A page whose prose is unwritten carries a
-`(soon)` marker and holds section headings only.
+70 of 71 pages carry prose. A page whose prose is unwritten carries a `(soon)`
+marker and holds section headings only.
 
 <p class="ekdn-legend">
 <span class="ekdn-status ekdn-status--written"><span class="dot"></span>Done</span> every page has prose and nothing owed is open &nbsp;·&nbsp;

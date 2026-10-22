@@ -465,8 +465,6 @@ USE_STATEMENTS = [
             "id.idctf.kartu-nikah.1#kua",
             "id.idctf.kartu-nikah.1#kabupaten_kota",
             "id.idctf.kartu-nikah.1#provinsi",
-            "id.idctf.kartu-nikah.1#foto_suami",
-            "id.idctf.kartu-nikah.1#foto_istri",
         ],
         "status": {
             "status_list": {
@@ -521,10 +519,10 @@ ANSWERS = [
         "time_requested": "2026-09-01T00:00:00Z",
         "time_evaluated": "2026-10-17T03:11:20Z",
         "context": {"time": "2026-09-01T00:00:00Z"},
-        "message": "Granted 2026-02-18T00:00:00Z.",
+        "message": "Granted 2026-03-01T00:00:00Z.",
         "periods": [
-            {"valid_from": "2026-08-01T00:00:00Z"},
-            {"valid_from": "2026-02-18T00:00:00Z", "valid_until": "2026-07-01T00:00:00Z"},
+            {"valid_from": "2026-04-10T00:00:00Z"},
+            {"valid_from": "2026-03-01T00:00:00Z", "valid_until": "2026-04-01T00:00:00Z"},
         ],
     },
     {
@@ -534,8 +532,8 @@ ANSWERS = [
         "resource": "org.iso.18013.5.1.mDL.1#age_over_18",
         "authorized": True,
         "time_evaluated": "2026-10-17T03:11:20Z",
-        "message": "Granted 2026-02-20T00:00:00Z.",
-        "periods": [{"valid_from": "2026-02-20T00:00:00Z"}],
+        "message": "Granted 2026-03-01T00:00:00Z.",
+        "periods": [{"valid_from": "2026-03-01T00:00:00Z"}],
     },
     {
         "authority_id": TRUST_AUTHORITY,

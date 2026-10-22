@@ -16,22 +16,25 @@ credential.
 
 !!! note "Informative page"
 
-    This Rulebook is an illustration and is not registered. Its values were
-    chosen to show how the fields of [Rulebook structure](../rulebook-structure.md)
-    fit together, and none of them has been approved by the Root Authority.
-    The addresses under `catalog.trust.go.id` do not exist yet; the files they
-    name are shown on this page instead.
+    This Rulebook is an illustration and is not registered. Its values show
+    how the fields of [Rulebook structure](../rulebook-structure.md) fit
+    together, and the Root Authority has approved none of them. The addresses
+    under `catalog.trust.go.id` do not exist yet, so this page shows the files
+    they name.
 
 ## The Rulebook {#kartu-nikah-rulebook}
 
-The Rulebook for `id.idctf.kartu-nikah.1`, carrying every field
-[Rulebook structure](../rulebook-structure.md) lists, and the [JSON-LD 1.1][ref-json-ld] context
-its `ldp_vc` entry names. The Rulebook lists `ldp_vc` alone, because an
-`ldp_vc` credential stands alone. It lists no `expiry_date`, because the card it
-mirrors carries no validity period. Every term in the context expands to an IRI
-under `https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah`, and this page
-plays the part of the catalog page those IRIs resolve to: the schema gives
-each term's type, and the Type Metadata its labels.
+The Rulebook for `id.idctf.kartu-nikah.1` carries every field
+[Rulebook structure](../rulebook-structure.md) lists, and its `ldp_vc` entry
+names the [JSON-LD 1.1][ref-json-ld] context. It lists `ldp_vc` alone, as
+[REQ-CR-055][req-cr-055] requires of a Rulebook that lists that format. It
+lists no `expiry_date`, because the card it mirrors carries no validity
+period. It carries no photograph either, because
+[REQ-CR-082][req-cr-082] fixes a facial image at `restricted` and
+[REQ-CR-017][req-cr-017] keeps a `restricted` attribute out of `ldp_vc`. Every
+term in the context expands to an Internationalized Resource Identifier (IRI)
+under `https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah`; the schema
+gives each term's type, and the Type Metadata its labels.
 
 ``` { .json title="rulebook.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/kartu-nikah/rulebook.json"
@@ -43,8 +46,9 @@ each term's type, and the Type Metadata its labels.
 
 ## Schema {#kartu-nikah-schema}
 
-The [JSON Schema 2020-12][ref-json-schema] that [the schema field][rulebook-schema-field] points at, and
-the schema over the whole credential that `credential_schema` points at, as
+These are the [JSON Schema 2020-12][ref-json-schema] that
+[the schema field][rulebook-schema-field] points at and the schema over the whole
+credential that `credential_schema` points at, as
 [the schema in each format][schema-in-each-format] sets out for `ldp_vc`.
 
 ``` { .json title="schema.json" data-format="JSON" }
@@ -57,9 +61,10 @@ the schema over the whole credential that `credential_schema` points at, as
 
 ## Display {#kartu-nikah-display}
 
-The card a wallet draws, light and dark, and the [SD-JWT-based Verifiable
-Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] that [the display field][rulebook-display-field]
-points at. The Type Metadata carries both templates and the logo.
+A wallet draws the card, light and dark, from the
+[SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc]
+that [the display field][rulebook-display-field] points at. The Type Metadata
+carries both templates and the logo.
 
 [](){ #fig-kartu-nikah-light }
 [](){ #fig-kartu-nikah-dark }
@@ -75,7 +80,7 @@ points at. The Type Metadata carries both templates and the logo.
 </figure>
 </div>
 
-Templates: [`card-light.svg`](kartu-nikah/card-light.svg) and
+The templates are [`card-light.svg`](kartu-nikah/card-light.svg) and
 [`card-dark.svg`](kartu-nikah/card-dark.svg).
 
 ``` { .json title="type-metadata.json" data-format="JSON" }
@@ -84,8 +89,8 @@ Templates: [`card-light.svg`](kartu-nikah/card-light.svg) and
 
 ## Issued credential {#kartu-nikah-issued-credential}
 
-One credential as Issuer Core signs it, and where each of its parts comes
-from.
+This section shows one credential as Issuer Core signs it, and where each of
+its parts comes from.
 
 ``` { .json title="W3C VCDM 2.0 credential with its Data Integrity proof" data-format="JSON-LD" }
 {
@@ -96,7 +101,7 @@ from.
   "type": [ "VerifiableCredential", "KartuNikah" ],
   "issuer": "did:webvh:QmScid...:kemenag.go.id",
   "validFrom": "2026-10-16T09:12:00Z",
-  "validUntil": "2028-10-15T09:12:00Z",
+  "validUntil": "2027-10-16T09:12:00Z",
   "credentialSubject": {
     "id": "did:key:zDnaeT7k...Qm4",
     "nama_suami": "Arif Setiawan Nugroho",
@@ -105,9 +110,7 @@ from.
     "nomor_akta_nikah": "0123/0007/V/2025",
     "kua": "KUA Kec. Cibinong",
     "kabupaten_kota": "Kabupaten Bogor",
-    "provinsi": "Jawa Barat",
-    "foto_suami": "/9j/4AAQSkZJRg...",
-    "foto_istri": "/9j/4AAQSkZJRg..."
+    "provinsi": "Jawa Barat"
   },
   "credentialStatus": [
     {
@@ -151,7 +154,7 @@ from.
 | `validFrom` | The moment Issuer Core signs |
 | `validUntil` | The issuer, within the ceiling the Governance Profile sets, because [a Rulebook carries no technical validity period][what-a-rulebook-does-not-carry] |
 | `credentialSubject.id` | The holder's [did:key][holder-one-didkey-per-wallet-installation] |
-| `nama_suami` to `foto_istri` | The issuer's source system, read by Issuer Core, using its Claims Provider Component, and checked against `schema.json` |
+| `nama_suami` to `provinsi` | The issuer's source system, read by Issuer Core, using its Claims Provider Component, and checked against `schema.json` |
 | `credentialStatus` | The credential's two entries in the issuer's [status list][status-list], one for revocation and one for suspension at the same index, allocated by Issuer Core, using its Status Manager Component |
 | `credentialSchema` | The Rulebook's `formats.ldp_vc.credential_schema`, with the `digestSRI` of that file |
 | `proof` | Issuer Core, signing the [RDFC-1.0][ref-rdfc-1-0] canonical form of the whole document with the issuer's signing key under `ecdsa-rdfc-2019`; `verificationMethod` names that key's [`Multikey`][ref-cid] entry in the issuer's DID Document |

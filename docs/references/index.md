@@ -8,15 +8,17 @@ description: Every standard and law the five IDCTF documents build on, split int
 # References {#references}
 
 Every format and every protocol in IDCTF comes from a specification somebody
-else wrote and maintains. This page lists them for all five IDCTF documents,
-each with a link to the document and one line on what IDCTF uses it for. Each
-entry carries a label in square brackets, and the entries in each section are
-in alphabetical order of that label.
+else wrote and maintains, for all five IDCTF documents. Each entry carries a
+link to the document, one line on what IDCTF uses it for, and a label in square
+brackets, and the entries in each section are in alphabetical order of that
+label. Indonesian laws and regulations run in
+order of enactment instead, because a reader looking one up knows its year.
 
 Each entry names, in brackets after its title, the version IDCTF is written
 against and how mature that version is, and its link points at that version.
 A draft is pinned to one revision, so the link keeps showing that revision after
-newer ones are published.
+newer ones are published. A law has no version; its entry names the amendments
+in force instead.
 
 A normative reference is one an implementation of IDCTF cannot do without:
 the protocols, formats, and profiles IDCTF is built from, and the Indonesian
@@ -31,19 +33,22 @@ turned down are in the [technology map][technology-map].
 
 - [](){ #ref-android-key-attestation } **[AndroidKeyAttestation]**
   [Android Key Attestation](https://source.android.com/docs/security/features/keystore/attestation)
-  (vendor documentation, no version, read on 17 October 2026), platform evidence an Android wallet exchanges for a Key Attestation, together
-  with Play Integrity.
+  (vendor documentation, no version, read on 17 October 2026), platform evidence
+  an Android wallet exchanges for a Key Attestation, together with Play
+  Integrity.
 - [](){ #ref-app-attest } **[AppAttest]**
   [App Attest](https://developer.apple.com/documentation/devicecheck/establishing-your-app-s-integrity)
   (vendor documentation, no version, read on 17 October 2026), the same evidence on iOS.
 - [](){ #ref-bitstring-status-list } **[BitstringStatusList]**
   [W3C Bitstring Status List](https://www.w3.org/TR/2025/REC-vc-bitstring-status-list-20250515/)
-  (W3C Recommendation, 15 May 2025), the status list for `ldp_vc`, the equivalent of the IETF Token Status List.
+  (W3C Recommendation, 15 May 2025), the status list for `ldp_vc`, the
+  equivalent of the IETF Token Status List.
 - [](){ #ref-cid } **[CID]**
   [W3C Controlled Identifiers v1.0](https://www.w3.org/TR/2025/REC-cid-1.0-20250515/)
   (W3C Recommendation, 15 May 2025), the
-  definition of `Multikey`, the verification method type `issuance-jose` and
-  `status-list` take in an issuer's Decentralized Identifier (DID) Document.
+  definition of `Multikey`, the verification method type that `issuance-jose`
+  and `status-list` take in an issuer's Decentralized Identifier (DID)
+  Document.
 - [](){ #ref-did-core } **[DID-Core]**
   [W3C DID 1.0](https://www.w3.org/TR/2022/REC-did-core-20220719/) (W3C
   Recommendation, 19 July 2022), the DID data model and the
@@ -67,37 +72,39 @@ turned down are in the [technology map][technology-map].
   permits one cryptosuite for those proofs, `eddsa-jcs-2022`, which is the only
   place Ed25519 is used.
 - [](){ #ref-etsi-ts-119602 } **[ETSI.TS.119602]**
-  [ETSI TS 119
-  602](https://www.etsi.org/deliver/etsi_ts/119600_119699/119602/01.01.01_60/ts_119602v010101p.pdf)
-  (V1.1.1, 2025-11), the List of Trusted Entities (LoTE) data model the trusted list is published
-  as. IDCTF publishes the JSON encoding only.
+  [ETSI TS 119 602](https://www.etsi.org/deliver/etsi_ts/119600_119699/119602/01.01.01_60/ts_119602v010101p.pdf)
+  (V1.1.1, 2025-11), the List of Trusted Entities (LoTE) data model the
+  trusted list is published as. IDCTF publishes the JSON encoding only.
+- [](){ #ref-eucc } **[EUCC]**
+  [Implementing Regulation (EU) 2024/482](https://eur-lex.europa.eu/eli/reg_impl/2024/482/oj)
+  (adopted 31 January 2024), the European Union cybersecurity
+  certification scheme on Common Criteria, one of the schemes a `keyStorage`
+  value in the Governance Profile names for a certified secure element.
 - [](){ #ref-fips-140-3 } **[FIPS.140-3]**
   [FIPS 140-3](https://csrc.nist.gov/pubs/fips/140-3/final) (final, 22 March
   2019), the validation
   standard for cryptographic modules. The hardware security module (HSM) that
   holds Issuer Root CA is validated to its Level 3.
 - [](){ #ref-i-d-ietf-oauth-sd-jwt-vc } **[I-D.ietf-oauth-sd-jwt-vc]**
-  [IETF SD-JWT
-  VC](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-sd-jwt-vc-13)
+  [IETF SD-JWT VC](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-sd-jwt-vc-13)
   (draft-ietf-oauth-sd-jwt-vc-13, 6 November 2025, Internet-Draft), the
-  credential type over selective disclosure for JSON Web Tokens (SD-JWT),
-  format `dc+sd-jwt`, carrying `vct` and the `cnf` holder binding. It is the
-  main online path, and it is still an Internet-Draft, pinned at draft -13.
-  The same document defines SD-JWT VC Type Metadata, the metadata a `vct`
-  resolves to, published alongside a Rulebook, and the display metadata that
-  says how a credential is rendered to a citizen.
+  credential type over selective disclosure for JSON Web Tokens (SD-JWT), format
+  `dc+sd-jwt`, carrying `vct` and the `cnf` holder binding. It is the main
+  online path. The same
+  document defines SD-JWT VC Type Metadata, the metadata a `vct` resolves to,
+  published alongside a Rulebook, and the display metadata that says how a
+  credential is rendered to a citizen.
 - [](){ #ref-i-d-ietf-oauth-status-list } **[I-D.ietf-oauth-status-list]**
-  [IETF Token Status
-  List](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-14)
+  [IETF Token Status List](https://datatracker.ietf.org/doc/html/draft-ietf-oauth-status-list-14)
   (draft-ietf-oauth-status-list-14, 10 December 2025, Internet-Draft), the
   compressed status list SD-JWT-based Verifiable Credentials (SD-JWT VC) and
-  mdoc point at. It is still an Internet-Draft, pinned at draft -14.
+  mdoc point at.
 - [](){ #ref-iso-15408-3 } **[ISO.15408-3]**
   [ISO/IEC 15408-3](https://www.iso.org/standard/72906.html) (ISO/IEC
-  15408-3:2022, fourth edition), the Common Criteria assurance components,
-  among them `AVA_VAN.5`, the vulnerability analysis against an attacker of
-  high attack potential that a certification has to include before a Key
-  Attestation reports `iso_18045_high`.
+  15408-3:2022, fourth edition), the Common Criteria assurance components, among
+  them `AVA_VAN.5`, the vulnerability analysis against an attacker of high
+  attack potential that a certification has to include before a Key Attestation
+  reports `iso_18045_high`.
 - [](){ #ref-iso-17021-1 } **[ISO.17021-1]**
   [ISO/IEC 17021-1](https://www.iso.org/standard/61651.html) (ISO/IEC
   17021-1:2015, first edition), conformity assessment, requirements for bodies
@@ -110,20 +117,21 @@ turned down are in the [technology map][technology-map].
   conformance testing, adopted in Indonesia as SNI ISO/IEC 17025:2017.
 - [](){ #ref-iso-18013-5 } **[ISO.18013-5]**
   [ISO/IEC 18013-5](https://www.iso.org/standard/69084.html)
-  (ISO/IEC 18013-5:2021, first edition), the mobile
-  driving license standard. IDCTF takes four things from it. The first is the
-  mdoc credential format: Concise Binary Object Representation (CBOR) and CBOR
-  Object Signing and Encryption (COSE), the Mobile Security Object (MSO) with
-  its `valueDigests` and `DeviceKey`, and `docType` as the type identifier. The
-  second is the whole proximity path: device engagement over QR or Near Field
-  Communication (NFC), the encrypted Bluetooth Low Energy (BLE) session, and
-  ReaderAuth and DeviceAuth over a shared SessionTranscript. The third is the
-  certificate profiles in Annex B, which the ecosystem's own certificates
-  follow, including the extended key usages `1.0.18013.5.1.2` for a Document
-  Signer Certificate and `1.0.18013.5.1.6` for a reader. The fourth is the
-  Verified Issuer Certificate Authority List (VICAL) in Annex C, the signed list
-  of certificate roots an mdoc reader accepts issuers from with no network at
-  all.
+  (ISO/IEC 18013-5:2021, first edition), the mobile driving license standard.
+  IDCTF takes four things from it:
+    - The mdoc credential format: Concise Binary Object Representation (CBOR)
+      and CBOR Object Signing and Encryption (COSE), the Mobile Security
+      Object (MSO) with its `valueDigests` and `DeviceKey`, and `docType` as
+      the type identifier.
+    - The whole proximity path: device engagement over QR or Near Field
+      Communication (NFC), the encrypted Bluetooth Low Energy (BLE) session,
+      and ReaderAuth and DeviceAuth over a shared SessionTranscript.
+    - The certificate profiles in Annex B, which the ecosystem's own
+      certificates follow, including the extended key usages `1.0.18013.5.1.2`
+      for a Document Signer Certificate and `1.0.18013.5.1.6` for a reader.
+    - The Verified Issuer Certificate Authority List (VICAL) in Annex C, the
+      signed list of certificate roots an mdoc reader accepts issuers from
+      with no network.
 - [](){ #ref-iso-18045 } **[ISO.18045]**
   [ISO/IEC 18045](https://www.iso.org/standard/72889.html) (ISO/IEC
   18045:2022, third edition), the evaluation
@@ -134,14 +142,9 @@ turned down are in the [technology map][technology-map].
   Recommendation, 16 July 2020), the syntax an `ldp_vc`
   credential is written in, which a verifier expands before it canonicalizes.
 - [](){ #ref-json-schema } **[JSON-Schema]**
-  [JSON Schema](https://json-schema.org/draft/2020-12) (Draft 2020-12,
-  published as Internet-Drafts on 16 June 2022), which validates a Credential
-  Rulebook and the claims an institution's source system returns.
-- [](){ #ref-kmip } **[KMIP]**
-  [KMIP](https://docs.oasis-open.org/kmip/kmip-spec/v2.1/os/kmip-spec-v2.1-os.html)
-  (KMIP 2.1, OASIS Standard, 14 December 2020), the Key Management
-  Interoperability Protocol, which a Key Manager driver may use to reach a
-  cloud key management service (KMS) or an HSM.
+  [JSON Schema](https://json-schema.org/draft/2020-12) (Draft 2020-12, published
+  as Internet-Drafts on 16 June 2022), which validates a Credential Rulebook and
+  the claims an institution's source system returns.
 - [](){ #ref-openid-core } **[OpenID.Core]**
   [OpenID Connect Core
   1.0](https://openid.net/specs/openid-connect-core-1_0.html) (Final,
@@ -176,15 +179,8 @@ turned down are in the [technology map][technology-map].
   through, so a signing key can be used without being exported.
 - [](){ #ref-play-integrity } **[PlayIntegrity]**
   [Play Integrity](https://developer.android.com/google/play/integrity) (vendor
-  documentation, no version, read on 17 October 2026), the
-  other half of the platform evidence an Android wallet exchanges for a Key
-  Attestation.
-- [](){ #ref-pp-42-2020 } **[PP.42-2020]**
-  [PP No. 42 Tahun 2020](https://peraturan.bpk.go.id/Details/142301/pp-no-42-tahun-2020)
-  tentang Aksesibilitas terhadap Permukiman, Pelayanan Publik, dan Pelindungan
-  dari Bencana bagi Penyandang Disabilitas, the government regulation whose
-  Pasal 17 obliges a public service that uses technology to make it accessible
-  to persons with disabilities.
+  documentation, no version, read on 17 October 2026), the other half of the
+  platform evidence an Android wallet exchanges for a Key Attestation.
 - [](){ #ref-pp-71-2019 } **[PP.71-2019]**
   [PP No. 71 Tahun 2019](https://peraturan.bpk.go.id/Details/122030/pp-no-71-tahun-2019)
   tentang Penyelenggaraan Sistem dan Transaksi Elektronik, the government
@@ -192,6 +188,12 @@ turned down are in the [technology map][technology-map].
   Certificate*, *Electronic Certification Provider (PSrE)*, and *Electronic
   System Provider (PSE)*. Enacted 4 October 2019 and in force since 10 October
   2019.
+- [](){ #ref-pp-42-2020 } **[PP.42-2020]**
+  [PP No. 42 Tahun 2020](https://peraturan.bpk.go.id/Details/142301/pp-no-42-tahun-2020)
+  tentang Aksesibilitas terhadap Permukiman, Pelayanan Publik, dan Pelindungan
+  dari Bencana bagi Penyandang Disabilitas, the government regulation whose
+  Pasal 17 obliges a public service that uses technology to make it accessible
+  to persons with disabilities.
 - [](){ #ref-rdfc-1-0 } **[RDFC-1.0]**
   [RDFC-1.0](https://www.w3.org/TR/2024/REC-rdf-canon-20240521/) (W3C
   Recommendation, 21 May 2024), the Resource Description
@@ -217,10 +219,10 @@ turned down are in the [technology map][technology-map].
   [RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html) (October 2006), the base64 encoding
   a Credential Rulebook schema marks a binary attribute value with.
 - [](){ #ref-rfc5280 } **[RFC5280]**
-  [RFC 5280](https://www.rfc-editor.org/rfc/rfc5280.html) (May 2008), the X.509 profile
-  and the certificate revocation list (CRL) format, which is what withdraws a
-  Document Signer Certificate, a Verifier Issuing CA, or a Verifier Device
-  Certificate before it expires.
+  [RFC 5280](https://www.rfc-editor.org/rfc/rfc5280.html) (May 2008), the X.509
+  profile and the certificate revocation list (CRL) format, which withdraws a
+  Document Signer Certificate, a Verifier Issuing CA, or a
+  Verifier Device Certificate before it expires.
 - [](){ #ref-rfc5612 } **[RFC5612]**
   [RFC 5612](https://www.rfc-editor.org/rfc/rfc5612.html) (August 2009), the enterprise
   number reserved for documentation, `32473`, the arc the `ReaderAuthRole`
@@ -241,9 +243,9 @@ turned down are in the [technology map][technology-map].
   Algorithms (JWA), which defines `HS256`, the message authentication code that binds an entity's first
   log entry to its registration.
 - [](){ #ref-rfc7519 } **[RFC7519]**
-  [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519.html) (May 2015), JSON Web Token
-  (JWT), the claims set and the validation rules a Use Statement, an Authority
-  Statement, and a Key Attestation are read by.
+  [RFC 7519](https://www.rfc-editor.org/rfc/rfc7519.html) (May 2015), JSON Web
+  Token (JWT), the claims set and the validation rules a Use Statement, an
+  Authority Statement, and a Key Attestation are read by.
 - [](){ #ref-rfc7636 } **[RFC7636]**
   [RFC 7636](https://www.rfc-editor.org/rfc/rfc7636.html) (September 2015), PKCE, which binds an
   authorization code to the client that started the flow.
@@ -256,8 +258,11 @@ turned down are in the [technology map][technology-map].
   RFC 2119 so that only the capitalized key words carry its meaning.
 - [](){ #ref-rfc8414 } **[RFC8414]**
   [RFC 8414](https://www.rfc-editor.org/rfc/rfc8414.html) (June 2018), authorization server
-  metadata, which is how an authorization server's `.well-known` document and its
-  JSON Web Key Set (JWKS) are found.
+  metadata, which names where an authorization server's `.well-known` document
+  and its JSON Web Key Set (JWKS) are found.
+- [](){ #ref-rfc8446 } **[RFC8446]**
+  [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.html) (August 2018), TLS 1.3,
+  the transport every interface a Technical Specification binds is served over.
 - [](){ #ref-rfc8555 } **[RFC8555]**
   [RFC 8555](https://www.rfc-editor.org/rfc/rfc8555.html) (March 2019), Automatic
   Certificate Management Environment (ACME), whose signed request, `Replay-Nonce`
@@ -281,7 +286,7 @@ turned down are in the [technology map][technology-map].
   [RFC 9053](https://www.rfc-editor.org/rfc/rfc9053.html) (August 2022), the
   initial COSE algorithms, which define `ES256` as the value `-7`, the
   algorithm of every COSE signature in IDCTF: the mdoc's IssuerAuth,
-  DeviceAuth and ReaderAuth, and the CWT form of a status list.
+  DeviceAuth, and ReaderAuth, and the CWT form of a status list.
 - [](){ #ref-rfc9101 } **[RFC9101]**
   [RFC 9101](https://www.rfc-editor.org/rfc/rfc9101.html) (August 2021), the signed Request
   Object a verifier publishes behind a `request_uri`.
@@ -298,9 +303,9 @@ turned down are in the [technology map][technology-map].
   parameters for X.509 certificates, including `x5chain`, which carries the
   Document Signer Certificate in an mdoc. ISO/IEC 18013-5:2021 clause 9.1.2.4
   puts `x5chain` in the unprotected header. RFC 9360 permits that when the
-  certificate authority required proof of possession of the subject's key,
-  which the certification request a Document Signer Certificate is issued from
-  gives.
+  certificate authority required proof of possession of the subject's key. The
+  certification request a Document Signer Certificate is issued from gives that
+  proof.
 - [](){ #ref-rfc9396 } **[RFC9396]**
   [RFC 9396](https://www.rfc-editor.org/rfc/rfc9396.html) (May 2023), rich authorization
   requests, the structured authorization detail Issuer Core accepts.
@@ -315,11 +320,12 @@ turned down are in the [technology map][technology-map].
 - [](){ #ref-rfc9901 } **[RFC9901]**
   [RFC 9901](https://www.rfc-editor.org/rfc/rfc9901.html) (November 2025), SD-JWT, the
   salted-hash mechanism SD-JWT VC is built on.
-- [](){ #ref-saml2 } **[SAML2]**
-  [SAML
-  2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
-  (OASIS Standard, 15 March 2005), the alternative to OpenID Connect for that same handoff to the Relying
-  Party's business system.
+- [](){ #ref-sogis-mra } **[SOGIS.MRA]**
+  [SOG-IS MRA](https://www.sogis.eu/uk/mra_en.html)
+  (Version 3.0, 8 January 2010), the Senior Officials Group Information
+  Systems Security Mutual Recognition Agreement, under which the participating
+  states recognize one another's Common Criteria certificates. It is one of
+  the schemes a `keyStorage` value in the Governance Profile names.
 - [](){ #ref-sri } **[SRI]**
   [W3C Subresource Integrity](https://www.w3.org/TR/2016/REC-SRI-20160623/)
   (Level 1, W3C Recommendation, 23 June 2016), the digest form a
@@ -329,12 +335,12 @@ turned down are in the [technology map][technology-map].
   [Scalable Vector Graphics (SVG) 2](https://www.w3.org/TR/2026/CR-SVG2-20261006/) (W3C Candidate
   Recommendation Snapshot, 6 October 2026), the image
   format of the card template SD-JWT VC Type Metadata carries in
-  `rendering.svg_templates`. It is still a Candidate Recommendation.
+  `rendering.svg_templates`.
 - [](){ #ref-trqp } **[TRQP]**
-  [ToIP TRQP
-  v2.0](https://doi.org/10.5281/zenodo.18789010)
-  (ToIP Approved Deliverable, April 2026), the TRQP behind `POST /authorization` and `POST /recognition`. Authority is
-  asked for at the moment it matters rather than downloaded in advance.
+  [ToIP TRQP v2.0](https://doi.org/10.5281/zenodo.18789010) (ToIP Approved
+  Deliverable, April 2026), the TRQP behind `POST /authorization` and
+  `POST /recognition`. Authority is asked for at the moment it matters rather
+  than downloaded in advance.
 - [](){ #ref-uu-11-2008 } **[UU.11-2008]**
   [UU No. 11 Tahun 2008](https://peraturan.bpk.go.id/Details/37589/uu-no-11-tahun-2008)
   tentang Informasi dan Transaksi Elektronik, as amended by
@@ -351,8 +357,9 @@ turned down are in the [technology map][technology-map].
 - [](){ #ref-uu-20-2014 } **[UU.20-2014]**
   [UU No. 20 Tahun 2014](https://peraturan.bpk.go.id/Details/38663/uu-no-20-tahun-2014)
   tentang Standardisasi dan Penilaian Kesesuaian, the law under which Komite
-  Akreditasi Nasional (KAN) accredits a conformity assessment organization, which the
-  Governance Framework uses as the condition for recognizing an Assessment Body.
+  Akreditasi Nasional (KAN) accredits a conformity assessment organization;
+  the Governance Framework uses that accreditation as the condition for
+  recognizing an Assessment Body.
 - [](){ #ref-uu-30-2014 } **[UU.30-2014]**
   [UU No. 30 Tahun 2014](https://peraturan.bpk.go.id/Details/38695/uu-no-30-tahun-2014)
   tentang Administrasi Pemerintahan, as amended by
@@ -385,14 +392,13 @@ turned down are in the [technology map][technology-map].
   `ecdsa-rdfc-2019` as the cryptosuite.
 - [](){ #ref-vc-di-eddsa } **[VC-DI-EdDSA]**
   [Data Integrity EdDSA Cryptosuites v1.0](https://www.w3.org/TR/2025/REC-vc-di-eddsa-20250515/)
-  (W3C Recommendation, 15 May 2025), the definition of `eddsa-jcs-2022`, the proof on every `did:webvh` log entry
-  and witness.
+  (W3C Recommendation, 15 May 2025), the definition of `eddsa-jcs-2022`, the
+  proof on every `did:webvh` log entry and witness.
 - [](){ #ref-vc-json-schema } **[VC-JSON-Schema]**
   [W3C VC JSON Schema](https://www.w3.org/TR/2025/CRD-vc-json-schema-20250204/)
   (W3C Candidate Recommendation Draft, 4 February 2025), the
   `credentialSchema` entry of type `JsonSchema` an `ldp_vc` credential names
-  its schema in, with a `digestSRI`. It is still a Candidate Recommendation
-  Draft.
+  its schema in, with a `digestSRI`.
 - [](){ #ref-wcag-2-2 } **[WCAG-2.2]**
   [Web Content Accessibility Guidelines (WCAG) 2.2](https://www.w3.org/TR/2024/REC-WCAG22-20241212/)
   (W3C Recommendation, 12 December 2024), the accessibility standard every
@@ -418,21 +424,27 @@ turned down are in the [technology map][technology-map].
   [ETSI TS 119
   182-1](https://www.etsi.org/deliver/etsi_ts/119100_119199/11918201/01.02.01_60/ts_11918201v010201p.pdf)
   (V1.2.1, 2024-07), JAdES digital signatures, the signature ETSI TS 119 602 asks for on a JSON
-  List of Trusted Entities and the trusted list specification departs from.
+  List of Trusted Entities, and from which the trusted list specification
+  departs.
 - [](){ #ref-eu-2015-1502 } **[EU.2015-1502]**
   [Implementing Regulation (EU) 2015/1502](https://eur-lex.europa.eu/eli/reg_impl/2015/1502/oj)
-  (of 8 September 2015, as originally published), the eIDAS source of the three assurance levels `low`, `substantial`, and
-  `high`.
+  (of 8 September 2015, as originally published), the eIDAS source of the three
+  assurance levels `low`, `substantial`, and `high`.
 - [](){ #ref-iso-27560 } **[ISO.27560]**
   [ISO/IEC TS 27560](https://www.iso.org/standard/80392.html) (ISO/IEC TS
   27560:2023, Technical Specification), the consent record information
   structure, the model behind the consent receipt a verifier records with a
-  verification. It supplements ISO/IEC 29184 and is based on the consent
-  receipt specification of the Kantara Initiative.
+  verification. It supplements ISO/IEC 29184 and is based on the consent receipt
+  specification of the Kantara Initiative.
 - [](){ #ref-iso-29184 } **[ISO.29184]**
   [ISO/IEC 29184](https://www.iso.org/standard/70331.html) (ISO/IEC
   29184:2020, first edition), online privacy notices and how consent is asked
   for, the consent a consent receipt records.
+- [](){ #ref-kmip } **[KMIP]**
+  [KMIP](https://docs.oasis-open.org/kmip/kmip-spec/v2.1/os/kmip-spec-v2.1-os.html)
+  (KMIP 2.1, OASIS Standard, 14 December 2020), the Key Management
+  Interoperability Protocol, which a Key Manager driver may use to reach a
+  cloud key management service (KMS) or an HSM.
 - [](){ #ref-openid4vc-haip } **[OpenID4VC-HAIP]**
   [OpenID4VC High Assurance Interoperability Profile
   (HAIP)](https://openid.net/specs/openid4vc-high-assurance-interoperability-profile-1_0.html)
@@ -458,6 +470,10 @@ turned down are in the [technology map][technology-map].
   `-9`. IDCTF keeps `-7` because ISO/IEC 18013-5:2021 requires it, the
   operational requirement under which RFC 9864 lets a deployment stay on a
   deprecated value. JOSE `ES256` is fully specified and not affected.
+- [](){ #ref-saml2 } **[SAML2]**
+  [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf)
+  (OASIS Standard, 15 March 2005), the alternative to OpenID Connect for that
+  same handoff to the Relying Party's business system.
 - [](){ #ref-wcag2ict } **[WCAG2ICT]**
   [Guidance on Applying WCAG 2 to Non-Web Information and Communications Technologies (WCAG2ICT)](https://www.w3.org/TR/2025/NOTE-wcag2ict-22-20251211/)
   (W3C Group Note, 11 December 2025), how the WCAG 2.2 success criteria are read

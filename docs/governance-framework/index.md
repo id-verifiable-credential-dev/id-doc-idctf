@@ -13,16 +13,14 @@ follows when those obligations go unmet. Changed by the Root Authority through
 a formal process.
 </p>
 
-The Governance Framework holds the rules for institutions and people. It says
-who decides each question about a participant, what a participant has to show
-to join, what it owes for as long as it holds a role, how an Assessment Body
-tests it, what happens when it falls short, and on what terms another ecosystem
-is recognized. The architecture these rules rest on is in
+The Governance Framework holds the rules for institutions and people,
+including what a participant has to show to join. The architecture these rules
+rest on is in
 [Architecture Framework](../architecture-framework/index.md), and the technical
 rules each Module meets are in
 [Technical Specifications](../technical-specifications/index.md).
 
-**The Governance Framework holds no value of its own.** Every number a rule
+The Governance Framework holds no value of its own. Every number a rule
 needs, a period, a limit, a list of algorithms, an address, is a member of the
 Governance Profile, the signed file
 [Publishing and reading the Governance Profile](../technical-specifications/publishing-and-reading-the-governance-profile.md)
@@ -30,9 +28,9 @@ binds. A rule here says "within the period the Governance Profile sets" and
 names the member; the Root Authority sets the value, and
 [amendment][gf-amendment] says how. The rules of one credential type are in its
 Credential Rulebook, in
-[Credential Rulebook Catalog](../credential-rulebook/index.md). Where the three
-sit beside each other is in
-[The Credential Rulebook][the-credential-rulebook].
+[Credential Rulebook Catalog](../credential-rulebook/index.md).
+[The Credential Rulebook][the-credential-rulebook] shows where the three sit
+beside each other.
 
 Every page of this document is normative. A participant is compliant with
 IDCTF only when it meets the obligations of its role here, as

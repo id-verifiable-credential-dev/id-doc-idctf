@@ -11,8 +11,7 @@ description: The profile of ETSI TS 119 602 the trusted list is published in, wh
 
 <p class="ekdn-lead" markdown="span">
 The roll of accredited entities, as a List of Trusted Entities (LoTE) under
-ETSI TS 119 602 V1.1.1. What Trust Registry puts in it, how Trust Authority signs
-it, where it is served, and what every reader does with the copy it holds.
+ETSI TS 119 602 V1.1.1.
 </p>
 
 Every sentence on this page binds Trust Registry and every Module that
@@ -30,28 +29,38 @@ element, what an entry carries for one accredited registration, the
 identifiers of the roles and statuses, the signature, the publication, and
 the rules a reader applies to its cached copy.
 
-Its conformance targets are Trust Registry, which publishes the list, and
-the five readers: Issuer Core, Verifier Core, Mobile Wallet, Mobile
-Verifier, and a Relying Party's own application built on Reader SDK, which
-reads the list on the same terms as Mobile Verifier when it verifies in
-proximity. A reader meets its requirements through Trust SDK where the
+Its conformance targets are:
+
+- Trust Registry, which publishes the list.
+- The four Modules that read it: Issuer Core, Verifier Core, Mobile Wallet,
+  and Mobile Verifier.
+- A Relying Party's own application built on Reader SDK, which reads the
+  list on the same terms as Mobile Verifier when it verifies in proximity.
+
+A reader meets its requirements through Trust SDK where the
 library performs the check, and otherwise by its own means.
 
-It leaves to other documents: [who is accredited, suspended, or withdrawn and on what grounds][gf-grounds], which the Governance Framework holds; the longest interval
-between issue and `NextUpdate`, the sync timer, and the signature algorithms
-allowed, which the Governance Profile holds; the Verified Issuer Certificate
-Authority List (VICAL) and the certificates, which [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md) holds; the Authority Statement, which
-[Answering with an Authority Statement](answering-with-an-authority-statement.md)
-holds; and the Decentralized Identifier (DID) Document,
-which [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md) holds.
+It leaves to other documents:
 
-One rule of the standard is not followed. Clause 6.8 asks for an Advanced
-Electronic Signature (AdES) at baseline level B, which the profile annexes
-give for the JSON binding as a JSON Advanced Electronic Signature
-([JAdES, ETSI TS 119 182-1 V1.2.1][ref-etsi-ts-119182-1]). The
-trusted list is signed as a plain JSON Web Signature (JWS) instead, as
-[the trusted list][trusted-list] records, and [Signature][ts-5-01-signature]
-gives the reason and what it means for a reader.
+- [Who is accredited, suspended, or withdrawn and on what grounds][gf-grounds],
+  which the Governance Framework holds.
+- The longest interval between issue and `NextUpdate`, the sync timer, and
+  the signature algorithms allowed, which the Governance Profile holds.
+- The Verified Issuer Certificate Authority List (VICAL) and the
+  certificates, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The Authority Statement, which
+  [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  holds.
+- The Decentralized Identifier (DID) Document, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+
+One rule of the standard is not followed: the trusted list is signed as a
+plain JSON Web Signature (JWS) rather than as the JSON Advanced Electronic
+Signature ([JAdES, ETSI TS 119 182-1 V1.2.1][ref-etsi-ts-119182-1]) clause
+6.8 asks for, as [Signature][ts-5-01-signature] sets out.
 
 Before the first exchange, each target holds what the rules below assume:
 
@@ -73,66 +82,82 @@ Before the first exchange, each target holds what the rules below assume:
 ## What the list answers {#ts-5-01-overview}
 
 The trusted list answers one question about a counterpart: whether it is
-accredited. Which key the counterpart signs with is answered by its DID
-Document, and what it may do by its Authority Statement, as
+accredited. Which key the counterpart signs with is answered by its
+DID Document, and what it may do by its Authority Statement, as
 [three questions, three answers][three-questions-three-answers] sets out.
-The list is an index rather than a key store: an entry names a registration
-by its DID, its legal name, the legal identifier
-of the body behind it, its status, and its role, and for a registration that
-issues reader certificates, the certificate authority (CA) it issues them
-from, its Verifier Issuing CA. The only
-keys the list names are Trust Authority's own, and any key of an entity that
-was revoked early. [The trusted list][trusted-list] records who publishes
+
+The list is an index rather than a keystore: an entry names a registration by
+its DID, its legal name, the legal identifier of the body behind it, its
+status, and its role. For a registration that issues reader certificates it
+also names the certificate authority (CA) it issues them from, its
+Verifier Issuing CA. The
+only keys the list names are Trust Authority's own, and any key of an entity
+that was revoked early. [The trusted list][trusted-list] records who publishes
 it, who reads it, and where it lives.
 
 Every reader works from a bulk download of the whole list, cached outside
 any transaction, for the reasons [a bulk download, cached][a-bulk-download-cached]
-gives: a lookup per transaction would tell Trust Infrastructure which citizen
-dealt with which bank, and a verification that starts while Trust
-Infrastructure is unreachable has to complete from the copy. The
-[trust cache sync][trust-cache-sync] is the flow that fills the copy, and
-[the three rules for reading the copy][three-rules-for-reading-the-copy]
-are what this specification turns into requirements.
+gives. The [trust cache sync][trust-cache-sync] is the flow that fills the
+copy, and this specification turns
+[the three rules for reading the copy][three-rules-for-reading-the-copy] into
+requirements.
 
 ETSI TS 119 602 models a list as scheme information followed by a sequence
 of trusted entities, each holding one or more services; a service has a type,
 a digital identity, a status, the time the status started, and a history of
 its earlier statuses. In this profile a trusted entity is one accredited
-registration, and a service is one of the things the list says about it: a
-role it holds, a certificate authority it runs, or a key of its that was
-revoked. Trust Authority's own keys are an entry of the same shape.
+registration, and [Services][ts-5-01-services] gives what a service says about
+it. Trust Authority's own keys are an entry of the same shape.
 
 ## Trusted list payload {#ts-5-01-trusted-list-payload}
 
-The payload of the list as this profile publishes it, before
-[Signature][ts-5-01-signature] wraps it in the JWS. It shows every option the
-profile admits: every service type, both kinds of legal identifier, all four
-statuses, both forms of a revoked key, a service history, both languages,
-and the Root Authority's entry with a witness key that was rotated and a
-signing key that is announced but has not signed yet. Its eight entries
-are, in order, a government Identity Issuer with two revoked keys, a
-private Wallet Provider, a private Relying Party that is an RP Intermediary
-with its Verifier Issuing CA and a suspension in its history, a government
-Attribute Issuer whose accreditation was withdrawn, three government
-Attribute Issuers in good standing, the issuers of the Kartu Nikah, the
-Kartu ASN and the SIM, and the Root Authority.
-
 The list is an illustration: the bodies, the legal identifiers, the
-addresses and the keys are invented, and no registration has been
+addresses, and the keys are invented, and no registration has been
 accredited. Every field is exact. The identifiers were generated with the
 algorithms this profile names, the list was signed with the key its own
 `TrustedListSigner` service carries, and the signature verifies, so an
 implementation can parse this list and find what the clauses below require.
-Its `VerifierIssuingCA` service carries the certificate
-[the Verifier Issuing CA][ts-5-04-verifier-issuing-ca-as-issued] publishes,
-the same bytes and the same subject key identifier, and its DIDs are the
-ones [the log as published][ts-5-02-the-log-as-published] resolves. Its two
-revoked key services are two revocations on the two routes, not one event
-written twice: the `did:webvh` key revoked on 16 October 2026, which the log
-still presents in `verificationMethod`, and a Document Signer Certificate
-revoked on 15 September 2026, the entry that
-[the Issuer Root CA list][ts-5-04-the-two-revocation-lists-as-issued]
-carries.
+
+The payload, before [Signature][ts-5-01-signature] wraps it in the JWS,
+shows every option the profile admits:
+
+- Every service type.
+- Both kinds of legal identifier.
+- All four statuses.
+- Both forms of a revoked key.
+- A service history.
+- Both languages.
+- The Root Authority's entry, with a witness key that was rotated and a
+  signing key that is announced but has not signed yet.
+
+Its eight entries are, in order:
+
+- A government Identity Issuer with two revoked keys.
+- A private Wallet Provider.
+- A private Relying Party that is an RP Intermediary, with its
+  Verifier Issuing CA and a suspension in its history.
+- A government Attribute Issuer whose accreditation was withdrawn.
+- Three government Attribute Issuers in good standing, the issuers of the
+  Kartu Nikah, the Kartu ASN, and the SIM.
+- The Root Authority.
+
+The list agrees with the other pages on four points:
+
+- Its `VerifierIssuingCA` service carries the same bytes and the same
+  subject key identifier as the certificate
+  [the Verifier Issuing CA][ts-5-04-verifier-issuing-ca-as-issued]
+  publishes.
+- Its DIDs are the ones [the log as published][ts-5-02-the-log-as-published]
+  resolves.
+- Its two revoked key services are two revocations on the two routes, not one
+  event written twice: the `did:webvh` key revoked on 16 October 2026, which the
+  log still presents in `verificationMethod`, and a Document Signer Certificate
+  revoked on 15 September 2026, the entry that
+  [the Issuer Root CA list][ts-5-04-the-two-revocation-lists-as-issued] carries.
+- The `StatusStartingTime` of each is the `ListIssueDateTime` of the
+  emergency list that first carried the service, which
+  [REQ-TS-5-01-038][req-ts-5-01-038] requires and which keeps it from
+  preceding the list that announces it.
 
 ``` { .json title="trusted-list.json, the LoTE payload" data-format="JSON" }
 {
@@ -788,13 +813,11 @@ structure, and nothing this profile needs lacks a place in the model.
 ## The scheme identifiers {#ts-5-01-the-scheme-identifiers}
 
 The list type, the status determination approach, the scheme rules, every
-service type and every status are written as Uniform Resource Identifiers (URIs) under
+service type, and every status are written as Uniform Resource Identifiers (URIs) under
 `https://idctf.id/ns/19602/`, the pattern ETSI TS 119 602 follows and the
 one the credential type namespace `id.idctf` already uses. Each is an
 identifier and nothing else: it names a value this profile defines, it is
-compared as a string, and no reader ever fetches it. Whether anything is
-served at that address, and who owns the name, changes nothing about how
-the list is read.
+compared as a string, and no reader ever fetches it.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -812,10 +835,8 @@ working from a cached copy and nothing else. A reader that fetched one
 would hand whoever holds the name that day a say in whether a registration
 is trusted, and would tell them who was reading the list.
 
-Moving the identifiers to another root is a change an implementation
-conformant to the previous version may fail, so it is a major version of
-this specification under [Common provisions](common-provisions.md),
-published with the transition period that version names.
+Moving the identifiers to another root is a major change under
+[Common provisions](common-provisions.md).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -872,16 +893,19 @@ the element as the standard defines it.
 
 </div>
 
-The horizon behind `NextUpdate` is the staleness Trust Registry accepts from
-a device with no network, as [the three rules for reading the copy][three-rules-for-reading-the-copy]
-explain; the list is reissued on the sync schedule regardless, well inside
-it. The six-month ceiling is the one
-[ETSI TS 119 602][ref-etsi-ts-119602] clause 6.3.15 asks a profile to set,
-and the value every Annex profile of that standard sets. The list points at no other list: whether a foreign authority is
+The horizon behind `NextUpdate` is the staleness Trust Registry accepts from a
+device with no network, as
+[the three rules for reading the copy][three-rules-for-reading-the-copy]
+explain; the list is reissued on the sync schedule regardless, well inside it.
+The six-month ceiling is the one [ETSI TS 119 602][ref-etsi-ts-119602] clause
+6.3.15 asks a profile to set, and the value every Annex profile of that standard
+sets.
+
+The list points at no other list: whether a foreign authority is
 recognized is answered on request over the `recognition` query of
-[Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md), as
-[chain of trust](../architecture-framework/trust-model/chain-of-trust.md)
-sets out. IDCTF publishes no list of lists: it runs one national list, so no scheme sits below it for such a list to point at.
+[Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md),
+as [chain of trust](../architecture-framework/trust-model/chain-of-trust.md)
+sets out.
 
 ## Entries {#ts-5-01-entries}
 
@@ -890,8 +914,8 @@ sets out. IDCTF publishes no list of lists: it runs one national list, so no sch
 A `TrustedEntity` is one registration the Root Authority accredited. One
 legal body may hold several registrations, each with its own DID, as
 [three stages of authority](../architecture-framework/roles/three-stages-of-authority.md)
-sets out; each is an entry of its own, and the legal identifier is what shows
-they belong to one body.
+sets out; each is an entry of its own, and the legal identifier shows they
+belong to one body.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -910,15 +934,15 @@ they belong to one body.
 - [](){ #req-ts-5-01-019 }**REQ-TS-5-01-019** `TETradeName` MUST carry, in each language, one string holding the legal identifier of the body: `BKN:` followed by its institution code from the Badan Kepegawaian Negara (BKN) for a government body, or `NIB:` followed by its Nomor Induk Berusaha (NIB) for a private one.
 - [](){ #req-ts-5-01-020 }**REQ-TS-5-01-020** The legal identifier in `TETradeName` MUST be identical across every registration of one body.
 - [](){ #req-ts-5-01-021 }**REQ-TS-5-01-021** `TETradeName` MAY carry, after the legal identifier, a name under which the body operates the registered services.
-- [](){ #req-ts-5-01-022 }**REQ-TS-5-01-022** `TEAddress` MUST carry the postal address, the e-mail address, and the website of the body, at which it answers enquiries about the registration.
+- [](){ #req-ts-5-01-022 }**REQ-TS-5-01-022** `TEAddress` MUST carry the postal address, the e-mail address, and the website of the body, at which it answers inquiries about the registration.
 - [](){ #req-ts-5-01-023 }**REQ-TS-5-01-023** `TEInformationURI` MUST carry the address of the domain the registration's `did:webvh` resolves at, as `https://` followed by that domain.
 
 </div>
 
-A reader that has to tell a BKN code from an NIB reads the prefix; the two
+A reader tells a BKN code from an NIB by the prefix; the two
 kinds never share a value space because the prefix is part of the string.
 A registration's `did:webvh` names the domain it resolves at, as
-[entities: did:webvh][entities-didwebvh] sets out, which is what makes
+[entities: did:webvh][entities-didwebvh] sets out, which makes
 `TEInformationURI` always available.
 
 ### Services {#ts-5-01-services}
@@ -961,18 +985,21 @@ each key of its that was revoked early. Each is one `TrustedEntityService`, and 
 The role is carried and the scope is not: what a registration may issue or
 request is the Authority Statement's to answer, as
 [Authorization][authorization] explains. An RP Intermediary is accredited as
-a Relying Party and carries that role; serving merchants is a permission,
-not a role of its own, as
+a Relying Party and carries that role; serving merchants is a standing the
+Root Authority grants, not a role of its own, as
 [RP Intermediary and merchant][rp-intermediary-and-merchant] sets out, and
-what the list adds for it is the Verifier Issuing CA service. That CA is
-listed by its key identifier rather than its certificate because a wallet
-builds the certificate chain of the reading device from the certificates
-the request carries and needs the list only to confirm that the CA belongs
-to a granted registration; [the reader side][the-reader-side] sets out the
-chain. A Document Signer Certificate is never in the list, because the list
-is an index and not a key store: an mdoc verifier learns the signing key
-from the certificate the credential carries and checks it against the
-Issuer Root CA, as [the issuer side][the-issuer-side] sets out.
+the Verifier Issuing CA service is how the list shows it.
+
+That CA is listed by its key identifier rather than its certificate because
+a wallet builds the certificate chain of the reading device from the
+certificates the request carries. It needs the list only to confirm that the
+CA belongs to a granted registration, and
+[the reader side][the-reader-side] sets out the chain.
+
+A Document Signer Certificate is never in the list: an mdoc verifier learns
+the signing key from the certificate the credential carries and checks it
+against the Issuer Root CA, as [the issuer side][the-issuer-side] sets
+out.
 
 ### Status {#ts-5-01-status}
 
@@ -1006,10 +1033,10 @@ fourth applies to a key.
 
 </div>
 
-The last rule is clause 6.6.5 of the standard: a status that starts before
-the list announcing it was issued would change the outcome of validations
-already made. A suspension stops at the one registration unless the Root
-Authority extends it, which is what [the trusted list and cache][trusted-list-and-cache]
+[REQ-TS-5-01-037][req-ts-5-01-037] is clause 6.6.5 of the standard: a status
+that starts before the list announcing it was issued would change the outcome
+of validations already made. A suspension stops at the one registration unless the Root Authority
+extends it, which [the trusted list and cache][trusted-list-and-cache]
 describes.
 
 ### Revoked keys {#ts-5-01-revoked-keys}
@@ -1018,12 +1045,11 @@ A key of a registration that is revoked before its DID Document or its
 certificate stops presenting it is named in the entry, so that a reader can
 refuse a signature made with it. The refusal does not depend on the date the
 signature claims, because a thief can backdate one, as
-[what happens to the old key][what-happens-to-the-old-key] sets out. No key
-of a registration that is in good standing is listed.
+[what happens to the old key][what-happens-to-the-old-key] sets out.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-01-038 }**REQ-TS-5-01-038** When the Root Authority revokes a key of a registration, Trust Registry MUST add to that entry one revoked key service naming the key, with `StatusStartingTime` the time from which the key is revoked.
+- [](){ #req-ts-5-01-038 }**REQ-TS-5-01-038** When the Root Authority revokes a key of a registration, Trust Registry MUST add to that entry one revoked key service naming the key, with `StatusStartingTime` the `ListIssueDateTime` of the first list that carries the service.
 - [](){ #req-ts-5-01-039 }**REQ-TS-5-01-039** For a key published in a DID Document, the `ServiceDigitalIdentity` of a revoked key service MUST carry in `OtherIds` the public key as a `did:key` and the DID URL of its verification method.
 - [](){ #req-ts-5-01-040 }**REQ-TS-5-01-040** For a key published in an X.509 certificate, the `ServiceDigitalIdentity` of a revoked key service MUST carry the subject key identifier of that certificate in `X509SKIs`.
 - [](){ #req-ts-5-01-041 }**REQ-TS-5-01-041** A revoked key service MUST stay in the entry for as long as the list is published.
@@ -1031,15 +1057,14 @@ of a registration that is in good standing is listed.
 </div>
 
 A reader matches a key it resolved from a DID Document against the entry by
-encoding the public key as a `did:key` and comparing the two strings, so the
-match does not depend on how either side serialized the key; every key in
-the list is written the same way, and `did:key` encodes any key type the
-DID Document may carry. An X.509 key revoked early is also added to the
-certificate revocation list (CRL) of [RFC 5280][ref-rfc5280] its issuer
-publishes, which is what an
-offline mdoc reader checks, while an online verifier refuses the key once
-its cached trusted list names it, as
-[entity key revocation][entity-key-revocation] sets out.
+encoding the public key as a `did:key` and comparing the two strings. The match
+then does not depend on how either side serialized the key, and `did:key`
+encodes any key type the DID Document may carry.
+
+An X.509 key revoked early is also added to the certificate revocation list
+(CRL) of [RFC 5280][ref-rfc5280] its issuer publishes, which an offline mdoc
+reader checks. An online verifier refuses the key once its cached trusted list
+names it, as [entity key revocation][entity-key-revocation] sets out.
 
 ### Trust Authority's own keys {#ts-5-01-trust-authoritys-own-keys}
 
@@ -1050,15 +1075,15 @@ witness key is published beside the old one during a rotation and struck
 when stolen, as [the witness key][the-witness-key] describes; a signing key
 is announced in a list before it signs one, as
 [how Trust Authority's keys are replaced][how-trust-authoritys-keys-are-replaced]
-describes. A status with a history carries both: a key that leaves the list
-in the Architecture Framework's words is a service set to `withdrawn` here,
-kept so that the time it stopped counting stays readable.
+describes. A key that leaves the list in the Architecture Framework's words is
+a service set to `withdrawn` here, kept so that the time it stopped counting
+stays readable.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-01-042 }**REQ-TS-5-01-042** The Root Authority's entry MUST carry one witness service for each `did:key` whose witness proofs readers accept, at status `granted`.
 - [](){ #req-ts-5-01-043 }**REQ-TS-5-01-043** The Root Authority's entry MUST carry one trusted list signer service for each key that may sign the list, at status `granted`, with the public key as a `did:key` in `OtherIds`.
-- [](){ #req-ts-5-01-044 }**REQ-TS-5-01-044** A key that stops being accepted as a witness or as a signer MUST be set to `withdrawn`, with `StatusStartingTime` the time from which its proofs or signatures are no longer accepted.
+- [](){ #req-ts-5-01-044 }**REQ-TS-5-01-044** A key that stops being accepted as a witness or as a signer MUST be set to `withdrawn`, with `StatusStartingTime` the `ListIssueDateTime` of the first list that carries the status.
 - [](){ #req-ts-5-01-045 }**REQ-TS-5-01-045** The Root Authority's entry MUST NOT carry a role service.
 
 </div>
@@ -1073,25 +1098,30 @@ kept so that the time it stopped counting stays readable.
 
 </div>
 
-The history is what answers the question an incident asks: what the status
+The history answers the question an incident asks: what the status
 of a registration or a key was at a given time, rather than what it is now.
 
 ## Signature {#ts-5-01-signature}
 
-The list is signed as a JWS in the compact serialization of
-[RFC 7515][ref-rfc7515], the payload being the LoTE JSON document. The
-signing key is the trusted list key that [Trust Authority's own keys][trust-authoritys-own-keys]
-names, held in Trust Authority's hardware security module (HSM); Trust
-Registry publishes what Trust Authority signed. This is where the profile
-departs from clause 6.8 of the standard, which asks for an AdES signature at
-baseline level B, JAdES on the JSON binding as the profile annexes name it: a JAdES signature carries a signing certificate and a
-critical signing-time parameter that a plain JWS verifier does not know, and
-three of the five readers are mobile applications with plain JWS libraries. A
-reader verifies the list as a JWS and nothing more. The cost falls on a
-wallet from another ecosystem that validates the list as clause 6.8 asks: it
-finds no JAdES signature, so it has to be told to verify the list as a JWS,
-along with the pointer to the list it is handed under recognition, as
-[the reader side][the-reader-side] sets out. The terms of recognition say how it is told in [what IDCTF hands over][gf-what-idctf-hands-over].
+The signing key is the trusted list key that
+[Trust Authority's own keys][trust-authoritys-own-keys] names, held in
+Trust Authority's hardware security module (HSM); Trust Registry publishes
+what Trust Authority signed.
+
+This is where the profile departs from clause 6.8 of the standard, which asks
+for an Advanced Electronic Signature (AdES) at baseline level B, JAdES on the
+JSON binding as the profile annexes name it. A JAdES signature carries a
+signing certificate and a critical signing-time parameter that a plain JWS
+verifier does not know, and three of the five readers are mobile applications
+with plain JWS libraries. A reader verifies the list as a JWS and nothing
+more.
+
+The cost falls on a wallet from another ecosystem that validates the list as
+clause 6.8 asks: it finds no JAdES signature, so it has to be told to verify
+the list as a JWS, along with the pointer to the list it is handed under
+recognition, as [the reader side][the-reader-side] sets out. The terms of
+recognition say how it is told in
+[what IDCTF hands over][gf-what-idctf-hands-over].
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1106,14 +1136,14 @@ along with the pointer to the list it is handed under recognition, as
 
 </div>
 
-The last rule is what lets the key rotate without asking every reader to
-trust a new key on sight: a reader accepts a list under a new key only when
+[REQ-TS-5-01-056][req-ts-5-01-056] lets the key rotate without asking
+every reader to trust a new key on sight: a reader accepts a list under a new key only when
 a list it already verified announced that key.
 
-The protected header of the list above, and the compact serialization it
-sits in. The payload is the base64url encoding of the JSON shown in
-[Trusted list payload][ts-5-01-trusted-list-payload], byte for byte, and
-the signature is 64 bytes, the concatenation of `r` and `s`.
+The protected header of the list shown in
+[Trusted list payload][ts-5-01-trusted-list-payload], and the compact
+serialization it sits in. The payload is the base64url encoding of that
+JSON, byte for byte, and the signature is 64 bytes, the concatenation of `r` and `s`.
 
 ``` { .json title="trusted-list.json, the JWS protected header" data-format="JSON" }
 {"alg":"ES256","kid":"did:key:zDnaeSCzChDqLTnobz1iquKetDC1piuwydzo3jkpiEHNwtX7q"}
@@ -1632,6 +1662,11 @@ the transaction path.
    Object Storage Provider Component.
 4. Every reader fetches it on its next trust cache sync, never on demand.
 
+The hour an emergency list is published within is a constant of this
+specification and not a member of the Governance Profile. An edition is how
+the ecosystem tunes a value, and the answer to a confirmed compromise is the
+one value an edition cannot slow.
+
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-01-057 }**REQ-TS-5-01-057** Trust Registry MUST serve the current list at every address in `DistributionPoints`, over HTTP with Transport Layer Security (TLS), as a static file.
@@ -1650,10 +1685,9 @@ The address of the list is a distribution point the Governance Profile
 publishes to participants and the list itself repeats, so that a reader
 configured once can follow a move. An emergency list is the ordinary list
 reissued early, when a key is revoked or a registration suspended, as
-[entity key revocation][entity-key-revocation] sets out; Trust Authority's
+[entity key revocation][entity-key-revocation] sets out. Trust Authority's
 order and the list's publication both come inside the hour that flow counts
-from the compromise being confirmed. Nothing in the list's form marks it as an emergency, and a reader
-treats it as the next list.
+from the compromise being confirmed.
 
 ## Reading the copy {#ts-5-01-reading-the-copy}
 
@@ -1670,15 +1704,14 @@ read, inside one.
 
 A reader in this section is any of the five that hold a cached copy of the
 list: Issuer Core, Verifier Core, Mobile Wallet, Mobile Verifier, and a
-Relying Party's own application built on Reader SDK. The copy is filled by
-the trust cache sync and never consulted at Trust Registry during a
-transaction. These are the rules a reader applies to that copy, and they
-bind it whether the check is made by Trust SDK or by the reader itself.
+Relying Party's own application built on Reader SDK.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-01-066 }**REQ-TS-5-01-066** A reader MUST verify the JWS of its copy every time it reads the copy, not only when it fetched it.
 - [](){ #req-ts-5-01-067 }**REQ-TS-5-01-067** A reader MUST accept a signature only from the trusted list key it carries from build time, or from a key that a list it already verified named in a trusted list signer service at status `granted`.
+- [](){ #req-ts-5-01-094 }**REQ-TS-5-01-094** A reader MUST NOT accept a signature from a key that the newest list it verified names at status `withdrawn`, the build-time key included, from the `StatusStartingTime` of that status.
+- [](){ #req-ts-5-01-093 }**REQ-TS-5-01-093** A reader MUST keep the trusted list signer services of the newest list it verified, each with its status and `StatusStartingTime`, and that list's `LoTESequenceNumber`, after it discards the copy under [REQ-TS-5-01-069][req-ts-5-01-069], until a later list it verifies replaces them.
 - [](){ #req-ts-5-01-068 }**REQ-TS-5-01-068** A reader MUST reject a list whose `LoTESequenceNumber` is lower than that of the copy it holds.
 - [](){ #req-ts-5-01-069 }**REQ-TS-5-01-069** A reader MUST discard its copy once the `NextUpdate` it carries has passed, with no grace period.
 - [](){ #req-ts-5-01-070 }**REQ-TS-5-01-070** A reader MUST refresh its copy outside any transaction, through the trust cache sync.
@@ -1697,29 +1730,31 @@ bind it whether the check is made by Trust SDK or by the reader itself.
 </div>
 
 Which role a reader checks for depends on what it is doing. Issuer Core
-checks that the signer of a Key Attestation is a Wallet Provider; Verifier
-Core checks that the issuer of a credential is an Identity Issuer or an
-Attribute Issuer; Mobile Wallet checks that the issuer making an offer is
-one of the two, and that the party asking for a presentation is a Relying
-Party. An mdoc read in proximity carries no DID, so Mobile Verifier
-establishes the issuer through the X.509 chain and the VICAL instead, as
-[the issuer side][the-issuer-side] sets out. The flows in
+checks that the signer of a Key Attestation is a Wallet Provider.
+Verifier Core and Mobile Verifier check that the issuer of a credential is an
+Identity Issuer or an Attribute Issuer. Mobile Wallet checks that the issuer
+making an offer is one of the two, and that the party asking for a
+presentation is a Relying Party.
+
+An mdoc carries no DID, so Mobile Verifier and Verifier Core establish the
+issuer through the X.509 chain and the VICAL instead, as
+[the issuer side][the-issuer-side] sets out, and find its entry by the
+`organizationName` of the Document Signer Certificate, which
+[REQ-TS-5-04-168][req-ts-5-04-168] makes the entry's `TEName`. The flows in
 [Flows per use case](../architecture-framework/high-level-architecture/flows-per-use-case.md)
-place each check. A merchant's device is not in the list and is checked
-through the Verifier Issuing CA of the RP Intermediary behind it, as
+place each check.
+
+A merchant's device is not in the list and is checked through the
+Verifier Issuing CA of the RP Intermediary behind it, as
 [the reader side][the-reader-side] sets out.
 
-For the issuer of a credential the question is asked at the time the
-credential was signed. A withdrawal revokes no key, as
+A withdrawal revokes no key, as
 [Withdrawing the registration][ts-4-03-withdrawing-the-registration] sets
-out, so what an issuer signed while granted still verifies after its
-accreditation is withdrawn, and what it signed after the withdrawal, or
-while it was suspended, does not. A suspension in force stops every
-credential of the issuer until a later status lifts it.
+out. What an issuer signed while granted still verifies after its
+accreditation is withdrawn; what it signed after the withdrawal, or while it
+was suspended, does not.
 
 ## Security considerations {#ts-5-01-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **Substitution of an old list.** `NextUpdate` with no grace period,
   [REQ-TS-5-01-069][req-ts-5-01-069], and the sequence number,
@@ -1730,8 +1765,14 @@ Each threat below is answered by the requirement named with it.
   fetched is caught at the next read.
 - **A stolen signing key.** A key that appears unannounced is refused,
   [REQ-TS-5-01-067][req-ts-5-01-067], so a stolen key cannot publish a list of
-  its own; the containment is to strike the key, [REQ-TS-5-01-044][req-ts-5-01-044],
-  which the next list signed with an accepted key does.
+  its own. An announced key that is stolen is struck,
+  [REQ-TS-5-01-044][req-ts-5-01-044], by the next list signed with an
+  accepted key. A reader that verified that list refuses the struck key from
+  then on, the build-time key included, because it keeps the signer services
+  and the sequence number after it discards the copy,
+  [REQ-TS-5-01-093][req-ts-5-01-093]. A reader that never verified the
+  striking list, a fresh installation whose build-time key is the stolen
+  one among them, is contained only by a new reader release.
 - **A stolen witness key.** Setting the `did:key` to `withdrawn` stops every
   reader counting its proofs on any later entry,
   [REQ-TS-5-01-077][req-ts-5-01-077], as [the witness key][the-witness-key]
@@ -1753,11 +1794,11 @@ Each threat below is answered by the requirement named with it.
 
 The list carries no citizen data. It is fetched whole, without
 authentication and without any identifier of the reader,
-[REQ-TS-5-01-059][req-ts-5-01-059], [REQ-TS-5-01-060][req-ts-5-01-060] and
+[REQ-TS-5-01-059][req-ts-5-01-059], [REQ-TS-5-01-060][req-ts-5-01-060], and
 [REQ-TS-5-01-078][req-ts-5-01-078], on a schedule the citizen's transactions do
-not drive, [REQ-TS-5-01-070][req-ts-5-01-070], so that Trust Registry learns
-nothing about which citizen dealt with which party; a lookup per
-transaction would, which is why a reader never makes one,
+not drive, [REQ-TS-5-01-070][req-ts-5-01-070]. Trust Registry therefore learns
+nothing about which citizen dealt with which party, and a reader makes no lookup
+per transaction,
 [REQ-TS-5-01-071][req-ts-5-01-071] and [REQ-TS-5-01-072][req-ts-5-01-072]. A
 reader's cache holds only the public artifact and is never keyed by the
 citizen, [REQ-TS-5-01-079][req-ts-5-01-079], because a cache keyed by the
@@ -1769,6 +1810,6 @@ citizen is a record of the citizen's behavior.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

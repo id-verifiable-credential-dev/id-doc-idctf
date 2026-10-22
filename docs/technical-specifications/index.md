@@ -14,16 +14,14 @@ its identifier and versioned on its own.
 </p>
 
 The Architecture Framework says what exists and why. A Technical
-Specification says what an implementation has to do, in sentences an
-Assessment Body can test one at a time. Every specification rests on the
+Specification says what an implementation has to do. Every specification rests on the
 [Architecture Framework](../architecture-framework/index.md) and repeats none
 of its reasons: where a rule needs its why, the specification links the page
 that holds it.
 
-Each specification covers one thing a test can be written for: one family of
-artifacts, with its format, its signature, how it is published and how a
-reader checks it, or one interface, between two Modules or between a Module
-and a system outside the ecosystem. The requirements in it are addressed to
+Each specification covers one thing: one family of artifacts, or one interface
+between two Modules or between a Module and a system outside the ecosystem.
+The requirements in it are addressed to
 named Modules, and a participant is compliant when it meets every
 specification for the interfaces it runs and the artifacts it produces or
 reads, as
@@ -31,15 +29,20 @@ reads, as
 
 ## Specifications {#ts-specifications}
 
-A specification is numbered by its group and its place in it,
-`TS-<group>-<nn>`: 1 for Issuer Services, 2 for Wallet Services, 3 for
-Verifier Services, 4 for Trust Infrastructure, and 5 for Artifacts, each
-group counting from 01. A Service group holds the interfaces that Service's
-Modules expose; the Artifacts group holds one specification per artifact
-family, its format, signature, lifecycle, publication and reader rules.
-Three specifications stand outside the groups because every other one rests on them: Common provisions as `TS-00`, Finding a signer's key from its DID as `TS-01`, and Publishing and reading the Governance Profile as `TS-02`. A title names the
-task and the protocol or artifact it runs on. A specification marked
-planned has a title and a scope and no page yet.
+A specification is numbered by its group and its place in it, `TS-<group>-<nn>`:
+1 for Issuer Services, 2 for Wallet Services, 3 for Verifier Services, 4 for
+Trust Infrastructure, and 5 for Artifacts, each group counting from 01.
+
+A Service group holds the interfaces that Service's Modules expose; the Artifacts
+group holds one specification per artifact family, its format, signature,
+lifecycle, publication, and reader rules.
+
+Three specifications stand outside the groups because every other one rests on
+them: Common provisions as `TS-00`, Finding a signer's key from its DID as
+`TS-01`, and Publishing and reading the Governance Profile as `TS-02`.
+
+A title names the task and the protocol or artifact it runs on. A specification
+marked planned has a title and a scope and no page yet.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -54,7 +57,7 @@ planned has a title and a scope and no page yet.
 | `TS-3-02` | Verifier Services | [Verifying a credential in proximity via ISO/IEC 18013-5](verifying-a-credential-in-proximity-via-iso-iec-18013-5.md) | The ISO/IEC 18013-5 profile Mobile Verifier and Mobile Wallet run face to face: device engagement by QR code and NFC, the BLE transport, the encrypted session, the DeviceRequest and its ReaderAuth, the checks on the request, the response, and the end of the session | Drafting |
 | `TS-4-01` | Trust Infrastructure | [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md) | What DID Service checks before it witnesses an entry, the proof it returns, and the copy it serves | Drafting |
 | `TS-4-02` | Trust Infrastructure | [Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md) | The Trust Registry Query Protocol as IDCTF runs it, the signed answer to a recognition query, the errors, the signed catalog of Rulebooks, and where each published artifact is fetched | Drafting |
-| `TS-4-03` | Trust Infrastructure | [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) | Trust Authority's portal, where an entity's staff register a body and manage its uses, permissions, incidents and record, and its entity endpoint, where the Key Manager registers keys and certificate requests | Drafting |
+| `TS-4-03` | Trust Infrastructure | [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) | Trust Authority's portal, where an entity's staff register a body and manage its uses, permissions, incidents, and record, and its entity endpoint, where the Key Manager registers keys and certificate requests | Drafting |
 | `TS-5-01` | Artifacts | [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md) | The profile of ETSI TS 119 602 the trusted list is published in, its signature, its publication, and how a reader checks its copy | Drafting |
 | `TS-5-02` | Artifacts | [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md) | The `did:webvh` profile every entity and Trust Authority use, the DID Document and its keys, rotation, publication, and how a reader resolves it | Drafting |
 | `TS-5-03` | Artifacts | [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md) | How every `did:key` is formed and decoded, where each appears, the holder's identifier from the credential key, and the device thumbprint | Drafting |

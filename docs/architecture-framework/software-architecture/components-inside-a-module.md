@@ -7,9 +7,9 @@ description: What sits inside each of the ten Modules, layer by layer, and the T
 
 # Components inside a Module {#components-inside-a-module}
 
-A Component is a part of a Module that is not deployed on its own. Where
-[Module Map](../high-level-architecture/module-map.md) names the
-ten units that ship, this section opens each one and names what is inside.
+A Component is a part of a Module that is not deployed on its own, where
+[Module Map](../high-level-architecture/module-map.md) names the ten units
+that ship.
 
 Every Component sits in one of the layers
 [Layers inside a Module](layers-inside-a-module.md) defines, and the
@@ -18,11 +18,9 @@ layer it is in rather than on what it does.
 
 ## Issuer Services {#sa-issuer-services}
 
-Every server Module divides into the same four layers: Controller, Domain,
-Repository, and Provider. A console or application Module has no Controller,
-because nothing calls into it over the network; it has View and Client at the
-top instead, with Domain, Provider, and Repository beneath them wherever one
-applies. In both cases a Component is drawn where it is because of what it does, not because
+[Layers inside a Module](layers-inside-a-module.md) sets out the four layers of
+a server Module, and what a console or application Module has in place of a
+Controller. In either case a Component is drawn where it is because of what it does, not because
 of the layer it happens to sit in: it holds one responsibility, removing it
 leaves a functional hole, and the full set of Components together covers
 everything the Module does. Claims Provider is the clearest case: it faces the
@@ -38,11 +36,8 @@ facing outward goes.
 
 ### Issuer Core {#sa-issuer-core}
 
-Issuer Core is where credentials come from. It runs the OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0 endpoint,
-assembles a credential in whichever of the three formats the Credential Rulebook
-specifies for that credential type, signs it through the entity's Key Manager,
-and manages and hosts that entity's status list. Every accredited issuer runs
-its own, which is why the count is many.
+Issuer Core is where credentials come from, as [Issuer Core][hla-issuer-core]
+describes it.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -62,27 +57,18 @@ its own, which is why the count is many.
 
 </figure>
 
-The restrictions on Claims Provider are load-bearing rather than incidental. It
-is read-only against the source system, so nothing it does can write back into
-an institution's own records. It returns only the fields the Credential
-Rulebook lists for that credential type, and nothing else the source system
-might hold. It stores no personally identifiable information (PII) of its own.
-And it has no notion of which credential format Credential Builder will
-assemble from what it returns, because the mapping to SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13, mdoc, or
-`ldp_vc` happens one layer up. Those four together are what let a Component
-whose contents differ at every installation sit inside a Module whose behavior
-must not.
+Nothing Claims Provider does can write back into an institution's own records,
+and it holds no personally identifiable information (PII) of its own. The
+mapping to SD-JWT-based Verifiable Credentials (SD-JWT VC) draft -13, mdoc, or
+`ldp_vc` happens one layer up, in Credential Builder, so Claims Provider has
+no notion of the format the claims it returns will take.
 
 ### Issuer Console {#sa-issuer-console}
 
-Issuer Console is what staff use. Credential types are configured from the
-Credential Rulebook here, batches are issued, credentials are revoked, and
-reports are read. It reaches Issuer Core through the Admin API and holds no
-database connection of its own, so an operator's console session cannot reach
-around the API to the data underneath.
-
-Issuer Console's four Components cover the three Views an operator works in,
-plus the Client that reaches the Admin Controller.
+Issuer Console is the operator's side of Issuer Core, as
+[Issuer Console][hla-issuer-console] describes it. It holds no database
+connection of its own, so an operator's session cannot reach around the
+Admin API to the data underneath.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -98,26 +84,20 @@ plus the Client that reaches the Admin Controller.
 ## Wallet Services {#sa-wallet-services}
 
 Wallet Services is two Modules: the application on the citizen's phone,
-and the backend that vouches for it.
+and Wallet Backend Service, which vouches for it.
 
 [](){ #fig-wallet-services-components }
 
 <figure markdown="1">
   ![Components inside Mobile Wallet and Wallet Backend Service](../../images/architecture-framework/software-architecture/component-wallet-services.svg){ loading=lazy }
-  <figcaption><span class="ekdn-fignum"></span> The wallet's five layers, and the backend that vouches for it.</figcaption>
+  <figcaption><span class="ekdn-fignum"></span> The wallet's five layers, and Wallet Backend Service, which vouches for it.</figcaption>
 </figure>
 
 ### Mobile Wallet {#sa-mobile-wallet}
 
-Mobile Wallet is the citizen's. It stores credentials, holds one
-credential key that binds all of them, shows who is requesting a presentation and what
-they are asking for, and signs presentations both online and in proximity. Every
-accredited Wallet Provider publishes one, and each has millions of
-installations, which is the count that matters.
-
-Mobile Wallet is an application Module, so it has no Controller. Four Views
-are what the citizen sees and touches, four Clients carry the protocols, and
-beneath them sit one Domain Component, two Providers, and one Repository.
+Mobile Wallet is the citizen's application, as
+[Mobile Wallet][hla-mobile-wallet] describes it. It is an application Module,
+so it has no Controller: Views and Clients sit on top instead.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -133,28 +113,23 @@ beneath them sit one Domain Component, two Providers, and one Repository.
 | Attestation Client | Client | Enrolls the installation; exchanges the attestation platform and integrity verdict for a Key Attestation bound to the issuer's nonce. Called before each issuance; the issuer's `key_attestations_required` sets what the attestation must report | OpenID4VCI 1.0 App. D.1, Play Integrity, App Attest |
 | Credential Codec | Domain | Parses and reassembles SD-JWT VC, mdoc, and `ldp_vc`: disclosures, IssuerSigned, DeviceAuth, the Data Integrity proof | IETF SD-JWT VC, ISO/IEC 18013-5, W3C VCDM 2.0, VC Data Integrity, JSON-LD 1.1, RDFC-1.0 |
 | Keystore Manager | Provider | The device key, one per installation, and the credential key, one per installation and shared by every credential, in the secure element; attestation platform; the credential key doubles as `DeviceKey` in the MSO | Android Keystore, iOS Secure Enclave |
-| Trust SDK | Provider | Trusted list, the Use Statement status list, VICAL, and the JSON-LD contexts of `ldp_vc` Rulebooks from local cache; the Use Statement status list and VICAL fall back to the last-known-good copy, the trusted list never does | ETSI TS 119 602, IETF Token Status List |
-| Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local presentation history holding each signed request, its Use Statement, the outcome, and the time | SQLCipher, Keystore |
+| Trust SDK | Provider | Trusted list, the Use Statement status list, and the JSON-LD contexts of `ldp_vc` Rulebooks from local cache; the Use Statement status list falls back to the last-known-good copy, the trusted list never does | ETSI TS 119 602, IETF Token Status List |
+| Credential Store | Repository | Encrypted storage for all three formats, an encrypted client-side backup, a local presentation history holding each signed request, its Use Statement, the outcome, and the time | SQLCipher, Android Keystore |
 
 </figure>
 
 ### Wallet Backend Service {#sa-wallet-backend-service}
 
-Wallet Backend Service proves an installation is genuine. It issues the
-daily Key Attestation, binds an installation to its device, holds the link to
-the citizen's account at the identity provider, sends push notifications, handles recovery when a citizen changes
-device, and revokes a device when it must. It stores no credentials at all.
-That absence is what lets it disown a wallet without ever being able to read
-what the wallet holds.
-
-Wallet Backend Service has seven Components, and none of them touches a
-credential.
+Wallet Backend Service proves an installation is genuine, as
+[Wallet Backend Service][hla-wallet-backend-service] describes it. It stores
+no credentials at all, which lets it disown a wallet without ever being able
+to read what that wallet holds.
 
 <figure markdown="1" class="ekdn-table">
 
 | Component | Layer | What it does | Standards |
 |---|---|---|---|
-| Key Attestation Issuer | Controller | Verifies the attestation platform up to the Google or Apple root and the integrity verdict; issues a Key Attestation carrying `attested_keys`, `key_storage`, `user_authentication`, and `nonce`; rejects a revoked installation | OpenID4VCI 1.0 App. D.1, [Android Key Attestation][ref-android-key-attestation], App Attest, Play Integrity |
+| Key Attestation Issuer | Controller | Verifies the attestation platform up to the Google or Apple root at enrollment, and at each request the device key signature or App Attest assertion against the record, with the integrity verdict where the platform produces one; issues a Key Attestation carrying `attested_keys`, `key_storage`, `user_authentication`, and `nonce`; rejects a revoked installation | OpenID4VCI 1.0 App. D.1, [Android Key Attestation][ref-android-key-attestation], App Attest, Play Integrity |
 | Account Service | Domain | Validates the identity provider's token, links the citizen's account to the device, and forms the basis for recovery | OpenID Connect Core |
 | Notification Service | Domain | Pushes the Wallet Provider's own notices to its installations. No issuer is party to them: a credential offer reaches the wallet by QR code or deeplink, and a revoked credential is read from the issuer's status list | None |
 | Recovery Service | Domain | Encrypted client-side backup, orchestrating reissuance on a new device, revoking a lost device | None |
@@ -164,10 +139,8 @@ credential.
 
 </figure>
 
-Device Repository is where holding no credentials stops being a claim and
-becomes a schema. It stores the list of active and revoked devices, the device
-key thumbprint, and the link to an account at the identity provider. There is no column a
-credential could go in.
+Device Repository is where the no-credentials rule shows in the schema: there
+is no column a credential could go in.
 
 ## Verifier Services {#sa-verifier-services}
 
@@ -184,22 +157,12 @@ carried by a merchant with no server or set on a Relying Party's counter.
 
 ### Verifier Core {#sa-verifier-core}
 
-Verifier Core requests credentials over OpenID for Verifiable Presentations (OpenID4VP) 1.0, verifies both trust chains,
-and hands the result to the Relying Party's business system over OpenID
-Connect Core 1.0 or Security Assertion Markup Language (SAML) 2.0. It is a backend only;
-whatever front end sits before it belongs to the Relying Party. It also issues
-the Verifier Device Certificate that each reader device it answers for depends
-on, a merchant's or its own counter device, from its own Verifier Issuing CA,
-and the certificate revocation list (CRL) that withdraws one early. For a
-merchant, it also holds the signed request and the encrypted response of an
-online check in transit, without opening them. It reads nothing in proximity;
+Verifier Core is the Relying Party's verifying backend, as
+[Verifier Core][hla-verifier-core] describes it. Whatever front end sits
+before it belongs to the Relying Party, and it reads nothing in proximity:
 that happens on the device, in [Mobile Verifier][sa-mobile-verifier] or in a
-Relying Party's own application built on the Reader SDK.
-
-Verifier Core carries ten Components: three Controllers, four Domain
-Components, two Providers, and one Repository. The Trust Evaluator row is the
-one to read closely, because the two chains it walks are what verification
-actually means here.
+Relying Party's own application built on the Reader SDK. The Trust Evaluator
+row below names the two chains a verification walks.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -220,13 +183,9 @@ actually means here.
 
 ### Verifier Console {#sa-verifier-console}
 
-Verifier Console is the operator's side of that: request templates, merchant
-onboarding and each merchant's `allowed_attrs`, revocation of a merchant's
-device, the consent receipt archive, and reports. Like Issuer Console it reaches
-its Core only through the Admin API.
-
-Its four Components carry out Verifier Console's operator tasks:
-template design, merchant management, reporting, and nothing that touches
+Verifier Console is the operator's side of Verifier Core, as
+[Verifier Console][hla-verifier-console] describes it. Like Issuer Console it
+reaches its Core only through the Admin API, and nothing in it touches
 Verifier Core's database directly.
 
 <figure markdown="1" class="ekdn-table">
@@ -242,30 +201,24 @@ Verifier Core's database directly.
 
 ### Mobile Verifier {#sa-mobile-verifier}
 
-Mobile Verifier is the official verifier app for merchants, and it also runs at
-a Relying Party's counter. It decrypts and verifies on the device: online, a
-merchant's request and response pass through the RP Intermediary's Verifier
-Core, which only relays them. Keys stay on the device, the result appears on the
-screen, and there is no web version, because a browser cannot hold the keys
-this design requires. It supports `dc+sd-jwt`, `mso_mdoc` and `ldp_vc`, as
-[which format each role verifies][which-format-each-role-verifies]
-sets out.
+Mobile Verifier is the verifier application for merchants and for a
+Relying Party's counter, as [Mobile Verifier][hla-mobile-verifier] describes
+it. There is no web version, because a browser cannot hold the keys this
+design requires.
 
 Its proximity reading lives in the Reader SDK, a Dart library. Reading over Bluetooth Low
 Energy (BLE) and Near Field Communication (NFC) has to happen on a physical
 device, so the library is embedded here, and a Relying Party may embed the same
 library in its own application instead of running Mobile Verifier.
 
-Mobile Verifier's Credential Verifier verifies all three formats, SD-JWT VC,
-mdoc and `ldp_vc`, and for `ldp_vc` it carries a JSON-LD 1.1 processor and a
-Resource Description Framework (RDF) Dataset Canonicalization (RDFC-1.0)
-canonicalizer, the same pair Verifier Core's Credential Verifier holds in Go.
-It works from cache rather than reaching
-Trust Infrastructure at the moment of verification, checking both trust
-chains against whatever the Trust SDK Component last downloaded. The
-Activity Repository keeps the record of that work on the device, but the
-record is the verification itself, not the citizen: it holds no attribute
-belonging to the person whose credential was checked.
+For `ldp_vc`, its Credential Verifier carries a JSON for Linked Data
+(JSON-LD) 1.1 processor and a Resource Description Framework (RDF) Dataset
+Canonicalization (RDFC-1.0) canonicalizer, the same pair Verifier Core's
+Credential Verifier holds in Go.
+
+The Activity Repository keeps the record of that work on the device, and the
+record is the verification itself rather than the citizen: it holds no
+attribute belonging to the person whose credential was checked.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -274,7 +227,7 @@ belonging to the person whose credential was checked.
 | Result View | View | Shows the verification result to the merchant on screen | None |
 | Presentation Client | Client | Assembles the request, QR or deeplink; online, hands the Request Object, carrying the Use Statement in `verifier_info`, to the RP Intermediary's Verifier Core and collects the response from it; offline, engages by QR or NFC and reads an mdoc over BLE through the Reader SDK, with ReaderAuth from the Verifier Device Certificate and the Use Statement in `requestInfo` | OpenID4VP 1.0, ISO/IEC 18013-5 |
 | Attestation Client | Client | Enrolls the device with the Verifier Core that answers for it (the RP Intermediary's for a merchant, the Relying Party's own for a counter device), retrieves and renews the Verifier Device Certificate together with the Use Statements of the uses bound to the device; hands over the platform evidence of the device key at activation and renewal | OpenID4VP client identifier, [Android Key Attestation][ref-android-key-attestation], Play Integrity, App Attest |
-| Credential Verifier | Domain | Verifies SD-JWT VC, mdoc and `ldp_vc`; both trust chains, from cache | RFC 9901, ISO/IEC 18013-5 |
+| Credential Verifier | Domain | Verifies SD-JWT VC, mdoc, and `ldp_vc`; both trust chains, from cache | RFC 9901, ISO/IEC 18013-5 |
 | Keystore Manager | Provider | Device key in the secure element, which signs the Request Object; the key drawn for each request, which decrypts its response on the device | Android Keystore, iOS Secure Enclave |
 | Reader SDK | Provider | The proximity reading library a Relying Party's own application may also embed: QR or NFC engagement, the BLE session, DeviceRequest with ReaderAuth, verification of the DeviceResponse | ISO/IEC 18013-5 |
 | Trust SDK | Provider | Trusted list, status list, VICAL, and the JSON-LD contexts and credential schemas of `ldp_vc` Rulebooks from the local cache | ETSI TS 119 602 |
@@ -299,19 +252,11 @@ Trust Infrastructure certifies, witnesses, and records the public halves.
 
 ### Trust Authority {#sa-trust-authority}
 
-Trust Authority is where registration, accreditation, and authorization happen.
-It acts as the Certificate Authority for the Issuer Root CA, the Verifier Root
-CA, Document Signer Certificates, the Verifier Issuing CA, and the CRL, each
-issued from a certificate signing request (CSR) the entity sends. It records
-every entity's public keys in the Public Key Registry and holds none of their
-private keys, and it holds the governance registry, incident handling, and the
-transparency log. Its two roots sit in offline hardware security modules
-(HSMs), one each, and its other keys, the trusted list key among them, in
-its own HSM, as [Trust Authority's own keys][trust-authoritys-own-keys] sets
-out.
-
-Its eight Components divide into one Controller, four Domain Components, and
-three Repositories.
+Trust Authority is where registration, accreditation, and authorization
+happen, as [Trust Authority][hla-trust-authority] describes it. Its two roots
+sit in offline hardware security modules (HSMs), one each, and its other keys,
+the trusted list key among them, in its own HSM, as
+[Trust Authority's own keys][trust-authoritys-own-keys] sets out.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -319,10 +264,10 @@ three Repositories.
 |---|---|---|---|
 | Registrar Controller | Controller | Self-service entity portal with MFA, for registration, uses, further permissions, incidents, and the record; the entity endpoint, `POST /entities/me/keys`, for a log entry, proof of possession, storage evidence, and a CSR; operator back office with MFA | None |
 | Accreditation Service | Domain | Registration, verification that the applicant is a legal body, intake of assessment-body reports, recording of status decisions, issuance of the Authority Statement, the Use Statement, and the Accreditation Credential, and withdrawal of a single use; Approval Tiers A, B, and C | ToIP TRQP, IETF SD-JWT VC |
-| Certificate Authority | Domain | Issuer Root CA and Verifier Root CA, each self-signed in its own offline HSM; issues the Document Signer Certificate (EKU 1.0.18013.5.1.2) and the Verifier Issuing CA, for an RP Intermediary and for a Relying Party that reads offline, from a CSR; issues and hosts the CRL; signs each published version of the trusted list and of the VICAL with the trusted list key and the VICAL key | ISO/IEC 18013-5 Annex B and Annex C, ETSI TS 119 602, RFC 7515, RFC 5280, RFC 2986 |
+| Certificate Authority | Domain | Issuer Root CA and Verifier Root CA, each self-signed in its own offline HSM; issues the Document Signer Certificate (EKU 1.0.18013.5.1.2) and the Verifier Issuing CA, for an RP Intermediary and for a Relying Party that reads offline, from a CSR; issues the CRL of each root, which Trust Registry serves; signs each published version of the trusted list and of the VICAL with the trusted list key and the VICAL key | ISO/IEC 18013-5 Annex B and Annex C, ETSI TS 119 602, RFC 7515, RFC 5280, RFC 2986 |
 | Governance Service | Domain | List of `action` and `resource`, mapping of `min_assurance` to ISO/IEC 18045 values and of `issuer_assurance` to Key Manager drivers, cache TTL, tolerance limits, the `NextUpdate` horizon of the trusted list, the cut-off date for requests carrying no Use Statement, list of Assessment Bodies | None |
 | Incident Service | Domain | Revokes a compromised key, suspends or withdraws an entity on the Root Authority's decision, orders the emergency trusted list, notifies Relying Parties directly | None |
-| Entity Repository | Repository | Entity data, status, accreditation and authorization history | None |
+| Entity Repository | Repository | Entity data, status, accreditation, and authorization history | None |
 | Public Key Registry | Repository | `keyRef`, thumbprint, `purpose`, evidence of `keyStorage`, validity, status; no private key | None |
 | Transparency Log | Repository | Append-only record of every entity event, no citizen transaction; read outside Trust Authority only by each entity, for its own events, through the portal | [RFC 6962][ref-rfc6962] / [RFC 9162][ref-rfc9162] |
 
@@ -330,17 +275,10 @@ three Repositories.
 
 ### Trust Registry {#sa-trust-registry}
 
-Trust Registry answers Trust Registry Query Protocol (TRQP) v2.0 queries for
-`authorization` and `recognition`, publishes the trusted list as List of Trusted Entities (LoTE) JSON
-along with Verified Issuer Certificate Authority List (VICAL), stores the
-Credential Rulebook, and runs the conformance crawler. Everything it publishes
+Trust Registry answers queries and publishes the lists, as
+[Trust Registry][hla-trust-registry] describes it. Everything it publishes
 goes out through a content delivery network (CDN) as a static file, which is
 how it stays off the transaction path.
-
-Trust Registry's six Components are what stands behind the static files it
-publishes: two Controllers answer queries, two Domain Components build what
-gets published, one Provider pushes it to the CDN, and one Repository holds
-the Authority Statements the rest of it is derived from.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -351,20 +289,17 @@ the Authority Statements the rest of it is derived from.
 | List Publisher | Domain | LoTE JSON, VICAL, JSON-LD Context, the Use Statement status list, the accreditation status list; status with history (`StatusStartingTime`, `NextUpdate`); the keys an entry names as revoked early | ETSI TS 119 602, ISO/IEC 18013-5 Annex C |
 | Conformance Crawler | Domain | Compares the `.well-known` metadata an issuer publishes against its approved scope, and looks for `did:webvh` log entries without a witness in every entity's log; findings go to Incident Service | None |
 | Object Storage Provider | Provider | Publishes static artifacts to the CDN with refresh jitter | None |
-| Registry Repository | Repository | Authority Statement and Use Statement, each with its status history | None |
+| Registry Repository | Repository | Its copy of the Authority Statements and Use Statements Trust Authority records, each with its status history | None |
 
 </figure>
 
 ### DID Service {#sa-did-service}
 
-Decentralized Identifier (DID) Service witnesses and resolves `did:webvh` v1.0 identifiers for entities,
-including each entity's key history. The entity signs its own log on its own
-domain; DID Service validates each new entry and adds the witness proof without
-which no resolver accepts it.
-
-DID Service's five Components witness and resolve `did:webvh`, the entity
-identifier fixed by
-the design principle
+Decentralized Identifier (DID) Service witnesses and resolves `did:webvh` v1.0
+identifiers, as [DID Service][hla-did-service] describes it. The entity signs
+its own log on its own domain, and DID Service adds the witness proof without
+which no resolver accepts an entry. The identifier itself is fixed by the
+design principle
 [finished specifications only][finished-specifications-only].
 
 <figure markdown="1" class="ekdn-table">
@@ -405,17 +340,17 @@ carrying its own risk that the Go and Dart versions drift apart.
 | DID Resolver Client | Resolves `did:webvh` (replays the log, verifies the hash chain, checks `proof`, handles pre-rotation, verifies the `eddsa-jcs-2022` proofs of log entries and witnesses) and decodes `did:key`; in the scheduled sync, falls back to DID Service's copy when the entity's domain is unreachable, never on a cache miss mid-transaction | High | did:webvh v1.0 |
 | Status Checker | Status List Token and Bitstring Status List: downloads, verifies, decompresses, checks the bit | Medium | IETF Token Status List, W3C Bitstring Status List |
 | X.509 Validator | Chains the Document Signer Certificate to the Issuer Root CA and the Verifier Device Certificate to the Verifier Root CA, against the CRL and VICAL. On Dart it calls the platform's own validator, `CertPathValidator` on Android and the Security framework on iOS, rather than a version written from scratch | Highest | RFC 5280, ISO/IEC 18013-5 Annex B and C |
-| Cache Store | Redis on the server, an encrypted file on the device; TTL set by the risk profile of what each copy protects; the trusted list discarded at its `NextUpdate`; the status list, CRL, VICAL, TRQP answers, `did:webvh` logs, and the Rulebooks with their JSON-LD contexts and credential schemas held as last-known-good until the tolerance limit; signature checked again on every read | Low | None |
+| Cache Store | Redis on the server, an encrypted file on the device; TTL set by the Governance Profile for each kind of copy; the trusted list discarded at its `NextUpdate`; the status list, CRL, VICAL, TRQP answers, `did:webvh` logs, and the Rulebooks with their JSON-LD contexts and credential schemas held as last-known-good until the tolerance limit; signature checked again on every read | Low | None |
 
 </figure>
 
 The X.509 Validator carries the highest risk of the six, which is why both
-implementations lean on a platform validator rather than reimplementing
-chain validation independently in two languages. Three requirements hold the pair together regardless: a shared
-set of test vectors, including malicious cases, runs against both SDKs on
-every pipeline run; a change to verification logic is written into the
-Technical Specifications before either implementation changes; and each
-implementation stays compatible with at least the two previous major
+implementations lean on a platform validator rather than reimplementing chain
+validation independently in two languages. Three requirements hold the pair
+together regardless: a shared set of test vectors, including malicious cases,
+runs against both SDKs on every pipeline run; a change to verification logic is
+written into the Technical Specifications before either implementation changes;
+and each implementation stays compatible with at least the two previous major
 versions.
 
 [](){ #fig-trust-sdk-parts }

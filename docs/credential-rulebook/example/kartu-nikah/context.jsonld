@@ -9,8 +9,6 @@
     "kua": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#kua",
     "kabupaten_kota": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#kabupaten_kota",
     "provinsi": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#provinsi",
-    "foto_suami": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#foto_suami",
-    "foto_istri": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#foto_istri",
     "tanggal_akad": {
       "@id": "https://catalog.trust.go.id/vocab/id.idctf.kartu-nikah#tanggal_akad",
       "@type": "http://www.w3.org/2001/XMLSchema#date"

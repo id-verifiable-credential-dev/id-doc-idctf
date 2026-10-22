@@ -11,7 +11,7 @@ description: How a participant reports an incident, what follows a compromised k
 An entity that loses a key tells the Root Authority, and a compromised key costs
 the entity that key and not its accreditation. An entity that breaks an obligation
 meets a ladder of sanctions, each step narrower than the next, with notice,
-a way back and a right to object.
+a way back, and a right to object.
 </p>
 
 !!! info "Normative page"
@@ -29,27 +29,26 @@ a way back and a right to object.
 Trust Authority's portal already takes a report from a registration whatever
 its status ([REQ-TS-4-03-035][req-ts-4-03-035]), and a report revokes nothing
 on its own ([incidents and post-mortems][ts-4-03-incidents-and-post-mortems]).
-What the portal leaves open is the clock and the duty to use it. An entity
+The portal leaves open the clock and the duty to use it. An entity
 knows its keys best, so its own report that a key is compromised needs no
-further confirmation. The report to the Root Authority does not replace the
-notification that [UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi][ref-uu-27-2022]
-requires of a personal data controller under Pasal 46.
+further confirmation.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-221 }**REQ-GF-221** An entity MUST report to the Root Authority, through Trust Authority's portal, every key of its own that it learns is compromised or lost, without undue delay and within the period the Governance Profile sets as `intervals.incident_report`, listed in [Intervals][ts-02-intervals].
-- [](){ #req-gf-222 }**REQ-GF-222** An entity MUST report in the same way and within the same period any security incident that affects what it issues, presents or verifies.
+- [](){ #req-gf-222 }**REQ-GF-222** An entity MUST report in the same way and within the same period any security incident that affects what it issues, presents, or verifies.
 - [](){ #req-gf-223 }**REQ-GF-223** The Root Authority MUST treat an entity's report that its own key is compromised as a confirmed compromise on receipt.
-- [](){ #req-gf-224 }**REQ-GF-224** An entity MUST NOT rely on a report under this Framework to meet a notification that UU No. 27 Tahun 2022 Pasal 46 requires of it.
+- [](){ #req-gf-224 }**REQ-GF-224** An entity MUST NOT rely on a report under this Framework to meet a notification that [UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi][ref-uu-27-2022] Pasal 46 requires of it.
 
 </div>
 
 ## The response to a compromised key {#gf-response-to-a-compromised-key}
 
-A compromised key revokes that key, and the entity stays accredited. The steps, their order and the time within which the
-first phase ends belong to [entity key revocation][entity-key-revocation] and
-are not restated here. This section binds the two parties the flow names.
-Phases that have no fixed target in the flow stay without one.
+A compromised key revokes that key, and the entity stays accredited. The steps,
+their order and the time within which the first phase ends belong to
+[entity key revocation][entity-key-revocation] and are not restated here. This
+section binds the two parties the flow names. Phases that have no fixed target
+in the flow stay without one.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -78,16 +77,12 @@ records.
 
 ## Grounds {#gf-grounds}
 
-Every judgement about an entity belongs to the Root Authority, and Trust
-Authority carries it out. Conformance Crawler
-finds, a refused signing request flags and a participant reports, and none
-of the three decides. Each is an incident the Root Authority decides on.
 A sector regulator's act is evidence for a ground and never a ground itself.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-233 }**REQ-GF-233** The Root Authority MUST decide every warning, suspension, withdrawal and restoration of a registration.
-- [](){ #req-gf-234 }**REQ-GF-234** The Root Authority MUST treat a finding of Conformance Crawler, a signing request that Trust Authority refused and a report from a participant as an incident to decide on, never as a decision.
+- [](){ #req-gf-233 }**REQ-GF-233** The Root Authority MUST decide every warning, suspension, withdrawal, and restoration of a registration.
+- [](){ #req-gf-234 }**REQ-GF-234** The Root Authority MUST treat a finding of Conformance Crawler, a signing request that Trust Authority refused, and a report from a participant as an incident to decide on, never as a decision.
 - [](){ #req-gf-235 }**REQ-GF-235** The Root Authority MAY ask an Assessment Body for a special assessment of an entity before it decides.
 
 </div>
@@ -104,10 +99,10 @@ the page that binds the role.
 - [](){ #req-gf-237 }**REQ-GF-237** The Root Authority MUST warn an issuer whose Issuer Core endpoint stays unreachable as [reachability][gf-issuer-reachability] requires.
 - [](){ #req-gf-238 }**REQ-GF-238** The Root Authority MUST warn an entity that does not file or report its sector license as [sector license][gf-sector-license] requires.
 - [](){ #req-gf-239 }**REQ-GF-239** The Root Authority MUST warn an RP Intermediary that has not withdrawn a merchant as [withdrawing a merchant][gf-withdrawing-a-merchant] requires.
-- [](){ #req-gf-240 }**REQ-GF-240** The Root Authority MUST warn a Wallet Provider that released a build changing code a specification binds before it filed and had accepted the report [wallet releases][gf-wallet-releases] requires.
-- [](){ #req-gf-241 }**REQ-GF-241** The Root Authority MUST warn a participant that displays a mark, name or wording against [publishing no more than was granted][gf-publishing-no-more-than-was-granted].
+- [](){ #req-gf-240 }**REQ-GF-240** The Root Authority MUST warn a Wallet Provider that released a build changing code a specification binds before it had filed the report [wallet releases][gf-wallet-releases] requires and had it accepted.
+- [](){ #req-gf-241 }**REQ-GF-241** The Root Authority MUST warn a participant that displays a mark, name, or wording against [publishing no more than was granted][gf-publishing-no-more-than-was-granted].
 - [](){ #req-gf-242 }**REQ-GF-242** The Root Authority MUST warn a registration that breaches any other obligation this Framework places on its role, unless the breach is a ground for suspension.
-- [](){ #req-gf-243 }**REQ-GF-243** The Root Authority MUST name in a warning the ground, the evidence, the correction the Root Authority requires and the end of the correction period.
+- [](){ #req-gf-243 }**REQ-GF-243** The Root Authority MUST name in a warning the ground, the evidence, the correction the Root Authority requires, and the end of the correction period.
 - [](){ #req-gf-244 }**REQ-GF-244** The Root Authority MUST set the correction period of a warning to the period the Governance Profile sets as `intervals.correction_period`, listed in [Intervals][ts-02-intervals], counted from the notice.
 
 </div>
@@ -136,9 +131,9 @@ withdrawal, in the same way that a credential's suspension ends.
 ### Grounds for withdrawal {#gf-grounds-for-withdrawal}
 
 Withdrawal revokes no key, so what the entity signed while accredited still
-verifies ([REQ-TS-4-03-043][req-ts-4-03-043]). That default holds unless the
-Root Authority has reason to fear backdated credentials, the risk that the
-trusted list page names.
+verifies ([REQ-TS-4-03-043][req-ts-4-03-043]), unless the Root Authority has
+reason to fear backdated credentials, the risk that the trusted list page
+names.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -150,19 +145,17 @@ trusted list page names.
 
 ## The ladder of sanctions {#gf-ladder-of-sanctions}
 
-The Root Authority picks the narrowest sanction that answers the ground. The
-Architecture Framework's own example is a campus that mishandles one
-credential type and loses that one permission, with its standing untouched.
-From narrowest to widest the steps are a warning, the withdrawal of one
-permission or registered use, suspension of the registration, suspension of
-every registration of the legal body, and withdrawal of the accreditation.
-The ladder is not a sequence to climb: a ground in
-[grounds for suspension][gf-grounds-for-suspension] skips the warning.
+The Architecture Framework's own example of the narrowest sanction is a campus
+that mishandles one credential type and loses that one permission, with its
+standing untouched. From narrowest to widest the steps are a warning, the
+withdrawal of one permission or registered use, suspension of the
+registration, suspension of every registration of the legal body, and
+withdrawal of the accreditation.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-257 }**REQ-GF-257** The Root Authority MUST choose the narrowest sanction on the ladder that answers the ground.
-- [](){ #req-gf-258 }**REQ-GF-258** The Root Authority MUST NOT suspend a registration before the correction period of a warning on the same ground has passed, except on a ground that allows suspension without a warning.
+- [](){ #req-gf-258 }**REQ-GF-258** The Root Authority MUST NOT suspend a registration before the correction period of a warning on the same ground has passed, except on [a ground that allows suspension without a warning][gf-grounds-for-suspension].
 
 </div>
 
@@ -186,21 +179,18 @@ confined to one of them.
 ## Notice of a sanction {#gf-notice-of-a-sanction}
 
 Prior notice is the warning itself, so the Root Authority adds no hearing
-step before a suspension. The notice to Relying Parties goes out through
-Trust Authority's Incident Service Component with the emergency trusted list,
-as it does for a revoked key.
+step before a suspension.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-264 }**REQ-GF-264** The Root Authority MUST notify the entity of a warning, suspension, withdrawal or restoration no later than when it takes effect, stating the ground, the evidence, the start, the scope, what ends it, and the objection and appeal available.
-- [](){ #req-gf-265 }**REQ-GF-265** The Root Authority, through Trust Authority, MUST give notice of a suspension or withdrawal to Relying Parties as organizations, with the emergency trusted list.
+- [](){ #req-gf-264 }**REQ-GF-264** The Root Authority MUST notify the entity of a warning, suspension, withdrawal, or restoration no later than when it takes effect, stating the ground, the evidence, the start, the scope, what ends it, and the objection and appeal available.
+- [](){ #req-gf-265 }**REQ-GF-265** The Root Authority, through Trust Authority's Incident Service Component, MUST give notice of a suspension or withdrawal to Relying Parties as organizations, with the emergency trusted list.
 
 </div>
 
 ## What each status does to what the entity signed {#gf-effect-of-each-status}
 
-The Technical Specifications fix the effect and this Framework states it as
-policy. A suspension sets every role service and Verifier Issuing CA service
+A suspension sets every role service and Verifier Issuing CA service
 of the entry to `suspended` ([REQ-TS-5-01-035][req-ts-5-01-035]), turns its
 Authority Statement answers to `false` ([REQ-TS-5-05-009][req-ts-5-05-009]) and
 sets its accreditation status list entry to suspended
@@ -214,7 +204,7 @@ Verifier Issuing CA stops every merchant device under it
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-266 }**REQ-GF-266** An RP Intermediary whose registration is suspended MUST NOT issue or renew a Verifier Device Certificate while it is suspended.
+- [](){ #req-gf-266 }**REQ-GF-266** An RP Intermediary whose registration is suspended MUST NOT issue or renew a Verifier Device Certificate.
 - [](){ #req-gf-267 }**REQ-GF-267** The Root Authority MUST say in the notice to an RP Intermediary that its merchants stop with it.
 
 </div>
@@ -222,9 +212,7 @@ Verifier Issuing CA stops every merchant device under it
 ## Restoration {#gf-restoration}
 
 A restoration sets the status list entry back to valid at the same index and
-reissues nothing ([REQ-TS-5-07-064][req-ts-5-07-064]). The Root Authority
-restores once the ground is corrected. Where it asked for a special
-assessment, the report is what confirms the correction.
+reissues nothing ([REQ-TS-5-07-064][req-ts-5-07-064]).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -236,9 +224,10 @@ assessment, the report is what confirms the correction.
 ## Objection and appeal {#gf-objection-and-appeal}
 
 The Root Authority is a designated state institution, so its decisions are
-government administrative decisions, and [UU No. 30 Tahun 2014 tentang Administrasi Pemerintahan][ref-uu-30-2014]
-applies whether this Framework says so or not. It sets the objection
-(*keberatan*) and the appeal (*banding*), with their periods in Pasal 75 to
+government administrative decisions, and
+[UU No. 30 Tahun 2014 tentang Administrasi Pemerintahan][ref-uu-30-2014] applies
+whether this Framework says so or not. It sets the objection (*keberatan*) and
+the appeal (*banding*), with their periods in Pasal 75 to
 78. This Framework writes no period of its own, because a second set of days
 would sit beside the statute and could contradict it. An Assessment Body's
 report is not a decision, so only the Root Authority's decision on it can be
@@ -246,6 +235,7 @@ objected to.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-270 }**REQ-GF-270** The Root Authority MUST accept and decide an entity's objection and appeal against a warning, suspension, withdrawal or restoration decision within the periods and in the form UU No. 30 Tahun 2014 sets, keeping the sanction in force meanwhile unless it suspends the sanction's effect.
+- [](){ #req-gf-270 }**REQ-GF-270** The Root Authority MUST accept and decide an entity's objection and appeal against a warning, suspension, withdrawal, or restoration decision within the periods and in the form UU No. 30 Tahun 2014 sets.
+- [](){ #req-gf-295 }**REQ-GF-295** The Root Authority MUST keep the sanction in force while it decides an objection or appeal, unless it suspends the sanction's effect.
 
 </div>

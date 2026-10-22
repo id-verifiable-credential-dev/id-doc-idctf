@@ -16,15 +16,15 @@ issued as an [SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13][ref-i-d-
 
 !!! note "Informative page"
 
-    This Rulebook is an illustration and is not registered. Its values were
-    chosen to show how the fields of [Rulebook structure](../rulebook-structure.md)
-    fit together, and none of them has been approved by the Root Authority.
-    The addresses under `catalog.trust.go.id` do not exist yet; the files they
-    name are shown on this page instead.
+    This Rulebook is an illustration and is not registered. Its values show
+    how the fields of [Rulebook structure](../rulebook-structure.md) fit
+    together, and the Root Authority has approved none of them. The addresses
+    under `catalog.trust.go.id` do not exist yet, so this page shows the files
+    they name.
 
 ## The Rulebook {#kartu-indonesia-sehat-rulebook}
 
-The Rulebook for `id.idctf.kartu-indonesia-sehat.1`, carrying every field
+The Rulebook for `id.idctf.kartu-indonesia-sehat.1` carries every field
 [Rulebook structure](../rulebook-structure.md) lists. It lists `sd-jwt-vc`
 alone. It lists no `expiry_date`, because the card it mirrors prints no
 validity period.
@@ -35,8 +35,9 @@ validity period.
 
 ## Schema {#kartu-indonesia-sehat-schema}
 
-The [JSON Schema 2020-12][ref-json-schema] that [the schema field][rulebook-schema-field] points at.
-Issuer Core checks the six type claims against it before it signs.
+This is the [JSON Schema 2020-12][ref-json-schema] that
+[the schema field][rulebook-schema-field] points at. Issuer Core checks the six
+type claims against it before it signs.
 
 ``` { .json title="schema.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/kartu-indonesia-sehat/schema.json"
@@ -44,7 +45,7 @@ Issuer Core checks the six type claims against it before it signs.
 
 ## Display {#kartu-indonesia-sehat-display}
 
-The card a wallet draws, light and dark, and the SD-JWT VC Type Metadata that
+A wallet draws the card, light and dark, from the SD-JWT VC Type Metadata that
 [the display field][rulebook-display-field] points at. The Type Metadata
 carries both templates and the logo.
 
@@ -62,7 +63,7 @@ carries both templates and the logo.
 </figure>
 </div>
 
-Templates: [`card-light.svg`](kartu-indonesia-sehat/card-light.svg) and
+The templates are [`card-light.svg`](kartu-indonesia-sehat/card-light.svg) and
 [`card-dark.svg`](kartu-indonesia-sehat/card-dark.svg).
 
 ``` { .json title="type-metadata.json" data-format="JSON" }
@@ -71,8 +72,8 @@ Templates: [`card-light.svg`](kartu-indonesia-sehat/card-light.svg) and
 
 ## Issued credential {#kartu-indonesia-sehat-issued-credential}
 
-One credential as Issuer Core signs it, and where each of its claims comes
-from.
+This section shows one credential as Issuer Core signs it, and where each of
+its claims comes from.
 
 ``` { .json title="SD-JWT VC header, payload and disclosure" data-format="SD-JWT VC" }
 // header
@@ -89,7 +90,7 @@ from.
   "_sd_alg": "sha-256",
   "status": { "status_list": { "idx": 481920,
                  "uri": "https://bpjs-kesehatan.go.id/status/kartu-indonesia-sehat-1" } },
-  "iat": 1789901520, "exp": 1852973520
+  "iat": 1789901520, "exp": 1821437520
 }
 
 // disclosure for nama, sent beside the credential

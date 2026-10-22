@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IDCTF repository map</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.34.4/cytoscape.min.js"></script>
+<style>
+:root {
+  --bg: #ffffff; --panel: #f6f8fa; --line: #d8dee4; --text: #1f2328; --muted: #59636e;
+  --accent: #0281ff; --error: #cf222e; --info: #9a6700;
+  --k-page: #0281ff; --k-track: #8250df; --k-debt: #cf222e; --k-anchor: #8c959f;
+  --k-term: #1a7f37; --k-member: #bf8700; --k-block: #e16f24; --k-json: #b35900;
+  --k-script: #57606a; --k-drawio: #0e8a8a; --k-svg: #0e8a8a; --k-file: #24292f;
+  --k-source: #a0a7b0; --k-value: #6639ba; --k-group: #0281ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1117; --panel: #161b22; --line: #30363d; --text: #e6edf3; --muted: #9198a1;
+    --k-file: #c9d1d9; --k-script: #9198a1;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1117; --panel: #161b22; --line: #30363d; --text: #e6edf3; --muted: #9198a1;
+  --k-file: #c9d1d9; --k-script: #9198a1;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 14px/1.45 Inter, system-ui, sans-serif; background: var(--bg); color: var(--text);
+  height: 100vh; display: grid; grid-template-rows: auto 1fr; }
+header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px;
+  border-bottom: 1px solid var(--line); background: var(--panel); }
+header h1 { font-size: 15px; margin: 0 12px 0 0; }
+input[type=search] { flex: 1 1 260px; min-width: 0; padding: 6px 10px; border: 1px solid var(--line);
+  border-radius: 6px; background: var(--bg); color: var(--text); font: inherit; }
+button { font: inherit; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--text); cursor: pointer; }
+button[aria-pressed=true] { border-color: var(--accent); color: var(--accent); }
+main { display: grid; grid-template-columns: 200px 1fr 340px; min-height: 0; }
+aside { overflow: auto; padding: 12px 16px; background: var(--panel); }
+aside.left { border-right: 1px solid var(--line); }
+aside.right { border-left: 1px solid var(--line); }
+#cy { min-height: 0; }
+h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 14px 0 6px; }
+label { display: flex; gap: 6px; align-items: center; padding: 1px 0; cursor: pointer; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+.count { color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+ul { list-style: none; margin: 0; padding: 0; }
+li a { color: var(--text); text-decoration: none; display: block; padding: 2px 0; word-break: break-word; }
+li a:hover { color: var(--accent); }
+.closed { color: var(--muted); text-decoration: line-through; }
+.lvl-error { color: var(--error); } .lvl-info { color: var(--info); }
+#title { font-weight: 600; word-break: break-word; }
+#sub { color: var(--muted); word-break: break-word; }
+.note { color: var(--muted); font-size: 12px; }
+#findings { display: none; }
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; grid-template-rows: auto 50vh auto; }
+  aside.left, aside.right { border: 0; border-bottom: 1px solid var(--line); }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>IDCTF repository map</h1>
+  <input type="search" id="q" list="ids" placeholder="Path, 0437, REQ-GF-012, intervals.incident_report, term…">
+  <datalist id="ids"></datalist>
+  <button id="b-overview" aria-pressed="true">Overview</button>
+  <button id="b-findings" aria-pressed="false">Findings</button>
+</header>
+<main>
+  <aside class="left">
+    <h2>Kinds</h2>
+    <div id="kinds"></div>
+    <h2>Hops</h2>
+    <label><input type="radio" name="hops" value="1" checked> 1</label>
+    <label><input type="radio" name="hops" value="2"> 2</label>
+    <h2>Records</h2>
+    <label><input type="checkbox" id="closed"> Show closed</label>
+    <p class="note">Hidden anchors fold into the page that defines them, so a link to a heading reads as a link to its page.</p>
+  </aside>
+  <div id="cy"></div>
+  <aside class="right">
+    <div id="detail">
+      <div id="title">Overview</div>
+      <div id="sub">One node per group; edge width grows with the number of links. Click a group, or search, to focus.</div>
+      <div id="lists"></div>
+    </div>
+    <div id="findings"></div>
+  </aside>
+</main>
+<script>
+const DATA = /*DATA*/null;
+const CLOSED = /^(superseded|withdrawn|paid)/;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const node = {}; DATA.nodes.forEach(n => node[n.id] = n);
+const home = {};  // anchor -> page that defines it
+DATA.edges.forEach(e => { if (e.type === "defines") home[e.target] = "page:" + node[e.target]?.page; });
+
+const KINDS = ["page", "track", "debt", "block", "json", "script", "member", "drawio", "svg",
+               "file", "value", "source", "term", "anchor"];
+const defaultOff = new Set(["anchor", "term", "source"]);
+const kindCount = {}; DATA.nodes.forEach(n => kindCount[n.kind] = (kindCount[n.kind] || 0) + 1);
+const kindsBox = document.getElementById("kinds");
+KINDS.filter(k => kindCount[k]).forEach(k => {
+  kindsBox.insertAdjacentHTML("beforeend",
+    `<label><input type="checkbox" value="${k}" ${defaultOff.has(k) ? "" : "checked"}>
+     <span class="dot" style="background:var(--k-${k})"></span>${k}<span class="count">${kindCount[k]}</span></label>`);
+});
+document.getElementById("ids").innerHTML = DATA.nodes
+  .filter(n => n.kind !== "anchor" || n.id.startsWith("anchor:req-") === false)
+  .map(n => `<option value="${n.id.replace(/"/g, "&quot;")}">`).join("");
+
+const shown = () => new Set([...kindsBox.querySelectorAll("input:checked")].map(i => i.value));
+const hops = () => +document.querySelector("input[name=hops]:checked").value;
+const showClosed = () => document.getElementById("closed").checked;
+const label = id => {
+  const n = node[id] || {};
+  const name = id.split(":").slice(1).join(":");
+  if (n.kind === "track" || n.kind === "debt") return id + (n.title ? "  " + n.title : "");
+  if (n.kind === "page") return (n.title || name).replace(/^docs\//, "");
+  return name;
+};
+
+// The edge list as the current filters see it: hidden anchors fold into
+// their page, other hidden kinds and closed records drop out.
+function view(focus) {
+  const on = shown(), out = new Map();
+  const keep = id => id === focus || (on.has(node[id]?.kind) &&
+    (showClosed() || !CLOSED.test(node[id]?.status || "")));
+  for (const e of DATA.edges) {
+    if (e.type === "defines" && !on.has("anchor")) continue;
+    let s = e.source, t = e.target;
+    if (!on.has("anchor")) {
+      if (node[s]?.kind === "anchor") s = home[s] || s;
+      if (node[t]?.kind === "anchor") t = home[t] || t;
+    }
+    if (s === t || !keep(s) || !keep(t)) continue;
+    const key = s + "\u0000" + e.type + "\u0000" + t;
+    out.set(key, { source: s, type: e.type, target: t, n: (out.get(key)?.n || 0) + 1 });
+  }
+  return [...out.values()];
+}
+
+const cy = cytoscape({
+  container: document.getElementById("cy"),
+  wheelSensitivity: 0.3,
+  style: [
+    { selector: "node", style: {
+      "background-color": el => css("--k-" + el.data("kind")) || css("--accent"),
+      "label": "", "font-size": "data(fs)", "color": css("--text"),
+      "text-valign": "bottom", "text-margin-y": 3, "width": "data(size)", "height": "data(size)",
+      "text-wrap": "ellipsis", "text-max-width": 420 } },
+    { selector: "node[?lbl], node.hover", style: { "label": "data(short)" } },
+    { selector: "node.hover", style: { "z-index": 9, "text-background-color": css("--bg"),
+      "text-background-opacity": 0.9, "text-background-padding": 2 } },
+    { selector: "node.focus", style: { "border-width": 3, "border-color": css("--text") } },
+    { selector: "node.closed", style: { "opacity": 0.45 } },
+    { selector: "edge", style: {
+      "width": "data(w)", "line-color": css("--line"), "target-arrow-color": css("--line"),
+      "target-arrow-shape": "triangle", "curve-style": "bezier", "arrow-scale": 0.7,
+      "label": "", "font-size": "data(fs)", "color": css("--muted"), "text-rotation": "autorotate" } },
+    { selector: "edge[?lbl]", style: { "label": "data(type)" } },
+  ],
+});
+
+// A crowded graph names only its focus; the others name themselves on hover
+// and in the side panel, where the full list can be read.
+function draw(nodes, edges, layout, fs = 10) {
+  const few = nodes.length <= 30;
+  nodes.forEach(n => { n.fs = fs; n.lbl = n.lbl || few; });
+  edges.forEach(e => { e.fs = Math.round(fs * 0.8); e.lbl = edges.length <= 40; });
+  cy.elements().remove();
+  cy.add(nodes.map(n => ({ data: n, classes: n.cls || "" })));
+  cy.add(edges.map((e, i) => ({ data: { id: "e" + i, ...e } })));
+  cy.layout({ ...layout, stop: () => { if (cy.zoom() > 1.6) { cy.zoom(1.6); cy.center(); } } }).run();
+}
+cy.on("mouseover", "node", e => e.target.addClass("hover"));
+cy.on("mouseout", "node", e => e.target.removeClass("hover"));
+
+// ---- overview: one node per group
+function group(id) {
+  const n = node[id]; if (!n) return "other";
+  const path = n.path || n.page || id.split(":").slice(1).join(":");
+  if (n.kind === "page" || n.kind === "anchor") {
+    const seg = (n.kind === "anchor" ? n.page || "" : path).replace(/^docs\//, "").split("/")[0];
+    return seg.endsWith(".md") ? "home" : seg || "anchors (undefined)";
+  }
+  if (n.kind === "drawio" || n.kind === "svg") return "figures";
+  if (n.kind === "json" || n.kind === "script" || n.kind === "block") return "artifacts";
+  return n.kind;
+}
+function overview() {
+  setMode("overview");
+  const size = {}, link = new Map();
+  DATA.nodes.forEach(n => { const g = group(n.id); size[g] = (size[g] || 0) + 1; });
+  for (const e of DATA.edges) {
+    const a = group(e.source), b = group(e.target);
+    if (a === b) continue;
+    link.set(a + "\u0000" + b, (link.get(a + "\u0000" + b) || 0) + 1);
+  }
+  // A document group takes the page colour; the other groups are named after a kind.
+  const tint = g => ({ artifacts: "block", figures: "svg" }[g] || (kindCount[g] ? g : "page"));
+  const nodes = Object.entries(size).map(([g, c]) => ({ id: "group:" + g, kind: tint(g), lbl: true,
+    short: `${g} (${c})`, size: 16 + 7 * Math.log2(c + 1) }));
+  const edges = [...link].filter(([, c]) => c >= 3).map(([k, c]) => {
+    const [a, b] = k.split("\u0000");
+    return { source: "group:" + a, target: "group:" + b, type: String(c), w: Math.min(1 + Math.log2(c), 9) };
+  });
+  draw(nodes, edges, { name: "circle", animate: false, padding: 40, spacingFactor: 1.1 }, 26);
+  document.getElementById("title").textContent = "Overview";
+  document.getElementById("sub").textContent =
+    `${DATA.nodes.length} nodes, ${DATA.edges.length} edges. Edge width grows with the number of links between groups; links fewer than three are left out.`;
+  document.getElementById("lists").innerHTML = "";
+}
+
+// ---- focus: one node and its neighbourhood
+function focus(id) {
+  if (!node[id]) return;
+  setMode("focus");
+  const edges = view(id), adj = {};
+  edges.forEach(e => { (adj[e.source] ||= []).push(e.target); (adj[e.target] ||= []).push(e.source); });
+  const seen = new Set([id]); let ring = [id];
+  for (let h = 0; h < hops(); h++) {
+    const next = [];
+    ring.forEach(r => (adj[r] || []).forEach(m => { if (!seen.has(m)) { seen.add(m); next.push(m); } }));
+    ring = next;
+  }
+  const CAP = 350;
+  const ids = [...seen].slice(0, CAP);
+  const inView = new Set(ids);
+  const nodes = ids.map(n => ({ id: n, kind: node[n]?.kind, short: label(n).slice(0, 60),
+    size: n === id ? 26 : 14, lbl: n === id,
+    cls: (n === id ? "focus " : "") + (CLOSED.test(node[n]?.status || "") ? "closed" : "") }));
+  const es = edges.filter(e => inView.has(e.source) && inView.has(e.target))
+    .map(e => ({ ...e, w: Math.min(1 + Math.log2(e.n), 6) }));
+  draw(nodes, es, { name: ids.length > 30 ? "cose" : "concentric", animate: false,
+    concentric: n => (n.id() === id ? 10 : 1), levelWidth: () => 1, minNodeSpacing: 20 });
+  detail(id, edges, seen.size > CAP ? `Showing ${CAP} of ${seen.size} nodes; narrow the kinds.` : "");
+}
+
+function detail(id, edges, warn) {
+  const n = node[id];
+  document.getElementById("title").textContent = label(id);
+  document.getElementById("sub").textContent =
+    [n.kind, n.status, n.path, warn].filter(Boolean).join(" · ");
+  const groups = {};
+  edges.forEach(e => {
+    if (e.source === id) (groups[e.type + " →"] ||= []).push(e.target);
+    if (e.target === id) (groups["← " + e.type] ||= []).push(e.source);
+  });
+  document.getElementById("lists").innerHTML = Object.keys(groups).sort().map(g => {
+    const items = [...new Set(groups[g])].sort();
+    return `<h2>${g} (${items.length})</h2><ul>` + items.map(m =>
+      `<li><a href="#" data-id="${encodeURIComponent(m)}" class="${CLOSED.test(node[m]?.status || "") ? "closed" : ""}">${esc(label(m))}</a></li>`).join("") + "</ul>";
+  }).join("");
+}
+
+function findings() {
+  setMode("findings");
+  document.getElementById("findings").innerHTML = DATA.findings.map(f =>
+    `<h2 class="lvl-${f.level}">${f.level}: ${esc(f.kind)} (${f.items.length})</h2><ul>` +
+    f.items.map(i => i.focus
+      ? `<li><a href="#" data-id="${encodeURIComponent(i.focus)}">${esc(i.text)}</a></li>`
+      : `<li>${esc(i.text)}</li>`).join("") + "</ul>").join("") || "<p>No findings.</p>";
+}
+
+function setMode(m) {
+  document.getElementById("b-overview").setAttribute("aria-pressed", m === "overview");
+  document.getElementById("b-findings").setAttribute("aria-pressed", m === "findings");
+  document.getElementById("detail").style.display = m === "findings" ? "none" : "block";
+  document.getElementById("findings").style.display = m === "findings" ? "block" : "none";
+  if (m !== "findings") current.mode = m;
+}
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const current = { mode: "overview", id: null };
+
+function resolve(q) {
+  q = q.trim(); if (!q) return null;
+  if (node[q]) return q;
+  const rec = q.match(/^(?:(tracks|debt)\/)?(\d{4})/);
+  if (rec) { const k = rec[1] === "debt" ? "debt" : "track";
+    return DATA.nodes.find(n => n.id === `${k}:${rec[2]}` || n.id.startsWith(`${k}:${rec[2]}-`))?.id; }
+  for (const p of ["page:", "file:", "drawio:", "svg:", "script:", "json:", "member:", "term:", "anchor:"]) {
+    if (node[p + q]) return p + q;
+    if (p === "anchor:" && node[p + q.toLowerCase()]) return p + q.toLowerCase();
+  }
+  const low = q.toLowerCase();
+  return DATA.nodes.find(n => n.id.toLowerCase().includes(low) || (n.title || "").toLowerCase().includes(low))?.id;
+}
+function go(id) { if (!id) return; current.id = id; history.replaceState(null, "", "#" + encodeURIComponent(id)); focus(id); }
+
+document.getElementById("q").addEventListener("change", e => go(resolve(e.target.value)));
+document.getElementById("b-overview").onclick = () => { current.id = null; history.replaceState(null, "", "#"); overview(); };
+document.getElementById("b-findings").onclick = findings;
+document.body.addEventListener("click", e => {
+  const a = e.target.closest("a[data-id]"); if (!a) return;
+  e.preventDefault(); go(decodeURIComponent(a.dataset.id));
+});
+document.querySelector("aside.left").addEventListener("change", () => current.id ? focus(current.id) : overview());
+cy.on("tap", "node", e => {
+  const id = e.target.id();
+  if (id.startsWith("group:")) {
+    const g = id.slice(6);
+    const first = DATA.nodes.find(n => group(n.id) === g && ["page", "track", "debt", "script", "json", "drawio", "member", "file", "value"].includes(n.kind));
+    if (first) go(first.id);
+  } else go(id);
+});
+
+const start = decodeURIComponent(location.hash.slice(1));
+start && node[start] ? go(start) : overview();
+</script>
+</body>
+</html>

@@ -34,39 +34,48 @@ issues, in the mode each is presented in: an
 draft -13 and an `ldp_vc` online over [OpenID4VP][ref-openid4vp] 1.0, an
 [ISO mdoc][ref-iso-18013-5] in proximity under ISO/IEC 18013-5:2021.
 
-Its conformance targets are Mobile Wallet, Verifier Core and Mobile Verifier.
+Its conformance targets are Mobile Wallet, Verifier Core, and Mobile Verifier.
 Mobile Verifier verifies in both modes: an mdoc in proximity, and an SD-JWT VC
-or an `ldp_vc` online when a merchant's device runs its check through the relay
-at the RP Intermediary's Verifier Core, as
+or an `ldp_vc` online. The online check runs through the relay at the
+RP Intermediary's Verifier Core, as
 [Mobile Verifier to Verifier Core][mobile-verifier-to-verifier-core] sets out. A
 Relying Party's own application built on Reader SDK verifies a proximity
-presentation through that library, and the requirements addressed to Mobile
-Verifier bind the application as well.
+presentation through that library, and the requirements addressed to
+Mobile Verifier bind the application as well, except where a requirement names
+the application itself.
 
-Five neighboring things sit elsewhere. The request a presentation answers, with
-its `client_id`, its Digital Credentials Query Language (DCQL) query and its
-response encryption, is
-[Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md); the proximity
-exchange that carries one, from device engagement to the encrypted session, is
-[Verifying a credential in proximity via ISO/IEC 18013-5](verifying-a-credential-in-proximity-via-iso-iec-18013-5.md).
-What a verifier is allowed to ask for
-is the Use Statement of
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-and, in proximity, the `ReaderAuthRole` of
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md).
-The credential being presented, and the checks that reach the credential itself,
-are
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md).
-Whether the verifier may be trusted at all is the trusted list of
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md).
+It leaves to other documents:
+
+- The request a presentation answers, with its `client_id`, its Digital
+  Credentials Query Language (DCQL) query, and its response encryption, which
+  [Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md)
+  holds.
+- The proximity exchange that carries one, from device engagement to the
+  encrypted session, which
+  [Verifying a credential in proximity via ISO/IEC 18013-5](verifying-a-credential-in-proximity-via-iso-iec-18013-5.md)
+  holds.
+- The Use Statement that bounds what a verifier may ask for, which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
+- The `ReaderAuthRole` that bounds what a verifier may ask for in proximity,
+  which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The credential being presented, and the checks that reach the credential
+  itself, which
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  holds.
+- Whether the verifier may be trusted at all, which is the trusted list that
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
 
 Before it builds a presentation, Mobile Wallet holds the credential, every
 disclosure that came with it, the credential key in its secure storage, and a
-verified request: signature checked, verifier found on the trusted list, Use
-Statement read, and the citizen's consent taken. Before it verifies one,
+verified request: signature checked, verifier found on the trusted list,
+Use Statement read, and the citizen's consent taken. Before it verifies one,
 Verifier Core or Mobile Verifier holds the nonce it issued, the trusted list,
-the issuer's Decentralized Identifier (DID) Document or the Issuer Root CA, and the status lists, all from
-its own cache.
+the issuer's Decentralized Identifier (DID) Document or the Issuer Root CA, and
+the status lists, all from its own cache.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -123,27 +132,35 @@ online, so the mode decides the representation, as
 ## The presentations as exchanged {#ts-5-11-the-presentations-as-exchanged}
 
 The three presentations below are an illustration: the citizen, the verifier,
-the session and the keys are invented, and no transaction has taken place. Every
+the session, and the keys are invented, and no transaction has taken place. Every
 field is exact. Each was signed with the credential key the credential it
 presents is bound to, each signature verifies, and each digest recomputes, so an
 implementation can parse these artifacts and find what the clauses below
-require. All three present the credentials
-[the credentials as issued][ts-5-10-the-credentials-as-issued] publishes, to the
-Relying Party
-[the trusted list][ts-5-01-trusted-list-payload] carries. The
-SD-JWT VC one answers the first Request Object
-[carrying it online][ts-5-06-carrying-it-online] publishes and carries its
-`nonce`; the `ldp_vc` one answers the second, under a second registered use,
-and carries that request's `nonce` as `challenge`; the proximity one answers
-the `ItemsRequest` of the age check
-[carrying it in proximity][ts-5-06-carrying-it-in-proximity] publishes and
-carries no nonce at all, because its binding is the session.
+require.
+
+The presentations agree with the other examples on four points:
+
+- All three present the credentials
+  [the credentials as issued][ts-5-10-the-credentials-as-issued] publishes.
+- All three present them to the Relying Party
+  [the trusted list][ts-5-01-trusted-list-payload] carries.
+- The SD-JWT VC one answers the first Request Object
+  [carrying it online][ts-5-06-carrying-it-online] publishes and carries its
+  `nonce`; the `ldp_vc` one answers the second, under a second registered use,
+  and carries that request's `nonce` as `challenge`.
+- The proximity one answers the `ItemsRequest` of the age check
+  [carrying it in proximity][ts-5-06-carrying-it-in-proximity] publishes and
+  carries no nonce at all, because its binding is the session.
+
 What each discloses is what the Use Statements
 [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-register: `nama` and `instansi` for the official travel use, the first of
-the two options its request offers,
-`usia_di_atas_17` alone for the tobacco use, and, for the Kartu Nikah, all nine
-attributes of the type, because an `ldp_vc` presentation cannot withhold one.
+register:
+
+- `nama` and `instansi` for the official travel use, the first of the two
+  options its request offers.
+- `usia_di_atas_17` alone for the tobacco use.
+- All nine attributes of the type for the Kartu Nikah, because an `ldp_vc`
+  presentation cannot withhold one.
 
 ### An SD-JWT VC presentation {#ts-5-11-an-sd-jwt-vc-presentation}
 
@@ -191,9 +208,9 @@ Vk5rMjk2bDVBYW03TW8yN3czd2VzZk45LW5JVUNCZEh6ZyJ9.VX1bqErPuXtjNRRHFLYG3Si5LTd
 c4xUfeYgvq_WnpfGx8SnHio0C9pxEfDhhGEJ_603yMcH9Ygm8J4EK0ooBKw
 ```
 
-The two disclosures that travelled, with the arrays they decode to:
+The two disclosures that traveled, with the arrays they decode to:
 
-``` { .text title="The disclosures that travelled" data-format="SD-JWT VC" }
+``` { .text title="The disclosures that traveled" data-format="SD-JWT VC" }
 ~WyJ3SXVNc2VoQTM1UEp0RU1yUzRub0NRIiwibmFtYSIsIkJ1ZGkgU2FudG9zbyBXaWNha3Nvbm8iXQ
   ["wIuMsehA35PJtEMrS4noCQ","nama","Budi Santoso Wicaksono"]
 ~WyJSb1o4SHRpMk9JVkJ4NHlNd3Q0UkZRIiwiaW5zdGFuc2kiLCJCYWRhbiBLZXBlZ2F3YWlhbiBOZWdhcmEiXQ
@@ -222,7 +239,7 @@ The Key Binding JWT at the end of it, decoded:
 
 The same wallet answering a request for the Kartu Nikah, under the
 `pencatatan-ahli-waris` use. The credential travels whole, because nothing in
-it can be withheld, which is why that registered use names all nine of the
+it can be withheld. That registered use therefore names all nine of the
 type's attributes. The proof of the key is a second Data Integrity proof over
 the presentation that wraps the credential, carrying this request's `nonce` as
 `challenge`. The `vp_token` is keyed by the credential query's `id`, as it is
@@ -261,9 +278,7 @@ for an SD-JWT VC:
             "nomor_akta_nikah": "0123/0007/V/2025",
             "kua": "KUA Kec. Cibinong",
             "kabupaten_kota": "Kabupaten Bogor",
-            "provinsi": "Jawa Barat",
-            "foto_suami": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==",
-            "foto_istri": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q=="
+            "provinsi": "Jawa Barat"
           },
           "credentialStatus": [
             {
@@ -292,7 +307,7 @@ for an SD-JWT VC:
             "created": "2026-10-17T06:00:10Z",
             "verificationMethod": "did:webvh:QmbAb7u9RMjqsZ9L98pe47szJZdnKQLh9KizqNW2WwKac1:kemenag.go.id#issuance-jose-1",
             "proofPurpose": "assertionMethod",
-            "proofValue": "z23RrsniSuQSX6EgQ5VByC1PYJhY8P9TFupfVXiJoiaaEqdDKYrXj36hFVXaUUinQVoRNfLrWGodfjWM9XCqRaQao"
+            "proofValue": "z3JTvebTQCkzF6G4dX57mTnykwTtDGWD1gBCfBjzpWmkx2PdTocdowomBTR7Qzaef1L34erTcPA16ArhQhiNxS5UW"
           }
         }
       ],
@@ -304,7 +319,7 @@ for an SD-JWT VC:
         "proofPurpose": "authentication",
         "challenge": "RuHSu26QAGIX4UP7H-ulTA",
         "domain": "decentralized_identifier:did:webvh:QmUATC5jyf5yVy72GYAp8nSvuwshzDy6wYX7WmNY5UJtXT:terminal-nusantara.co.id",
-        "proofValue": "z4DaZPqdn2MuNyTqmPdjPJB4bgA46NmzENjmYuz3BfXGsdFiTQqwXMfj82GPLSp5BPqshoGuEXpQc2Ki3qqguW4Za"
+        "proofValue": "z4LeoqAxQA3HaH4VjaNg9FmPYDdoEUYUQXYx1sob1MiWyy5sgjedFZUDA9AUPHJzZjafAc3Duvywfhp8vsarv1nP5"
       }
     }
   ]
@@ -430,7 +445,7 @@ disclosed item travels beside it:
 }
 ```
 
-The `SessionTranscript` both sides built independently, which is what the
+The `SessionTranscript` both sides built independently, the bytes the
 `deviceSignature` is taken over. It is not transmitted:
 
 ``` { .text title="The SessionTranscript of that session" data-format="CBOR diag" }
@@ -471,8 +486,9 @@ The `SessionTranscript` both sides built independently, which is what the
 ## Choosing what to disclose {#ts-5-11-choosing-what-to-disclose}
 
 A presentation carries what the request asked for and nothing beside it. Four
-bounds narrow the answer. The wallet applies the first three before it shows
-the citizen anything; the fourth is what the citizen then does.
+bounds narrow the answer. The wallet applies the request, the Use Statement, and
+the certificate before it shows the citizen anything; what the citizen releases
+is the fourth.
 
 1. **What the request asks for.** The claims of the credential query online,
    or, where it carries `claim_sets`, those of the first option the other
@@ -496,7 +512,7 @@ the citizen anything; the fourth is what the citizen then does.
 - [](){ #req-ts-5-11-010 }**REQ-TS-5-11-010** In an `ldp_vc`, Mobile Wallet MUST present the credential whole, because its proof covers every claim and withholding one breaks it.
 - [](){ #req-ts-5-11-011 }**REQ-TS-5-11-011** In an SD-JWT VC and in an mdoc, Mobile Wallet MUST disclose only the claims the citizen released for this request.
 - [](){ #req-ts-5-11-012 }**REQ-TS-5-11-012** Mobile Wallet MUST NOT send an `ldp_vc` presentation where the citizen released fewer than every claim of the credential.
-- [](){ #req-ts-5-11-094 }**REQ-TS-5-11-094** In an SD-JWT VC and in an mdoc, Mobile Wallet MUST NOT present a credential where the citizen released fewer than every claim of it that the first three bounds leave, which under `claim_sets` are the claims of the option it answers.
+- [](){ #req-ts-5-11-094 }**REQ-TS-5-11-094** In an SD-JWT VC and in an mdoc, Mobile Wallet MUST NOT present a credential where the citizen released fewer than every claim of it that the request, the Use Statement, and the certificate leave, which under `claim_sets` are the claims of the option it answers.
 - [](){ #req-ts-5-11-095 }**REQ-TS-5-11-095** Mobile Wallet MUST answer a credential query that carries `claim_sets` with the first of its options that includes no attribute refused under [REQ-TS-5-06-067][req-ts-5-06-067].
 - [](){ #req-ts-5-11-013 }**REQ-TS-5-11-013** Mobile Wallet MUST build a presentation for one request only.
 - [](){ #req-ts-5-11-014 }**REQ-TS-5-11-014** Mobile Wallet MUST NOT reuse a presentation it built for an earlier request.
@@ -510,8 +526,7 @@ the citizen anything; the fourth is what the citizen then does.
 
 A presented SD-JWT VC is the issuer-signed JSON Web Token (JWT) as issued, then
 the disclosures
-that travel, then a Key Binding JWT. The issuer-signed part is never rebuilt:
-the wallet holds the bytes the issuer signed and sends them unchanged.
+that travel, then a Key Binding JWT.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -525,8 +540,7 @@ the wallet holds the bytes the issuer signed and sends them unchanged.
 
 ### The Key Binding JWT {#ts-5-11-the-key-binding-jwt}
 
-The Key Binding JWT is signed with the credential key, which is the key `cnf`
-of the credential names. `sd_hash`
+`sd_hash`
 covers the credential and the disclosures that travel with it, so a disclosure
 added or removed in transit invalidates the whole answer.
 
@@ -593,12 +607,12 @@ with the credential key over the transcript of the session both sides saw.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-11-045 }**REQ-TS-5-11-045** A `DeviceResponse` MUST carry `version`, `documents` and `status`.
+- [](){ #req-ts-5-11-045 }**REQ-TS-5-11-045** A `DeviceResponse` MUST carry `version`, `documents`, and `status`.
 - [](){ #req-ts-5-11-046 }**REQ-TS-5-11-046** `version` MUST be `1.0`.
-- [](){ #req-ts-5-11-047 }**REQ-TS-5-11-047** Each entry of `documents` MUST carry `docType`, `issuerSigned` and `deviceSigned`.
+- [](){ #req-ts-5-11-047 }**REQ-TS-5-11-047** Each entry of `documents` MUST carry `docType`, `issuerSigned`, and `deviceSigned`.
 - [](){ #req-ts-5-11-048 }**REQ-TS-5-11-048** `issuerAuth` MUST be the one the issuer signed, byte for byte.
 - [](){ #req-ts-5-11-049 }**REQ-TS-5-11-049** `issuerSigned.nameSpaces` MUST carry only the items the citizen released, each wrapped in CBOR tag 24 exactly as the issuer built it.
-- [](){ #req-ts-5-11-050 }**REQ-TS-5-11-050** Mobile Wallet MUST NOT alter `digestID`, `random`, `elementIdentifier` or `elementValue` of an item it discloses.
+- [](){ #req-ts-5-11-050 }**REQ-TS-5-11-050** Mobile Wallet MUST NOT alter `digestID`, `random`, `elementIdentifier`, or `elementValue` of an item it discloses.
 - [](){ #req-ts-5-11-051 }**REQ-TS-5-11-051** `deviceSigned.nameSpaces` MUST be an empty map wrapped in CBOR tag 24, because no data element of IDCTF is signed by the device rather than by the issuer.
 - [](){ #req-ts-5-11-052 }**REQ-TS-5-11-052** Mobile Wallet MUST encode every CBOR structure it builds for a `DeviceResponse` with the deterministic encoding [ISO/IEC 18013-5][ref-iso-18013-5] requires, which orders the keys of a map by length and then by value.
 - [](){ #req-ts-5-11-053 }**REQ-TS-5-11-053** Mobile Wallet MUST forward a structure the issuer signed without re-encoding it, because a re-encoded structure is a different sequence of bytes and the signature is over the bytes.
@@ -610,9 +624,8 @@ with the credential key over the transcript of the session both sides saw.
 `DeviceAuth` carries a `deviceSignature` and never a `deviceMac`, as
 [the two columns compared][tbl-online-versus-offline] records. The signature is taken over
 `DeviceAuthentication`, which names the session, the document type, and the
-device-signed namespaces. The `SessionTranscript` inside it is never
-transmitted: each side builds it from what it saw, and a mismatch means the two
-were not in the same session.
+device-signed namespaces. A mismatch between the transcripts each side builds
+means the two were not in the same session.
 
 1. **Build the transcript.** `SessionTranscript` is the `DeviceEngagement` the
    reader read, the reader's ephemeral public key, and the handover, each of the
@@ -665,7 +678,7 @@ different request from the one that was sent.
 </figure>
 
 Proximity carries no `client_id`, so the reader's identity enters the binding
-through the session rather than through a field the wallet copies: `ReaderAuth`
+through the session rather than through a field the wallet copies. `ReaderAuth`
 and `DeviceAuth` are taken over the same `SessionTranscript`, and a captured
 `DeviceResponse` replayed in another session fails against the transcript that
 session built.
@@ -691,8 +704,10 @@ refuse on its own.
    the presentation proof against `credentialSubject.id`, or the
    `deviceSignature` against `deviceKey`.
 2. **The answer is for this request.** The freshness value and the identity
-   value have to be the ones the verifier sent, and for an mdoc the signature
-   has to verify against the transcript the verifier built.
+   value are the ones the verifier sent, [REQ-TS-5-11-080][req-ts-5-11-080] and
+   [REQ-TS-5-11-081][req-ts-5-11-081], and for an mdoc the signature verifies
+   against the transcript the verifier built,
+   [REQ-TS-5-11-084][req-ts-5-11-084].
 3. **The answer is what was asked.** A claim the request did not ask
    for is a reason to refuse the presentation rather than to ignore the claim,
    because a wallet that sends more than it was asked for has a defect the
@@ -707,21 +722,21 @@ party nothing about which check failed. Both are fixed for the credential in
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-11-073 }**REQ-TS-5-11-073** Verifier Core and Mobile Verifier MUST verify the proof of the credential key before it reads any claim of a presentation.
+- [](){ #req-ts-5-11-073 }**REQ-TS-5-11-073** Verifier Core and Mobile Verifier MUST verify the proof of the credential key before they read any claim of a presentation.
 - [](){ #req-ts-5-11-074 }**REQ-TS-5-11-074** Verifier Core and Mobile Verifier MUST refuse a presentation whose proof of the credential key does not verify.
 - [](){ #req-ts-5-11-075 }**REQ-TS-5-11-075** Verifier Core and Mobile Verifier MUST verify a Key Binding JWT with the key in the credential's `cnf`.
 - [](){ #req-ts-5-11-076 }**REQ-TS-5-11-076** Verifier Core and Mobile Verifier MUST NOT take that key from the Key Binding JWT itself.
 - [](){ #req-ts-5-11-077 }**REQ-TS-5-11-077** Verifier Core and Mobile Verifier MUST refuse a presentation whose Key Binding JWT `typ` is not `kb+jwt`.
 - [](){ #req-ts-5-11-078 }**REQ-TS-5-11-078** Verifier Core and Mobile Verifier MUST recompute `sd_hash` over the presentation up to the Key Binding JWT.
 - [](){ #req-ts-5-11-079 }**REQ-TS-5-11-079** Verifier Core and Mobile Verifier MUST refuse the presentation if the recomputed `sd_hash` differs from the one it carries.
-- [](){ #req-ts-5-11-080 }**REQ-TS-5-11-080** Verifier Core and Mobile Verifier MUST refuse a presentation whose `nonce` or `challenge` is not the one it issued for this request.
+- [](){ #req-ts-5-11-080 }**REQ-TS-5-11-080** Verifier Core and Mobile Verifier MUST refuse a presentation whose `nonce` or `challenge` is not the one they issued for this request.
 - [](){ #req-ts-5-11-081 }**REQ-TS-5-11-081** Verifier Core and Mobile Verifier MUST refuse a presentation whose `aud` or `domain` is not its own `client_id`.
 - [](){ #req-ts-5-11-082 }**REQ-TS-5-11-082** Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` presentation whose `proofPurpose` is not `authentication`.
 - [](){ #req-ts-5-11-083 }**REQ-TS-5-11-083** Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` presentation whose `holder` does not equal the `credentialSubject.id` of the credential it carries.
 - [](){ #req-ts-5-11-084 }**REQ-TS-5-11-084** Mobile Verifier MUST verify `deviceSignature` against the `SessionTranscript` it built itself.
 - [](){ #req-ts-5-11-085 }**REQ-TS-5-11-085** Mobile Verifier MUST refuse a `DeviceResponse` whose `deviceSigned.nameSpaces` is not an empty map.
 - [](){ #req-ts-5-11-086 }**REQ-TS-5-11-086** Mobile Verifier MUST refuse a `DeviceResponse` whose `docType` differs from the `docType` of the `ItemsRequest` it answers.
-- [](){ #req-ts-5-11-087 }**REQ-TS-5-11-087** Verifier Core and Mobile Verifier MUST refuse a presentation carrying a claim it did not ask for.
+- [](){ #req-ts-5-11-087 }**REQ-TS-5-11-087** Verifier Core and Mobile Verifier MUST refuse a presentation carrying a claim they did not ask for.
 - [](){ #req-ts-5-11-088 }**REQ-TS-5-11-088** Verifier Core and Mobile Verifier MUST refuse a presentation that omits a claim the request asked for; under a credential query that carries `claim_sets`, the claims asked for are those of any one of its options.
 
 </div>
@@ -736,20 +751,22 @@ attribute values themselves are the citizen's, and the verifier has already used
 them by the time the record is written.
 
 A proximity record keeps less. With every `IntentToRetain` at `false`,
-[ISO/IEC 18013-5][ref-iso-18013-5] clause 8.3.2.1.2.1 forbids the reader to
-keep anything it received from the wallet or derived from it, digests and
-signatures included, and no consent receipt travels in a DeviceResponse. Mobile
-Verifier therefore records what it produced itself and nothing the wallet sent.
-No consent receipt is produced in proximity: the verifier keeps only what
-[REQ-TS-5-11-096][req-ts-5-11-096] lists, and the consent is recorded on the
-wallet's side.
+[ISO/IEC 18013-5][ref-iso-18013-5] clause 8.3.2.1.2.1 forbids the reader to keep
+anything it received from the wallet or derived from it, digests and signatures
+included. No consent receipt is produced in proximity: Mobile Verifier
+records what it produced itself and nothing the wallet sent, keeping only
+what [REQ-TS-5-11-096][req-ts-5-11-096] lists, and the consent is recorded on
+the wallet's side.
+
+A Relying Party's own application is the one reader that keeps a value, and
+it marks each element its business system keeps with `IntentToRetain` `true`
+under [REQ-TS-3-02-075][req-ts-3-02-075], as clause 8.3.2.1.2.1 asks of a
+reader that keeps one. The record of the transaction still carries none.
 
 The citizen's consent receipt that [REQ-TS-5-11-089][req-ts-5-11-089] names is
-one record of six fields, modeled on [ISO/IEC TS 27560][ref-iso-27560], which
+one record of six fields, modeled on [ISO/IEC TS 27560:2023][ref-iso-27560], which
 IDCTF borrows from and does not claim conformance to. The verifier signs
-nothing new for it. It holds identifiers and paths and never a value, so a
-reader of the receipt learns what was asked and whether the citizen agreed, and
-nothing about the citizen.
+nothing new for it.
 
 [](){ #tbl-ts-5-11-consent-receipt }
 
@@ -760,13 +777,13 @@ nothing about the citizen.
 | Controller | The verifier that asked | The `client_id` of the Request Object: a DID or, for a merchant, `x509_hash` and the digest of the Verifier Device Certificate in `x5c[0]` |
 | Purpose | The registered use | The `use_id` of the Use Statement in `verifier_info`, where the Request Object carries one |
 | Notice | What the citizen was shown | The SHA-256 digest of the signed Request Object, as the compact JWS the verifier served; it pairs the receipt with the record the wallet keeps of the same transaction |
-| Data consented to | What the citizen agreed to release | For each credential presented, its type (`vct`, `doctype` or `type`) and the `path` of each claim released, never a value; the claims are those of the request, or of the `claim_sets` option answered, as [REQ-TS-5-11-087][req-ts-5-11-087] and [REQ-TS-5-11-088][req-ts-5-11-088] fix them |
+| Data consented to | What the citizen agreed to release | For each credential presented, its type (`vct`, `doctype`, or `type`) and the `path` of each claim released, never a value; the claims are those of the request, or of the `claim_sets` option answered, as [REQ-TS-5-11-087][req-ts-5-11-087] and [REQ-TS-5-11-088][req-ts-5-11-088] fix them |
 | Consent | Whether the citizen agreed | `given` where the wallet answered with `vp_token`, `not given` where it answered `access_denied`, which does not say whether the citizen declined or the wallet had nothing to present, as [when the wallet does not answer][ts-3-01-when-the-wallet-does-not-answer] describes |
 | Time | When the answer arrived | The moment the verifier received the response |
 
 </figure>
 
-The receipt carries no holder identifier, no `cnf` key, no claim value and no
+The receipt carries no holder identifier, no `cnf` key, no claim value, and no
 disclosure. A response that carries `invalid_request`, and a request that got no
 response, leave no consent receipt, because the citizen was never asked.
 
@@ -780,19 +797,19 @@ response, leave no consent receipt, because the citizen was never asked.
 - [](){ #req-ts-5-11-093 }**REQ-TS-5-11-093** Verifier Core and Mobile Verifier MUST NOT record a disclosure or an `IssuerSignedItem`, because either one carries the value and its salt.
 - [](){ #req-ts-5-11-097 }**REQ-TS-5-11-097** Verifier Core and Mobile Verifier MUST write the consent receipt with the fields of [the table of consent receipt fields][tbl-ts-5-11-consent-receipt] for every OpenID4VP response that carries `vp_token` or `access_denied`.
 - [](){ #req-ts-5-11-098 }**REQ-TS-5-11-098** Verifier Core and Mobile Verifier MUST NOT keep in the consent receipt any value that [the table of consent receipt fields][tbl-ts-5-11-consent-receipt] does not list.
-- [](){ #req-ts-5-11-099 }**REQ-TS-5-11-099** Verifier Core and Mobile Verifier MUST delete a record of [REQ-TS-5-11-089][req-ts-5-11-089] and [REQ-TS-5-11-090][req-ts-5-11-090], and its consent receipt, once the time the Governance Profile sets for keeping it has passed, unless a law binding the Relying Party requires the record to be kept longer, in which case it MUST delete the record when that duty ends.
+- [](){ #req-ts-5-11-099 }**REQ-TS-5-11-099** Verifier Core and Mobile Verifier MUST delete a record of [REQ-TS-5-11-089][req-ts-5-11-089] and [REQ-TS-5-11-090][req-ts-5-11-090], and its consent receipt, once the time the Governance Profile sets for keeping it has passed, unless a law binding the party the verifier acts for requires the record to be kept longer.
+- [](){ #req-ts-5-11-104 }**REQ-TS-5-11-104** Where a law binding the party the verifier acts for requires a record of [REQ-TS-5-11-089][req-ts-5-11-089] and [REQ-TS-5-11-090][req-ts-5-11-090], or its consent receipt, to be kept beyond the time the Governance Profile sets, Verifier Core and Mobile Verifier MUST delete that record when that duty ends.
 
 </div>
 
 ## What the wallet keeps {#ts-5-11-what-the-wallet-keeps}
 
 Mobile Wallet keeps a record of each request it shows the citizen, and the
-record is made of what the verifier already signed. Mobile
-Wallet signs nothing new for it, and it holds no attribute value. The record
-lives in the encrypted Credential Store and travels in the encrypted
-client-side backup, so the citizen chooses on a new device whether to restore
-it, as [device migration and reissuance][device-migration-and-reissuance]
-describes.
+record is made of what the verifier already signed. Mobile Wallet signs nothing
+new for it, and it holds no attribute value. The record lives in the encrypted
+Credential Store and travels in the encrypted client-side backup, so the citizen
+chooses on a new device whether to restore it, as
+[device migration and reissuance][device-migration-and-reissuance] describes.
 
 [](){ #tbl-ts-5-11-presentation-history }
 
@@ -822,15 +839,13 @@ personal data about them.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-11-100 }**REQ-TS-5-11-100** Mobile Wallet MUST write a record with the fields of [the table of presentation history fields][tbl-ts-5-11-presentation-history] for every request it shows the citizen, online and in proximity.
-- [](){ #req-ts-5-11-101 }**REQ-TS-5-11-101** Mobile Wallet MUST NOT keep in the record any value that [the table of presentation history fields][tbl-ts-5-11-presentation-history] does not list, in particular no attribute value, no disclosure, no `IssuerSignedItem` and no presentation.
+- [](){ #req-ts-5-11-101 }**REQ-TS-5-11-101** Mobile Wallet MUST NOT keep in the record any value that [the table of presentation history fields][tbl-ts-5-11-presentation-history] does not list, in particular no attribute value, no disclosure, no `IssuerSignedItem`, and no presentation.
 - [](){ #req-ts-5-11-102 }**REQ-TS-5-11-102** Mobile Wallet MUST delete a record once the time the Governance Profile sets for keeping it has passed.
 - [](){ #req-ts-5-11-103 }**REQ-TS-5-11-103** Mobile Wallet MUST let the citizen delete any record, or the whole history, at any time.
 
 </div>
 
 ## Security considerations {#ts-5-11-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A transcript built from the other side's message binds nothing.** The
   whole value of `SessionTranscript` is that each side built it from what it
@@ -839,19 +854,16 @@ Each threat below is answered by the requirement named with it.
   captured response can satisfy as easily as a live one.
   [REQ-TS-5-11-064][req-ts-5-11-064] and [REQ-TS-5-11-084][req-ts-5-11-084]
   state the rule for both sides.
-- **A nonce the verifier does not remember is no protection.** The freshness
-  value works only while the verifier still holds the value it issued.
+- **A nonce the verifier does not remember is no protection.**
   [REQ-TS-5-11-070][req-ts-5-11-070] and [REQ-TS-5-11-071][req-ts-5-11-071]
-  fix where it comes from and that it is spent once, and a verifier that
-  does not keep the nonces it issued has no way to meet the second.
+  fix where the freshness value comes from and that it is spent once.
 - **A presentation is good for one audience.** Without `aud` and `domain`, a
   verifier that receives a presentation could forward it to a second
-  verifier and be believed as the citizen. The audience value is what stops
-  that, which is why [REQ-TS-5-11-081][req-ts-5-11-081] compares it against
-  the verifier's own `client_id` rather than merely checking that it is
-  present.
+  verifier and be believed as the citizen. The audience value stops
+  that: [REQ-TS-5-11-081][req-ts-5-11-081] compares it against
+  the verifier's own `client_id`.
 - **`sd_hash` is what makes the parts one answer.** The credential, the
-  disclosures and the Key Binding JWT travel as separate strings, and only
+  disclosures, and the Key Binding JWT travel as separate strings, and only
   `sd_hash` ties them together. A verifier that checks the Key Binding JWT's
   signature without recomputing `sd_hash` accepts a presentation whose
   disclosures were swapped in transit for other valid disclosures of the
@@ -865,19 +877,17 @@ Each threat below is answered by the requirement named with it.
 
 ## Privacy considerations {#ts-5-11-privacy-considerations}
 
-Each exposure below is named with what bounds it.
-
 - **The verifier learns what it asked for.** The six disclosures that
   stayed on the device leave no trace of what they said: the digests in
   `_sd` were already in the credential, and their order says nothing, as
-  [REQ-TS-5-10-035][req-ts-5-10-035] arranges. Their number is not hidden,
-  and nothing tries to hide it: the Credential Rulebook publishes how many
-  claims the type has. The same holds for an mdoc, where `valueDigests`
+  [REQ-TS-5-10-035][req-ts-5-10-035] arranges. Their number is not hidden: the
+  Credential Rulebook publishes how many claims the type has. The same holds for an mdoc, where `valueDigests`
   carries one digest per item whether or not the item travels.
 - **`ldp_vc` has no such property.** A presentation of an `ldp_vc`
-  credential carries every claim in it, so the verifier that asked for one
-  attribute receives all of them. The bound that holds is the one on the
-  format: a Credential Rulebook that names `ldp_vc` carries no restricted
+  credential carries every claim in it, so a verifier that asks for the type
+  asks for all of them, [REQ-TS-3-01-115][req-ts-3-01-115], and its use
+  names all of them, [REQ-TS-5-06-119][req-ts-5-06-119]. The bound that
+  holds is the one on the format: a Credential Rulebook that names `ldp_vc` carries no restricted
   attribute, as [REQ-CR-017][req-cr-017] requires.
 - **One credential key means every verifier sees one identifier.** The same
   key signs every presentation a wallet makes, so two verifiers comparing
@@ -886,18 +896,18 @@ Each exposure below is named with what bounds it.
   `ldp_vc` presentation that identifier is written out in full, as `holder`
   and as `verificationMethod`. The exposure is one IDCTF accepts, and this
   specification does not widen it.
-- **The record is bounded by what it omits.**
-  [REQ-TS-5-11-090][req-ts-5-11-090] to [REQ-TS-5-11-093][req-ts-5-11-093]
-  keep attribute values out of the verifier's own log, so a later breach of
-  that log yields transactions rather than identities. Nothing stops the
-  verifier's business system from storing what it was given, which is why
-  the Governance Framework rather than this specification [governs what happens after the result is handed over][gf-relying-parties].
+- **The record is bounded by what it omits.** [REQ-TS-5-11-090][req-ts-5-11-090]
+  to [REQ-TS-5-11-093][req-ts-5-11-093] keep attribute values out of the
+  verifier's own log, so a later breach of that log yields transactions rather
+  than identities. Nothing stops the verifier's business system from storing
+  what it was given, which is why the Governance Framework rather than this
+  specification
+  [governs what happens after the result is handed over][gf-relying-parties].
 - **A presentation is non-repudiable.** Because `DeviceAuth` is a signature
   rather than a message authentication code, a verifier can prove to a third
   party that the citizen presented. The ecosystem accepts that for dispute
   resolution, and [the two columns compared][tbl-online-versus-offline]
-  records the choice; the cost is that a citizen cannot later deny a
-  presentation that happened.
+  records the choice.
 
 ## Changelog {#ts-5-11-changelog}
 
@@ -905,6 +915,6 @@ Each exposure below is named with what bounds it.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

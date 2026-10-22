@@ -1,6 +1,6 @@
 ---
 title: "[TS-5-05] Answering with an Authority Statement"
-description: The Authority Statement Trust Registry answers a permission query with, the permission it names, the signature Trust Authority puts on each answer, how long a reader may keep it, and the checks a reader runs before it acts on one.
+description: The Authority Statement with which Trust Registry answers a permission query, the permission it names, the signature Trust Authority puts on each answer, how long a reader may keep it, and the checks a reader runs before it acts on one.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, Kep. 6, §2.4, §4.3, §5.4, §5.7; Rincian Module dan Operasi §2.1, §2.2, §2.5, §7.4; tracks/0251 -->
@@ -10,10 +10,11 @@ description: The Authority Statement Trust Registry answers a permission query w
 # Answering with an Authority Statement {#ts-5-05-answering-with-an-authority-statement}
 
 <p class="ekdn-lead" markdown="span">
-An Authority Statement is the record of one permission the Root Authority
-granted to one entity. Nobody publishes it and nobody carries it. Trust
-Registry answers a permission query with it, signed, and the reader keeps
-the answer until it expires.
+An Authority Statement is the signed answer to whether one entity may
+perform one action on one resource, built from the record Trust Authority
+keeps of the permission the Root Authority granted. Nobody publishes it and
+nobody carries it. Trust Registry answers a permission query with it, and
+the reader keeps the answer until it expires.
 </p>
 
 Every sentence on this page binds Trust Registry, Trust Authority, and every
@@ -25,40 +26,51 @@ the identifier `REQ-TS-5-05-nnn` follow
 ## Who runs this and what it needs {#ts-5-05-who-runs-this-and-what-it-needs}
 
 This specification fixes the answer Trust Registry returns to a Trust
-Registry Query Protocol (TRQP) v2.0 authorization query: what the answer carries,
-what a permission names, the signature Trust Authority puts on it, how long
-a reader may use it, and what a reader checks before acting on it. It also
-fixes when a statement comes into force and when it stops.
+Registry Query Protocol (TRQP) v2.0 authorization query:
 
-Its conformance targets are Trust Registry, which answers the query; Trust
-Authority, which records each permission and signs each answer; and the four
-Modules that act on a permission: Issuer Core, Verifier Core, Mobile Wallet,
-and Mobile Verifier. A reader meets its requirements through Trust SDK where
-the library performs the check.
+- What the answer carries.
+- What a permission names.
+- The signature Trust Authority puts on it.
+- How long a reader may use it.
+- What a reader checks before acting on it.
+- When a statement comes into force and when it stops.
 
-It leaves to other documents: who is granted a permission and on what
-grounds, [the approval tiers][gf-approval-tiers], and [the sanctions behind a withdrawal][gf-ladder-of-sanctions], which
-the Governance Framework holds; the list of admitted `action` values, the
-signature algorithms allowed, the lifetime of an answer, and the tolerance
-limit, which the Governance Profile holds; the request, the endpoint, the
-error responses, the recognition query, and the catalog Trust Registry
-serves beside them, which
-[Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md)
-holds; the trusted
-list, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds; the keys of Trust Authority and the log they live in, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; and the registered use that narrows a permission further, which
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-holds.
+Its conformance targets are Trust Registry, which answers the query;
+Trust Authority, which records each permission and signs each answer; and the
+four Modules that act on a permission: Issuer Core, Verifier Core,
+Mobile Wallet, and Mobile Verifier. A reader meets its requirements through
+Trust SDK where the library performs the check.
+
+It leaves to other documents:
+
+- Who is granted a permission and on what grounds,
+  [the approval tiers][gf-approval-tiers], and
+  [the sanctions behind a withdrawal][gf-ladder-of-sanctions], which the
+  Governance Framework holds.
+- The list of admitted `action` values, the signature algorithms allowed, the
+  lifetime of an answer, and the tolerance limit, which the Governance Profile
+  holds.
+- The request, the endpoint, the error responses, the recognition query,
+  and the catalog Trust Registry serves beside them, which
+  [Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md)
+  holds.
+- The trusted list, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- The keys of Trust Authority and the log they live in, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- The registered use that narrows a permission further, which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Trust Registry** holds the Root Authority's authorization decisions with
-  their history, and reaches the Authority Statement key through Trust
-  Authority, whose Certificate Authority Component signs each answer; it
-  holds no private key of its own.
+- **Trust Registry** holds its copy of the Root Authority's authorization
+  decisions with their history, derived from the record Trust Authority keeps,
+  and reaches the Authority Statement key through Trust Authority, whose
+  Certificate Authority Component signs each answer; it holds no private key of
+  its own.
 - **Trust Authority** holds the Authority Statement key in its hardware
   security module (HSM), and publishes the matching public key in its own
   Decentralized Identifier (DID) Document.
@@ -70,52 +82,52 @@ Before the first exchange, each target holds what the rules below assume:
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-05-001 }**REQ-TS-5-05-001** Trust Registry MUST meet every requirement on this page that names Trust Registry, and every requirement on what Trust Registry writes: its answer and every member of it, `statement` included, and every requirement on how a permission is read.
-- [](){ #req-ts-5-05-002 }**REQ-TS-5-05-002** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the `statement` it signs, with its protected header, its claims and its signature.
+- [](){ #req-ts-5-05-002 }**REQ-TS-5-05-002** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the `statement` it signs, with its protected header, its claims, and its signature.
 - [](){ #req-ts-5-05-003 }**REQ-TS-5-05-003** Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier MUST each meet every requirement that names a reader, and every requirement on how a permission is read, wherever it stands on this page.
 
 </div>
 
 ## What the statement answers {#ts-5-05-overview}
 
-The trusted list says whether an entity is accredited. An Authority
-Statement says what that entity may do: one `action` on one `resource`,
-granted by the Root Authority and recorded by Trust Authority, as
-[Authorization][authorization] sets out. An entity holding several
-permissions has several statements, and nothing combines them into one
-record.
+The trusted list says whether an entity is accredited. An Authority Statement
+says what that entity may do: one `action` on one `resource`, granted by the
+Root Authority and recorded by Trust Authority, as
+[Authorization][authorization] sets out.
 
-It is the one artifact of the ecosystem that nobody publishes and nobody
-carries. There is no file to fetch and no address to go to: a participant
-asks whether a named entity may take a named action on a named resource,
-and Trust Registry answers, as
-[Authority Statement][authority-statement] explains. The answer is signed,
-so a reader that keeps it can check it again later without asking again,
-which is what lets a permission check survive an unreachable registry.
+It is one of the two artifacts of the ecosystem that nobody publishes and nobody
+carries, the recognition statement being the other. There is no file to fetch
+and no address to go to: a participant asks whether a named entity may take a
+named action on a named resource, and Trust Registry answers, as
+[Authority Statement][authority-statement] explains. The answer is signed, so a
+reader that keeps it can check it again later without asking again, which is
+what lets a permission check survive an unreachable Trust Registry.
 
-A permission is the ceiling for an entity. A Use Statement narrows it to one
-registered use of one Relying Party and travels in the request instead, as
-[Registered use][registered-use] sets out. The two are read together: a
-verifier may ask for an attribute only when its Authority Statement covers
-that attribute and the Use Statement it carries names it.
+An entity's permissions together are its ceiling, which a Use Statement narrows
+further, as [Registered use][registered-use] sets out. The two are read
+together: a verifier may ask for an attribute only when its Authority Statement
+covers that attribute and the Use Statement it carries names it.
 
 ## Authority Statement answer {#ts-5-05-authority-statement-answer}
 
-The body Trust Registry returns, for the four forms this specification
-admits: a permission to issue a credential type, a permission to request one
-attribute under a query evaluated at a stated time, a permission to request
-one attribute of a credential type another body named, and a query for a
-permission the entity does not hold. The permission to issue is shown four
-times: for the types the ecosystem names, the KTP, the Kartu ASN and the Kartu
-Nikah, and for the mobile driving license, which another body named.
+The seven answers are an illustration: the entities, the domains, and the keys
+are invented, and no registration has been accredited. Every field is exact.
+Each answer was signed with the Authority Statement key of the Trust Authority
+DID shown in `authority_id`, and each signature verifies, so an implementation
+can parse these answers and find what the clauses below require.
 
-The seven answers are an illustration: the entities, the domains and the
-keys are invented, and no registration has been accredited. Every field is
-exact. Each answer was signed with the Authority Statement key of the Trust
-Authority DID shown in `authority_id`, and each signature verifies, so an
-implementation can parse these answers and find what the clauses below
-require. The entities are the ones
-[the trusted list][ts-5-01-trusted-list-payload] carries, with
-the same DIDs.
+The answers show the four forms this specification admits:
+
+- A permission to issue a credential type, shown four times: for the types
+  the ecosystem names, the KTP, the Kartu ASN, and the Kartu Nikah, and for
+  the mobile driving license, which another body named.
+- A permission to request one attribute under a query evaluated at a stated
+  time.
+- A permission to request one attribute of a credential type another body
+  named.
+- A query for a permission the entity does not hold.
+
+The entities are the ones [the trusted list][ts-5-01-trusted-list-payload]
+carries, with the same DIDs.
 
 ``` { .json title="The answer to an issuing permission that is granted" data-format="JSON" }
 {
@@ -142,8 +154,8 @@ the same DIDs.
   "context": {
     "time": "2026-09-01T00:00:00Z"
   },
-  "message": "Granted 2026-02-18T00:00:00Z.",
-  "statement": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuYXV0aG9yaXR5LXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2F1dGhvcml0eS1zdGF0ZW1lbnQtMSJ9.eyJhdXRob3JpdHlfaWQiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImVudGl0eV9pZCI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsImFjdGlvbiI6InJlcXVlc3QiLCJyZXNvdXJjZSI6ImlkLmlkY3RmLmt0cC4xI3VzaWFfZGlfYXRhc18xNyIsImF1dGhvcml6ZWQiOnRydWUsInRpbWVfcmVxdWVzdGVkIjoiMjAyNi0wOS0wMVQwMDowMDowMFoiLCJ0aW1lX2V2YWx1YXRlZCI6IjIwMjYtMTAtMTdUMDM6MTE6MjBaIiwicGVyaW9kcyI6W3sidmFsaWRfZnJvbSI6IjIwMjYtMDgtMDFUMDA6MDA6MDBaIn0seyJ2YWxpZF9mcm9tIjoiMjAyNi0wMi0xOFQwMDowMDowMFoiLCJ2YWxpZF91bnRpbCI6IjIwMjYtMDctMDFUMDA6MDA6MDBaIn1dLCJpYXQiOjE3OTIyMDY2ODAsImV4cCI6MTc5MjI0OTg4MH0.0qY602jIFU2z9Fd2CR7AL22oEhCPMt_RkOTUNYm_ux2OtrejK7-5-w76tVHQYx1iIknjvlYigx1tRkKs5YB2MQ"
+  "message": "Granted 2026-03-01T00:00:00Z.",
+  "statement": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuYXV0aG9yaXR5LXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2F1dGhvcml0eS1zdGF0ZW1lbnQtMSJ9.eyJhdXRob3JpdHlfaWQiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImVudGl0eV9pZCI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsImFjdGlvbiI6InJlcXVlc3QiLCJyZXNvdXJjZSI6ImlkLmlkY3RmLmt0cC4xI3VzaWFfZGlfYXRhc18xNyIsImF1dGhvcml6ZWQiOnRydWUsInRpbWVfcmVxdWVzdGVkIjoiMjAyNi0wOS0wMVQwMDowMDowMFoiLCJ0aW1lX2V2YWx1YXRlZCI6IjIwMjYtMTAtMTdUMDM6MTE6MjBaIiwicGVyaW9kcyI6W3sidmFsaWRfZnJvbSI6IjIwMjYtMDQtMTBUMDA6MDA6MDBaIn0seyJ2YWxpZF9mcm9tIjoiMjAyNi0wMy0wMVQwMDowMDowMFoiLCJ2YWxpZF91bnRpbCI6IjIwMjYtMDQtMDFUMDA6MDA6MDBaIn1dLCJpYXQiOjE3OTIyMDY2ODAsImV4cCI6MTc5MjI0OTg4MH0.qwI_BfkdOvPBo4loavyhzGAI2JBoS-m1A_pteSjgp7dv4YTWnorfTYJ3c9y8M_VMlJ6aKRooo2xJF4TIWVQlOQ"
 }
 ```
 
@@ -155,8 +167,8 @@ the same DIDs.
   "resource": "org.iso.18013.5.1.mDL.1#age_over_18",
   "authorized": true,
   "time_evaluated": "2026-10-17T03:11:20Z",
-  "message": "Granted 2026-02-20T00:00:00Z.",
-  "statement": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuYXV0aG9yaXR5LXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2F1dGhvcml0eS1zdGF0ZW1lbnQtMSJ9.eyJhdXRob3JpdHlfaWQiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImVudGl0eV9pZCI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsImFjdGlvbiI6InJlcXVlc3QiLCJyZXNvdXJjZSI6Im9yZy5pc28uMTgwMTMuNS4xLm1ETC4xI2FnZV9vdmVyXzE4IiwiYXV0aG9yaXplZCI6dHJ1ZSwidGltZV9ldmFsdWF0ZWQiOiIyMDI2LTEwLTE3VDAzOjExOjIwWiIsInBlcmlvZHMiOlt7InZhbGlkX2Zyb20iOiIyMDI2LTAyLTIwVDAwOjAwOjAwWiJ9XSwiaWF0IjoxNzkyMjA2NjgwLCJleHAiOjE3OTIyNDk4ODB9.ZCKcmfCloXYCrdqBUg7NkWQil-uD7OP-5J-sLmDPTIfGUWscnt322LSO8iu3_U8DncXAZkv4C89U2IPqcjkk4A"
+  "message": "Granted 2026-03-01T00:00:00Z.",
+  "statement": "eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuYXV0aG9yaXR5LXN0YXRlbWVudCtqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2F1dGhvcml0eS1zdGF0ZW1lbnQtMSJ9.eyJhdXRob3JpdHlfaWQiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImVudGl0eV9pZCI6ImRpZDp3ZWJ2aDpRbVVBVEM1anlmNXlWeTcyR1lBcDhuU3Z1d3NoekR5NndZWDdXbU5ZNVVKdFhUOnRlcm1pbmFsLW51c2FudGFyYS5jby5pZCIsImFjdGlvbiI6InJlcXVlc3QiLCJyZXNvdXJjZSI6Im9yZy5pc28uMTgwMTMuNS4xLm1ETC4xI2FnZV9vdmVyXzE4IiwiYXV0aG9yaXplZCI6dHJ1ZSwidGltZV9ldmFsdWF0ZWQiOiIyMDI2LTEwLTE3VDAzOjExOjIwWiIsInBlcmlvZHMiOlt7InZhbGlkX2Zyb20iOiIyMDI2LTAzLTAxVDAwOjAwOjAwWiJ9XSwiaWF0IjoxNzkyMjA2NjgwLCJleHAiOjE3OTIyNDk4ODB9.JlYB3MsJ1nthoyiibmwUJsfbm1SKp5ULmOpJYZ8e57TIJGTGHdaS5I7gD41FHGNDYZ6Nf0QCx2Hlipgnf2dzhQ"
 }
 ```
 
@@ -256,7 +268,7 @@ protocol does not define.
 A negative answer carries the same members as a positive one, the signature
 included. There is no permission to show in that case, and the signature is
 over Trust Authority's assertion that the entity holds no such permission,
-which is what keeps a cached `false` from being turned into a `true`.
+which keeps a cached `false` from being turned into a `true`.
 
 ## What a permission names {#ts-5-05-what-a-permission-names}
 
@@ -327,12 +339,12 @@ Authority's HSM, where the Certificate Authority Component signs with it.
 Trust Registry builds the answer and asks Trust Authority to sign it, as it
 reaches the trusted list key for the list it publishes. Trust Authority does
 not sign what it is handed. It builds the payload again from the record it
-holds and refuses the request when the two disagree, so a Trust Registry in
-someone else's hands cannot have a permission signed that the Root Authority
-never granted. The key is published
-in Trust Authority's DID Document, so it rotates the way Trust Authority's
-other signing keys do, and a reader finds it by resolving the SCID it
-carries from build time.
+holds and refuses the request when the two disagree. A Trust Registry in
+someone else's hands therefore cannot have a permission signed that the
+Root Authority never granted.
+
+The key is published in Trust Authority's DID Document, so it rotates the way
+Trust Authority's other signing keys do.
 
 [](){ #tbl-ts-5-05-statement-claims }
 
@@ -368,9 +380,11 @@ carries from build time.
 - [](){ #req-ts-5-05-031 }**REQ-TS-5-05-031** Trust Authority MUST NOT sign an Authority Statement with the trusted list key, the Verified Issuer Certificate Authority List (VICAL) key, the Use Statement key, or any other key that [Trust Authority's own keys][trust-authoritys-own-keys] names.
 - [](){ #req-ts-5-05-055 }**REQ-TS-5-05-055** Trust Authority MUST build the payload it signs from its own record of the permission, not from the payload Trust Registry presents.
 - [](){ #req-ts-5-05-056 }**REQ-TS-5-05-056** Trust Authority MUST refuse a signing request whose answer does not match that record.
-- [](){ #req-ts-5-05-057 }**REQ-TS-5-05-057** Trust Authority MUST carry in `periods` every interval taken from the times [REQ-TS-5-05-048][req-ts-5-05-048] records, and MUST NOT drop one.
-- [](){ #req-ts-5-05-058 }**REQ-TS-5-05-058** Each entry of `periods` MUST be an object with `valid_from` and, once the permission has been withdrawn, `valid_until`, each a date and time in UTC with the `Z` offset, and MUST omit `valid_until` while the permission is in force.
-- [](){ #req-ts-5-05-059 }**REQ-TS-5-05-059** Trust Authority MUST order `periods` by `valid_from`, newest first, and MUST carry an empty array for a permission that was never granted.
+- [](){ #req-ts-5-05-057 }**REQ-TS-5-05-057** Trust Authority MUST carry in `periods` every interval taken from the times [REQ-TS-5-05-048][req-ts-5-05-048] records.
+- [](){ #req-ts-5-05-058 }**REQ-TS-5-05-058** Each entry of `periods` MUST be an object with `valid_from` and, once the permission has been withdrawn, `valid_until`, each a date and time in UTC with the `Z` offset.
+- [](){ #req-ts-5-05-064 }**REQ-TS-5-05-064** An entry of `periods` MUST omit `valid_until` while the permission is in force.
+- [](){ #req-ts-5-05-059 }**REQ-TS-5-05-059** Trust Authority MUST order `periods` by `valid_from`, newest first.
+- [](){ #req-ts-5-05-065 }**REQ-TS-5-05-065** Trust Authority MUST carry an empty array in `periods` for a permission that was never granted.
 - [](){ #req-ts-5-05-060 }**REQ-TS-5-05-060** Trust Registry MUST NOT carry `periods` as a member of the answer.
 
 </div>
@@ -381,23 +395,23 @@ ended, and a member it does not define would sit outside the signature
 unless the payload repeated it. `valid_until` may lie in the future when
 the Root Authority has decided a withdrawal with notice, as
 [how Rulebook versions end][rulebook-versions]
-sets out; a reader treats the time as reached only when it arrives.
+sets out. A reader treats the time as reached only when it arrives.
 
-The last rule is the blast-radius rule the rest of Trust Authority's keys
-follow. An Authority Statement key signs on every query, so it is the key
-most exposed to a fault in the query path, and a key that also signed the
-trusted list would carry that exposure into the list.
+[REQ-TS-5-05-031][req-ts-5-05-031] is the blast-radius rule the rest of
+Trust Authority's keys follow. An Authority Statement key signs on every query,
+so it is the key most exposed to a fault in the query path. A key that also
+signed the trusted list would carry that exposure into the list.
 
 ## Lifetime {#ts-5-05-lifetime}
 
-An answer is current until the `exp` it carries. Past that, a reader keeps
-using it as a last-known-good copy up to the tolerance limit, and refuses it
-after, which is how every cached artifact other than the trusted list
-behaves, as
-[three rules for reading the copy][three-rules-for-reading-the-copy] sets out. The
+An answer is current until the `exp` it carries. Past that a reader keeps
+using it as a last-known-good copy up to the tolerance limit and refuses it
+after, as
+[three rules for reading the copy][three-rules-for-reading-the-copy] sets out
+for every cached artifact other than the trusted list. The
 Governance Profile holds both numbers, because the right interval is a
-balance between how fast a withdrawal has to reach a reader and how much
-traffic the registry carries.
+balance between how fast a withdrawal reaches a reader and how much
+traffic Trust Registry carries.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -418,22 +432,24 @@ takes out of its cache, because a cached answer is the same bytes.
 1. **Check the signature.** Resolve Trust Authority's DID Document from the
    SCID carried at build time, take the key the `kid` names, and verify the
    JWS. An answer whose signature does not verify is refused.
-2. **Check the payload against the body.** Every claim of the payload has to
-   equal the member of the same name in the answer. Where they differ, the
-   answer is refused, because the members outside the signature are the ones
-   an attacker can edit.
-3. **Check the query.** `entity_id`, `action`, and `resource` have to be the
-   values the reader asked about. An answer about anything else is refused,
-   whoever signed it.
+2. **Check the payload against the body.** Compare every claim of the payload
+   with the member of the same name in the answer,
+   [REQ-TS-5-05-040][req-ts-5-05-040]. Where they differ, the answer is
+   refused, because the members outside the signature are the ones an
+   attacker can edit.
+3. **Check the query.** Compare `entity_id`, `action`, and `resource` with
+   the values the reader asked about,
+   [REQ-TS-5-05-042][req-ts-5-05-042]. An answer about anything else is
+   refused, whoever signed it.
 4. **Check the time.** The answer is current when `exp` has not passed, and
    usable as a last-known-good copy up to the tolerance limit after that.
 5. **Read `authorized`.** A `true` lets the reader go on; a `false` stops
    it. Nothing in `message` changes either.
-6. **Read `periods` for a past time.** A reader that has to know whether the
+6. **Read `periods` for a past time.** A reader that asks whether the
    permission held at a time before the answer was signed looks for that
-   time in `periods`. A time falls in a period from its `valid_from`, which
-   counts, up to its `valid_until`, which does not; a period with no
-   `valid_until` has no end. `authorized` says nothing about that time.
+   time in `periods`, [REQ-TS-5-05-061][req-ts-5-05-061]. A time falls in a
+   period from its `valid_from`, which counts, up to its `valid_until`,
+   which does not; a period with no `valid_until` has no end. `authorized` says nothing about that time.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -448,16 +464,13 @@ takes out of its cache, because a cached answer is the same bytes.
 - [](){ #req-ts-5-05-045 }**REQ-TS-5-05-045** A reader MUST NOT act on `message`.
 - [](){ #req-ts-5-05-046 }**REQ-TS-5-05-046** A reader MUST check the entity's status on the trusted list as well.
 - [](){ #req-ts-5-05-054 }**REQ-TS-5-05-054** A reader MUST NOT accept a permission for an entity that is not granted on the trusted list.
-- [](){ #req-ts-5-05-061 }**REQ-TS-5-05-061** A reader that reads a permission for a past time MUST read it from `periods`, and MUST NOT read it from `authorized`.
+- [](){ #req-ts-5-05-061 }**REQ-TS-5-05-061** A reader that reads a permission for a past time MUST read it from `periods` alone, not from `authorized`.
 - [](){ #req-ts-5-05-062 }**REQ-TS-5-05-062** A reader MUST count a time as inside a period when it is not before `valid_from` and, where the period carries `valid_until`, is before it.
 
 </div>
 
-The last rule is what keeps the two answers in their places. The trusted
-list says whether the entity is accredited and the Authority Statement says
-what it may do, as
-[three questions, three answers][three-questions-three-answers] sets out,
-and a reader that checked only one of them would accept a withdrawn entity
+[REQ-TS-5-05-054][req-ts-5-05-054] keeps the two answers in their
+places: a reader that checked only one of them would accept a withdrawn entity
 holding an old permission.
 
 ## Lifecycle {#ts-5-05-lifecycle}
@@ -466,13 +479,12 @@ A permission begins when the Root Authority grants it and Trust Authority
 records it, and ends when the Root Authority withdraws it. Between those two
 points it does not change: a narrower grant is a different permission, and
 a wider one is a new permission beside it rather than an edit of the first.
-Trust Authority records that new permission instead of editing the one it
-holds. Trust Authority keeps the history, so a question asked about a past
+Trust Authority keeps the history, so a question asked about a past
 time is answered from the status that held then.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-05-047 }**REQ-TS-5-05-047** Trust Authority MUST record one Authority Statement for each permission the Root Authority grants, naming one `action` and one `resource`.
+- [](){ #req-ts-5-05-047 }**REQ-TS-5-05-047** Trust Authority MUST keep one permission record for each permission the Root Authority grants, naming one `action` and one `resource`.
 - [](){ #req-ts-5-05-048 }**REQ-TS-5-05-048** Trust Authority MUST record the time a permission came into force and the time it was withdrawn.
 - [](){ #req-ts-5-05-049 }**REQ-TS-5-05-049** Trust Authority MUST keep a withdrawn permission with its history rather than deleting it.
 - [](){ #req-ts-5-05-050 }**REQ-TS-5-05-050** Trust Authority MUST NOT widen or narrow a recorded permission.
@@ -483,8 +495,6 @@ time is answered from the status that held then.
 </div>
 
 ## Security considerations {#ts-5-05-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **An answer edited in the cache or on the wire.** The signature covers
   every field a reader acts on, [REQ-TS-5-05-026][req-ts-5-05-026], the
@@ -510,7 +520,7 @@ Each threat below is answered by the requirement named with it.
   signs nothing else, [REQ-TS-5-05-031][req-ts-5-05-031], and Trust Registry
   never holds it, [REQ-TS-5-05-029][req-ts-5-05-029].
 - **A captured Trust Registry having a permission signed.** Trust Registry
-  reaches the signer on every query, so a registry in someone else's hands
+  reaches the signer on every query, so a Trust Registry in someone else's hands
   would be a signing service for whatever it presented. Trust Authority
   signs from its own record instead,
   [REQ-TS-5-05-055][req-ts-5-05-055], and refuses a request that does not
@@ -520,20 +530,20 @@ Each threat below is answered by the requirement named with it.
   resource name, [REQ-TS-5-05-018][req-ts-5-05-018], and an attribute grant
   covers that attribute alone, [REQ-TS-5-05-020][req-ts-5-05-020].
 
-Trust Authority signing every answer is also what bounds availability: when
-its signer cannot be reached, Trust Registry answers with the
-`signer-unavailable` problem of [Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md)
-and no statement, and a reader
-falls back to the copy it already holds until the tolerance limit. That is
-the behavior the architecture asks for, since an unreachable registry must
-not stop a transaction that was already provided for.
+Trust Authority signs every answer, which bounds availability. When its
+signer cannot be reached, Trust Registry answers with the `signer-unavailable`
+problem of
+[Answering a permission query and serving the catalog](answering-a-permission-query-and-serving-the-catalog.md)
+and no statement, and a reader falls back to the copy it already holds until the
+tolerance limit. That is the behavior the architecture asks for: an unreachable
+Trust Registry does not stop a transaction that was already provided for.
 
 ## Privacy considerations {#ts-5-05-privacy-considerations}
 
 A query tells Trust Registry which entity a participant is interested in.
-Cached answers are what keep that from being a record of transactions: a
-reader that holds a current answer asks nothing, so the registry sees one
-query per entity per TTL rather than one per transaction, and a wallet
+Cached answers keep that from being a record of transactions. A
+reader that holds a current answer asks nothing, so Trust Registry sees one
+query per entity per TTL rather than one per transaction. A wallet
 asks on its trust cache sync rather than during a transaction. The architecture
 sets that bound in
 [what connects the two planes][what-connects-the-two-planes].
@@ -549,6 +559,6 @@ the same question, so nothing in it identifies who asked.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

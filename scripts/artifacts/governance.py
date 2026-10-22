@@ -132,6 +132,7 @@ def payload(signers: dict) -> dict:
             "accreditation_credential": algorithms_jose,
             "key_attestation": algorithms_jose,
             "status_list": algorithms_jose,
+            "vical": algorithms_jose,
             "issuance": {
                 "dc+sd-jwt": algorithms_jose,
                 "mso_mdoc": [-7],
@@ -145,6 +146,7 @@ def payload(signers: dict) -> dict:
             "authority_statement": "PT12H",
             "recognition_answer": "PT12H",
             "catalog": "P1D",
+            "key_attestation": "P1D",
             "status_list_ttl": {
                 "credential": "PT12H",
                 "use_statement": "PT12H",
@@ -212,6 +214,7 @@ def payload(signers: dict) -> dict:
             "incident_report": "PT24H",
             "post_mortem": "P30D",
             "amendment_notice": "P90D",
+            "citizen_notice": "P7D",
         },
         "rotation": {
             "issuance-jose": {"interval": "P1Y", "overlap": "P60D"},
@@ -222,8 +225,9 @@ def payload(signers: dict) -> dict:
             "update": {"interval": "P2Y"},
             "retired_private_key": "destroy",
             "trust_authority": {
-                **{name: {"interval": "P2Y", "lead_time": "P90D"}
-                   for name in ("trusted-list", "vical", "governance-profile")},
+                "trusted-list": {"interval": "P2Y", "lead_time": "P90D"},
+                "vical": {"interval": "P2Y"},
+                "governance-profile": {"interval": "P2Y", "lead_time": "P90D"},
                 **{name: {"interval": "P2Y"}
                    for name in ("accreditation-credential", "accreditation-status-list",
                                 "use-statement", "use-statement-status-list",
@@ -236,6 +240,7 @@ def payload(signers: dict) -> dict:
             "entity_endpoint_rate": {"requests": 60, "per": "PT1M"},
             "portal_rate": {"requests": 120, "per": "PT1M"},
             "portal_failed_sign_ins": 10,
+            "crawl_fetch_failures": 2,
             "use_statement_cut_off": "2026-10-01T00:00:00Z",
             "key_attestation_clock_skew": "PT1M",
             "transaction_code_attempts": 3,
@@ -255,7 +260,7 @@ def payload(signers: dict) -> dict:
             ],
             "attestation_root_refusal": [
                 {"root": "CEDB1CB6DC896AE5EC797348BCE9286753C2B38EE71CE0FBE34A9A1248800DFC",
-                 "from": "2036-01-01T00:00:00Z"},
+                 "from": "2030-01-01T00:00:00Z"},
             ],
         },
         "mappings": {

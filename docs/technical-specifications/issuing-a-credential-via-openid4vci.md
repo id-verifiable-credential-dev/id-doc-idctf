@@ -1,6 +1,6 @@
 ---
 title: "[TS-1-01] Issuing a credential via OpenID4VCI"
-description: The OpenID4VCI profile Issuer Core exposes and Mobile Wallet runs against it, from the signed issuer metadata and the credential offer, through authorization, DPoP and the nonce, to the credential request, deferred issuance, the notification and renewal.
+description: The OpenID4VCI profile Issuer Core exposes and Mobile Wallet runs against it, from the signed issuer metadata and the credential offer, through authorization, DPoP, and the nonce, to the credential request, deferred issuance, the notification, and renewal.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §4.5, §7.2, §9.1, Kep. 1, Kep. 5, Kep. 21, Kep. 26, Kep. 27; JWT di OpenID4VCI dan OpenID4VP, bagian OpenID4VCI; Peta Alur Penerbitan dan Presentasi §2.1, §2.2, §2.3; Rincian Module dan Operasi §5.2, §5.5, §7.2; OpenID4VCI 1.0; OpenID4VC HAIP 1.0; RFC 9449; RFC 9126; RFC 9207; tracks/0129, tracks/0155, tracks/0165, tracks/0175, tracks/0180, tracks/0269, tracks/0298, tracks/0310, tracks/0344; EUDI ARF Annex 2 ISSU_42, ISSU_65 -->
@@ -11,9 +11,7 @@ description: The OpenID4VCI profile Issuer Core exposes and Mobile Wallet runs a
 
 <p class="ekdn-lead" markdown="span">
 Issuance is the one exchange that puts a credential in a citizen's wallet.
-This specification fixes how Issuer Core and Mobile Wallet run it: what the
-issuer publishes and signs, how the wallet is authorized, how it proves the
-key the credential will be bound to, and how the credential comes back.
+This specification fixes how Issuer Core and Mobile Wallet run it.
 </p>
 
 Every sentence on this page binds Issuer Core, which runs the credential
@@ -26,87 +24,114 @@ Governance Profile puts in force. The key words and the identifier
 
 This specification fixes the profile of
 [OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0][ref-openid4vci]
-that IDCTF runs: the issuer metadata and its signature, the credential offer,
-authorization through the Authorization Code flow with a pushed authorization
-request (PAR) and through the Pre-Authorized Code flow, the access token and
-its binding through Demonstrating Proof of Possession (DPoP), the nonce, the
-credential request and its answer, deferred issuance, the notification,
-renewal, and the errors.
+that IDCTF runs:
+
+- The issuer metadata and its signature.
+- The credential offer.
+- Authorization through the Authorization Code flow with a pushed
+  authorization request (PAR) and through the Pre-Authorized Code flow.
+- The access token and its binding through Demonstrating Proof of Possession
+  (DPoP).
+- The nonce.
+- The credential request and its answer.
+- Deferred issuance.
+- The notification.
+- Renewal.
+- The errors.
 
 Its conformance targets are Issuer Core, which is both the credential issuer
 and its own authorization server, and Mobile Wallet, which is the client.
 
-It leaves to other documents: the credential in each of its three
-representations, which
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
-holds; the Key Attestation, the proof that carries it, and the checks Issuer
-Core runs on both, which
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-holds, this page saying only which proof types an issuer announces and where
-the proof travels; how a signer names its key and how a reader finds it,
-which [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
-holds; the status list a credential points into, which
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md)
-holds; the trusted list and the Authority Statement the wallet reads before it
-asks for anything, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-and [Answering with an Authority Statement](answering-with-an-authority-statement.md)
-hold; the representations, the assurance level and the display of a type,
-which its Credential Rulebook holds under
-[Rulebook structure](../credential-rulebook/rulebook-structure.md); how a
-citizen signs in at the authorization endpoint and how an issuer binds the
-citizen to a record in its source system, [which are the issuer's own and the Governance Framework's][gf-issuers]; how a wallet installation enrolls with its Wallet
-Backend Service, which
-[Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
-holds; and the numbers, which the
-Governance Profile holds: the lifetime of a pre-authorized code, an
-authorization code, a request Uniform Resource Identifier (URI), an access
-token, a nonce, a DPoP nonce and a deferred request, the inactivity period
-after which a refresh token is refused, the attempts allowed on a
-transaction code, the algorithms an issuance key, a
-credential key, a Key Attestation key and a DPoP key may use, and how long
-before `exp` a wallet starts renewal.
+It leaves to other documents:
+
+- The credential in each of its three representations, which
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  holds.
+- The Key Attestation, the proof that carries it, and the checks Issuer Core
+  runs on both, which
+  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  holds, this page saying only which proof types an issuer announces and where
+  the proof travels.
+- How a signer names its key and how a reader finds it, which
+  [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
+  holds.
+- The status list a credential points into, which
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  holds.
+- The trusted list and the Authority Statement the wallet reads before it asks
+  for anything, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  and [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  hold.
+- The representations, the assurance level, and the display of a type, which
+  its Credential Rulebook holds under
+  [Rulebook structure](../credential-rulebook/rulebook-structure.md).
+- How a citizen signs in at the authorization endpoint and how an issuer binds
+  the citizen to a record in its source system, which the issuer settles within
+  [the Governance Framework's obligations of issuers][gf-issuers].
+- How a wallet installation enrolls with its Wallet Backend Service, which
+  [Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
+  holds.
+- The numbers, which the Governance Profile holds:
+    - The lifetime of a pre-authorized code, an authorization code, a request
+      Uniform Resource Identifier (URI), an access token, a nonce, a DPoP
+      nonce, and a deferred request.
+    - The inactivity period after which a refresh token is refused.
+    - The attempts allowed on a transaction code.
+    - The algorithms an issuance key, a credential key, a Key Attestation key,
+      and a DPoP key may use.
+    - How long before `exp` a wallet starts renewal.
 
 The profile follows the
 [OpenID4VC High Assurance Interoperability Profile (HAIP) 1.0][ref-openid4vc-haip],
-which IDCTF reads as a comparison and is not bound by, in all but four
-places. The wallet is a public client and does not authenticate at the PAR
-and token endpoints, and an issuer may let it reach the token endpoint
-anonymously in the Pre-Authorized Code flow, because the attestation-based
-client authentication HAIP asks for there is still an Internet-Draft; the
-wallet proves what it is where it hands over the key, as
-[Issuer to Wallet][issuer-to-wallet] sets out. Every token signed under a
-DID, the issuer's metadata, its SD-JWT-based Verifiable Credential
-(SD-JWT VC) draft -13 and the Wallet Provider's Key Attestation included,
-names its key by `kid` and not by `x5c`, as
-[Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
-fixes. And a wallet asks for credential configurations through
-`authorization_details`, which names each one exactly, and not through
-`scope`. And a refresh token lasts as long as the credential's
-administrative validity period, where HAIP advises against a refresh more
-than a year after issuance, for the reason [Renewal][ts-1-01-renewal] gives.
+which IDCTF reads as a comparison and is not bound by, except in these
+places:
+
+- The wallet is a public client and does not authenticate at the PAR and
+  token endpoints, and an issuer may let it reach the token endpoint
+  anonymously in the Pre-Authorized Code flow, because the attestation-based
+  client authentication HAIP asks for there is still an Internet-Draft. The
+  wallet proves what it is where it hands over the key, as
+  [Issuer to Wallet][issuer-to-wallet] sets out.
+- Every token signed under a Decentralized Identifier (DID), the issuer's
+  metadata, its SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13, and
+  the Wallet Provider's Key Attestation included, names its key by `kid` and
+  not by `x5c`, as
+  [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
+  fixes.
+- A wallet asks for credential configurations through `authorization_details`,
+  which names each one exactly, and not through `scope`.
+- A refresh token lasts as long as the credential's administrative validity
+  period, where HAIP advises against a refresh more than a year after
+  issuance, for the reason [Renewal][ts-1-01-renewal] gives.
+
 An issuer announces no batch issuance, which HAIP leaves to it, because a
 wallet installation has [one credential key][the-credential-key].
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Issuer Core** holds an entry in the trusted list that reads `granted` as
-  an Identity Issuer or an Attribute Issuer; an Authority Statement letting it
-  issue each type it offers; the Credential Rulebook of each such type and the
-  Type Metadata its `display` points at; its `issuance-jose` key in its
-  Decentralized Identifier (DID) Document; for a type issued as an mdoc, its
-  Document Signer Certificate; a cached copy of the trusted list; and a public
-  address of its own, as [Issuer Core][hla-issuer-core] sets out.
-- **Mobile Wallet** holds the credential key in the device's secure element,
-  enrolled with its Wallet Backend Service; the trusted list, the Authority
-  Statements, and every entity's `did:webvh` log its
-  [trust cache sync][trust-cache-sync] fetched; and the client identifier and
-  redirect address its Wallet Provider chose for it.
+- **Issuer Core** holds:
+    - An entry in the trusted list that reads `granted` as an Identity Issuer
+      or an Attribute Issuer.
+    - An Authority Statement letting it issue each type it offers.
+    - The Credential Rulebook of each such type and the Type Metadata its
+      `display` points at.
+    - Its `issuance-jose` key in its DID Document.
+    - For a type issued as an mdoc, its Document Signer Certificate.
+    - A cached copy of the trusted list.
+    - A public address of its own, as [Issuer Core][hla-issuer-core] sets out.
+- **Mobile Wallet** holds:
+    - The credential key in the device's secure element, enrolled with its
+      Wallet Backend Service.
+    - The trusted list, the Authority Statements, and every entity's
+      `did:webvh` log its [trust cache sync][trust-cache-sync] fetched.
+    - The client identifier and redirect address its Wallet Provider chose for
+      it.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-1-01-001 }**REQ-TS-1-01-001** Issuer Core MUST meet every requirement on this page that names Issuer Core, and every requirement on what Issuer Core writes: its metadata, its offers, its tokens and its answers.
-- [](){ #req-ts-1-01-002 }**REQ-TS-1-01-002** Mobile Wallet MUST meet every requirement on this page that names Mobile Wallet, and every requirement on what Mobile Wallet sends: its requests, its DPoP proofs and its notifications.
+- [](){ #req-ts-1-01-001 }**REQ-TS-1-01-001** Issuer Core MUST meet every requirement on this page that names Issuer Core, and every requirement on what Issuer Core writes: its metadata, its offers, its tokens, and its answers.
+- [](){ #req-ts-1-01-002 }**REQ-TS-1-01-002** Mobile Wallet MUST meet every requirement on this page that names Mobile Wallet, and every requirement on what Mobile Wallet sends: its requests, its DPoP proofs, and its notifications.
 
 </div>
 
@@ -132,18 +157,16 @@ from the issuer's side and never from the wallet, as
 [Pre-Authorized Code flow][pre-authorized-code-flow] draw both paths.
 
 Before the citizen types a code or signs in anywhere, the wallet has checked
-the issuer. The issuer signs its metadata with its `issuance-jose` key, so the
-wallet learns from the metadata which DID it is dealing with,
-looks that DID up in its cached trusted list, and reads from the same cache
-whether the issuer may issue the offered type. Nothing in that check touches
-the network beyond the issuer itself.
+the issuer against its cached trusted list, as
+[Signed metadata][ts-1-01-signed-metadata] sets out. Nothing in that check
+touches the network beyond the issuer itself.
 
-The wallet is a public client: it holds no secret the issuer gave it, and
-anyone can claim its client identifier. What protects the exchange is a Proof
-Key for Code Exchange (PKCE) on the authorization code, the transaction code
-the citizen types on the pre-authorized code, DPoP on every token, and the Key
-Attestation at the credential request, where the wallet shows that the key the
-credential will be bound to sits in storage of the strength the type demands.
+The wallet is a public client: it holds no secret the issuer gave it, and anyone
+can claim its client identifier. What protects the exchange is a Proof Key for
+Code Exchange (PKCE) on the authorization code, the transaction code the citizen
+types on the pre-authorized code, DPoP on every token, and the Key Attestation
+at the credential request, where the wallet shows that the key the credential
+will be bound to sits in storage of the strength the type demands.
 
 ## The exchange {#ts-1-01-the-exchange}
 
@@ -168,7 +191,7 @@ An issuance runs in twelve steps.
    Service.
 8. It sends a credential request for one credential identifier, with the proof
    that carries the Key Attestation.
-9. Issuer Core checks its own standing, the proof and the attestation, reads
+9. Issuer Core checks its own standing, the proof, and the attestation, reads
    the claims from its source system, and builds and signs the credential.
 10. It answers with the credential, or with a transaction identifier that the
     wallet presents at the deferred credential endpoint until the credential
@@ -183,20 +206,27 @@ the code.
 
 ## An issuance, as exchanged {#ts-1-01-an-issuance-as-exchanged}
 
-Below are two issuances end to end, and the answer that carries a third
-representation. The citizens, the issuers, their addresses and every key are
-invented, and nothing has been issued. Every field is exact. The issuers are
-the ones [the trusted list][ts-5-01-trusted-list-payload] carries, with the
-same DIDs. Each signed issuer metadata verifies under the `issuance-jose` key
-its `kid` names, each DPoP proof under the key its header carries, and the
-Key Attestations under the Key Attestation key of the Wallet Provider. The key
-proof and the first Key Attestation are the ones
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-shows, and the three credentials are the ones
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
-shows, byte for byte. Access tokens, refresh tokens, codes and identifiers are
-opaque strings Issuer Core drew; nothing reads them but the issuer that drew
-them.
+The citizens, the issuers, their addresses, and every key are invented, and
+nothing has been issued. Every field is exact.
+
+The examples agree with the rest of these pages:
+
+- The issuers: the ones [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same DIDs.
+- Each signed issuer metadata verifies under the `issuance-jose` key its `kid`
+  names.
+- Each DPoP proof verifies under the key its header carries.
+- The Key Attestations verify under the Key Attestation key of the
+  Wallet Provider.
+- The key proof and the first Key Attestation: the ones
+  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  shows.
+- The three credentials: the ones
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  shows, byte for byte.
+
+Access tokens, refresh tokens, codes, and identifiers are opaque strings Issuer
+Core drew; nothing reads them but the issuer that drew them.
 
 ### The Kartu ASN, through the Pre-Authorized Code flow {#ts-1-01-the-kartu-asn-through-the-pre-authorized-code-flow}
 
@@ -242,7 +272,7 @@ Accept: application/jwt
 HTTP/1.1 200 OK
 Content-Type: application/jwt
 
-eyJ0eXAiOiJvcGVuaWR2Y2ktaXNzdWVyLW1ldGFkYXRhK2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoiZGlkOndlYnZoOlFtZThScmlHbkt4NWoyUWpvYVkxU2dSU3B4VEhkanExMUwyRXhneTF6VjJ4c0o6YmtuLmdvLmlkI2lzc3VhbmNlLWpvc2UtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1lOFJyaUduS3g1ajJRam9hWTFTZ1JTcHhUSGRqcTExTDJFeGd5MXpWMnhzSjpia24uZ28uaWQiLCJzdWIiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQiLCJpYXQiOjE3OTIxOTUyMDAsImNyZWRlbnRpYWxfaXNzdWVyIjoiaHR0cHM6Ly9pc3N1ZXIuYmtuLmdvLmlkIiwiY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9jcmVkZW50aWFsIiwibm9uY2VfZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQvbm9uY2UiLCJkZWZlcnJlZF9jcmVkZW50aWFsX2VuZHBvaW50IjoiaHR0cHM6Ly9pc3N1ZXIuYmtuLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJub3RpZmljYXRpb25fZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQvbm90aWZpY2F0aW9uIiwiY3JlZGVudGlhbF9jb25maWd1cmF0aW9uc19zdXBwb3J0ZWQiOnsiaWQuaWRjdGYua2FydHUtYXNuLjE6c2Qtand0LXZjIjp7ImZvcm1hdCI6ImRjK3NkLWp3dCIsInZjdCI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImp3ayJdLCJjcmVkZW50aWFsX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7Imp3dCI6eyJwcm9vZl9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIkVTMjU2Il0sImtleV9hdHRlc3RhdGlvbnNfcmVxdWlyZWQiOnsia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X21vZGVyYXRlIiwiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdfX0sImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IkthcnR1IEFTTiIsImxvY2FsZSI6ImlkIiwiZGVzY3JpcHRpb24iOiJLYXJ0dSBpZGVudGl0YXMgQXBhcmF0dXIgU2lwaWwgTmVnYXJhIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkxhbWJhbmcgR2FydWRhIFBhbmNhc2lsYSJ9LCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZGRkZGRiIsInRleHRfY29sb3IiOiIjOEExQjNEIn0seyJuYW1lIjoiQ2l2aWwgU2VydmFudCBDYXJkIiwibG9jYWxlIjoiZW4iLCJkZXNjcmlwdGlvbiI6IklkZW50aXR5IGNhcmQgb2YgYW4gSW5kb25lc2lhbiBjaXZpbCBzZXJ2YW50IiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGV4dF9jb2xvciI6IiM4QTFCM0QifV0sImNsYWltcyI6W3sicGF0aCI6WyJuYW1hIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6Ik5hbWEiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbIm5pcCJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJOSVAiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IkNpdmlsIFNlcnZhbnQgSUQgTnVtYmVyIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJnb2xvbmdhbiJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmFuayIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsic3RhdHVzX2tlcGVnYXdhaWFuIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IlN0YXR1cyBLZXBlZ2F3YWlhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiRW1wbG95bWVudCBTdGF0dXMiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImphYmF0YW4iXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiSmFiYXRhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUG9zaXRpb24iLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbInVuaXRfa2VyamEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiVW5pdCBLZXJqYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiV29yayBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpbnN0YW5zaSJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJJbnN0YW5zaSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQWdlbmN5IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJmb3RvIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IkZvdG8iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBob3RvIiwibG9jYWxlIjoiZW4ifV19XX19LCJpZC5pZGN0Zi5rYXJ0dS1hc24uMTptZG9jIjp7ImZvcm1hdCI6Im1zb19tZG9jIiwiZG9jdHlwZSI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImNvc2Vfa2V5Il0sImNyZWRlbnRpYWxfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6Wy03XSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7Imp3dCI6eyJwcm9vZl9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIkVTMjU2Il0sImtleV9hdHRlc3RhdGlvbnNfcmVxdWlyZWQiOnsia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X21vZGVyYXRlIiwiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdfX0sImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IkthcnR1IEFTTiIsImxvY2FsZSI6ImlkIiwiZGVzY3JpcHRpb24iOiJLYXJ0dSBpZGVudGl0YXMgQXBhcmF0dXIgU2lwaWwgTmVnYXJhIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkxhbWJhbmcgR2FydWRhIFBhbmNhc2lsYSJ9LCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZGRkZGRiIsInRleHRfY29sb3IiOiIjOEExQjNEIn0seyJuYW1lIjoiQ2l2aWwgU2VydmFudCBDYXJkIiwibG9jYWxlIjoiZW4iLCJkZXNjcmlwdGlvbiI6IklkZW50aXR5IGNhcmQgb2YgYW4gSW5kb25lc2lhbiBjaXZpbCBzZXJ2YW50IiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGV4dF9jb2xvciI6IiM4QTFCM0QifV0sImNsYWltcyI6W3sicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsIm5hbWEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiTmFtYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJuaXAiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiTklQIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJDaXZpbCBTZXJ2YW50IElEIE51bWJlciIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJnb2xvbmdhbiJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmFuayIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJzdGF0dXNfa2VwZWdhd2FpYW4iXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiU3RhdHVzIEtlcGVnYXdhaWFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJFbXBsb3ltZW50IFN0YXR1cyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJqYWJhdGFuIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IkphYmF0YW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBvc2l0aW9uIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsInVuaXRfa2VyamEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiVW5pdCBLZXJqYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiV29yayBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsImluc3RhbnNpIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6Ikluc3RhbnNpIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJBZ2VuY3kiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiZm90byJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJGb3RvIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQaG90byIsImxvY2FsZSI6ImVuIn1dfV19fX19.tMP-r2hixSesJJYdzIBiO4ZEt7acNmqjQ1b4El8A80rzFhvLlEgdPxy-MnxjXYY6XrDRJd5jrKHQNgb3gchMgw
+eyJ0eXAiOiJvcGVuaWR2Y2ktaXNzdWVyLW1ldGFkYXRhK2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoiZGlkOndlYnZoOlFtZThScmlHbkt4NWoyUWpvYVkxU2dSU3B4VEhkanExMUwyRXhneTF6VjJ4c0o6YmtuLmdvLmlkI2lzc3VhbmNlLWpvc2UtMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1lOFJyaUduS3g1ajJRam9hWTFTZ1JTcHhUSGRqcTExTDJFeGd5MXpWMnhzSjpia24uZ28uaWQiLCJzdWIiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQiLCJpYXQiOjE3OTIxOTUyMDAsImNyZWRlbnRpYWxfaXNzdWVyIjoiaHR0cHM6Ly9pc3N1ZXIuYmtuLmdvLmlkIiwiY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9jcmVkZW50aWFsIiwibm9uY2VfZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQvbm9uY2UiLCJkZWZlcnJlZF9jcmVkZW50aWFsX2VuZHBvaW50IjoiaHR0cHM6Ly9pc3N1ZXIuYmtuLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJub3RpZmljYXRpb25fZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQvbm90aWZpY2F0aW9uIiwiY3JlZGVudGlhbF9jb25maWd1cmF0aW9uc19zdXBwb3J0ZWQiOnsiaWQuaWRjdGYua2FydHUtYXNuLjE6c2Qtand0LXZjIjp7ImZvcm1hdCI6ImRjK3NkLWp3dCIsInZjdCI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImp3ayJdLCJjcmVkZW50aWFsX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7Imp3dCI6eyJwcm9vZl9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIkVTMjU2Il0sImtleV9hdHRlc3RhdGlvbnNfcmVxdWlyZWQiOnsia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X21vZGVyYXRlIiwiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdfX0sImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IkthcnR1IEFTTiIsImxvY2FsZSI6ImlkIiwiZGVzY3JpcHRpb24iOiJLYXJ0dSBpZGVudGl0YXMgQXBhcmF0dXIgU2lwaWwgTmVnYXJhIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkxhbWJhbmcgR2FydWRhIFBhbmNhc2lsYSJ9LCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZGRkZGRiIsInRleHRfY29sb3IiOiIjOEExQjNEIn0seyJuYW1lIjoiQ2l2aWwgU2VydmFudCBDYXJkIiwibG9jYWxlIjoiZW4iLCJkZXNjcmlwdGlvbiI6IklkZW50aXR5IGNhcmQgb2YgYW4gSW5kb25lc2lhbiBjaXZpbCBzZXJ2YW50IiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGV4dF9jb2xvciI6IiM4QTFCM0QifV0sImNsYWltcyI6W3sicGF0aCI6WyJuYW1hIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6Ik5hbWEiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6Ik5hbWUiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbIm5pcCJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJOSVAiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IkNpdmlsIFNlcnZhbnQgSUQgTnVtYmVyIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJnb2xvbmdhbiJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmFuayIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsic3RhdHVzX2tlcGVnYXdhaWFuIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IlN0YXR1cyBLZXBlZ2F3YWlhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiRW1wbG95bWVudCBTdGF0dXMiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImphYmF0YW4iXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiSmFiYXRhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUG9zaXRpb24iLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbInVuaXRfa2VyamEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiVW5pdCBLZXJqYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiV29yayBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpbnN0YW5zaSJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJJbnN0YW5zaSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQWdlbmN5IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJmb3RvIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IkZvdG8iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBob3RvIiwibG9jYWxlIjoiZW4ifV19XX19LCJpZC5pZGN0Zi5rYXJ0dS1hc24uMTptZG9jIjp7ImZvcm1hdCI6Im1zb19tZG9jIiwiZG9jdHlwZSI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImNvc2Vfa2V5Il0sImNyZWRlbnRpYWxfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6Wy03XSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7Imp3dCI6eyJwcm9vZl9zaWduaW5nX2FsZ192YWx1ZXNfc3VwcG9ydGVkIjpbIkVTMjU2Il0sImtleV9hdHRlc3RhdGlvbnNfcmVxdWlyZWQiOnsia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X21vZGVyYXRlIiwiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdfX0sImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfbW9kZXJhdGUiLCJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IkthcnR1IEFTTiIsImxvY2FsZSI6ImlkIiwiZGVzY3JpcHRpb24iOiJLYXJ0dSBpZGVudGl0YXMgQXBhcmF0dXIgU2lwaWwgTmVnYXJhIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkxhbWJhbmcgR2FydWRhIFBhbmNhc2lsYSJ9LCJiYWNrZ3JvdW5kX2NvbG9yIjoiI0ZGRkZGRiIsInRleHRfY29sb3IiOiIjOEExQjNEIn0seyJuYW1lIjoiQ2l2aWwgU2VydmFudCBDYXJkIiwibG9jYWxlIjoiZW4iLCJkZXNjcmlwdGlvbiI6IklkZW50aXR5IGNhcmQgb2YgYW4gSW5kb25lc2lhbiBjaXZpbCBzZXJ2YW50IiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rYXJ0dS1hc24tdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRkZGRkZGIiwidGV4dF9jb2xvciI6IiM4QTFCM0QifV0sImNsYWltcyI6W3sicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsIm5hbWEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiTmFtYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiTmFtZSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJuaXAiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiTklQIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJDaXZpbCBTZXJ2YW50IElEIE51bWJlciIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJnb2xvbmdhbiJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmFuayIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJzdGF0dXNfa2VwZWdhd2FpYW4iXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiU3RhdHVzIEtlcGVnYXdhaWFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJFbXBsb3ltZW50IFN0YXR1cyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua2FydHUtYXNuLjEiLCJqYWJhdGFuIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6IkphYmF0YW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBvc2l0aW9uIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsInVuaXRfa2VyamEiXSwibWFuZGF0b3J5Ijp0cnVlLCJkaXNwbGF5IjpbeyJuYW1lIjoiVW5pdCBLZXJqYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiV29yayBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rYXJ0dS1hc24uMSIsImluc3RhbnNpIl0sIm1hbmRhdG9yeSI6dHJ1ZSwiZGlzcGxheSI6W3sibmFtZSI6Ikluc3RhbnNpIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJBZ2VuY3kiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmthcnR1LWFzbi4xIiwiZm90byJdLCJtYW5kYXRvcnkiOnRydWUsImRpc3BsYXkiOlt7Im5hbWUiOiJGb3RvIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQaG90byIsImxvY2FsZSI6ImVuIn1dfV19fX19._hWRXvzc-4jxincyXdlBDSMmtqYYJ9k0CJGgL9ath5FWHTBZySAFRrzSOGx4yJzmgcV_nhBHeqI25AgXLBHFVg
 ```
 
 ``` { .json title="Signed issuer metadata header" data-format="JSON" }
@@ -724,7 +754,7 @@ DPoP nonce, and Issuer Core answers with one:
 POST /token HTTP/1.1
 Host: issuer.bkn.go.id
 Content-Type: application/x-www-form-urlencoded
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJoZnJ2bERtbkQ1TEF1NXNhSDd5MEZnIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTc5MjIxNjc5MH0.dZpUG1b1fjPuU0NDgVZdTEagRuBQBfXIfM2ur68gWcDou-xVssijfJbvrrYbFJ4JEdIzPoAkKwqJxicL9lorSg
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJoZnJ2bERtbkQ1TEF1NXNhSDd5MEZnIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTc5MjIxNjc5MH0.Qc3ts_T2ejl20BAR6kgf_EM4ZYt64BpcDwQadGufknbm2g9s0YgZPGU9dONkabAPyyLlQAvbkB7H_yCpnzguQg
 
 grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code&pre-authorized_code=n3b2wEVTT9PYmMug8RpcyeaK&tx_code=493817&authorization_details=%5B%7B%22type%22%3A%22openid_credential%22%2C%22credential_configuration_id%22%3A%22id.idctf.kartu-asn.1%3Asd-jwt-vc%22%7D%2C%7B%22type%22%3A%22openid_credential%22%2C%22credential_configuration_id%22%3A%22id.idctf.kartu-asn.1%3Amdoc%22%7D%5D
 ```
@@ -749,7 +779,7 @@ endpoint in this flow:
 POST /token HTTP/1.1
 Host: issuer.bkn.go.id
 Content-Type: application/x-www-form-urlencoded
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJQd0VsSk5GSHVhTEFQVjBRMVRYVFdBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTc5MjIxNjc5MSwibm9uY2UiOiJQYVA0eGNRWGtLbUEwdmNhaW9JYlVnX2kifQ.xGVXlXdkou5nHu69XqwlkvY6wPfwBoqjkFUuzgsH8YEj_itL7vprYeO_N7KGo8cikyIIx9eb0X0pYIE9Dw-vDQ
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJQd0VsSk5GSHVhTEFQVjBRMVRYVFdBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTc5MjIxNjc5MSwibm9uY2UiOiJQYVA0eGNRWGtLbUEwdmNhaW9JYlVnX2kifQ.MR9V1ipJws-z2ZNRSpT_1fffYleac9DNyezDXSZH-npoFcNYlcvo0We6DItw94j-s3sCt6eXI_pK_p8yxBkVMg
 
 grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Apre-authorized_code&pre-authorized_code=n3b2wEVTT9PYmMug8RpcyeaK&tx_code=493817&authorization_details=%5B%7B%22type%22%3A%22openid_credential%22%2C%22credential_configuration_id%22%3A%22id.idctf.kartu-asn.1%3Asd-jwt-vc%22%7D%2C%7B%22type%22%3A%22openid_credential%22%2C%22credential_configuration_id%22%3A%22id.idctf.kartu-asn.1%3Amdoc%22%7D%5D
 ```
@@ -836,7 +866,7 @@ POST /credential HTTP/1.1
 Host: issuer.bkn.go.id
 Content-Type: application/json
 Authorization: DPoP ni_IZoW82gn6GQVQbDshjrWOj3XoRiVU-pfY_vzdd4w
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJtaW1NQVAzLUtjZ0E0Q1VFR2tWRlhRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9jcmVkZW50aWFsIiwiaWF0IjoxNzkyMjE2ODA2LCJub25jZSI6IlQ0dzBIeWxUcFZKVXVaMjVLa3hTRmVYUSIsImF0aCI6InA4Nmlwd2Y2MXcybzVYSGx3VlVDQVRBWHNzUGlwS3FEdGxTb2syajJ1NjQifQ.nNygmzzzjKP73Qjp_rA53LdMedY3Xtwps1mj3aJVz4H1Va5WqhKNmlkASWSVDi8QM59LwqNr8o0QQvVT0P1GpA
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJtaW1NQVAzLUtjZ0E0Q1VFR2tWRlhRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9jcmVkZW50aWFsIiwiaWF0IjoxNzkyMjE2ODA2LCJub25jZSI6IlQ0dzBIeWxUcFZKVXVaMjVLa3hTRmVYUSIsImF0aCI6InA4Nmlwd2Y2MXcybzVYSGx3VlVDQVRBWHNzUGlwS3FEdGxTb2syajJ1NjQifQ.omPGOtKf-psUEsVIFKPqOJTGbK10uj-O1_PBazT_KN5OLQaHxVhpO32zHILIv_P-RNs-256H-5fVAd4-KzxZww
 
 {
   "credential_identifier": "asn-jb0YglbvHGNb",
@@ -895,7 +925,7 @@ POST /notification HTTP/1.1
 Host: issuer.bkn.go.id
 Content-Type: application/json
 Authorization: DPoP ni_IZoW82gn6GQVQbDshjrWOj3XoRiVU-pfY_vzdd4w
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJEak9KQ1RGNnRhbWJ5cDlMSlNjUGNBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9ub3RpZmljYXRpb24iLCJpYXQiOjE3OTIyMTY4MTIsIm5vbmNlIjoiRm1JdVVQUFFQZWt4RFprNGNFdmZlc0NMIiwiYXRoIjoicDg2aXB3ZjYxdzJvNVhIbHdWVUNBVEFYc3NQaXBLcUR0bFNvazJqMnU2NCJ9.CbmMHK7quCEWWCCy0wzVH2lwuGsgI5Kc6-D-pSlhI2e0vXb0GnmOvdxTLtrLiUPdxWEYvUHzaoUKdmr4e9lWoQ
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJEak9KQ1RGNnRhbWJ5cDlMSlNjUGNBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC9ub3RpZmljYXRpb24iLCJpYXQiOjE3OTIyMTY4MTIsIm5vbmNlIjoiRm1JdVVQUFFQZWt4RFprNGNFdmZlc0NMIiwiYXRoIjoicDg2aXB3ZjYxdzJvNVhIbHdWVUNBVEFYc3NQaXBLcUR0bFNvazJqMnU2NCJ9.dijyIEknpF2E9u7EZ0FQjfhxACVXIv_xwf_Iw2jAkbczYbBLG37_NU2W3fsJf5JbedWtNqPK7WJJy_d0tiWTBw
 
 {
   "notification_id": "CMemYMX-3nU0WGfu",
@@ -909,11 +939,10 @@ DPoP-Nonce: 5IjZ8J3IQaL1HIuKDYGkOB9g
 Cache-Control: no-store
 ```
 
-The wallet then asks for the second credential identifier, the mdoc of the
-same credential, in a request of the same form: a new nonce, a new Key
-Attestation carrying it, and a new proof. Issuer Core gives the mdoc the claim
-values, the credential key, the status entry and the validity period of the
-SD-JWT VC.
+The wallet then asks for the second credential identifier, the mdoc of the same
+credential, in a request of the same form: a new nonce, a new Key Attestation
+carrying it, and a new proof. Issuer Core gives the mdoc the claim values, the
+credential key, the status entry, and the validity period of the SD-JWT VC.
 
 Close to the credential's `exp`, the wallet renews it with the refresh token.
 The DPoP nonce it held has long expired, so the first attempt is answered
@@ -937,7 +966,7 @@ and the request is sent again, signed by the same DPoP key:
 POST /token HTTP/1.1
 Host: issuer.bkn.go.id
 Content-Type: application/x-www-form-urlencoded
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJXcFNIS01fRHVuU1NLaUhwNlluQ2dBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTg4NDMxOTIwMCwibm9uY2UiOiJ4TE1qVkJ0LW1TbU92NE96MV90OVZDUHEifQ.E32o6vxX6KcVFZXPPIorLvOab631jrkKE6jNLvxXSKZGqfASAM0RHnRYY9iArFY-7tIcBioi-mRSQFNb6l9k6A
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoieHJDQXdRb3lfeEJpWFowaXBpdGNaQno3QXNsS2ZLVXBJWUMyQUVldkpXYyIsInkiOiJEWF8wZmtLUVRQQjUtY0txVmtVcF9GMXJCTE5KU3BOQlY5SWstWmJObWEwIn19.eyJqdGkiOiJXcFNIS01fRHVuU1NLaUhwNlluQ2dBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmJrbi5nby5pZC90b2tlbiIsImlhdCI6MTgyMTQyMDAwMCwibm9uY2UiOiJ4TE1qVkJ0LW1TbU92NE96MV90OVZDUHEifQ.7y4S9TcNVAHeOcqHHIC8vfX-Vi65qSpqsldDzvxZp2N8hDgsg3BqpBW64cNKMMR5dqbcsTK92PdPqeZvrmEB2Q
 
 grant_type=refresh_token&refresh_token=EgFeS5xiitMMzdR3HQP-2F9koJeCL1t-s8kPozZedzU
 ```
@@ -971,8 +1000,8 @@ Content-Type: application/json
 }
 ```
 
-and runs the credential requests again, each with a new nonce and a new Key
-Attestation sent as the `attestation` proof.
+and runs the credential requests again, each with a new nonce and a new
+Key Attestation sent as the `attestation` proof.
 
 ### The KTP Digital, through the Authorization Code flow {#ts-1-01-the-ktp-digital-through-the-authorization-code-flow}
 
@@ -1016,7 +1045,7 @@ accepts the `attestation` proof type alone:
 HTTP/1.1 200 OK
 Content-Type: application/jwt
 
-eyJ0eXAiOiJvcGVuaWR2Y2ktaXNzdWVyLW1ldGFkYXRhK2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoiZGlkOndlYnZoOlFtY0VWVDJpSlNyc3M1aGd3aU1Gc01VeEtrUm96Z0ZGNDU4UmNnZ1Q0TUYyTDQ6ZHVrY2FwaWwuZ28uaWQjaXNzdWFuY2Utam9zZS0yIn0.eyJpc3MiOiJkaWQ6d2Vidmg6UW1jRVZUMmlKU3JzczVoZ3dpTUZzTVV4S2tSb3pnRkY0NThSY2dnVDRNRjJMNDpkdWtjYXBpbC5nby5pZCIsInN1YiI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkIiwiaWF0IjoxNzkyMTk1MjAwLCJjcmVkZW50aWFsX2lzc3VlciI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkIiwiY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2NyZWRlbnRpYWwiLCJub25jZV9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL25vbmNlIiwiZGVmZXJyZWRfY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJub3RpZmljYXRpb25fZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5kdWtjYXBpbC5nby5pZC9ub3RpZmljYXRpb24iLCJjcmVkZW50aWFsX2NvbmZpZ3VyYXRpb25zX3N1cHBvcnRlZCI6eyJpZC5pZGN0Zi5rdHAuMTptZG9jIjp7ImZvcm1hdCI6Im1zb19tZG9jIiwiZG9jdHlwZSI6ImlkLmlkY3RmLmt0cC4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImNvc2Vfa2V5Il0sImNyZWRlbnRpYWxfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6Wy03XSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7ImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IktUUCBEaWdpdGFsIiwibG9jYWxlIjoiaWQiLCJkZXNjcmlwdGlvbiI6IkthcnR1IFRhbmRhIFBlbmR1ZHVrIGRpZ2l0YWwiLCJsb2dvIjp7InVyaSI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC90eXBlLW1ldGFkYXRhL2t0cC12MS9sb2dvLnBuZyIsImFsdF90ZXh0IjoiTGFtYmFuZyBHYXJ1ZGEgUGFuY2FzaWxhIn0sImJhY2tncm91bmRfY29sb3IiOiIjRERFQkZBIiwidGV4dF9jb2xvciI6IiMwQjFGM0EifSx7Im5hbWUiOiJEaWdpdGFsIElkZW50aXR5IENhcmQiLCJsb2NhbGUiOiJlbiIsImRlc2NyaXB0aW9uIjoiSW5kb25lc2lhbiByZXNpZGVudCBpZGVudGl0eSBjYXJkIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rdHAtdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRERFQkZBIiwidGV4dF9jb2xvciI6IiMwQjFGM0EifV0sImNsYWltcyI6W3sicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsIm5payJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiTklLIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQb3B1bGF0aW9uIElkZW50aWZpY2F0aW9uIE51bWJlciIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJuYW1hIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJOYW1hIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJOYW1lIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsInRlbXBhdF9sYWhpciJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiVGVtcGF0IExhaGlyIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQbGFjZSBvZiBCaXJ0aCIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJ0YW5nZ2FsX2xhaGlyIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJUYW5nZ2FsIExhaGlyIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJEYXRlIG9mIEJpcnRoIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsInVzaWFfZGlfYXRhc18xNyJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiQmVydXNpYSAxNyBUYWh1biBrZSBBdGFzIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJBZ2VkIDE3IG9yIE92ZXIiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwiamVuaXNfa2VsYW1pbiJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiSmVuaXMgS2VsYW1pbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiU2V4IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImdvbG9uZ2FuX2RhcmFoIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiBEYXJhaCIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQmxvb2QgVHlwZSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJhbGFtYXQiXSwiZGlzcGxheSI6W3sibmFtZSI6IkFsYW1hdCIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQWRkcmVzcyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJydF9ydyJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiUlQvUlciLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6Ik5laWdoYm9yaG9vZCBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImtlbHVyYWhhbl9kZXNhIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJLZWx1cmFoYW4vRGVzYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiVXJiYW4gVmlsbGFnZS9WaWxsYWdlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImtlY2FtYXRhbiJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiS2VjYW1hdGFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJEaXN0cmljdCIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJrYWJ1cGF0ZW5fa290YSJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiS2FidXBhdGVuL0tvdGEiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlJlZ2VuY3kvQ2l0eSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJwcm92aW5zaSJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiUHJvdmluc2kiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlByb3ZpbmNlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImFnYW1hIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJBZ2FtYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmVsaWdpb24iLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwic3RhdHVzX3Blcmthd2luYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6IlN0YXR1cyBQZXJrYXdpbmFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJNYXJpdGFsIFN0YXR1cyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJwZWtlcmphYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6IlBla2VyamFhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiT2NjdXBhdGlvbiIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJrZXdhcmdhbmVnYXJhYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6Iktld2FyZ2FuZWdhcmFhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQ2l0aXplbnNoaXAiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwidGVtcGF0X2Rpa2VsdWFya2FuIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJUZW1wYXQgRGlrZWx1YXJrYW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBsYWNlIG9mIElzc3VhbmNlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImlzc3VhbmNlX2RhdGUiXSwiZGlzcGxheSI6W3sibmFtZSI6IlRhbmdnYWwgRGlrZWx1YXJrYW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IkRhdGUgb2YgSXNzdWFuY2UiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwiZm90byJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiRm90byIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUGhvdG8iLCJsb2NhbGUiOiJlbiJ9XX1dfX19fQ.9Tzm3JjirtcOaLnETy22tiRQuQz0HO_jUuIaKHr7xyz6wveBb5mbMwWf73NebGt_NCmcigy3P4V6kn-prh_6Tg
+eyJ0eXAiOiJvcGVuaWR2Y2ktaXNzdWVyLW1ldGFkYXRhK2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoiZGlkOndlYnZoOlFtY0VWVDJpSlNyc3M1aGd3aU1Gc01VeEtrUm96Z0ZGNDU4UmNnZ1Q0TUYyTDQ6ZHVrY2FwaWwuZ28uaWQjaXNzdWFuY2Utam9zZS0yIn0.eyJpc3MiOiJkaWQ6d2Vidmg6UW1jRVZUMmlKU3JzczVoZ3dpTUZzTVV4S2tSb3pnRkY0NThSY2dnVDRNRjJMNDpkdWtjYXBpbC5nby5pZCIsInN1YiI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkIiwiaWF0IjoxNzkyMTk1MjAwLCJjcmVkZW50aWFsX2lzc3VlciI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkIiwiY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2NyZWRlbnRpYWwiLCJub25jZV9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL25vbmNlIiwiZGVmZXJyZWRfY3JlZGVudGlhbF9lbmRwb2ludCI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJub3RpZmljYXRpb25fZW5kcG9pbnQiOiJodHRwczovL2lzc3Vlci5kdWtjYXBpbC5nby5pZC9ub3RpZmljYXRpb24iLCJjcmVkZW50aWFsX2NvbmZpZ3VyYXRpb25zX3N1cHBvcnRlZCI6eyJpZC5pZGN0Zi5rdHAuMTptZG9jIjp7ImZvcm1hdCI6Im1zb19tZG9jIiwiZG9jdHlwZSI6ImlkLmlkY3RmLmt0cC4xIiwiY3J5cHRvZ3JhcGhpY19iaW5kaW5nX21ldGhvZHNfc3VwcG9ydGVkIjpbImNvc2Vfa2V5Il0sImNyZWRlbnRpYWxfc2lnbmluZ19hbGdfdmFsdWVzX3N1cHBvcnRlZCI6Wy03XSwicHJvb2ZfdHlwZXNfc3VwcG9ydGVkIjp7ImF0dGVzdGF0aW9uIjp7InByb29mX3NpZ25pbmdfYWxnX3ZhbHVlc19zdXBwb3J0ZWQiOlsiRVMyNTYiXSwia2V5X2F0dGVzdGF0aW9uc19yZXF1aXJlZCI6eyJrZXlfc3RvcmFnZSI6WyJpc29fMTgwNDVfaGlnaCJdLCJ1c2VyX2F1dGhlbnRpY2F0aW9uIjpbImlzb18xODA0NV9tb2RlcmF0ZSIsImlzb18xODA0NV9oaWdoIl19fX0sImNyZWRlbnRpYWxfbWV0YWRhdGEiOnsiZGlzcGxheSI6W3sibmFtZSI6IktUUCBEaWdpdGFsIiwibG9jYWxlIjoiaWQiLCJkZXNjcmlwdGlvbiI6IkthcnR1IFRhbmRhIFBlbmR1ZHVrIGRpZ2l0YWwiLCJsb2dvIjp7InVyaSI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC90eXBlLW1ldGFkYXRhL2t0cC12MS9sb2dvLnBuZyIsImFsdF90ZXh0IjoiTGFtYmFuZyBHYXJ1ZGEgUGFuY2FzaWxhIn0sImJhY2tncm91bmRfY29sb3IiOiIjRERFQkZBIiwidGV4dF9jb2xvciI6IiMwQjFGM0EifSx7Im5hbWUiOiJEaWdpdGFsIElkZW50aXR5IENhcmQiLCJsb2NhbGUiOiJlbiIsImRlc2NyaXB0aW9uIjoiSW5kb25lc2lhbiByZXNpZGVudCBpZGVudGl0eSBjYXJkIiwibG9nbyI6eyJ1cmkiOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvdHlwZS1tZXRhZGF0YS9rdHAtdjEvbG9nby5wbmciLCJhbHRfdGV4dCI6IkdhcnVkYSBQYW5jYXNpbGEgZW1ibGVtIn0sImJhY2tncm91bmRfY29sb3IiOiIjRERFQkZBIiwidGV4dF9jb2xvciI6IiMwQjFGM0EifV0sImNsYWltcyI6W3sicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsIm5payJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiTklLIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQb3B1bGF0aW9uIElkZW50aWZpY2F0aW9uIE51bWJlciIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJuYW1hIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJOYW1hIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJOYW1lIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsInRlbXBhdF9sYWhpciJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiVGVtcGF0IExhaGlyIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJQbGFjZSBvZiBCaXJ0aCIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJ0YW5nZ2FsX2xhaGlyIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJUYW5nZ2FsIExhaGlyIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJEYXRlIG9mIEJpcnRoIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsInVzaWFfZGlfYXRhc18xNyJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiQmVydXNpYSAxNyBUYWh1biBrZSBBdGFzIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJBZ2VkIDE3IG9yIE92ZXIiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwiamVuaXNfa2VsYW1pbiJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiSmVuaXMgS2VsYW1pbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiU2V4IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImdvbG9uZ2FuX2RhcmFoIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJHb2xvbmdhbiBEYXJhaCIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQmxvb2QgVHlwZSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJhbGFtYXQiXSwiZGlzcGxheSI6W3sibmFtZSI6IkFsYW1hdCIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQWRkcmVzcyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJydF9ydyJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiUlQvUlciLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6Ik5laWdoYm9yaG9vZCBVbml0IiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImtlbHVyYWhhbl9kZXNhIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJLZWx1cmFoYW4vRGVzYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiVXJiYW4gVmlsbGFnZS9WaWxsYWdlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImtlY2FtYXRhbiJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiS2VjYW1hdGFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJEaXN0cmljdCIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJrYWJ1cGF0ZW5fa290YSJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiS2FidXBhdGVuL0tvdGEiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlJlZ2VuY3kvQ2l0eSIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJwcm92aW5zaSJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiUHJvdmluc2kiLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlByb3ZpbmNlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImFnYW1hIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJBZ2FtYSIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUmVsaWdpb24iLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwic3RhdHVzX3Blcmthd2luYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6IlN0YXR1cyBQZXJrYXdpbmFuIiwibG9jYWxlIjoiaWQifSx7Im5hbWUiOiJNYXJpdGFsIFN0YXR1cyIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJwZWtlcmphYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6IlBla2VyamFhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiT2NjdXBhdGlvbiIsImxvY2FsZSI6ImVuIn1dfSx7InBhdGgiOlsiaWQuaWRjdGYua3RwLjEiLCJrZXdhcmdhbmVnYXJhYW4iXSwiZGlzcGxheSI6W3sibmFtZSI6Iktld2FyZ2FuZWdhcmFhbiIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiQ2l0aXplbnNoaXAiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwidGVtcGF0X2Rpa2VsdWFya2FuIl0sImRpc3BsYXkiOlt7Im5hbWUiOiJUZW1wYXQgRGlrZWx1YXJrYW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IlBsYWNlIG9mIElzc3VhbmNlIiwibG9jYWxlIjoiZW4ifV19LHsicGF0aCI6WyJpZC5pZGN0Zi5rdHAuMSIsImlzc3VhbmNlX2RhdGUiXSwiZGlzcGxheSI6W3sibmFtZSI6IlRhbmdnYWwgRGlrZWx1YXJrYW4iLCJsb2NhbGUiOiJpZCJ9LHsibmFtZSI6IkRhdGUgb2YgSXNzdWFuY2UiLCJsb2NhbGUiOiJlbiJ9XX0seyJwYXRoIjpbImlkLmlkY3RmLmt0cC4xIiwiZm90byJdLCJkaXNwbGF5IjpbeyJuYW1lIjoiRm90byIsImxvY2FsZSI6ImlkIn0seyJuYW1lIjoiUGhvdG8iLCJsb2NhbGUiOiJlbiJ9XX1dfX19fQ.6oyNrd2H1aulyOVL4wE2HyCvLzRG_ZeLkj2vWT6NjtM6eFQia946pHNPRUre1P4MiTonGxZ1FVrlDp_jEZ8M4A
 ```
 
 ``` { .json title="Dukcapil's issuer metadata claims" data-format="JSON" }
@@ -1409,7 +1438,8 @@ eyJ0eXAiOiJvcGVuaWR2Y2ktaXNzdWVyLW1ldGFkYXRhK2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoi
 ```
 
 The wallet pushes its authorization request. Its first attempt carries no
-DPoP nonce, and Dukcapil answers the way BKN's token endpoint did above:
+DPoP nonce, and Dukcapil answers the way BKN's token endpoint did in
+[the Kartu ASN exchange][ts-1-01-the-kartu-asn-through-the-pre-authorized-code-flow]:
 
 ``` { .http title="400, the pushed authorization request asked for a DPoP nonce" data-format="HTTP" }
 HTTP/1.1 400 Bad Request
@@ -1430,7 +1460,7 @@ authorization code to the DPoP key:
 POST /par HTTP/1.1
 Host: issuer.dukcapil.go.id
 Content-Type: application/x-www-form-urlencoded
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiIzTXZmeVU0QmpBNUxDVzEtZzctanJRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL3BhciIsImlhdCI6MTc5MjIxNjY4MCwibm9uY2UiOiIzYXJKa1BjTDZIb1NJdGpYbndtOTZDNWIifQ.7BMBqH_TEDwBz6ggkTyAe22o15U-aSe3k71egAfEloHPOVb8AJA8uz3Hv6sIvufeGG-t3ljHLDvMm_HMkE_80A
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiIzTXZmeVU0QmpBNUxDVzEtZzctanJRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL3BhciIsImlhdCI6MTc5MjIxNjY4MCwibm9uY2UiOiIzYXJKa1BjTDZIb1NJdGpYbndtOTZDNWIifQ.yZK8P_e6NDWDW0P1VfBOw4Nkg4kSqN8ZOyjdYLQ_lgT-OnIakWTXy-d2b2pegMeg8XO4gG8Txgpaq8blg4gZiw
 
 response_type=code&client_id=id.wallet&redirect_uri=https%3A%2F%2Fdompet.co.id%2Fwallet%2Fcb&state=NPWhJ5Ok_Y_lNX7w&code_challenge=1ZN5qntmoz0kzaFPzY1S7Sf7-uhuSmfWRd9S8j2XfSY&code_challenge_method=S256&authorization_details=%5B%7B%22type%22%3A%22openid_credential%22%2C%22credential_configuration_id%22%3A%22id.idctf.ktp.1%3Amdoc%22%7D%5D&issuer_state=VUp0BI5QAzIzYeRILtoC7TTq
 ```
@@ -1487,7 +1517,7 @@ Cache-Control: no-store
 POST /token HTTP/1.1
 Host: issuer.dukcapil.go.id
 Content-Type: application/x-www-form-urlencoded
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiJEekNnRE5objk5VmJNdXRWVndndUV3IiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL3Rva2VuIiwiaWF0IjoxNzkyMjE2NzQwLCJub25jZSI6IkxtNGFRQWNnUzZYRzl4U25YcWF5QWZSYiJ9.WGhbH_0oTfG3otLzPDs0tc5USdduAKIaXUsMjY96dU7od6W2HaqpRKLK2LNBLTAF_TC5pX7RNjKHHwettX41Xg
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiJEekNnRE5objk5VmJNdXRWVndndUV3IiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL3Rva2VuIiwiaWF0IjoxNzkyMjE2NzQwLCJub25jZSI6IkxtNGFRQWNnUzZYRzl4U25YcWF5QWZSYiJ9.2uNYWQKfe48H0UqG8ycErSFa00uX9np1DRdGpVd4ZrYY-jJcTJV33BKo8DqQD6iZswenbvuKy8nXL4XbaGlqgg
 
 grant_type=authorization_code&code=FbUYKg77K-KSHfwtr0cu9xg1&code_verifier=K2TweqCNe2OXhlDw2MyLu3p75hj6eB2LCHL2mvO4C1M&redirect_uri=https%3A%2F%2Fdompet.co.id%2Fwallet%2Fcb&client_id=id.wallet
 ```
@@ -1562,13 +1592,13 @@ POST /credential HTTP/1.1
 Host: issuer.dukcapil.go.id
 Content-Type: application/json
 Authorization: DPoP WpTmPmsFknmKmrZe3PrHdu4ulfxtCsKHcRQzGY8yjuE
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiJVbEdzRnlzbkh5U2tHcDVqOWVQcUtBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2NyZWRlbnRpYWwiLCJpYXQiOjE3OTIyMTY3NTUsIm5vbmNlIjoicU9mV25XZloySDdEenRKQ0t2R01ZYnBRIiwiYXRoIjoianVwMmtmVEhFclVwQnNocWVYVGNZWEtSMFpBZ3ltWjM5LUtMLVpQSU5pdyJ9.QmB8kpHUVPkd9lSeMePxPFnJ5OfoBfgocExVM3WcEy6ySkjfYrLabTJCU63SSC1xXyYM-EGUiU9g_pO7aRwn6w
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiJVbEdzRnlzbkh5U2tHcDVqOWVQcUtBIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2NyZWRlbnRpYWwiLCJpYXQiOjE3OTIyMTY3NTUsIm5vbmNlIjoicU9mV25XZloySDdEenRKQ0t2R01ZYnBRIiwiYXRoIjoianVwMmtmVEhFclVwQnNocWVYVGNZWEtSMFpBZ3ltWjM5LUtMLVpQSU5pdyJ9.FF4jkeO9pbHIdb16HTcbxzn78wwTxtkLWpwngPvz_DpA-RYM8cYSKz312TXSjEIpkZ_YqC9iJNQgTD5-hAdIow
 
 {
   "credential_identifier": "ktp-j8rgoQh6XyyU",
   "proofs": {
     "attestation": [
-      "eyJ0eXAiOiJrZXktYXR0ZXN0YXRpb24rand0IiwiYWxnIjoiRVMyNTYiLCJraWQiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQja2V5LWF0dGVzdGF0aW9uLTEifQ.eyJpc3MiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQiLCJhdHRlc3RlZF9rZXlzIjpbeyJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6IjNDT2h4T2VPeHBCT2pVSmdxV1NBVTBRQUFZYVlndWdQVkpfMlgycUdka2MiLCJ5IjoiMms5ODg1NHBCNzd1ZGRSdmU4TzRrZzVuSVBUN0VqRWdwYmVLcVdMdU1FRSJ9XSwia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiXSwiY2VydGlmaWNhdGlvbiI6Imh0dHBzOi8vZG9tcGV0LmNvLmlkL2NlcnRpZmljYXRpb24vc2UtMjAyNi1hIiwibm9uY2UiOiJwdXVtaXhrbmlhNUEiLCJpYXQiOjE3OTIyMTY3NTAsImV4cCI6MTc5MjMwMzE1MH0.6YcjS64cN0MWd4Fr2yhA90hC5kGJ5_NKgAoASOnYkDYAcW9RnIB8Uf9Q95DsaAxHWrXDLuWJT91tmWu2nD8lAQ"
+      "eyJ0eXAiOiJrZXktYXR0ZXN0YXRpb24rand0IiwiYWxnIjoiRVMyNTYiLCJraWQiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQja2V5LWF0dGVzdGF0aW9uLTEifQ.eyJpc3MiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQiLCJhdHRlc3RlZF9rZXlzIjpbeyJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6IjNDT2h4T2VPeHBCT2pVSmdxV1NBVTBRQUFZYVlndWdQVkpfMlgycUdka2MiLCJ5IjoiMms5ODg1NHBCNzd1ZGRSdmU4TzRrZzVuSVBUN0VqRWdwYmVLcVdMdU1FRSJ9XSwia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiXSwiY2VydGlmaWNhdGlvbiI6Imh0dHBzOi8vZG9tcGV0LmNvLmlkL2NlcnRpZmljYXRpb24vc2UtMjAyNi1hIiwibm9uY2UiOiJwdXVtaXhrbmlhNUEiLCJpYXQiOjE3OTIyMTY3NTAsImV4cCI6MTc5MjMwMzE1MH0.ZrVqqTXkABk-YDxAz1FP-p8MdEXRgg_HQ6xoHy-g3M-NqJ2pKeAWBHZ7snmDG-4QZE_WI7Bvb86ybtN06oBAFA"
     ]
   }
 }
@@ -1598,7 +1628,7 @@ POST /deferred_credential HTTP/1.1
 Host: issuer.dukcapil.go.id
 Content-Type: application/json
 Authorization: DPoP WpTmPmsFknmKmrZe3PrHdu4ulfxtCsKHcRQzGY8yjuE
-DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiIwY0tJZUVKeGhCWHdsTXhjYjBHeEhRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJpYXQiOjE3OTIyMTY4MTUsIm5vbmNlIjoiaVdHV2xvTU1yWFpLLXhFV2Z1eXpMSHVnIiwiYXRoIjoianVwMmtmVEhFclVwQnNocWVYVGNZWEtSMFpBZ3ltWjM5LUtMLVpQSU5pdyJ9.aQVQFJZfu4at-isXEwjXOlVrvcXjlSpycYMewqwt2ToqR3YqSv-AX0I6xK2ELmPGuPgZ9NLkIhFknwE36LGgRA
+DPoP: eyJ0eXAiOiJkcG9wK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiRm5XVm9nZnpLem1HX1lPQ21FY2VoSnZaVFM0YlJ6Z21qeXBNMjRCUVoycyIsInkiOiJIN2l5RGpRMGR3U25OOExKZUtXRmlRcHdCLVBJYWVtaldNWmsySXZ3RndNIn19.eyJqdGkiOiIwY0tJZUVKeGhCWHdsTXhjYjBHeEhRIiwiaHRtIjoiUE9TVCIsImh0dSI6Imh0dHBzOi8vaXNzdWVyLmR1a2NhcGlsLmdvLmlkL2RlZmVycmVkX2NyZWRlbnRpYWwiLCJpYXQiOjE3OTIyMTY4MTUsIm5vbmNlIjoiaVdHV2xvTU1yWFpLLXhFV2Z1eXpMSHVnIiwiYXRoIjoianVwMmtmVEhFclVwQnNocWVYVGNZWEtSMFpBZ3ltWjM5LUtMLVpQSU5pdyJ9.EicbSUChl_XTYhqQI3RGOimEmd2txEZQHisytMvrtZvBIKGKVcEJwb323SsvqModqxxvT1VTZTXq0Jmnwf4rng
 
 {
   "transaction_id": "QicBL_TslEJHsBAIeYHh"
@@ -1817,38 +1847,6 @@ object rather than a string:
                 "locale": "en"
               }
             ]
-          },
-          {
-            "path": [
-              "credentialSubject",
-              "foto_suami"
-            ],
-            "display": [
-              {
-                "name": "Foto Suami",
-                "locale": "id"
-              },
-              {
-                "name": "Husband's Photo",
-                "locale": "en"
-              }
-            ]
-          },
-          {
-            "path": [
-              "credentialSubject",
-              "foto_istri"
-            ],
-            "display": [
-              {
-                "name": "Foto Istri",
-                "locale": "id"
-              },
-              {
-                "name": "Wife's Photo",
-                "locale": "en"
-              }
-            ]
           }
         ]
       }
@@ -1886,9 +1884,7 @@ Content-Type: application/json
           "nomor_akta_nikah": "0123/0007/V/2025",
           "kua": "KUA Kec. Cibinong",
           "kabupaten_kota": "Kabupaten Bogor",
-          "provinsi": "Jawa Barat",
-          "foto_suami": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==",
-          "foto_istri": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q=="
+          "provinsi": "Jawa Barat"
         },
         "credentialStatus": [
           {
@@ -1917,7 +1913,7 @@ Content-Type: application/json
           "created": "2026-10-17T06:00:10Z",
           "verificationMethod": "did:webvh:QmbAb7u9RMjqsZ9L98pe47szJZdnKQLh9KizqNW2WwKac1:kemenag.go.id#issuance-jose-1",
           "proofPurpose": "assertionMethod",
-          "proofValue": "z23RrsniSuQSX6EgQ5VByC1PYJhY8P9TFupfVXiJoiaaEqdDKYrXj36hFVXaUUinQVoRNfLrWGodfjWM9XCqRaQao"
+          "proofValue": "z3JTvebTQCkzF6G4dX57mTnykwTtDGWD1gBCfBjzpWmkx2PdTocdowomBTR7Qzaef1L34erTcPA16ArhQhiNxS5UW"
         }
       }
     }
@@ -1956,7 +1952,7 @@ wallet learns its address, and the clause that fixes it.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-1-01-003 }**REQ-TS-1-01-003** Issuer Core MUST serve every endpoint of [the table of endpoints][tbl-ts-1-01-endpoints] over HTTP with Transport Layer Security (TLS) only.
-- [](){ #req-ts-1-01-004 }**REQ-TS-1-01-004** Issuer Core MUST serve every endpoint of that table at an address a wallet on the public internet can reach.
+- [](){ #req-ts-1-01-004 }**REQ-TS-1-01-004** Issuer Core MUST serve every endpoint of [the table of endpoints][tbl-ts-1-01-endpoints] at an address a wallet on the public internet can reach.
 - [](){ #req-ts-1-01-005 }**REQ-TS-1-01-005** The credential issuer identifier MUST be an `https` address with a host and no path, query, or fragment.
 - [](){ #req-ts-1-01-006 }**REQ-TS-1-01-006** Issuer Core MUST carry a `Cache-Control: no-store` header on every answer that carries an offer, a code, a token, a nonce, or a credential.
 - [](){ #req-ts-1-01-007 }**REQ-TS-1-01-007** Issuer Core MUST NOT call Mobile Wallet, because [nothing calls the wallet][who-may-call-whom]: every exchange of this specification starts at the wallet.
@@ -1968,8 +1964,7 @@ wallet learns its address, and the clause that fixes it.
 The credential issuer metadata tells a wallet where each endpoint is and what
 the issuer issues, in what representation, and against what proof. Issuer
 Core serves it as [OpenID4VCI][ref-openid4vci] section 12.2 defines, and signs
-it, so that the wallet can tell which DID stands behind the address it was
-handed before it asks for anything.
+it, as [Signed metadata][ts-1-01-signed-metadata] sets out.
 
 ### Members {#ts-1-01-metadata-members}
 
@@ -1999,7 +1994,7 @@ top-level member Issuer Core writes, and the ones it leaves out.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-1-01-008 }**REQ-TS-1-01-008** Issuer Core MUST write every member [the table of metadata members][tbl-ts-1-01-metadata-members] marks present.
-- [](){ #req-ts-1-01-009 }**REQ-TS-1-01-009** Issuer Core MUST NOT write a member that table marks absent.
+- [](){ #req-ts-1-01-009 }**REQ-TS-1-01-009** Issuer Core MUST NOT write a member [the table of metadata members][tbl-ts-1-01-metadata-members] marks absent.
 - [](){ #req-ts-1-01-010 }**REQ-TS-1-01-010** `credential_issuer` MUST equal the credential issuer identifier the metadata was fetched under.
 
 </div>
@@ -2009,10 +2004,10 @@ top-level member Issuer Core writes, and the ones it leaves out.
 A credential configuration is one representation of one type. A type whose
 Credential Rulebook names SD-JWT VC and mdoc has two, and a wallet asks for
 both, because a credential held in one representation alone cannot be shown
-in both modes. The identifier of a configuration is the Rulebook's `id`, a
-colon, and the name the Rulebook gives the representation under `formats`, so
-that every issuer of a type names its configurations the same way and a
-wallet finds the Rulebook from the identifier alone.
+in both modes. The identifier of a configuration is composed as
+[REQ-TS-1-01-012][req-ts-1-01-012] fixes, so every issuer of a type names its
+configurations the same way, and a wallet finds the Rulebook from the
+identifier alone.
 
 [](){ #tbl-ts-1-01-configuration-members }
 
@@ -2026,7 +2021,7 @@ wallet finds the Rulebook from the identifier alone.
 | `credential_definition` | object | Present for `ldp_vc` | `@context` and `type`, the values the issued credential carries |
 | `cryptographic_binding_methods_supported` | array | Present | `jwk` for `dc+sd-jwt`, `cose_key` for `mso_mdoc`, `did:key` for `ldp_vc` |
 | `credential_signing_alg_values_supported` | array | Present | The algorithms Issuer Core signs the representation with |
-| `proof_types_supported` | object | Present | The proof types of [the proof types by assurance level][tbl-ts-1-01-proof-types], each with `proof_signing_alg_values_supported` and `key_attestations_required` |
+| `proof_types_supported` | object | Present | The proof types the Governance Profile maps from the Rulebook's `min_assurance`, each with `proof_signing_alg_values_supported` and `key_attestations_required` |
 | `credential_metadata` | object | Present | `display` and `claims`, copied from the Type Metadata |
 | `scope` | string | Absent | None: a wallet asks through `authorization_details` |
 
@@ -2035,29 +2030,18 @@ wallet finds the Rulebook from the identifier alone.
 For `ldp_vc`, `credential_signing_alg_values_supported` carries the
 cryptosuite name, `ecdsa-rdfc-2019`. Appendix A.1.2.2 of
 [OpenID4VCI][ref-openid4vci] says the value should come from a registry of
-linked data signature suites that has not changed since 2020 and names no
-Data Integrity cryptosuite, so the profile takes the name the credential's own
-`proof.cryptosuite` carries, the way OpenID4VCI's `di_vp` proof type and the
+linked data signature suites. That registry has not changed since 2020 and names
+no Data Integrity cryptosuite, so the profile takes the name the credential's own
+`proof.cryptosuite` carries. OpenID4VCI's `di_vp` proof type and the
 `cryptosuite_values` of
-[OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp] already
-name one.
+[OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp] name one
+the same way.
 
 The proof types an issuer accepts follow from the Rulebook's `min_assurance`,
-and so do the values it requires of a Key Attestation, which the Governance
-Profile maps as [the mapping of assurance to key storage][tbl-min-assurance-mapping]
-sets out.
-
-[](){ #tbl-ts-1-01-proof-types }
-
-<figure markdown="1" class="ekdn-table">
-
-| `min_assurance` | Proof types announced |
-|---|---|
-| `high` | `attestation` |
-| `substantial` | `jwt` and `attestation` |
-| `low` | `jwt` and `attestation` |
-
-</figure>
+and so do the values it requires of a Key Attestation. The Governance Profile
+holds both, in one member per level under `mappings.min_assurance`, which
+[Mappings][ts-02-mappings] lists and
+[the mapping of assurance to key storage][tbl-min-assurance-mapping] explains.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -2065,25 +2049,27 @@ sets out.
 - [](){ #req-ts-1-01-012 }**REQ-TS-1-01-012** The identifier of a credential configuration MUST be the Rulebook's `id`, a colon, and the name of the representation under `formats`.
 - [](){ #req-ts-1-01-013 }**REQ-TS-1-01-013** A credential configuration MUST carry the members [the table of configuration members][tbl-ts-1-01-configuration-members] marks present for its `format`, with the values that table gives, and no member it marks absent.
 - [](){ #req-ts-1-01-014 }**REQ-TS-1-01-014** `credential_signing_alg_values_supported` MUST list only algorithms the Governance Profile allows for an issuance key, written as the `alg` names of [RFC 7518][ref-rfc7518] for `dc+sd-jwt`, as the algorithm numbers of [RFC 9053][ref-rfc9053] for `mso_mdoc`, and as the cryptosuite name for `ldp_vc`.
-- [](){ #req-ts-1-01-015 }**REQ-TS-1-01-015** `proof_types_supported` MUST name the proof types [the proof types by assurance level][tbl-ts-1-01-proof-types] gives for the Rulebook's `min_assurance`, and no other.
+- [](){ #req-ts-1-01-015 }**REQ-TS-1-01-015** `proof_types_supported` MUST name the proof types the Governance Profile holds under `mappings.min_assurance` for the Rulebook's `min_assurance`, and no other.
 - [](){ #req-ts-1-01-016 }**REQ-TS-1-01-016** Each proof type MUST carry `key_attestations_required` with the `key_storage` and `user_authentication` values the Governance Profile maps from the Rulebook's `min_assurance`.
 - [](){ #req-ts-1-01-017 }**REQ-TS-1-01-017** For the `attestation` proof type, `proof_signing_alg_values_supported` MUST list only algorithms the Governance Profile allows for a Key Attestation key.
 - [](){ #req-ts-1-01-018 }**REQ-TS-1-01-018** For the `jwt` proof type, `proof_signing_alg_values_supported` MUST list only algorithms the Governance Profile allows for a credential key or for a Key Attestation key, because the proof and the attestation in its header are each checked against it.
-- [](){ #req-ts-1-01-019 }**REQ-TS-1-01-019** Issuer Core MUST copy `credential_metadata.display` and the `display` of each claim from the Type Metadata the Rulebook's `display` points at, and add nothing: the type's name and description per locale, the logo, background color and text color of `display[].rendering.simple`, and each attribute's label as the claim's display `name`.
+- [](){ #req-ts-1-01-019 }**REQ-TS-1-01-019** Issuer Core MUST copy `credential_metadata.display` and the `display` of each claim from the Type Metadata the Rulebook's `display` points at, and add nothing: the type's name and description per locale, the logo, background color, and text color of `display[].rendering.simple`, and each attribute's label as the claim's display `name`.
 - [](){ #req-ts-1-01-020 }**REQ-TS-1-01-020** Issuer Core MUST write `credential_metadata.claims` with one claim for each claim of the Type Metadata, carrying its `path` as [REQ-CR-074][req-cr-074] and [REQ-CR-075][req-cr-075] form it and, where the Type Metadata sets it, its `mandatory`.
-- [](){ #req-ts-1-01-143 }**REQ-TS-1-01-143** In the `mso_mdoc` configuration of a type whose Rulebook lists both `sd-jwt-vc` and `mdoc`, Issuer Core MUST put the namespace in front of each claim's `path`, the Rulebook's `id` or the `namespace` its `mdoc` entry names, so that the path is the claims path pointer [OpenID4VCI][ref-openid4vci] defines for an mdoc; this is the one addition [REQ-TS-1-01-019][req-ts-1-01-019] allows.
+- [](){ #req-ts-1-01-143 }**REQ-TS-1-01-143** In the `mso_mdoc` configuration of a type whose Rulebook lists both `sd-jwt-vc` and `mdoc`, Issuer Core MUST put the namespace in front of each claim's `path`, the Rulebook's `id` or the `namespace` its `mdoc` entry names, so that the path is the claims path pointer [OpenID4VCI][ref-openid4vci] defines for an mdoc.
 
 </div>
+
+That namespace is the one addition [REQ-TS-1-01-019][req-ts-1-01-019] allows.
 
 ### Signed metadata {#ts-1-01-signed-metadata}
 
 Issuer Core signs its metadata as a JSON Web Token (JWT), the form
 [OpenID4VCI][ref-openid4vci] section 12.2.3 defines, with its `issuance-jose`
-key, the key it signs an SD-JWT VC and an `ldp_vc` with. The token names its key the way every token an
-issuer signs does, as [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
-fixes, and that is what ties the address to the DID: an issuer that can sign
-metadata for an address is the issuer behind it. A wallet asks for the signed
-form and takes no other.
+key, the key it signs an SD-JWT VC and an `ldp_vc` with. The token names its key
+the way every token an issuer signs does, as
+[Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
+fixes. An issuer that can sign metadata for an address is the issuer behind it,
+and a wallet asks for the signed form and takes no other.
 
 [](){ #tbl-ts-1-01-metadata-header }
 
@@ -2226,8 +2212,8 @@ In the Authorization Code flow the wallet pushes its authorization request
 to the issuer directly, as [RFC 9126][ref-rfc9126] defines, and the browser
 carries nothing but the reference to it. The request asks for each
 configuration of the offer through `authorization_details`, the structure
-[RFC 9396][ref-rfc9396] defines, carries a PKCE challenge, and is signed for
-with a DPoP proof, which binds the authorization code to the wallet's DPoP
+[RFC 9396][ref-rfc9396] defines, and carries a PKCE challenge. The wallet sends a DPoP proof
+with the request. That binds the authorization code to the wallet's DPoP
 key, as section 10.1 of [RFC 9449][ref-rfc9449] defines. The authorization
 response names the issuer that sent it, as [RFC 9207][ref-rfc9207] defines, so
 that a wallet talking to many issuers cannot be handed one issuer's code by
@@ -2322,8 +2308,8 @@ is of no use to anyone without that key.
 - [](){ #req-ts-1-01-073 }**REQ-TS-1-01-073** Issuer Core MUST bind every access token and every refresh token to the key of the DPoP proof sent with the token request.
 - [](){ #req-ts-1-01-074 }**REQ-TS-1-01-074** Issuer Core MUST answer a token request with `token_type` `DPoP` and the members [the table of token response members][tbl-ts-1-01-token-response] gives.
 - [](){ #req-ts-1-01-075 }**REQ-TS-1-01-075** Issuer Core MUST give an access token the lifetime the Governance Profile sets.
-- [](){ #req-ts-1-01-146 }**REQ-TS-1-01-146** Issuer Core MUST NOT end a refresh token for its age before the administrative validity period of the credential it was issued for ends.
-- [](){ #req-ts-1-01-147 }**REQ-TS-1-01-147** Issuer Core MUST refuse a refresh token once the administrative validity period of the credential it was issued for has ended.
+- [](){ #req-ts-1-01-146 }**REQ-TS-1-01-146** Issuer Core MUST NOT end a refresh token for its age before the administrative validity period of the credential it was issued for ends, where the type has one.
+- [](){ #req-ts-1-01-147 }**REQ-TS-1-01-147** Issuer Core MUST refuse a refresh token once the administrative validity period of the credential it was issued for has ended, where the type has one.
 - [](){ #req-ts-1-01-148 }**REQ-TS-1-01-148** Issuer Core MUST refuse a refresh token once the inactivity period the Governance Profile sets has passed since the end of the technical validity period of the latest credential issued under it.
 - [](){ #req-ts-1-01-076 }**REQ-TS-1-01-076** Issuer Core MUST issue a refresh token with every access token it issues for an authorization code or a pre-authorized code.
 - [](){ #req-ts-1-01-077 }**REQ-TS-1-01-077** Issuer Core MUST answer with one `authorization_details` entry for each configuration the authorization covers, each carrying exactly one credential identifier.
@@ -2337,13 +2323,15 @@ Every request a wallet sends to the pushed authorization request endpoint, the
 token endpoint, the credential endpoint, the deferred credential endpoint, and
 the notification endpoint carries a DPoP proof, as [RFC 9449][ref-rfc9449]
 defines it. The key that signs it is the wallet's DPoP key for that issuer:
-neither the credential key, which only the citizen's authentication
-releases and which signs presentations, nor the device key, which the Wallet
-Backend Service alone knows. Renewal runs without the citizen, so the key that
-signs its DPoP proofs cannot be one that asks for the citizen, as
-[the DPoP key][the-dpop-key] sets out. A wallet makes one DPoP key for each issuer, keeps it as long as
-it holds a refresh token from that issuer, and signs nothing else with it.
-That is what keeps renewal on the phone that received the refresh token, as
+not the credential key, which only the citizen's authentication releases and
+which signs presentations, and not the device key, which the Wallet Backend
+Service alone knows.
+
+Renewal runs without the citizen, so the key that signs its DPoP proofs
+cannot be one that asks for the citizen, as [the DPoP key][the-dpop-key] sets
+out. A wallet makes one DPoP key for each issuer, keeps it as long as it
+holds a refresh token from that issuer, and signs nothing else with it, which
+keeps renewal on the phone that received the refresh token, as
 [credential renewal][credential-renewal] requires.
 
 Issuer Core hands out the nonce each proof carries, in the `DPoP-Nonce` header,
@@ -2457,7 +2445,7 @@ stops at the first that fails.
 - [](){ #req-ts-1-01-103 }**REQ-TS-1-01-103** Issuer Core MUST refuse with `invalid_proof` a request whose `proofs` carries more than one member, or an array of more than one proof.
 - [](){ #req-ts-1-01-104 }**REQ-TS-1-01-104** Issuer Core MUST issue every representation asked for under one access token as one credential, as [REQ-TS-5-10-007][req-ts-5-10-007] to [REQ-TS-5-10-010][req-ts-5-10-010] require.
 - [](){ #req-ts-1-01-105 }**REQ-TS-1-01-105** Issuer Core MUST refuse with `invalid_proof` a credential request whose attested key differs from the key of a representation it already issued under the same access token.
-- [](){ #req-ts-1-01-106 }**REQ-TS-1-01-106** Issuer Core MUST refuse with `invalid_credential_request` a request for a credential identifier it already answered with a credential under the same grant.
+- [](){ #req-ts-1-01-106 }**REQ-TS-1-01-106** Issuer Core MUST refuse with `invalid_credential_request` a request for a credential identifier it already answered with a credential under the same access token.
 
 </div>
 
@@ -2506,20 +2494,21 @@ members][tbl-ts-1-01-response-members] gives both forms, and
 
 ## Deferred issuance {#ts-1-01-deferred-issuance}
 
-A source system that cannot answer in time is not a refusal. Issuer Core
-answers `202` with a transaction identifier, the wallet asks again at the
-deferred credential endpoint, and the issuer never calls the wallet to say the
-credential is ready, as [who may call whom][who-may-call-whom] fixes. A record
-that is not there, or that does not meet the conditions of the type, is a
-refusal, and the [Errors][ts-1-01-errors] clause gives its answer. A refused
-citizen has to go to the institution, while a deferred one only has to wait,
-so a refusal and a deferral never look alike. A renewal of a credential whose
-entry is suspended is deferred in the same way: the suspended citizen only has
-to wait, and a refusal would send the wallet into a new Authorization Code
-issuance that bypasses the suspension. A wait longer than the lifetime of a
-deferred request ends with `credential_request_denied`, and the wallet starts
-renewal again as [REQ-TS-1-01-127][req-ts-1-01-127] requires. A suspension that ends in revocation ends the refresh token too, so the
-wallet falls back to a new issuance through the Authorization Code flow.
+A source system that cannot answer in time is not a refusal. Issuer Core answers
+`202` with a transaction identifier, the wallet asks again at the deferred
+credential endpoint, and the issuer never calls the wallet to say the credential
+is ready, as [who may call whom][who-may-call-whom] fixes. A record that is not
+there, or that does not meet the conditions of the type, is a refusal, and the
+[Errors][ts-1-01-errors] clause gives its answer. A refused citizen has to go to
+the institution, while a deferred one only has to wait, so a refusal and a
+deferral never look alike.
+
+A renewal of a credential whose entry is suspended is
+deferred in the same way: the suspended citizen only has to wait, and a refusal
+would send the wallet into a new Authorization Code issuance that bypasses the
+suspension. A wait longer than the lifetime of a deferred request ends with
+`credential_request_denied`, and the wallet starts renewal again as
+[REQ-TS-1-01-127][req-ts-1-01-127] requires.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -2531,8 +2520,10 @@ wallet falls back to a new issuance through the Authorization Code flow.
 - [](){ #req-ts-1-01-117 }**REQ-TS-1-01-117** Issuer Core MUST answer a deferred credential request with `200` and the credential, or with `202` and the same `transaction_id` and an `interval`, or with an error.
 - [](){ #req-ts-1-01-118 }**REQ-TS-1-01-118** Issuer Core MUST invalidate a transaction identifier once it has answered it with the credential.
 - [](){ #req-ts-1-01-119 }**REQ-TS-1-01-119** Issuer Core MUST answer `credential_request_denied` to a deferred request that has stayed open longer than the lifetime the Governance Profile sets.
-- [](){ #req-ts-1-01-151 }**REQ-TS-1-01-151** Issuer Core MUST answer a credential request of a renewal with `202`, `transaction_id` and `interval` while the entry of the credential it replaces is suspended, and MUST NOT issue the renewal until that entry is valid again.
-- [](){ #req-ts-1-01-152 }**REQ-TS-1-01-152** Issuer Core MUST answer `credential_request_denied` to a deferred request of a renewal when the entry of the credential it replaces has become invalid, and MUST revoke the refresh token the renewal was made under.
+- [](){ #req-ts-1-01-151 }**REQ-TS-1-01-151** Issuer Core MUST answer a credential request of a renewal with `202`, `transaction_id`, and `interval` while the entry of the credential it replaces is suspended.
+- [](){ #req-ts-1-01-155 }**REQ-TS-1-01-155** Issuer Core MUST NOT issue a renewal until the entry of the credential it replaces is valid again.
+- [](){ #req-ts-1-01-152 }**REQ-TS-1-01-152** Issuer Core MUST answer `credential_request_denied` to a deferred request of a renewal when the entry of the credential it replaces has become invalid.
+- [](){ #req-ts-1-01-156 }**REQ-TS-1-01-156** Issuer Core MUST revoke the refresh token a renewal was made under when the entry of the credential it replaces has become invalid.
 - [](){ #req-ts-1-01-120 }**REQ-TS-1-01-120** Mobile Wallet MUST stop asking after an answer of `credential_request_denied` or `invalid_transaction_id`.
 
 </div>
@@ -2561,37 +2552,46 @@ A credential is renewed before its `exp` without the citizen, as
 refresh token for a new access token and asks for each representation again,
 each time with a new nonce and a new Key Attestation sent as the proof itself,
 and Issuer Core reads the claims again and signs a new credential for the same
-credential key. The `attestation` proof type is what lets renewal run with the
+credential key. The `attestation` proof type lets renewal run with the
 citizen away: a `jwt` proof is signed with the credential key, and only the
-citizen's authentication releases it. The same path brings a replacement
-after the issuer's key was revoked, as
+citizen's authentication releases it.
+
+The same path brings a replacement after the issuer's key was revoked, as
 [entity key revocation][entity-key-revocation] sets out, where the credential
 replaced was revoked with the key. Any other revocation ends the refresh
 token with the credential, so a credential revoked for cause is never renewed
 and the citizen goes through a new issuance. A credential renewed because its `exp` is
-near is not revoked; it runs out at its own `exp`. The Governance Profile sets one
-lead time for every credential, while an issuer may sign one that is valid for
-a day, so the wallet starts at the later of that lead time before `exp` and the
-middle of the technical period, and never renews for its `exp` a credential
-whose `exp` is already the end of its administrative period, which no renewal
-can pass.
+near is not revoked; it runs out at its own `exp`. The renewal therefore takes
+an index of its own in the credential status list, because the credential it
+replaces holds its own entry until then and may be revoked on its own, as it is
+when the issuer's signing key is revoked.
+
+The Governance Profile sets one lead time for every credential, while an
+issuer may sign one that is valid for a day. The wallet therefore starts at
+the later of that lead time before `exp` and the middle of the technical
+period. It never renews for its `exp` a credential whose `exp` is already the
+end of its administrative period, which no renewal can pass.
 
 A refresh token lives as long as the administrative validity period of its
-credential, as [expiry and validity periods][expiry-and-validity-periods]
-sets that period apart from the technical one, and runs out sooner only when
-the wallet does not come back for it. The inactivity period the Governance
-Profile sets counts from the end of the technical validity period of the
-latest credential issued under the token, the moment the wallet is due back,
-and not from the token's last use, which for a credential valid for years
-lies years back. The trust a fresh sign-in would give comes from
-elsewhere: the token works only with the DPoP key on the phone that received
-it, and every renewal carries a new Key Attestation for the same credential
-key, which Wallet Backend Service no longer issues once it has revoked the
-installation, as [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-fixes. That is why IDCTF does not follow the advice of HAIP
-1.0 against refreshing more than a year after issuance: a credential whose
-administrative period runs for years would otherwise send the citizen back to
-sign in once a year for no added assurance.
+credential, as [expiry and validity periods][expiry-and-validity-periods] sets
+that period apart from the technical one, and runs out sooner only when the
+wallet does not come back for it. Where the type has no administrative period,
+nothing ends the token for its age and the inactivity period alone bounds it.
+
+The inactivity period the Governance Profile sets counts from the end of the
+technical validity period of the latest credential issued under the token, the
+moment the wallet is due back, and not from the token's last use, which for a
+credential valid for years lies years back.
+
+The trust a fresh sign-in would give
+comes from elsewhere: the token works only with the DPoP key on the phone that
+received it, and every renewal carries a new Key Attestation for the same
+credential key, which Wallet Backend Service no longer issues once it has
+revoked the installation, as
+[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+fixes. A credential whose administrative period runs for years would
+otherwise send the citizen back to sign in once a year for no added
+assurance.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -2605,6 +2605,7 @@ sign in once a year for no added assurance.
 - [](){ #req-ts-1-01-130 }**REQ-TS-1-01-130** Issuer Core MUST read the claims from its source system again for a renewal.
 - [](){ #req-ts-1-01-131 }**REQ-TS-1-01-131** Issuer Core MUST NOT copy the claims of a renewal from the credential it replaces.
 - [](){ #req-ts-1-01-132 }**REQ-TS-1-01-132** Issuer Core MUST NOT revoke a credential because it issued its renewal.
+- [](){ #req-ts-1-01-154 }**REQ-TS-1-01-154** Issuer Core MUST allocate a renewal its own index.
 - [](){ #req-ts-1-01-153 }**REQ-TS-1-01-153** Issuer Core MUST revoke the refresh token of a credential when it sets that credential's entry to invalid, unless the credential was revoked with the issuer's key.
 - [](){ #req-ts-1-01-133 }**REQ-TS-1-01-133** Mobile Wallet MUST NOT present a refresh token again after the token endpoint refused it with `invalid_grant`.
 - [](){ #req-ts-1-01-134 }**REQ-TS-1-01-134** Mobile Wallet MUST start a new issuance through the Authorization Code flow to replace a credential whose refresh token was refused.
@@ -2614,7 +2615,7 @@ sign in once a year for no added assurance.
 ## Errors {#ts-1-01-errors}
 
 An endpoint that does not carry out a request answers with an error object as
-[OpenID4VCI][ref-openid4vci], [RFC 6749][ref-rfc6749] and
+[OpenID4VCI][ref-openid4vci], [RFC 6749][ref-rfc6749], and
 [RFC 9449][ref-rfc9449] define one, with `error` holding a code and an
 optional `error_description`. The codes come from those documents, not from
 IDCTF, so the answers keep the form a wallet from outside IDCTF expects.
@@ -2686,14 +2687,12 @@ Content-Type: application/json
 
 ## Security considerations {#ts-1-01-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **An offer from an issuer that is not accredited.** The wallet takes signed
   metadata only, finds the signer's DID from it, and checks the trusted list
   and the Authority Statement before the citizen types a code or signs in,
   [REQ-TS-1-01-028][req-ts-1-01-028],
   [REQ-TS-1-01-032][req-ts-1-01-032],
-  [REQ-TS-1-01-033][req-ts-1-01-033] and
+  [REQ-TS-1-01-033][req-ts-1-01-033], and
   [REQ-TS-1-01-035][req-ts-1-01-035].
 - **An address that claims an accredited issuer's DID.** Only the holder of
   that issuer's `issuance-jose` key can sign metadata naming its DID for the
@@ -2721,7 +2720,7 @@ Each threat below is answered by the requirement named with it.
 - **A stolen access token or refresh token.** Every token is bound to a DPoP
   key that never leaves the installation,
   [REQ-TS-1-01-073][req-ts-1-01-073],
-  [REQ-TS-1-01-082][req-ts-1-01-082] and
+  [REQ-TS-1-01-082][req-ts-1-01-082], and
   [REQ-TS-1-01-090][req-ts-1-01-090], and a proof cannot be
   made ahead of time or replayed,
   [REQ-TS-1-01-086][req-ts-1-01-086] and
@@ -2752,14 +2751,14 @@ Each threat below is answered by the requirement named with it.
 
 ## Privacy considerations {#ts-1-01-privacy-considerations}
 
-An issuer learns which Wallet Provider a citizen uses, from the Key
-Attestation, and the credential key, which it writes into the credential. It
-learns no identifier of the installation or the device, as
+An issuer learns which Wallet Provider a citizen uses, from the Key Attestation,
+and the credential key, which it writes into the credential. It learns no
+identifier of the installation or the device, as
 [What it does not carry][ts-5-08-what-it-does-not-carry] in TS-5-08 fixes. The
-DPoP key is one per issuer, so it gives two issuers nothing to compare; the
+DPoP key is one per issuer, so it gives two issuers nothing to compare. The
 credential key is the same at every issuer, as
-[the credential key][the-credential-key] accepts, and a DPoP key per issuer
-adds no link of its own.
+[the credential key][the-credential-key] accepts, and a DPoP key per issuer adds
+no link of its own.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -2779,6 +2778,6 @@ contacts the wallet, [REQ-TS-1-01-007][req-ts-1-01-007].
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

@@ -12,8 +12,7 @@ description: The two Trust Registry Query Protocol endpoints Trust Registry answ
 <p class="ekdn-lead" markdown="span">
 Trust Registry answers two questions on request, whether an entity may do
 something and whether another ecosystem's authority is recognized, and
-publishes the catalog of Credential Rulebooks as files. This specification
-fixes the endpoints, the answers, the errors, and the catalog.
+publishes the catalog of Credential Rulebooks as files.
 </p>
 
 Every sentence on this page binds Trust Registry, Trust Authority, and every
@@ -24,42 +23,56 @@ puts in force. The key words and the identifier `REQ-TS-4-02-nnn` follow
 
 ## Who runs this and what it needs {#ts-4-02-who-runs-this-and-what-it-needs}
 
-This specification binds the interface of Trust Registry: the two endpoints
-of the Trust Registry Query Protocol (TRQP) v2.0, `authorization` and
-`recognition`, as Trust Registry runs them; the answer to a recognition
-query and the signature on it; the errors either endpoint returns; the
-catalog of Credential Rulebooks and the checks a proposed Rulebook passes
-before review; and where each artifact Trust Registry publishes can be
-fetched.
+This specification binds the interface of Trust Registry:
 
-Its conformance targets are Trust Registry, which answers the queries and
-publishes the catalog; Trust Authority, which records each recognition and
-signs each recognition answer and each catalog list; and the four Modules
-that ask Trust Registry a question or read its catalog: Issuer Core,
-Verifier Core, Mobile Wallet, and Mobile Verifier. A reader meets its
-requirements through Trust SDK where the library performs the check.
+- The two endpoints of the Trust Registry Query Protocol (TRQP) v2.0,
+  `authorization` and `recognition`, as Trust Registry runs them.
+- The answer to a recognition query and the signature on it.
+- The errors either endpoint returns.
+- The catalog of Credential Rulebooks and the checks a proposed Rulebook
+  passes before review.
+- Where each artifact Trust Registry publishes can be fetched.
 
-It leaves to other documents: the answer to an authorization query, its
-signature and its lifetime, which
-[Answering with an Authority Statement](answering-with-an-authority-statement.md)
-holds; [which foreign authority is recognized, for what, and on what terms, which the Governance Framework holds][gf-recognition]; the address of each endpoint and of
-the catalog, the actions admitted, the signature algorithms allowed, the
-lifetime of each answer and of the catalog list, the tolerance limit, and
-the rate limit, which the Governance Profile holds; what a Rulebook
-contains and how its vocabulary is named, which the
-[Credential Rulebook Catalog](../credential-rulebook/index.md) holds; and
-each artifact served from a distribution point, which the specification
-that defines it holds.
+Its conformance targets are:
+
+- Trust Registry, which answers the queries and publishes the catalog.
+- Trust Authority, which records each recognition and signs each recognition
+  answer and each catalog list.
+- The four Modules that ask Trust Registry a question or read its catalog:
+  Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier.
+
+A reader meets its requirements through Trust SDK where the library performs
+the check.
+
+It leaves to other documents:
+
+- The answer to an authorization query, its signature, and its lifetime,
+  which
+  [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  holds.
+- [Which foreign authority is recognized, for what, and on what terms][gf-recognition],
+  which the Governance Framework holds.
+- The address of each endpoint and of the catalog, the actions admitted, the
+  signature algorithms allowed, the lifetime of each answer and of the catalog
+  list, the tolerance limit, and the rate limit, which the Governance Profile
+  holds.
+- What a Rulebook contains and how its vocabulary is named, which the
+  [Credential Rulebook Catalog](../credential-rulebook/index.md) holds.
+- Each artifact served from a distribution point, which the specification
+  that defines it holds.
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Trust Registry** holds the Root Authority's authorization and
-  recognition decisions with their history, and every published Rulebook
-  version. It reaches the recognition statement key and the catalog key
-  through Trust Authority, whose Certificate Authority Component signs with
-  both; it holds no private key of its own. Its query endpoint sits in the
-  public zone, as [network zones and placement][network-zones-and-placement]
-  sets out.
+- **Trust Registry** holds:
+    - Its copy of the Root Authority's authorization and recognition
+      decisions with their history, derived from the record Trust Authority
+      keeps.
+    - Every published Rulebook version.
+    - No private key of its own: it reaches the recognition statement key and
+      the catalog key through Trust Authority, whose Certificate Authority
+      Component signs with both.
+    - Its query endpoint, in the public zone, as
+      [network zones and placement][network-zones-and-placement] sets out.
 - **Trust Authority** holds the recognition statement key and the catalog
   key in its hardware security module (HSM), and publishes the matching
   public keys in its own Decentralized Identifier (DID) Document.
@@ -69,8 +82,8 @@ Before the first exchange, each target holds what the rules below assume:
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-4-02-001 }**REQ-TS-4-02-001** Trust Registry MUST meet every requirement in [The HTTPS binding][ts-4-02-the-https-binding], [Authorization query][ts-4-02-authorization-query], [Recognition query][ts-4-02-recognition-query], [Errors][ts-4-02-errors] and [The catalog][ts-4-02-the-catalog].
-- [](){ #req-ts-4-02-002 }**REQ-TS-4-02-002** Trust Authority MUST meet every requirement in [The recognition statement][ts-4-02-the-recognition-statement], [Recognition lifecycle][ts-4-02-recognition-lifecycle] and [The catalog list][ts-4-02-the-catalog-list], and [REQ-TS-4-02-085][req-ts-4-02-085].
+- [](){ #req-ts-4-02-001 }**REQ-TS-4-02-001** Trust Registry MUST meet every requirement in [The HTTPS binding][ts-4-02-the-https-binding], [Authorization query][ts-4-02-authorization-query], [Recognition query][ts-4-02-recognition-query], [Errors][ts-4-02-errors], and [The catalog][ts-4-02-the-catalog].
+- [](){ #req-ts-4-02-002 }**REQ-TS-4-02-002** Trust Authority MUST meet every requirement in [The recognition statement][ts-4-02-the-recognition-statement], [Recognition lifecycle][ts-4-02-recognition-lifecycle], and [The catalog list][ts-4-02-the-catalog-list], and [REQ-TS-4-02-085][req-ts-4-02-085].
 - [](){ #req-ts-4-02-003 }**REQ-TS-4-02-003** Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier MUST each meet every requirement that names a reader, wherever it stands on this page.
 
 </div>
@@ -78,26 +91,26 @@ Before the first exchange, each target holds what the rules below assume:
 ## What Trust Registry serves {#ts-4-02-overview}
 
 Trust Registry serves two kinds of traffic, as
-[Trust Registry][hla-trust-registry] sets out. The query endpoint answers
-questions one at a time: a participant names an entity, an action and a
+[the Trust Registry Module][hla-trust-registry] sets out. The query endpoint answers
+questions one at a time: a reader names an entity, an action, and a
 resource, and Trust Registry answers from the decisions Trust Authority
 recorded, as [Entity to Trust Registry][entity-to-trust-registry] explains.
 Everything else leaves as a static file through the central content
 delivery network (CDN): the trusted list, the Verified Issuer Certificate
 Authority List (VICAL), the revocation and
 status lists, and the catalog. Its six Components, and which of them does
-what below, are in [Trust Registry][sa-trust-registry].
+what below, are in [Trust Registry's Components][sa-trust-registry].
 
 Every answer is signed, so a reader keeps it and checks it again without
-asking again. That is what lets a permission check survive an unreachable
-registry, and it is why a reader asks only when it holds no current answer.
+asking again. That lets a permission check survive an unreachable
+Trust Registry, and it is why a reader asks only when it holds no current answer.
 
 ## The exchange {#ts-4-02-the-exchange}
 
 One query is answered in eight steps. The same steps serve both endpoints.
 
 1. The reader looks in its cache for a current answer to the same entity,
-   action and resource. If it holds one, it asks nothing.
+   action, and resource. If it holds one, it asks nothing.
 2. The reader sends the query to the endpoint the Governance Profile
    publishes, with nothing that identifies itself.
 3. Trust Registry checks that the body is a well-formed query.
@@ -112,14 +125,17 @@ One query is answered in eight steps. The same steps serve both endpoints.
 
 ## Queries as exchanged {#ts-4-02-queries-as-exchanged}
 
-Below are the queries this specification admits and the answers they
-receive. The entities, the domains and the keys are invented, and no
-registration has been accredited and no ecosystem recognized. Every field
-is exact. Each answer was signed with the key of the Trust Authority DID
-shown in `authority_id`, and each signature verifies. The entities are the
-ones [the trusted list][ts-5-01-trusted-list-payload] carries,
-with the same DIDs, and the two foreign authorities are named under the
-`.example` domain, which no ecosystem can hold.
+The entities, the domains, and the keys are invented, and no registration has
+been accredited and no ecosystem recognized. Every field is exact.
+
+The examples agree with the pages that show the same artifacts:
+
+- Each answer was signed with the key of the Trust Authority DID shown in
+  `authority_id`, and each signature verifies.
+- The entities are the ones [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same DIDs.
+- The two foreign authorities are named under the `.example` domain, which no
+  ecosystem can hold.
 
 An authorization query for a permission to issue, as Issuer Core or a
 reader sends it:
@@ -219,9 +235,9 @@ of the query endpoint in force.
 
 ## The HTTPS binding {#ts-4-02-the-https-binding}
 
-Both endpoints are public. Anyone may ask, nobody is asked who they are,
+Both endpoints are public. Anyone can ask, nobody is asked who they are,
 and the same question receives the same answer whoever asks it. That is
-what keeps the registry from learning which citizen deals with which
+what keeps Trust Registry from learning which citizen deals with which
 party, the rule the trusted list already follows in
 [Publication][ts-5-01-publication].
 
@@ -234,7 +250,7 @@ party, the rule the trusted list already follows in
 - [](){ #req-ts-4-02-008 }**REQ-TS-4-02-008** Trust Registry MUST NOT require any identifier of the reader.
 - [](){ #req-ts-4-02-009 }**REQ-TS-4-02-009** A reader MUST send a query with the header `Content-Type: application/json` and a body of that media type.
 - [](){ #req-ts-4-02-010 }**REQ-TS-4-02-010** A reader MUST NOT send any header, cookie, or member that identifies a holder, a device, an installation, a transaction, or the reader itself, `X-Request-ID` and `Authorization` included.
-- [](){ #req-ts-4-02-011 }**REQ-TS-4-02-011** A reader MUST NOT send a query for an entity, action and resource it holds a current answer for.
+- [](){ #req-ts-4-02-011 }**REQ-TS-4-02-011** A reader MUST NOT send a query for an entity, action, and resource it holds a current answer for.
 - [](){ #req-ts-4-02-012 }**REQ-TS-4-02-012** Trust Registry MUST answer a query it evaluated with `200` and media type `application/json`.
 - [](){ #req-ts-4-02-013 }**REQ-TS-4-02-013** Trust Registry MUST limit the rate of queries from one network address to the limit the Governance Profile sets.
 - [](){ #req-ts-4-02-014 }**REQ-TS-4-02-014** Trust Registry MUST NOT record which query a network address sent.
@@ -251,10 +267,10 @@ each on purpose:
 
 - **No bearer token and no `401`.** TRQP leaves authentication to the
   deployment, and a public registry asks for none.
-- **No `X-Request-ID`.** TRQP offers it for tracing; it would let the
-  registry link queries to one caller.
+- **No `X-Request-ID`.** TRQP offers it for tracing; it would let Trust
+  Registry link queries to one caller.
 - **A query for something Trust Registry does not know is answered `200`
-  with a signed negative**, where TRQP lists `404` for an entity, action or
+  with a signed negative**, where TRQP lists `404` for an entity, action, or
   resource it does not recognize. Only a signed answer can be cached, and a
   `404` would also tell anyone who asks whether a party has registered
   without being accredited.
@@ -305,8 +321,8 @@ what a permission names, and how a reader checks the answer are in
 
 </div>
 
-The last two rules keep the endpoint from becoming a register of who has
-applied. The trusted list already says who is accredited; a party that has
+[REQ-TS-4-02-021][req-ts-4-02-021] and [REQ-TS-4-02-022][req-ts-4-02-022] keep
+the endpoint from becoming a register of who has applied. The trusted list already says who is accredited; a party that has
 only registered may do nothing, and the answer about it is the same as the
 answer about a party nobody has heard of.
 
@@ -314,15 +330,9 @@ answer about a party nobody has heard of.
 
 A recognition query asks whether the Root Authority recognizes a foreign
 authority as authoritative for an action on a credential type, the first
-meaning [recognition][glossary-r] has in IDCTF. Recognition is granted per
-credential type: an authority recognized for issuing the mobile driving
-license is not thereby recognized for anything else. Who is recognized, and
-on what terms, [is the Governance Framework's to decide][gf-recognition]; this clause fixes
-how the question is asked and answered, and [chain of trust][chain-of-trust]
-sets out where the answer is used.
+meaning [recognition][glossary-r] has in IDCTF.
+[Chain of trust][chain-of-trust] sets out where the answer is used.
 
-The query carries the members of
-[the table of query members][tbl-ts-4-02-query-members].
 [The table of recognition actions][tbl-ts-4-02-recognition-actions] gives the
 one action the ecosystem recognizes today; the Governance Profile holds the
 list in force.
@@ -343,15 +353,16 @@ list in force.
 - [](){ #req-ts-4-02-024 }**REQ-TS-4-02-024** In a recognition query, `entity_id` MUST be the identifier the foreign authority is recognized under, as a Uniform Resource Identifier (URI).
 - [](){ #req-ts-4-02-025 }**REQ-TS-4-02-025** In a recognition query, `action` MUST be one the Governance Profile lists for recognition.
 - [](){ #req-ts-4-02-026 }**REQ-TS-4-02-026** In a recognition query, `resource` MUST be a credential type identifier, with its version and without an attribute.
-- [](){ #req-ts-4-02-027 }**REQ-TS-4-02-027** The credential type in `resource` MUST be one the Credential Rulebook Catalog registers.
+- [](){ #req-ts-4-02-027 }**REQ-TS-4-02-027** The credential type in `resource` MUST be one the catalog registers.
 
 </div>
 
 ### The recognition answer {#ts-4-02-the-recognition-answer}
 
 The answer is the `RecognitionResponse` of [TRQP][ref-trqp] with one member
-added, `statement`, which carries the signature the way an Authority
-Statement does. [The table of recognition answer members][tbl-ts-4-02-recognition-answer-members]
+added, `statement`, which carries the signature the way an Authority Statement
+does.
+[The table of recognition answer members][tbl-ts-4-02-recognition-answer-members]
 gives each member.
 
 [](){ #tbl-ts-4-02-recognition-answer-members }
@@ -389,19 +400,17 @@ gives each member.
 
 ### The recognition statement {#ts-4-02-the-recognition-statement}
 
-Each answer is signed as a JSON Web Token (JWT) as
-[RFC 7519][ref-rfc7519] defines one, signed as a JSON Web Signature (JWS) in
-the compact serialization of [RFC 7515][ref-rfc7515], and carried in the
-`statement` member. Its payload repeats the answer and adds the two times
+Each answer is a JSON Web Token (JWT) as [RFC 7519][ref-rfc7519] defines
+one, signed as a JSON Web Signature (JWS) in the compact serialization of
+[RFC 7515][ref-rfc7515], and carried in the `statement` member. Its payload
+repeats the answer and adds the two times
 that bound it. [The table of recognition statement claims][tbl-ts-4-02-recognition-statement-claims]
 gives each claim.
 
 The signing key is the recognition statement key that
-[Trust Authority's own keys][trust-authoritys-own-keys] names, held in Trust
-Authority's HSM. Trust Registry builds the answer and asks Trust Authority
-to sign it, as it does for an Authority Statement, and Trust Authority
-builds the payload again from its own record and refuses a request the two
-disagree on. A recognition answer is
+[Trust Authority's own keys][trust-authoritys-own-keys] names. Trust Registry
+asks Trust Authority to sign the answer, as it does for an Authority Statement.
+A recognition answer is
 not an Authority Statement: it records what the Root Authority accepts from
 another ecosystem, not what one entity may do, so it takes a key and a
 `typ` of its own.
@@ -443,17 +452,17 @@ another ecosystem, not what one entity may do, so it takes a key and a
 
 ### Reading a recognition answer {#ts-4-02-reading-a-recognition-answer}
 
-A reader checks a recognition answer the way it checks an Authority
-Statement, in the steps of
-[Reading the answer][ts-5-05-reading-the-answer], with three things read in
-place of their counterparts: the tolerance limit the Governance Profile sets
-for a recognition answer, the `typ` of a recognition answer, and the
-recognition in place of the permission. The rules are the same rules,
-applied to a second artifact, so they are cited here rather than written
-twice. One rule of that page is not applied: a foreign authority has no
-entry on the trusted list, so a change there cannot discard a cached
-recognition answer. A withdrawn recognition reaches a reader on its next
-fetch, no later than the answer's `exp` plus the tolerance limit.
+A reader checks a recognition answer the way it checks an Authority Statement,
+in the steps of [Reading the answer][ts-5-05-reading-the-answer], with three
+things read in place of their counterparts: the tolerance limit the
+Governance Profile sets for a recognition answer, the `typ` of a recognition
+answer, and the recognition in place of the permission. Those rules are
+cited here rather than written twice.
+
+One rule of that page is not applied: a foreign authority has no entry on
+the trusted list, so a change there cannot discard a cached recognition answer.
+A withdrawn recognition reaches a reader on its next fetch, no later than the
+answer's `exp` plus the tolerance limit.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -466,13 +475,13 @@ fetch, no later than the answer's `exp` plus the tolerance limit.
 
 A recognition begins when the Root Authority grants it and Trust Authority
 records it, and ends when the Root Authority withdraws it. It names one
-foreign authority, one action and one credential type, and it does not
+foreign authority, one action, and one credential type, and it does not
 change: recognizing the same authority for another type is a second
 recognition beside the first.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-4-02-049 }**REQ-TS-4-02-049** Trust Authority MUST record one recognition for each foreign authority, action and credential type the Root Authority recognizes.
+- [](){ #req-ts-4-02-049 }**REQ-TS-4-02-049** Trust Authority MUST record one recognition for each foreign authority, action, and credential type the Root Authority recognizes.
 - [](){ #req-ts-4-02-050 }**REQ-TS-4-02-050** Trust Authority MUST record the time a recognition came into force and the time it was withdrawn, and keep a withdrawn recognition with its history rather than deleting it.
 - [](){ #req-ts-4-02-051 }**REQ-TS-4-02-051** Trust Authority MUST NOT widen or narrow a recorded recognition.
 - [](){ #req-ts-4-02-052 }**REQ-TS-4-02-052** Trust Registry MUST answer a recognition query carrying `context.time` from the status that held at that time, and one carrying no `context.time` from the status that holds at `time_evaluated`.
@@ -521,7 +530,7 @@ Content-Type: application/problem+json
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-4-02-053 }**REQ-TS-4-02-053** Trust Registry MUST answer a query it cannot evaluate with the status [the table of problem types][tbl-ts-4-02-problem-types] gives for the condition, media type `application/problem+json`, and a problem document whose `type` and `title` are the ones that table gives and whose `status` equals the status of the response.
-- [](){ #req-ts-4-02-054 }**REQ-TS-4-02-054** Trust Registry MUST NOT answer with a `type` that table does not hold.
+- [](){ #req-ts-4-02-054 }**REQ-TS-4-02-054** Trust Registry MUST NOT answer with a `type` [the table of problem types][tbl-ts-4-02-problem-types] does not hold.
 - [](){ #req-ts-4-02-055 }**REQ-TS-4-02-055** Trust Registry MUST NOT carry in `detail` or `instance` anything about an entity, a foreign authority, or the party that asked.
 - [](){ #req-ts-4-02-056 }**REQ-TS-4-02-056** Trust Registry MUST write every `type` under the root named by the version of this specification it conforms to.
 - [](){ #req-ts-4-02-090 }**REQ-TS-4-02-090** A reader MUST treat the root of a `type` as [REQ-TS-5-01-084][req-ts-5-01-084] to [REQ-TS-5-01-086][req-ts-5-01-086] treat the root of the trusted list's identifiers.
@@ -545,13 +554,10 @@ answer, and why the reader falls back to the copy it holds, the behavior
 ask for.
 
 A signer that refuses is answered `server-error`, like any other failure
-inside Trust Registry. A refusal means the registry built an answer its own
-authority does not hold, through a defect or because someone else controls
-it. That is an incident for the Root Authority, not a condition a reader can
-act on, and naming it on the wire would tell anyone watching the endpoint
-which check the registry has started to fail. It is not `503` either: that
-status asks a client to try again, and a refusal does not go away on a
-retry.
+inside Trust Registry. A refusal means Trust Registry built an answer its own
+authority does not hold, which is an incident for the Root Authority rather
+than a condition a reader can act on. It is not `503` either: that status asks
+a client to try again, and a refusal does not go away on a retry.
 
 ## The catalog {#ts-4-02-the-catalog}
 
@@ -560,9 +566,9 @@ and one file per Rulebook version, as the
 [Credential Rulebook Catalog](../credential-rulebook/index.md) sets out. The
 list is signed; each Rulebook file is plain JSON and is bound to the list by
 its digest, so one signature covers every Rulebook and a published Rulebook
-stays the file its Provider proposed, unchanged. Every published
-version is listed, a private party's as much as one under the `id.idctf`
-root: a type that is not in the catalog has no Rulebook anyone can read.
+stays the file its Provider proposed, unchanged.
+[A type that is not in the catalog has no Rulebook anyone can
+read][private-rulebooks].
 
 The catalog has three addresses under `<catalog>`, the address the
 Governance Profile publishes:
@@ -581,10 +587,12 @@ fetched at the addresses its own fields carry, which need not sit under
 ### Catalog list payload {#ts-4-02-catalog-list-payload}
 
 The list as Trust Registry serves it, for the five Rulebooks the
-[registered Rulebooks][registered-rulebooks] table carries as illustrations.
-None of them is registered. Each `rulebook_digest` is the digest of the
-`rulebook.json` its example page shows, and the list was signed with the
-catalog key of the Trust Authority DID shown in `iss` and verifies.
+[registered Rulebooks][registered-rulebooks] table carries as illustrations. No
+Rulebook has been registered in IDCTF itself; inside this illustration the five
+are the registered versions, which puts them in the list. Each
+`rulebook_digest` is the digest of the `rulebook.json` its example page shows,
+and the list was signed with the catalog key of the Trust Authority DID shown in
+`iss` and verifies.
 
 ``` { .http title="GET /rulebooks, Trust Registry catalog" data-format="HTTP" }
 GET /rulebooks HTTP/1.1
@@ -592,7 +600,7 @@ Host: catalog.trust.go.id
 ```
 
 ``` { .text title="The catalog list as served" data-format="JWS" }
-eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuY2F0YWxvZytqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2NhdGFsb2ctMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImlhdCI6MTc5MjIwNjY4MCwiZXhwIjoxNzkyMjkzMDgwLCJydWxlYm9va3MiOlt7ImlkIjoiaWQuaWRjdGYua3RwLjEiLCJydWxlYm9vayI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC9ydWxlYm9va3MvaWQuaWRjdGYua3RwLjEiLCJydWxlYm9va19kaWdlc3QiOiJzaGEzODQtZVpwZk9WSmo4TVU0MWNBSWNmTldkdDRwM2dNUmJVbUJPZGowc3JPWDFXWmZ5TllSSjZHcmsvMStNNnJzN3ZYQyJ9LHsiaWQiOiJpZC5pZGN0Zi5rYXJ0dS1pbmRvbmVzaWEtc2VoYXQuMSIsInJ1bGVib29rIjoiaHR0cHM6Ly9jYXRhbG9nLnRydXN0LmdvLmlkL3J1bGVib29rcy9pZC5pZGN0Zi5rYXJ0dS1pbmRvbmVzaWEtc2VoYXQuMSIsInJ1bGVib29rX2RpZ2VzdCI6InNoYTM4NC01aklqdXp5QkNYd0NUMWZSRFBWOGtsYmlXdGQ5SStzT2VSQ3ZtVXp5VDZDcTJLLzBqNXZtVkluU1p6ZWFrTjZkIn0seyJpZCI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwicnVsZWJvb2siOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvcnVsZWJvb2tzL2lkLmlkY3RmLmthcnR1LWFzbi4xIiwicnVsZWJvb2tfZGlnZXN0Ijoic2hhMzg0LURuWUEySEVJRlFFSjlJclMxeXJrOWFGT0J6Skx0QTFlajYyWHE0MnZtM1Fma0ZWMXlnZmdXenZvUEtqZGFZN3YifSx7ImlkIjoiaWQuaWRjdGYua2FydHUtbmlrYWguMSIsInJ1bGVib29rIjoiaHR0cHM6Ly9jYXRhbG9nLnRydXN0LmdvLmlkL3J1bGVib29rcy9pZC5pZGN0Zi5rYXJ0dS1uaWthaC4xIiwicnVsZWJvb2tfZGlnZXN0Ijoic2hhMzg0LUFnMFRtRC9RVitjR09aaEN4VVdyVjV1TEQ0YTR1cXVUREJib3lmeDIwcnFjenQ4ek5PU2FOeGQrYUw3VHhRclYifSx7ImlkIjoib3JnLmlzby4xODAxMy41LjEubURMLjEiLCJydWxlYm9vayI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC9ydWxlYm9va3Mvb3JnLmlzby4xODAxMy41LjEubURMLjEiLCJydWxlYm9va19kaWdlc3QiOiJzaGEzODQtbW5hTDhRTnMvNWlVYnR6V0QrQlBScTJleVIzTVhMYUxvYVZrTEg1bE40TklON0UvdHJaNE5rUitKUHpDR01sMSJ9XX0.Nnd5wRhEQ0Vhq6NE8xxzVVB35NGTu_KT2DjftWRzct_pzU_nG7RELT5P0mgTfx6WQR8qZXaai9psSB78zGbNnQ
+eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuY2F0YWxvZytqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2NhdGFsb2ctMSJ9.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsImlhdCI6MTc5MjIwNjY4MCwiZXhwIjoxNzkyMjkzMDgwLCJydWxlYm9va3MiOlt7ImlkIjoiaWQuaWRjdGYua3RwLjEiLCJydWxlYm9vayI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC9ydWxlYm9va3MvaWQuaWRjdGYua3RwLjEiLCJydWxlYm9va19kaWdlc3QiOiJzaGEzODQtanR0QjEwTDlBVTJ4ajRVNkd2MnRqbHVVY1h0TnJjOHpxejhQL0NzYWpkNURYNmdEdzhRREZzVjMyWkF2MjZxZyJ9LHsiaWQiOiJpZC5pZGN0Zi5rYXJ0dS1pbmRvbmVzaWEtc2VoYXQuMSIsInJ1bGVib29rIjoiaHR0cHM6Ly9jYXRhbG9nLnRydXN0LmdvLmlkL3J1bGVib29rcy9pZC5pZGN0Zi5rYXJ0dS1pbmRvbmVzaWEtc2VoYXQuMSIsInJ1bGVib29rX2RpZ2VzdCI6InNoYTM4NC01aklqdXp5QkNYd0NUMWZSRFBWOGtsYmlXdGQ5SStzT2VSQ3ZtVXp5VDZDcTJLLzBqNXZtVkluU1p6ZWFrTjZkIn0seyJpZCI6ImlkLmlkY3RmLmthcnR1LWFzbi4xIiwicnVsZWJvb2siOiJodHRwczovL2NhdGFsb2cudHJ1c3QuZ28uaWQvcnVsZWJvb2tzL2lkLmlkY3RmLmthcnR1LWFzbi4xIiwicnVsZWJvb2tfZGlnZXN0Ijoic2hhMzg0LURuWUEySEVJRlFFSjlJclMxeXJrOWFGT0J6Skx0QTFlajYyWHE0MnZtM1Fma0ZWMXlnZmdXenZvUEtqZGFZN3YifSx7ImlkIjoiaWQuaWRjdGYua2FydHUtbmlrYWguMSIsInJ1bGVib29rIjoiaHR0cHM6Ly9jYXRhbG9nLnRydXN0LmdvLmlkL3J1bGVib29rcy9pZC5pZGN0Zi5rYXJ0dS1uaWthaC4xIiwicnVsZWJvb2tfZGlnZXN0Ijoic2hhMzg0LUk3RDRxSzVNWS84aXJSVlFyMkQ0dUp2TEFaQ3ZPRWtOZ3hqeHFZOEE1b1lzb2dLSmhkd2EvWi9tOUdoZnVPckUifSx7ImlkIjoib3JnLmlzby4xODAxMy41LjEubURMLjEiLCJydWxlYm9vayI6Imh0dHBzOi8vY2F0YWxvZy50cnVzdC5nby5pZC9ydWxlYm9va3Mvb3JnLmlzby4xODAxMy41LjEubURMLjEiLCJydWxlYm9va19kaWdlc3QiOiJzaGEzODQtbW5hTDhRTnMvNWlVYnR6V0QrQlBScTJleVIzTVhMYUxvYVZrTEg1bE40TklON0UvdHJaNE5rUitKUHpDR01sMSJ9XX0.VmExRbQKuRdJJnhp38iFDL6D48rtaN08tJ8-VqUC1ddkjBOaiK8di_ObWaPNBPf9-nBpRaJD158udFz56tY_ww
 ```
 
 ``` { .json title="Catalog list payload, decoded" data-format="JSON" }
@@ -604,7 +612,7 @@ eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuY2F0YWxvZytqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3
     {
       "id": "id.idctf.ktp.1",
       "rulebook": "https://catalog.trust.go.id/rulebooks/id.idctf.ktp.1",
-      "rulebook_digest": "sha384-eZpfOVJj8MU41cAIcfNWdt4p3gMRbUmBOdj0srOX1WZfyNYRJ6Grk/1+M6rs7vXC"
+      "rulebook_digest": "sha384-jttB10L9AU2xj4U6Gv2tjluUcXtNrc8zqz8P/Csajd5DX6gDw8QDFsV32ZAv26qg"
     },
     {
       "id": "id.idctf.kartu-indonesia-sehat.1",
@@ -619,7 +627,7 @@ eyJ0eXAiOiJ2bmQuaWQuaWRjdGYuY2F0YWxvZytqd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3
     {
       "id": "id.idctf.kartu-nikah.1",
       "rulebook": "https://catalog.trust.go.id/rulebooks/id.idctf.kartu-nikah.1",
-      "rulebook_digest": "sha384-Ag0TmD/QV+cGOZhCxUWrV5uLD4a4uquTDBboyfx20rqczt8zNOSaNxd+aL7TxQrV"
+      "rulebook_digest": "sha384-I7D4qK5MY/8irRVQr2D4uJvLAZCvOEkNgxjxqY8A5oYsogKJhdwa/Z/m9GhfuOrE"
     },
     {
       "id": "org.iso.18013.5.1.mDL.1",
@@ -635,9 +643,8 @@ address in force.
 
 ### The catalog list {#ts-4-02-the-catalog-list}
 
-The list is a JWT signed as a JWS in the compact serialization.
 [The table of catalog list claims][tbl-ts-4-02-catalog-list-claims] gives
-each claim of its payload, and
+each claim of the list's payload, and
 [the table of catalog entry members][tbl-ts-4-02-catalog-entry-members] each
 member of one entry.
 
@@ -692,7 +699,7 @@ member of one entry.
 - [](){ #req-ts-4-02-073 }**REQ-TS-4-02-073** Trust Registry MUST serve a Rulebook file as the bytes its `rulebook_digest` was computed over, and never change them, as [REQ-CR-049][req-cr-049] requires of the version.
 - [](){ #req-ts-4-02-074 }**REQ-TS-4-02-074** Trust Registry MUST publish a new list when it publishes a Rulebook version, and before the `exp` of the current list.
 - [](){ #req-ts-4-02-075 }**REQ-TS-4-02-075** Trust Registry MUST answer `404`, with no body, for a Rulebook version it has not published.
-- [](){ #req-ts-4-02-086 }**REQ-TS-4-02-086** Trust Registry MUST answer each IRI [REQ-CR-056][req-cr-056] names with the catalog page of the credential type, which shows each term's schema type and its labels from `display`.
+- [](){ #req-ts-4-02-086 }**REQ-TS-4-02-086** Trust Registry MUST answer each Internationalized Resource Identifier (IRI) [REQ-CR-056][req-cr-056] names with the catalog page of the credential type, which shows each term's schema type and its labels from `display`.
 - [](){ #req-ts-4-02-087 }**REQ-TS-4-02-087** Trust Registry MUST NOT take a Rulebook from an entity's own `.well-known` metadata.
 - [](){ #req-ts-4-02-088 }**REQ-TS-4-02-088** Trust Registry MUST refuse a proposed Rulebook at submission, before any review, when:
     - its `id` is already in the catalog;
@@ -704,7 +711,9 @@ member of one entry.
     - its `id` equals the mdoc `docType` of another Rulebook in the catalog;
     - its mdoc `docType` equals the `id` of another Rulebook in the catalog.
 
-A `ReaderAuthRole` entry is read as a `docType` first, so a Rulebook `id` that equals another Rulebook's `docType` could never be named, as [REQ-TS-5-04-057][req-ts-5-04-057] sets out.
+A `ReaderAuthRole` entry is read as a `docType` first, so a Rulebook `id` that
+equals another Rulebook's `docType` could never be named, as
+[REQ-TS-5-04-057][req-ts-5-04-057] sets out.
 
 </div>
 
@@ -731,8 +740,8 @@ the query endpoint alone.
 ## Distribution points {#ts-4-02-distribution-points}
 
 Beside the query endpoint and the catalog, Trust Registry serves the
-artifacts other specifications define, each as a static file from the
-central CDN. [The table of distribution points][tbl-ts-4-02-distribution-points]
+artifacts other specifications define.
+[The table of distribution points][tbl-ts-4-02-distribution-points]
 gives where a reader finds the address of each and the specification that
 binds it; no address is fixed on this page.
 
@@ -752,12 +761,11 @@ binds it; no address is fixed on this page.
 
 </figure>
 
-A credential's own status list is not on this table: an issuer publishes it
-on its own domain, never through Trust Registry.
+A credential's own status list is not on
+[the table of distribution points][tbl-ts-4-02-distribution-points]: an
+issuer publishes it on its own domain, never through Trust Registry.
 
 ## Security considerations {#ts-4-02-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A recognition answer edited in the cache or on the wire.** The
   signature covers every field a reader acts on, and the reader checks the
@@ -778,10 +786,10 @@ Each threat below is answered by the requirement named with it.
   and the catalog key each sign one thing, and Trust Registry holds
   neither, [REQ-TS-4-02-044][req-ts-4-02-044],
   [REQ-TS-4-02-046][req-ts-4-02-046], [REQ-TS-4-02-068][req-ts-4-02-068],
-  [REQ-TS-4-02-070][req-ts-4-02-070] and
+  [REQ-TS-4-02-070][req-ts-4-02-070], and
   [REQ-TS-4-02-095][req-ts-4-02-095].
 - **A captured Trust Registry having a recognition signed.** Trust Authority
-  signs from its own record rather than from what the registry presents,
+  signs from its own record rather than from what Trust Registry presents,
   [REQ-TS-4-02-082][req-ts-4-02-082], and refuses a request that does not
   match it, [REQ-TS-4-02-083][req-ts-4-02-083].
 - **A refusal that shows which check failed.** A refused signing request is
@@ -823,6 +831,6 @@ from cache, and a reader fetches none of them during a transaction,
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

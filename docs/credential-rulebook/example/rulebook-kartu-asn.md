@@ -15,15 +15,15 @@ servant.
 
 !!! note "Informative page"
 
-    This Rulebook is an illustration and is not registered. Its values were
-    chosen to show how the fields of [Rulebook structure](../rulebook-structure.md)
-    fit together, and none of them has been approved by the Root Authority.
-    The addresses under `catalog.trust.go.id` do not exist yet; the files they
-    name are shown on this page instead.
+    This Rulebook is an illustration and is not registered. Its values show
+    how the fields of [Rulebook structure](../rulebook-structure.md) fit
+    together, and the Root Authority has approved none of them. The addresses
+    under `catalog.trust.go.id` do not exist yet, so this page shows the files
+    they name.
 
 ## The Rulebook {#kartu-asn-rulebook}
 
-The Rulebook for `id.idctf.kartu-asn.1`, carrying every field
+The Rulebook for `id.idctf.kartu-asn.1` carries every field
 [Rulebook structure](../rulebook-structure.md) lists. It lists no
 `expiry_date`, because the card it mirrors carries no validity period.
 
@@ -33,8 +33,9 @@ The Rulebook for `id.idctf.kartu-asn.1`, carrying every field
 
 ## Schema {#kartu-asn-schema}
 
-The [JSON Schema 2020-12][ref-json-schema] that [the schema field][rulebook-schema-field] points at.
-Issuer Core checks the eight type claims against it before it signs.
+This is the [JSON Schema 2020-12][ref-json-schema] that
+[the schema field][rulebook-schema-field] points at. Issuer Core checks the
+eight type claims against it before it signs.
 
 ``` { .json title="schema.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/kartu-asn/schema.json"
@@ -42,9 +43,10 @@ Issuer Core checks the eight type claims against it before it signs.
 
 ## Display {#kartu-asn-display}
 
-The card a wallet draws, light and dark, and the [SD-JWT-based Verifiable
-Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] that [the display field][rulebook-display-field]
-points at. The Type Metadata carries both templates and the logo.
+A wallet draws the card, light and dark, from the
+[SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc]
+that [the display field][rulebook-display-field] points at. The Type Metadata
+carries both templates and the logo.
 
 [](){ #fig-kartu-asn-light }
 [](){ #fig-kartu-asn-dark }
@@ -60,7 +62,7 @@ points at. The Type Metadata carries both templates and the logo.
 </figure>
 </div>
 
-Templates: [`card-light.svg`](kartu-asn/card-light.svg) and
+The templates are [`card-light.svg`](kartu-asn/card-light.svg) and
 [`card-dark.svg`](kartu-asn/card-dark.svg).
 
 ``` { .json title="type-metadata.json" data-format="JSON" }
@@ -69,8 +71,8 @@ Templates: [`card-light.svg`](kartu-asn/card-light.svg) and
 
 ## Issued credential {#kartu-asn-issued-credential}
 
-One credential as Issuer Core signs it, in both representations the Rulebook
-lists, and where each of its parts comes from.
+This section shows one credential as Issuer Core signs it, in both
+representations the Rulebook lists, and where each of its parts comes from.
 
 ``` { .json title="SD-JWT VC header, payload and disclosure" data-format="SD-JWT VC" }
 // header
@@ -87,7 +89,7 @@ lists, and where each of its parts comes from.
   "_sd_alg": "sha-256",
   "status": { "status_list": { "idx": 481920,
                  "uri": "https://bkn.go.id/status/kartu-asn-1" } },
-  "iat": 1789901520, "exp": 1852973520
+  "iat": 1789901520, "exp": 1821437520
 }
 
 // disclosure for nama, sent beside the credential
@@ -110,9 +112,9 @@ lists, and where each of its parts comes from.
 
 </figure>
 
-The same credential as an mdoc, the representation a verifier reads in
-proximity. It carries the same claim values, the same credential key, the same
-status entry and the same validity period as the SD-JWT VC above, as
+The mdoc is the same credential as
+[the SD-JWT VC][kartu-asn-issued-credential], in the representation a verifier
+reads in proximity, as
 [one credential, two representations][one-credential-two-representations]
 requires.
 
@@ -163,7 +165,7 @@ requires.
   "validityInfo": {
     "signed": 0("2026-09-20T10:52:00Z"),
     "validFrom": 0("2026-09-20T10:52:00Z"),
-    "validUntil": 0("2028-09-19T10:52:00Z")
+    "validUntil": 0("2027-09-20T10:52:00Z")
   },
   "status": {
     "status_list": { "idx": 481920,
@@ -176,7 +178,7 @@ requires.
 
 | Part | Comes from |
 |---|---|
-| `nameSpaces` | One `IssuerSignedItem` for each of the eight type claims, with the values of the disclosures above, in the namespace `id.idctf.kartu-asn.1`, because the Rulebook's `mdoc` entry names no other and [REQ-CR-080][req-cr-080] makes the namespace the `id`. `foto` is the decoded JPEG bytes, where the SD-JWT VC carries a data URI, as [the table of mdoc encodings][tbl-mdoc-encodings] sets out |
+| `nameSpaces` | One `IssuerSignedItem` for each of the eight type claims, with the values of [the disclosures][kartu-asn-issued-credential], in the namespace `id.idctf.kartu-asn.1`, because the Rulebook's `mdoc` entry names no other and [REQ-CR-080][req-cr-080] makes the namespace the `id`. `foto` is the decoded JPEG bytes, where the SD-JWT VC carries a data URI, as [the table of mdoc encodings][tbl-mdoc-encodings] sets out |
 | `random` | Issuer Core, sixteen fresh bytes per item, so a verifier cannot guess a value from its digest |
 | `x5chain` | BKN's Document Signer Certificate, chained to the Issuer Root CA, as [Document Signer Certificate][ts-5-04-document-signer-certificate] sets out. The SD-JWT VC names the same issuer by its `did:webvh` |
 | `valueDigests` | Issuer Core, the SHA-256 of each tagged item, so the holder can disclose one data element and withhold the rest |

@@ -11,51 +11,61 @@ description: The Accreditation Credential Trust Authority issues to an accredite
 
 <p class="ekdn-lead" markdown="span">
 An Accreditation Credential is the evidence an accredited entity holds about
-itself. Nothing in the ecosystem fetches one and no transaction turns on one,
-because the trusted list is what every participant checks. It lives as long as
-the accreditation, so a status list is what ends it early.
+itself. It lives as long as the accreditation, so a status list ends it early.
 </p>
 
 Every sentence on this page binds Trust Authority, which issues and signs the
 credential, and Trust Registry, which publishes the status list it points into,
-and an Assessment Body tests them against it in the version the Governance
-Profile puts in force. The key words and the identifier `REQ-TS-5-07-nnn`
-follow [Common provisions](common-provisions.md).
+and an Assessment Body tests them against it in the version the
+Governance Profile puts in force. The key words and the identifier
+`REQ-TS-5-07-nnn` follow [Common provisions](common-provisions.md).
 
 ## Who runs this and what it needs {#ts-5-07-who-runs-this-and-what-it-needs}
 
-This specification fixes the Accreditation Credential: the claims it carries,
-what each of them names, the signature Trust Authority puts on it, how long it
-lives, the status reference that revokes it before it expires, and what a party
-that is shown one may conclude from it.
+This specification fixes the Accreditation Credential:
+
+- The claims it carries.
+- What each of them names.
+- The signature Trust Authority puts on it.
+- How long it lives.
+- The status reference that revokes it before it expires.
+- What a party that is shown one may conclude from it.
 
 Its conformance targets are Trust Authority, which records the accreditation,
-builds the credential and signs it; and Trust Registry, which publishes the
+builds the credential, and signs it; and Trust Registry, which publishes the
 status list that revokes one and the trusted list entry that answers the same
-question for everybody else. No Module of the ecosystem reads an Accreditation
-Credential: the entity it was issued to is its only reader inside the
-ecosystem. [Reading it][ts-5-07-reading-it] binds a party outside the ecosystem
-that is shown one and chooses to act on it, and no conformance target is tested
-against that clause.
+question for everybody else. No Module of the ecosystem reads an
+Accreditation Credential: the entity it was issued to is its only reader inside
+the ecosystem. [Reading it][ts-5-07-reading-it] binds a party outside the
+ecosystem that is shown one and chooses to act on it, and no conformance target
+is tested against that clause.
 
-It leaves to other documents: who is accredited, on what grounds, [how the assessment is run][gf-conformance-testing], and [the sanctions behind a suspension or a withdrawal][gf-ladder-of-sanctions], which
-the Governance Framework holds; the length of an accreditation period, the lead
-time for a renewal, and the rotation interval of the signing key, which the
-Governance Profile holds; the exchange the credential is delivered in and the
-place an entity collects a later copy from, which [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) holds; the format, the
-signature and the publication of the status list the credential points into,
-which
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md)
-holds; the entry
-that decides whether a party takes part, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds; the keys of Trust Authority, their rotation and the log they live in,
-which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; and what an entity may actually do, which is answered by query and never
-read from this credential, as
-[Answering with an Authority Statement](answering-with-an-authority-statement.md)
-sets out.
+It leaves to other documents:
+
+- Who is accredited, on what grounds,
+  [how the assessment is run][gf-conformance-testing], and
+  [the sanctions behind a suspension or a withdrawal][gf-ladder-of-sanctions],
+  which the Governance Framework holds.
+- The length of an accreditation period, the lead time for a renewal, and the
+  rotation interval of the signing key, which the Governance Profile holds.
+- The exchange the credential is delivered in and the place an entity
+  collects a later copy from, which
+  [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+  holds.
+- The format, the signature, and the publication of the status list the
+  credential points into, which
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  holds.
+- The entry that decides whether a party takes part, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- The keys of Trust Authority, their rotation, and the log they live in, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- What an entity may do, which is answered by query and never read
+  from this credential, and which
+  [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  holds.
 
 Before the first issuance, each target holds what the rules below assume:
 
@@ -71,7 +81,7 @@ Before the first issuance, each target holds what the rules below assume:
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-07-001 }**REQ-TS-5-07-001** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the Accreditation Credential, with its header, its claims and its signature.
+- [](){ #req-ts-5-07-001 }**REQ-TS-5-07-001** Trust Authority MUST meet every requirement on this page that names Trust Authority, and every requirement on what Trust Authority writes: the Accreditation Credential, with its header, its claims, and its signature.
 - [](){ #req-ts-5-07-002 }**REQ-TS-5-07-002** Trust Registry MUST meet every requirement on this page that names Trust Registry.
 - [](){ #req-ts-5-07-003 }**REQ-TS-5-07-003** A party that acts on an Accreditation Credential MUST meet every requirement that names a reader, wherever it stands on this page.
 
@@ -81,39 +91,39 @@ Before the first issuance, each target holds what the rules below assume:
 
 An Accreditation Credential is one statement by Trust Authority that one
 registration was accredited. The entity carries it and shows it where it
-chooses; nothing in the ecosystem fetches it, and no issuance, presentation or
-permission check depends on one being produced.
+chooses; no issuance, presentation, or permission check depends on one being
+produced.
 
 What everybody else checks is the trusted list. A party absent from that list
 is refused however valid the credential it shows, and a party present in it is
 accepted without one, as
 [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-sets out. The credential is a convenience for the entity, not a second source
-of truth about who takes part.
+sets out.
 
-Four roles reach accreditation: Identity Issuer, Attribute Issuer, Wallet
-Provider, and Relying Party, as
+Four roles reach accreditation: Identity Issuer, Attribute Issuer,
+Wallet Provider, and Relying Party, as
 [Three stages of authority](../architecture-framework/roles/three-stages-of-authority.md)
-sets out. An RP Intermediary is a Relying Party that holds further permissions
-rather than a fifth role, and it holds one credential like any other. A
-merchant is registered by its RP Intermediary and never accredited, so it holds
-none. An Assessment Body is recognized rather than accredited, so it holds none
-either.
+sets out. An RP Intermediary is a Relying Party that registers merchants and
+holds the standing to issue Verifier Device Certificates, rather than a fifth
+role, and it holds one credential like any other. A merchant is registered by
+its RP Intermediary and never accredited, so it holds none. An Assessment Body
+is recognized rather than accredited, so it holds none either.
 
 One registration, one credential. A legal body that registers twice is two
 entities and holds one credential for each.
 
 ## Accreditation Credentials as issued {#ts-5-07-accreditation-credentials-as-issued}
 
-The three credentials below are an illustration: the entities, the domains and
+The three credentials below are an illustration: the entities, the domains, and
 the keys are invented, and no registration has been accredited. Every field is
-exact. Each was signed with the Accreditation Credential key of the Trust
-Authority DID its `iss` names, and each signature verifies, so an
+exact. Each was signed with the Accreditation Credential key of the
+Trust Authority DID its `iss` names, and each signature verifies, so an
 implementation can parse these credentials and find what the clauses below
-require. The entities are the ones
-[the trusted list][ts-5-01-trusted-list-payload] carries, with
-the same DIDs, and each `iat` is the earliest `StatusStartingTime` in the history of that
-entry's role service.
+require.
+
+The entities are the ones [the trusted list][ts-5-01-trusted-list-payload]
+carries, with the same DIDs. Each `iat` is the moment Trust Authority issued
+the copy.
 
 ``` { .text title="The credential of an accredited Identity Issuer" data-format="SD-JWT" }
 eyJ0eXAiOiJkYytzZC1qd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbVpqeTF0OW9GaWFGamhYMmUzOHVNdVI3bWd0ZExqSFBNR2ZqRWZ2cnNtYWlxOnRydXN0LmdvLmlkI2FjY3JlZGl0YXRpb24tY3JlZGVudGlhbC0xIn0.eyJpc3MiOiJkaWQ6d2Vidmg6UW1aankxdDlvRmlhRmpoWDJlMzh1TXVSN21ndGRMakhQTUdmakVmdnJzbWFpcTp0cnVzdC5nby5pZCIsInZjdCI6ImlkLmlkY3RmLmFjY3JlZGl0YXRpb24uMSIsInN1YiI6ImRpZDp3ZWJ2aDpRbWNFVlQyaUpTcnNzNWhnd2lNRnNNVXhLa1JvemdGRjQ1OFJjZ2dUNE1GMkw0OmR1a2NhcGlsLmdvLmlkIiwiZW50aXR5X25hbWUiOiJEaXJla3RvcmF0IEplbmRlcmFsIEtlcGVuZHVkdWthbiBkYW4gUGVuY2F0YXRhbiBTaXBpbCIsImVudGl0eV90eXBlIjpbImh0dHBzOi8vaWRjdGYuaWQvbnMvMTk2MDIvU3ZjVHlwZS9JZGVudGl0eUlzc3VlciJdLCJzY29wZSI6W3siYWN0aW9uIjoiaXNzdWUiLCJyZXNvdXJjZSI6ImlkLmlkY3RmLmt0cC4xIn1dLCJzdGF0dXMiOnsic3RhdHVzX2xpc3QiOnsiaWR4IjoxNywidXJpIjoiaHR0cHM6Ly9yZWdpc3RyeS50cnVzdC5nby5pZC9zdGF0dXMvYWNjcmVkaXRhdGlvbnMtMSJ9fSwiaWF0IjoxNzY5OTA0MDAwLCJleHAiOjE4MzI5NzYwMDB9.kQVtLszmfPhVBfSdumMGFHCV7GB9y1QWmaScMCn_f8tHbHW6kjTw5qmR4B9A2DZBmNtlQxtH3W1j3eRSS_f3vA~
@@ -162,12 +172,12 @@ The claims of the first of them, decoded:
 
 ## Format {#ts-5-07-format}
 
-The credential is an SD-JWT VC as
-[IETF SD-JWT VC][ref-i-d-ietf-oauth-sd-jwt-vc] defines it, over SD-JWT as
-[RFC 9901][ref-rfc9901] defines it, with the issuer-signed part a JSON Web
-Signature in compact serialization as [RFC 7515][ref-rfc7515] defines it and a
-claims set as [RFC 7519][ref-rfc7519] defines it. The header carries three
-parameters and nothing else: `typ`, `alg`, and `kid`.
+The credential is an SD-JWT VC over SD-JWT, with the issuer-signed part a
+JSON Web Signature in compact serialization and a claims set:
+[IETF SD-JWT VC][ref-i-d-ietf-oauth-sd-jwt-vc] defines the credential,
+[RFC 9901][ref-rfc9901] the SD-JWT under it, [RFC 7515][ref-rfc7515] the
+compact serialization, and [RFC 7519][ref-rfc7519] the claims set. The header
+carries three parameters and nothing else: `typ`, `alg`, and `kid`.
 
 [](){ #tbl-ts-5-07-claims }
 
@@ -182,7 +192,7 @@ parameters and nothing else: `typ`, `alg`, and `kid`.
 | `entity_type` | array of strings | Present | The role service type identifiers the registration was accredited for |
 | `scope` | array of objects | Present | The permissions the registration held when the credential was issued, each an `action` on a `resource` |
 | `status` | object | Present | The reference into the accreditation status list |
-| `iat` | number | Present | The moment the accreditation took effect |
+| `iat` | number | Present | The moment Trust Authority issued this copy of the credential |
 | `exp` | number | Present | The moment the accreditation period ends |
 
 </figure>
@@ -209,9 +219,6 @@ parameters and nothing else: `typ`, `alg`, and `kid`.
 
 ## What the credential names {#ts-5-07-what-the-credential-names}
 
-Three things: which registration was accredited, what it was accredited to be,
-and what it was permitted to do at the moment the credential was issued.
-
 ### The entity {#ts-5-07-the-entity}
 
 `sub` is the registration's `did:webvh`, the identifier its trusted list entry
@@ -228,8 +235,8 @@ of [the table of service types][tbl-ts-5-01-service-types]:
 `https://idctf.id/ns/19602/SvcType/AttributeIssuer`,
 `https://idctf.id/ns/19602/SvcType/WalletProvider`, and
 `https://idctf.id/ns/19602/SvcType/RelyingParty`. A Verifier Issuing CA
-service, a witness service, a trusted list signer service and a revoked key
-service say nothing about a role, and none of them appears here.
+service, a witness service, a trusted list signer service, and a revoked key
+service say nothing about a role.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -255,11 +262,15 @@ resource that is a credential type or one attribute of one.
 
 It is a record of what was granted, never an authority. Trust Authority
 reissues the credential when the permissions change, but the entity goes on
-holding every copy it was ever sent, so the `scope` in front of a reader may be
-months out of date and nothing in the credential says which copy is current. A
+holding every copy it was ever sent. The `scope` in front of a reader may
+therefore be months out of date, and nothing in the credential says which copy
+is current. A
 party that has to know what an entity may do asks Trust Registry and reads the
-Authority Statement it answers with. The array is empty for a registration that
-holds no permission, which is the ordinary case for a Wallet Provider.
+Authority Statement it answers with.
+
+The array is empty for a registration that holds no permission, which is every
+registration that holds the Wallet Provider role alone: a Wallet Provider issues
+no credential and requests none, so no permission can be scoped to that role.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -280,8 +291,8 @@ The credential names no assurance level. An issuer's grade follows from where
 its signing key lives and changes with an ordinary key change rather than with
 a reaccreditation, as
 [two assurance levels](../architecture-framework/trust-model/two-assurance-levels.md)
-sets out, and a claim that moves without the accreditation moving would be
-wrong for most of the credential's life.
+sets out. A claim that moved without the accreditation moving would be wrong for
+most of the credential's life.
 
 It names no approval tier, because no participant carries one: a tier grades a
 request, not a party. It names no accrediting party beyond `iss`, because the
@@ -307,9 +318,10 @@ also signed a published list would carry the forgery of an accreditation into
 that list.
 
 `kid` is the `id` of the signing key's verification method, formed as
-[REQ-TS-5-02-023][req-ts-5-02-023] requires, so
-`did:webvh:QmZjy1t9oFiaFjhX2e38uMuR7mgtdLjHPMGfjEfvrsmaiq:trust.go.id#accreditation-credential-1`
-in the illustration above.
+[REQ-TS-5-02-023][req-ts-5-02-023] requires; in
+[Accreditation Credentials as issued][ts-5-07-accreditation-credentials-as-issued]
+it is
+`did:webvh:QmZjy1t9oFiaFjhX2e38uMuR7mgtdLjHPMGfjEfvrsmaiq:trust.go.id#accreditation-credential-1`.
 
 A new signing key is a new entry in Trust Authority's log, announced the way
 every other key of an entity is announced. A credential signed by a superseded
@@ -333,12 +345,11 @@ log, so a rotation reissues nothing.
 
 ## Lifetime {#ts-5-07-lifetime}
 
-The credential lives as long as the accreditation does. `iat` is the moment the
-accreditation first took effect, the earliest `StatusStartingTime` in the
-history of the entry's role service, which a suspension and a restoration do
-not move, and `exp` is the end of the accreditation period. Neither is a fixed
-term of the document's choosing: the Governance Profile sets how long an
-accreditation period runs and how far before `exp` a renewal is prepared.
+The Governance Profile sets how long an accreditation period runs and how far
+before `exp` a renewal is prepared. When the accreditation first took effect is
+read from the `StatusStartingTime` of the entry's role services on the
+trusted list, which a suspension and a restoration do not move, and not from
+this credential.
 
 A renewal is a new credential. It carries a new `iat`, a new `exp`, the same
 `sub`, and the same index in the status list, so the entity's place in that
@@ -347,7 +358,7 @@ list never moves.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-07-047 }**REQ-TS-5-07-047** `iat` and `exp` MUST each be a number of seconds since the Unix epoch.
-- [](){ #req-ts-5-07-048 }**REQ-TS-5-07-048** `iat` MUST be the earliest `StatusStartingTime` in the history of the registration's role service.
+- [](){ #req-ts-5-07-048 }**REQ-TS-5-07-048** `iat` MUST be the moment Trust Authority issued the credential.
 - [](){ #req-ts-5-07-049 }**REQ-TS-5-07-049** `exp` MUST be later than `iat`.
 - [](){ #req-ts-5-07-050 }**REQ-TS-5-07-050** `exp` MUST NOT be later than the end of the accreditation period.
 - [](){ #req-ts-5-07-051 }**REQ-TS-5-07-051** Trust Authority MUST issue a replacement credential before `exp` when the accreditation continues past it.
@@ -363,16 +374,14 @@ An accreditation that is withdrawn after two months leaves a credential that
 expires in two years, which is why the credential carries a status reference.
 `status.status_list` names an index and the address of the accreditation status
 list, as [IETF Token Status List draft -14][ref-i-d-ietf-oauth-status-list] fixes the
-claim, and in the illustration above that address is
+claim, and in
+[Accreditation Credentials as issued][ts-5-07-accreditation-credentials-as-issued]
+that address is
 `https://registry.trust.go.id/status/accreditations-1`.
 
-The entry follows the registration: valid while it is `granted`, suspended
-while it is `suspended`, and invalid once it is `withdrawn`. A restored
-registration returns to valid and keeps its index. An index belongs to one
-registration for as long as the list exists and is never handed to another.
-
-The format of the list, the signature on it, how often it is republished and
-how a reader fetches a copy are fixed by [Publishing and reading a status list](publishing-and-reading-a-status-list.md).
+The format of the list, the signature on it, how often it is republished, and
+how a reader fetches a copy are fixed by
+[Publishing and reading a status list](publishing-and-reading-a-status-list.md).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -393,9 +402,9 @@ how a reader fetches a copy are fixed by [Publishing and reading a status list](
 
 ## Reading it {#ts-5-07-reading-it}
 
-A party shown an Accreditation Credential runs the steps below. The first six
-establish that the credential is what it claims to be; the seventh is the one
-that answers the question the party actually has.
+A party shown an Accreditation Credential runs the steps below. Every step up
+to the status list entry establishes that the credential is what it claims to
+be; the trusted list lookup is the one that answers the question the party has.
 
 1. Resolve the DID in `iss` to Trust Authority's DID Document.
 2. Find the verification method `kid` names among its verification methods, and
@@ -428,43 +437,43 @@ that answers the question the party actually has.
 
 Trust Authority issues the credential when the Root Authority grants the
 accreditation, and returns it in the exchange that returns the entity's witness
-proof and its certificate, as [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) fixes. The same specification fixes where an
-entity collects a later copy from; nothing in this specification depends on how
-the credential reaches the entity.
+proof and its certificate, as
+[Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+fixes.
 
 A credential is reissued when what it says stops being true: a permission is
-granted, narrowed or withdrawn, a role service is added or ends, the legal name
+granted, narrowed, or withdrawn, a role service is added or ends, the legal name
 on the entry changes, or the accreditation is renewed. A key rotation is none
 of these, and neither is a change in where the entity's signing key lives.
 
-A suspension and a restoration reissue nothing: the status list carries them,
-and the credential is unchanged throughout.
+A suspension reissues nothing: the status list carries it, and the credential
+is unchanged while it lasts. Trust Authority issues no credential to a
+suspended registration, so a change to the permissions or the role services of
+one waits. Restoration is where the wait ends: the registration is accredited
+again, and Trust Authority reissues then if what the credential says changed
+meanwhile.
 
-The credential in force for a registration is the last one Trust Authority
-issued to it, as its record of issuance shows. Issuing a credential to a
-registration, whether a replacement before `exp` or a reissue after a change,
-supersedes the one in force before it at that moment. The earlier copy stays
-unexpired and valid in the status list, because the two share an index, and
-nothing in the ecosystem acts on either of them, so no reader has to tell them
-apart.
+A replacement before `exp` and a reissue after a change both supersede the
+credential in force at that moment. The earlier copy stays unexpired and valid
+in the status list, because the two share an index. Nothing in the ecosystem
+acts on either of them, so no reader has to tell them apart.
 
 A withdrawal ends the accreditation, not the copy the entity holds. Trust
 Registry sets the status list entry to invalid and sets every role service and
 every Verifier Issuing CA service of the trusted list entry to `withdrawn`;
-nothing recalls the file on the entity's
-disk, which is the reason the status reference exists at all. The Use
-Statements of that entity end with the accreditation, as
-[REQ-TS-5-06-083][req-ts-5-06-083] requires.
+nothing recalls the file on the entity's disk. The Use Statements of that entity end with the
+accreditation, as [REQ-TS-5-06-083][req-ts-5-06-083] requires.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-07-076 }**REQ-TS-5-07-076** Trust Authority MUST issue an Accreditation Credential when the Root Authority grants an accreditation.
 - [](){ #req-ts-5-07-077 }**REQ-TS-5-07-077** Trust Authority MUST treat the last Accreditation Credential it issued to a registration as the one in force, and every earlier one as superseded.
-- [](){ #req-ts-5-07-078 }**REQ-TS-5-07-078** Trust Authority MUST reissue the credential when the set of permissions of the registration changes.
-- [](){ #req-ts-5-07-079 }**REQ-TS-5-07-079** Trust Authority MUST reissue the credential when a role service of the registration is added or ends.
-- [](){ #req-ts-5-07-080 }**REQ-TS-5-07-080** Trust Authority MUST reissue the credential when the `TEName` of the registration's trusted list entry changes.
+- [](){ #req-ts-5-07-078 }**REQ-TS-5-07-078** Trust Authority MUST reissue the credential when the set of permissions of the registration changes, unless its accreditation is suspended.
+- [](){ #req-ts-5-07-079 }**REQ-TS-5-07-079** Trust Authority MUST reissue the credential when a role service of the registration is added or ends, unless its accreditation is suspended.
+- [](){ #req-ts-5-07-080 }**REQ-TS-5-07-080** Trust Authority MUST reissue the credential when the `TEName` of the registration's trusted list entry changes, unless its accreditation is suspended.
 - [](){ #req-ts-5-07-081 }**REQ-TS-5-07-081** Trust Authority MUST NOT reissue the credential when the entity rotates a key.
 - [](){ #req-ts-5-07-082 }**REQ-TS-5-07-082** Trust Authority MUST NOT issue a credential to a registration whose accreditation is suspended or withdrawn.
+- [](){ #req-ts-5-07-088 }**REQ-TS-5-07-088** Trust Authority MUST reissue the credential when an accreditation is restored and anything [REQ-TS-5-07-078][req-ts-5-07-078], [REQ-TS-5-07-079][req-ts-5-07-079], or [REQ-TS-5-07-080][req-ts-5-07-080] names changed during the suspension.
 - [](){ #req-ts-5-07-083 }**REQ-TS-5-07-083** Trust Authority MUST record the credentials it issued to a registration with their `iat`, `exp`, and the reason for each reissue.
 - [](){ #req-ts-5-07-084 }**REQ-TS-5-07-084** Trust Authority MUST NOT require an entity to return or destroy a credential that has been superseded or withdrawn.
 
@@ -472,14 +481,12 @@ Statements of that entity end with the accreditation, as
 
 ## Security considerations {#ts-5-07-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A forged credential.** Anyone can mint a JSON Web Signature and call it an
   accreditation. [REQ-TS-5-07-043][req-ts-5-07-043] and
-  [REQ-TS-5-07-068][req-ts-5-07-068] make a reader resolve the key in Trust
-  Authority's DID Document and refuse a signature that does not verify, and
-  [REQ-TS-5-07-072][req-ts-5-07-072] makes the trusted list decide the question
-  anyway, so a forgery that never reaches the list buys nothing.
+  [REQ-TS-5-07-068][req-ts-5-07-068] make a reader resolve the key in
+  Trust Authority's DID Document and refuse a signature that does not verify,
+  and [REQ-TS-5-07-072][req-ts-5-07-072] makes the trusted list decide the
+  question anyway, so a forgery that never reaches the list buys nothing.
 - **A credential that outlives its accreditation.** A withdrawal takes effect
   the moment the Root Authority makes it, and the entity still holds a file
   that says otherwise until `exp`.
@@ -499,24 +506,24 @@ Each threat below is answered by the requirement named with it.
   keep it in the HSM and keep it from signing anything else, so its theft
   cannot reach a published list, and the trusted list is what a reader acts on.
 - **A reader that trusts the credential over the list.** A credential that is
-  genuine, unexpired and valid in the status list still says nothing about
+  genuine, unexpired, and valid in the status list still says nothing about
   whether its subject takes part today, and a party that stops reading there
   accepts an entity the Root Authority removed this morning.
-  [REQ-TS-5-07-032][req-ts-5-07-032], [REQ-TS-5-07-071][req-ts-5-07-071] and
+  [REQ-TS-5-07-032][req-ts-5-07-032], [REQ-TS-5-07-071][req-ts-5-07-071], and
   [REQ-TS-5-07-074][req-ts-5-07-074] each close one direction of that mistake:
   the permission, the participation, and the refusal read from an absence.
 
 ## Privacy considerations {#ts-5-07-privacy-considerations}
 
 The credential carries no personal data. It names a legal body, its identifier,
-its roles and its permissions, and the trusted list publishes the first three
-to everyone already.
+its roles, and its permissions, and the trusted list publishes the legal body,
+its identifier, and its roles to everyone already.
 
 Fetching the status list shows the publisher which registration a reader is
 interested in. The list is published whole and read from a cached copy rather
-than queried per index, so a reader that keeps a copy reveals nothing about the
-entity it is checking, and a reader that fetches a fresh copy reveals only that
-it is checking something.
+than queried per index. A reader that keeps a copy reveals nothing about the
+entity it is checking, and one that fetches a fresh copy reveals only that it
+is checking something.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -531,6 +538,6 @@ it is checking something.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

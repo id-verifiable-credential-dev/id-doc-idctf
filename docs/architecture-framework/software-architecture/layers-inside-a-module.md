@@ -33,18 +33,21 @@ pair a console or application Module uses at the top instead.
 - **Repository** holds the SQL, the table schemas, and the indexes.
 - **Provider** faces the systems outside the Module: the source system, the
   hardware security module (HSM), and Trust Infrastructure.
-- **PostgreSQL** is what Repository reaches, and nothing else in the Module
+- **PostgreSQL** is reached by Repository, and by nothing else in the Module
   touches it.
-- **Outside systems** are what Provider reaches, and nothing else in the
+- **Outside systems** are reached by Provider, and by nothing else in the
   Module touches them.
 - **View** faces the person. It is a screen a citizen, an operator, or a
   merchant works in.
-- **Client** faces another Module. It sends the protocol messages that a
-  Controller on the other side receives.
-- **Another Module** is what Client reaches: a Controller in Issuer Core,
-  Verifier Core, Wallet Backend Service, or a system outside IDCTF.
+- **Client** faces another Module, or a system outside IDCTF that speaks the
+  same protocol. It sends the protocol messages that a Controller on the other
+  side receives.
+- **Another Module** is the box for everything Client reaches: a Controller in
+  Issuer Core, Verifier Core, or Wallet Backend Service, and equally a system
+  outside IDCTF, which [the layers][fig-layers-inside-a-module] draw as the
+  same box because the Client layer treats the two alike.
 
-The rule reads downward through that figure. Controller calls Domain. Domain
+The rule reads downward through [the layers][fig-layers-inside-a-module]. Controller calls Domain. Domain
 calls Repository and Provider, which sit side by side at the bottom. Nothing
 calls upward, so Repository never calls Domain, and nothing skips a layer, so
 Controller never reaches a database or an outside system on its own.
@@ -57,33 +60,35 @@ Controller never reaches a database or an outside system on its own.
     a check for a Provider class in Verifier Core that points at an issuer's
     domain. The bans themselves are listed under
     [constraints binding implementations][constraints-binding-implementations].
-    The layer rule itself is enforced in the build, not by review: a server
-    Module keeps one package per layer, the Go compiler refuses an import of
-    an `internal/` package from outside the tree it belongs to, and depguard,
-    a linter in the pipeline, refuses the imports the compiler allows but the
+
+    The layer rule itself is enforced in the build, not by review. A server
+    Module keeps one package per layer. The Go compiler refuses an import of
+    an `internal/` package from outside the tree it belongs to. Depguard, a
+    linter in the pipeline, refuses the imports the compiler allows but the
     rule does not, such as a handler that imports a repository.
 
 A console or application Module is not a server. Nothing calls into it over
 the network, so it has no Controller. In its place it has View and Client:
-View is what the person sees and touches, and Client is the mirror of a
+View is the part a person sees and touches, and Client is the mirror of a
 Controller, sending outward the messages a Controller receives. View calls
-Client, and Client calls the other Module. Domain, Provider, and Repository
-keep their meaning wherever one applies: a console has none of the three, an
-application on a phone has all three.
+Client, and Client calls the other Module.
+
+Domain, Provider, and Repository keep their meaning wherever one applies: a
+console has none of the three, an application on a phone has all three.
 [Components inside a Module](components-inside-a-module.md) gives the layer of
 every Component in every Module. The Trust SDK is a library and has no layers
 of its own; inside the four Modules that embed it, it is one Provider
 Component.
 
-A View is a screen, and a Client is a Component that calls another Module;
-the Component tables hold no other kind of either. On the citizen's phone the Views are Consent UI, Trust Display, Credential Renderer,
-and App Lock, which [Architecture on the
-device](../high-level-architecture/architecture-on-the-device.md) calls the
-interface part.
+A View is a screen, and a Client is a Component that calls another Module; the
+Component tables hold no other kind of either. On the citizen's phone the Views
+are Consent UI, Trust Display, Credential Renderer, and App Lock, which
+[Architecture on the device](../high-level-architecture/architecture-on-the-device.md)
+calls the interface part.
 
 ## Who knows what {#who-knows-what}
 
-The rule is about calls. What makes it hold is a division of knowledge, which
+The rule is about calls, and a division of knowledge is what holds it up, which
 [the table of who knows what][tbl-who-knows-what] sets out layer by layer.
 
 [](){ #tbl-who-knows-what }
@@ -101,18 +106,19 @@ The rule is about calls. What makes it hold is a division of knowledge, which
 
 </figure>
 
-Issuance Controller knows that OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0 requires a `/credential` endpoint
-that accepts a `proof`. It does not know what selective disclosure is.
-Credential Builder knows that an SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 needs a salt per disclosure and a
-`cnf` claim. It does not know that HTTP exists.
+Issuance Controller knows that OpenID for Verifiable Credential Issuance
+(OpenID4VCI) 1.0 requires a `/credential` endpoint that accepts a `proof`. It
+does not know what selective disclosure is. Credential Builder knows that an
+SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 needs a salt per
+disclosure and a `cnf` claim. It does not know that HTTP exists.
 
 !!! info "A change does not spread"
 
-    What each layer does not know is what keeps a change from spreading.
-    Moving to a new version of OpenID for Verifiable Presentations (OpenID4VP) 1.0 changes the Controller, because only
-    the Controller knows the shape of the messages. Changing a minimization
-    rule changes the Domain, because only the Domain knows the rules. The two
-    changes never meet.
+    What each layer does not know is what keeps a change from spreading: moving
+    to a new version of OpenID for Verifiable Presentations (OpenID4VP) 1.0
+    changes the Controller, because only the Controller knows the shape of the
+    messages. Changing a minimization rule changes the Domain, because only the
+    Domain knows the rules. The two changes never meet.
 
 ## Examples {#layer-examples}
 
@@ -131,15 +137,15 @@ three.
 
 ### One presentation through Verifier Core {#one-presentation-through-verifier-core}
 
-Presentation Controller accepts
-the response the wallet posts back. Signing Provider decrypts it, through Key
-Manager. Credential Verifier, in Domain, checks the credential's signature,
-its Key Binding JWT (KB-JWT), and its disclosures, and Trust Evaluator, also in Domain,
-walks the entity chain and the transaction chain. Both read the trusted list
-and the status list through the Trust SDK, from cache, so no call leaves for
-Trust Registry while the citizen waits. Verification Repository writes the
-`verification_record`, and RP Controller hands the attributes to the Relying
-Party's business system without storing them.
+Presentation Controller accepts the response the wallet posts back. Signing
+Provider decrypts it, through Key Manager. Credential Verifier, in Domain,
+checks the credential's signature, its Key Binding JWT (KB-JWT), and its
+disclosures, and Trust Evaluator, also in Domain, walks the entity chain and the
+transaction chain. Both read the trusted list and the status list through the
+Trust SDK, from cache, so no call leaves for Trust Registry while the citizen
+waits. Verification Repository writes the `verification_record`, and RP
+Controller hands the attributes to the Relying Party's business system without
+storing them.
 
 ### A console that never reaches the database {#a-console-that-never-reaches-the-database}
 
@@ -155,5 +161,3 @@ reach around the API to the tables underneath.
     One institution reads its source system over REST, another replicates it
     overnight. What differs between the two installations of Issuer Core is
     one class in the Provider layer, Claims Provider, and nothing above it.
-    Replacing the protocol is the same story one layer up: it changes the
-    Controller and nothing else.

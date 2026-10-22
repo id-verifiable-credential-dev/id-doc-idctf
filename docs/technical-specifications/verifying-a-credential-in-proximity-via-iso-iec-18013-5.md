@@ -16,20 +16,24 @@ find each other, open the encrypted session, and carry one signed request and
 one answer across it.
 </p>
 
-Every sentence on this page binds Mobile Verifier, which reads, and Mobile
-Wallet, which answers, and an Assessment Body tests them against it in the
-version the Governance Profile puts in force. The key words and the
+Every sentence on this page binds Mobile Verifier, which reads, and
+Mobile Wallet, which answers, and an Assessment Body tests them against it in
+the version the Governance Profile puts in force. The key words and the
 identifier `REQ-TS-3-02-nnn` follow [Common provisions](common-provisions.md).
 
 ## Who runs this and what it needs {#ts-3-02-who-runs-this-and-what-it-needs}
 
 This specification fixes the profile of device retrieval under
-[ISO/IEC 18013-5:2021][ref-iso-18013-5] that IDCTF runs: device engagement by
-QR code and by Near Field Communication (NFC), the Bluetooth Low Energy (BLE)
-transport, session establishment and session encryption, the handover the
-SessionTranscript ends in, the DeviceRequest and its ReaderAuth, the checks
-Mobile Wallet runs on a request, when a DeviceResponse is sent and what it
-leaves out, and how the session ends.
+[ISO/IEC 18013-5:2021][ref-iso-18013-5] that IDCTF runs:
+
+- Device engagement by QR code and by Near Field Communication (NFC).
+- The Bluetooth Low Energy (BLE) transport.
+- Session establishment and session encryption.
+- The handover the SessionTranscript ends in.
+- The DeviceRequest and its ReaderAuth.
+- The checks Mobile Wallet runs on a request.
+- When a DeviceResponse is sent and what it leaves out.
+- How the session ends.
 
 Its conformance targets are Mobile Verifier, which is the mdoc reader, and
 Mobile Wallet, which is the mdoc. A Relying Party's own application built on
@@ -37,67 +41,78 @@ Reader SDK runs the exchange through that library, and the requirements
 addressed to Mobile Verifier bind the application as well, except where a
 requirement names the application itself.
 
-It leaves to other documents: the documents a DeviceResponse carries, its
-DeviceAuth, the structure of the SessionTranscript both are taken over, and
-the checks a verifier runs on the answer, which
-[Building and verifying a presentation](building-and-verifying-a-presentation.md)
-holds; the mdoc itself and the checks that reach it, which
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
-holds; the Use Statement in `requestInfo` and the checks Mobile Wallet runs on
-it, which
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-holds; the Verifier Device Certificate, its `ReaderAuthRole`, and the
-validation of the reader chain and of the issuer chain against the Verified
-Issuer Certificate Authority List (VICAL), which
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-holds; the trusted list, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds; the status list form an mdoc reader reads, which
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md)
-holds; how stale a cached status list, certificate revocation list (CRL) or
-VICAL may be before a device with no network stops accepting it, which the
-Governance Profile holds; and [what a merchant may do with what it was shown, which the Governance Framework holds][gf-what-a-merchant-does-with-what-it-is-shown].
+It leaves to other documents:
 
-The profile narrows the standard where it lets an mdoc or a reader choose,
-and each narrowing is a requirement below. Reader authentication, which the
-standard leaves optional, is required: Mobile Wallet answers no request that a
-Verifier Device Certificate did not sign, because the certificate is where the
-bound on a merchant lives, as
+- The documents a DeviceResponse carries, its DeviceAuth, the structure of the
+  SessionTranscript both are taken over, and the checks a verifier runs on the
+  answer, which
+  [Building and verifying a presentation](building-and-verifying-a-presentation.md)
+  holds.
+- The mdoc itself and the checks that reach it, which
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  holds.
+- The Use Statement in `requestInfo` and the checks Mobile Wallet runs on it,
+  which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
+- The Verifier Device Certificate, its `ReaderAuthRole`, and the validation of
+  the reader chain and of the issuer chain against the Verified Issuer
+  Certificate Authority List (VICAL), which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The trusted list, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- The status list form an mdoc reader reads, which
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  holds.
+- How stale a cached status list, certificate revocation list (CRL), or VICAL
+  may be before a device with no network stops accepting it, which the
+  Governance Profile holds.
+- [What a merchant may do with what it was shown][gf-what-a-merchant-does-with-what-it-is-shown],
+  which the Governance Framework holds.
+
+The profile narrows the standard where it lets an mdoc or a reader choose, and
+each narrowing is a requirement below.
+
+Reader authentication, which the standard leaves optional, is required:
+Mobile Wallet answers no request that a Verifier Device Certificate did not
+sign, because the certificate is where the bound on a merchant lives, as
 [a central Relying Party vouching for a small one][verifier-device-certificate-for-a-small-verifier]
-sets out, and ReaderAuth takes ES256 alone, over a chain of exactly the device
-certificate and its Verifier Issuing CA. Mobile Wallet always offers
-engagement by QR code, because an app on an iOS device in Indonesia cannot act
-as an NFC tag, and uses Static Handover when it offers NFC. It offers device
-retrieval over BLE alone, in either mode, and never through a server, because
-a check in proximity makes no network call. It draws its ephemeral key on
-P-256, carries no fixed BLE address, and checks the Ident characteristic. One
-session carries one request, so that the citizen consents to one request
-whole, and `requestInfo` carries the Use Statement alone. A refusal reaches
-the reader as an ended session rather than as a DeviceResponse, and Mobile
-Wallet tells the reader nothing about what it did not return.
+sets out. Mobile Wallet always offers engagement by QR code, because an app
+on an iOS device in Indonesia cannot act as an NFC tag. It offers device
+retrieval over BLE alone and never through a server, because a check in
+proximity makes no network call. One session carries one request, so that the
+citizen consents to one request whole.
 
-On the reader side the profile asks for what an IDCTF wallet uses, and
-recommends the rest of what the standard asks of an mDL reader: Mobile
-Verifier supports both engagement methods, Static Handover, both BLE modes and
-P-256, and should support Negotiated Handover, NFC device retrieval and the
-other key agreement curves, which only a wallet outside IDCTF uses.
+On the reader side the profile asks for what an IDCTF wallet uses:
+Mobile Verifier supports both engagement methods, Static Handover, both BLE modes, and
+P-256. It recommends the rest of what the standard asks of a mobile driving
+license (mDL) reader. Negotiated Handover, NFC device retrieval, and the other
+key agreement curves are recommended rather than required,
+[REQ-TS-3-02-074][req-ts-3-02-074] among them, because only a wallet outside
+IDCTF uses them.
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Mobile Verifier** holds its device key in the secure element that
-  generated it, the Verifier Device Certificate over that key, the Verifier
-  Issuing CA certificate that issued it, and the Use Statements of the uses
-  bound to the device; the Issuer Root CA from build time; and the trusted list,
-  the VICAL, the Issuer Root CA CRL and the status lists in Concise Binary
-  Object Representation (CBOR) Web Token (CWT) form that its
-  [trust cache sync][trust-cache-sync] fetched.
-- **Mobile Wallet** holds each credential it presents as an mdoc, the
-  credential key in the device's secure element, the Verifier Root CA from
-  build time, Trust Authority's self-certifying identifier (SCID) from build
-  time, and what its trust cache sync fetched: the trusted list, Trust
-  Authority's Decentralized Identifier (DID) log, the Authority Statements on what each Relying Party may
-  ask for, the CRL of each Verifier Issuing CA, and the Use Statement status
-  list.
+- **Mobile Verifier** holds:
+    - Its device key, in the secure element that generated it.
+    - The Verifier Device Certificate over that key.
+    - The Verifier Issuing CA certificate that issued it.
+    - The Use Statements of the uses bound to the device.
+    - The Issuer Root CA, from build time.
+    - What its [trust cache sync][trust-cache-sync] fetched: the trusted list,
+      the VICAL, the Issuer Root CA CRL, and the status lists in Concise Binary
+      Object Representation (CBOR) Web Token (CWT) form.
+- **Mobile Wallet** holds:
+    - Each credential it presents as an mdoc.
+    - The credential key, in the device's secure element.
+    - The Verifier Root CA, from build time.
+    - Trust Authority's self-certifying identifier (SCID), from build time.
+    - What its trust cache sync fetched: the trusted list, Trust Authority's
+      Decentralized Identifier (DID) log, the Authority Statements on what each
+      Relying Party may ask for, the CRL of each Verifier Issuing CA, and the
+      Use Statement status list.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -108,32 +123,22 @@ Before the first exchange, each target holds what the rules below assume:
 
 ## What a proximity check does {#ts-3-02-what-a-proximity-check-does}
 
-A proximity check lets a counter read a credential with the network switched
-off at both ends, which is the reason the mdoc representation exists at all,
-as [online and offline][online-and-offline] sets out. Everything either side
-needs to judge the other is already on the device: Mobile Wallet checks the
-reader against the Verifier Root CA and its cached trusted list, and Mobile
-Verifier checks the issuer against the Issuer Root CA or its cached VICAL.
-Neither asks anyone anything during the exchange, as
-[offline verification][offline-verification] walks through.
+The mdoc representation exists for this check, as
+[online and offline][online-and-offline] sets out. Everything either side needs
+to judge the other is already on the device: Mobile Wallet checks the reader
+against the Verifier Root CA and its cached trusted list, and Mobile Verifier
+checks the issuer against the Issuer Root CA or its cached VICAL.
+[Offline verification][offline-verification] walks the exchange through.
 
-The two devices share no secret and know nothing of each other until the
-citizen's wallet shows a QR code or is tapped. That engagement hands the
-reader the wallet's ephemeral public key and the way to reach it. From there
-the reader answers with an ephemeral key of its own, both derive the same
-session keys, and the request and the response travel encrypted under them;
-only a status code that ends the session travels in the clear. Both
-signatures of the exchange, ReaderAuth over the request and DeviceAuth over
-the answer, are taken over the SessionTranscript, the record of
-that engagement and that reader key, so neither can be lifted into another
+Both signatures of the exchange, ReaderAuth over the request and DeviceAuth
+over the answer, are taken over the SessionTranscript, the record of the
+engagement and the reader key, so neither can be lifted into another
 session.
 
 What the reader may ask for is bounded three times before the citizen sees a
 screen: by the permission of the entity that vouches for the device, by the
 Use Statement the request carries, and by the `ReaderAuthRole` of the
-certificate that signed it. The wallet returns no document in which one data
-element falls outside a bound, then asks the citizen to approve what is left,
-whole, or to refuse.
+certificate that signed it.
 
 ## The exchange {#ts-3-02-the-exchange}
 
@@ -158,34 +163,38 @@ A proximity check runs in eleven steps.
 6. Mobile Wallet derives the same session keys from its own SessionTranscript
    and decrypts the request.
 7. Mobile Wallet checks each ReaderAuth, the reader chain, the entity's
-   permission, the Use Statement and the `ReaderAuthRole`, and drops every
-   document asking for something outside them.
-8. Mobile Wallet asks the citizen to approve what is left, naming the
+   permission, the Use Statement, and the `ReaderAuthRole`, and ends the
+   session when any document asks for something outside them.
+8. Mobile Wallet asks the citizen to approve the request, naming the
    requester from the certificate and the purpose from the Use Statement.
 9. Mobile Wallet sends the DeviceResponse encrypted in a SessionData, or, if
    the citizen refused, ends the session without one.
 10. Mobile Verifier decrypts the response and checks the credential, the
-    issuer chain, DeviceAuth and the status, all from its cache.
+    issuer chain, DeviceAuth, and the status, all from its cache.
 11. Mobile Verifier ends the session, and both sides destroy the ephemeral
     keys and the session keys.
 
 ## A proximity check, as exchanged {#ts-3-02-a-proximity-check-as-exchanged}
 
-Below is one check end to end, and the engagement that starts a second one
-over NFC. The citizen, the merchant, the session and every key are invented,
-and no transaction has taken place. Every field is exact. The reader is the
-phone at Warung Bu Ani, a merchant Terminal Nusantara registered, whose
-Verifier Device Certificate is the one
-[Verifier Device Certificate][ts-5-04-verifier-device-certificate-as-issued]
-shows in TS-5-04. The cashier picked the tobacco category, so the request is
-the age check
-[carrying it in proximity][ts-5-06-carrying-it-in-proximity] publishes in
-TS-5-06, and the answer is the DeviceResponse
-[an mdoc presentation in proximity][ts-5-11-an-mdoc-presentation-in-proximity]
-shows in TS-5-11, under the SessionTranscript shown there. ReaderAuth verifies
-under the device key that certificate names; both encrypted messages decrypt
-under the session keys shown, and the ephemeral keys behind them are kept with
-the other keys of the examples.
+The citizen, the merchant, the session, and every key are invented, and no
+transaction has taken place. Every field is exact.
+
+The examples agree with the pages that show the same parties and artifacts:
+
+- The reader is the phone at Warung Bu Ani, a merchant Terminal Nusantara
+  registered, whose Verifier Device Certificate is the one
+  [Verifier Device Certificate][ts-5-04-verifier-device-certificate-as-issued]
+  shows in TS-5-04.
+- The cashier picked the tobacco category, so the request is the age check
+  [carrying it in proximity][ts-5-06-carrying-it-in-proximity] publishes in
+  TS-5-06.
+- The answer is the DeviceResponse
+  [an mdoc presentation in proximity][ts-5-11-an-mdoc-presentation-in-proximity]
+  shows in TS-5-11, under the SessionTranscript shown there.
+- ReaderAuth verifies under the device key that certificate names.
+- Both encrypted messages decrypt under
+  [the session keys][ts-3-02-the-session-keys], and the ephemeral keys behind
+  them are kept with the other keys of the examples.
 
 ### Engagement by QR code {#ts-3-02-engagement-by-qr-code}
 
@@ -570,13 +579,15 @@ public key and the ways to reach it, and nothing about the citizen.
 BLE is the only device retrieval method Mobile Wallet offers, so every check
 between two IDCTF applications runs on it. A wallet offers either mode or
 both, and a reader supports both, so that a wallet built on a library that
-runs one mode at a time still reaches every counter. In mdoc central client
-mode the reader is the Generic Attribute Profile (GATT) server and advertises
-the UUID the engagement names; in mdoc peripheral server mode the wallet is. Either
-way the client subscribes to State and Server2Client and writes Start to
-State, and each side sends a message in parts of three bytes less than the
-negotiated maximum transmission unit, each part opening with `0x01` when more
-follow and `0x00` on the last.
+runs one mode at a time still reaches every counter.
+
+In mdoc central client mode the reader is the Generic Attribute Profile
+(GATT) server and advertises the UUID the engagement names; in mdoc
+peripheral server mode the wallet is. Either way the client subscribes to
+State and Server2Client and writes Start to State. Each side then sends a
+message in parts of three bytes less than the negotiated maximum transmission
+unit, each part opening with `0x01` when more follow and `0x00` on the
+last.
 
 [](){ #tbl-ts-3-02-gatt }
 
@@ -630,17 +641,17 @@ The session is set up in five steps, from the engagement the reader read.
    [REQ-TS-3-02-069][req-ts-3-02-069] names, `null` after a QR code and the
    NFC handover after a tap.
 3. Each side computes the shared secret by Elliptic Curve Diffie-Hellman
-   (ECDH) and derives `SKReader` and `SKDevice` with HKDF and SHA-256, the salt
-   being the SHA-256 digest of the `SessionTranscriptBytes` and the info string
-   `SKReader` or `SKDevice`, 32 bytes each, as ISO/IEC 18013-5 clause 9.1.1.5
-   fixes.
+   (ECDH) and derives `SKReader` and `SKDevice` with HKDF and SHA-256, 32 bytes
+   each, as ISO/IEC 18013-5 clause 9.1.1.5 fixes. The salt is the SHA-256 digest
+   of the `SessionTranscriptBytes`, and the info string is `SKReader` or
+   `SKDevice`.
 4. Mobile Verifier sends the SessionEstablishment, carrying `EReaderKey` and the
    DeviceRequest encrypted under `SKReader`.
 5. Every later message is a SessionData, encrypted under `SKReader` when the
    reader sends it and under `SKDevice` when the wallet does.
 
 Encryption is Advanced Encryption Standard (AES) with a 256-bit key in
-Galois/Counter Mode (GCM), with an empty additional authenticated data. The
+Galois/Counter Mode (GCM), with empty additional authenticated data. The
 initialization vector is an eight-byte identifier, all zero for the reader and
 `0x0000000000000001` for the wallet, followed by a four-byte big-endian counter
 that starts at 1 and grows by one for each message that key encrypts. The
@@ -652,9 +663,9 @@ encrypted value is the ciphertext followed by its 16-byte tag.
 
 | Message | Member | Type | Presence | Value |
 |---|---|---|---|---|
-| SessionEstablishment | `eReaderKey` | `bstr`, tag 24 | Present | `EReaderKey` as a COSE_Key, uncompressed, carrying `kty`, `crv`, `x` and `y` alone |
+| SessionEstablishment | `eReaderKey` | `bstr`, tag 24 | Present | `EReaderKey` as a COSE_Key, uncompressed, carrying `kty`, `crv`, `x`, and `y` alone |
 | SessionEstablishment | `data` | `bstr` | Present | The DeviceRequest, encrypted under `SKReader` |
-| SessionData | `data` | `bstr` | Conditional | The DeviceResponse encrypted under `SKDevice`; absent with status `10`, `11` or `20` |
+| SessionData | `data` | `bstr` | Conditional | The DeviceResponse encrypted under `SKDevice`; absent with status `10`, `11`, or `20` |
 | SessionData | `status` | `uint` | Conditional | `10` when a message does not decrypt, `11` when it does not decode as CBOR, `20` to end the session; absent otherwise |
 
 </figure>
@@ -703,8 +714,7 @@ their namespace, and in `requestInfo` the Use Statement, as
 
 Every DocRequest carries a ReaderAuth, as
 [REQ-TS-5-06-056][req-ts-5-06-056] requires. ReaderAuth is a `COSE_Sign1` as
-[RFC 9052][ref-rfc9052] defines it, untagged
-and with the payload detached. The detached content is
+[RFC 9052][ref-rfc9052] defines it. The detached content is
 `ReaderAuthenticationBytes`: the array of the string `ReaderAuthentication`,
 the SessionTranscript, and the `ItemsRequest` bytes as sent, encoded and
 wrapped in CBOR tag 24. The device key signs it, which is the reader key a
@@ -725,7 +735,7 @@ Mobile Verifier holds, as [the device key][the-device-key] sets out.
 
 - [](){ #req-ts-3-02-036 }**REQ-TS-3-02-036** `version` of a DeviceRequest MUST be `1.0`.
 - [](){ #req-ts-3-02-037 }**REQ-TS-3-02-037** Mobile Verifier MUST carry one DocRequest per document type it asks for.
-- [](){ #req-ts-3-02-038 }**REQ-TS-3-02-038** Mobile Verifier MUST set every `IntentToRetain` to `false`, because it keeps no value it was shown, as [REQ-TS-5-11-092][req-ts-5-11-092] and [REQ-TS-5-11-096][req-ts-5-11-096] require and the result stays on its screen.
+- [](){ #req-ts-3-02-038 }**REQ-TS-3-02-038** Mobile Verifier MUST set every `IntentToRetain` to `false`, because it keeps no value it was shown, as [REQ-TS-5-11-092][req-ts-5-11-092] and [REQ-TS-5-11-096][req-ts-5-11-096] require.
 - [](){ #req-ts-3-02-075 }**REQ-TS-3-02-075** A Relying Party's own application built on Reader SDK MUST set `IntentToRetain` to `true` for exactly the data elements its business system keeps beyond the transaction.
 - [](){ #req-ts-3-02-039 }**REQ-TS-3-02-039** Mobile Verifier MUST NOT carry a key in `requestInfo` other than `idUseStatement`.
 - [](){ #req-ts-3-02-040 }**REQ-TS-3-02-040** ReaderAuth MUST be an untagged `COSE_Sign1` whose payload is `null` and whose detached content is `ReaderAuthenticationBytes`.
@@ -756,9 +766,9 @@ the citizen sees anything.
 4. **Check the permission.** Read from the cached Authority Statements whether
    the entity holding the Verifier Issuing CA may `request` each document type
    asked for, as [Reading the answer][ts-5-05-reading-the-answer] fixes and
-   [REQ-TS-5-06-077][req-ts-5-06-077] requires, and refuse the request whole
-   when a statement is missing, past its tolerance limit, or answers `false`,
-   as the online check does.
+   [REQ-TS-5-06-077][req-ts-5-06-077] requires. Refuse the request whole when a
+   statement is missing, past its tolerance limit, or answers `false`, as the
+   online check does.
 5. **Check the Use Statement**, as [Reading it][ts-5-06-reading-it] fixes,
    with `sub` matched against the entity holding the Verifier Issuing CA. A
    request that carries none is served or refused as that clause sets out for
@@ -766,24 +776,20 @@ the citizen sees anything.
    [REQ-TS-5-06-076][req-ts-5-06-076].
 6. **Apply the bounds.** Refuse every data element outside the Use Statement
    or outside the `ReaderAuthRole` of the certificate, and return no document
-   in which one was refused, as [REQ-TS-5-06-112][req-ts-5-06-112] and
+   of the request when one was refused, as
+   [REQ-TS-5-06-112][req-ts-5-06-112] and
    [REQ-TS-5-04-101][req-ts-5-04-101] require.
 7. **Ask the citizen.** The consent screen names the requester by the
-   `commonName` of the certificate's subject, shows the purpose of the Use
-   Statement and which data elements the requester keeps, and the citizen
-   approves what is left, whole, or refuses.
-
-The `organizationName` of a merchant's certificate names its RP Intermediary,
-which never reaches the consent screen, as
-[how the intermediated group works][how-the-intermediated-group-works] sets
-out.
+   `commonName` of the certificate's subject, shows the purpose of the
+   Use Statement and which data elements the requester keeps, and the citizen
+   approves the whole of what is left, or refuses.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-3-02-048 }**REQ-TS-3-02-048** Mobile Wallet MUST refuse a DocRequest that carries no `readerAuth`.
+- [](){ #req-ts-3-02-048 }**REQ-TS-3-02-048** Mobile Wallet MUST refuse a DeviceRequest in which any DocRequest carries no `readerAuth`.
 - [](){ #req-ts-3-02-049 }**REQ-TS-3-02-049** Mobile Wallet MUST verify each ReaderAuth over `ReaderAuthentication` built from the SessionTranscript it built itself and the `ItemsRequest` bytes as it received them.
 - [](){ #req-ts-3-02-050 }**REQ-TS-3-02-050** Mobile Wallet MUST verify ReaderAuth with the public key of the first certificate of its `x5chain`.
-- [](){ #req-ts-3-02-051 }**REQ-TS-3-02-051** Mobile Wallet MUST refuse a DocRequest whose ReaderAuth does not verify.
+- [](){ #req-ts-3-02-051 }**REQ-TS-3-02-051** Mobile Wallet MUST refuse a DeviceRequest in which any ReaderAuth does not verify.
 - [](){ #req-ts-3-02-052 }**REQ-TS-3-02-052** Mobile Wallet MUST refuse a DeviceRequest whose DocRequests are not all signed under the same Verifier Device Certificate.
 - [](){ #req-ts-3-02-053 }**REQ-TS-3-02-053** Mobile Wallet MUST show the citizen, on the consent screen, every data element whose `IntentToRetain` is `true` as one the requester keeps.
 - [](){ #req-ts-3-02-054 }**REQ-TS-3-02-054** Mobile Wallet MUST name the requester on the consent screen by the `commonName` of the subject of the Verifier Device Certificate.
@@ -794,12 +800,13 @@ out.
 
 ## The response {#ts-3-02-the-response}
 
-Mobile Wallet answers once. A citizen who approves gets the documents the
-bounds left whole sent in one DeviceResponse, built as
+Mobile Wallet answers once. A citizen who approves gets every document of
+the request sent in one DeviceResponse, built as
 [the mdoc presentation][ts-5-11-the-mdoc-presentation] fixes. A citizen who
-refuses, or a request of which no document survived the bounds, gets no
+refuses, or a request of which any document fell outside the bounds, gets no
 DeviceResponse at all: the wallet ends the session, and the reader learns only
-that nothing came.
+that nothing came. A partial answer would hand a verifier data it is bound to
+refuse under [REQ-TS-5-11-088][req-ts-5-11-088].
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -807,7 +814,7 @@ that nothing came.
 - [](){ #req-ts-3-02-058 }**REQ-TS-3-02-058** `status` of a DeviceResponse MUST be `0`.
 - [](){ #req-ts-3-02-059 }**REQ-TS-3-02-059** Mobile Wallet MUST NOT carry `documentErrors` in a DeviceResponse, because naming a document it did not return tells the reader what the citizen holds or refused.
 - [](){ #req-ts-3-02-060 }**REQ-TS-3-02-060** Mobile Wallet MUST NOT carry `errors` in a document of a DeviceResponse.
-- [](){ #req-ts-3-02-061 }**REQ-TS-3-02-061** Mobile Wallet MUST end the session with status `20` and no DeviceResponse when the citizen refuses or when no document of the request can be returned.
+- [](){ #req-ts-3-02-061 }**REQ-TS-3-02-061** Mobile Wallet MUST end the session with status `20` and no DeviceResponse when the citizen refuses or when any document of the request cannot be returned under [REQ-TS-5-06-112][req-ts-5-06-112].
 - [](){ #req-ts-3-02-062 }**REQ-TS-3-02-062** Mobile Wallet MUST NOT answer a second DeviceRequest in a session.
 
 </div>
@@ -820,7 +827,7 @@ Mobile Verifier checks the response in five steps, from its own cache.
    DeviceResponse decodes.
 2. **Check the credential**, as
    [Reading a credential][ts-5-10-reading-a-credential] fixes: IssuerAuth, the
-   digests, the type and the validity period.
+   digests, the type, and the validity period.
 3. **Check the issuer**, from `x5chain` to the Issuer Root CA or to a root its
    cached VICAL carries for the document type, as
    [Validating a chain][ts-5-04-validating-a-chain] fixes.
@@ -842,23 +849,19 @@ Mobile Verifier checks the response in five steps, from its own cache.
 
 A session ends after one answer, after a refusal, on an error, or after 300
 seconds without a message, the floor ISO/IEC 18013-5 clause 9.1.1.4 sets for
-that time-out. On BLE the reader also signals End on the State
-characteristic, and the GATT client unsubscribes and disconnects. A session
-that ended is not resumed: another check starts from a new engagement.
+that time-out.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-3-02-066 }**REQ-TS-3-02-066** Mobile Verifier MUST end the session with status `20` once it has received the DeviceResponse.
 - [](){ #req-ts-3-02-067 }**REQ-TS-3-02-067** On BLE, Mobile Verifier MUST signal End, `0x02`, on the State characteristic after the SessionData that ends the session, by a notification in mdoc central client mode and by a write in mdoc peripheral server mode.
-- [](){ #req-ts-3-02-072 }**REQ-TS-3-02-072** On BLE, the side that is the GATT client MUST unsubscribe from State and Server2Client and disconnect once End is signalled.
+- [](){ #req-ts-3-02-072 }**REQ-TS-3-02-072** On BLE, the side that is the GATT client MUST unsubscribe from State and Server2Client and disconnect once End is signaled.
 - [](){ #req-ts-3-02-073 }**REQ-TS-3-02-073** Mobile Verifier and Mobile Wallet MUST end a session in which no message has arrived for 300 seconds.
 - [](){ #req-ts-3-02-068 }**REQ-TS-3-02-068** Mobile Verifier and Mobile Wallet MUST NOT reconnect a session that has ended.
 
 </div>
 
 ## Security considerations {#ts-3-02-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A reader that asks without a certificate.** The standard lets an mdoc
   answer an anonymous reader. Under this profile the wallet answers no
@@ -878,20 +881,20 @@ Each threat below is answered by the requirement named with it.
   and destroy them after,
   [REQ-TS-3-02-007][req-ts-3-02-007],
   [REQ-TS-3-02-024][req-ts-3-02-024],
-  [REQ-TS-3-02-034][req-ts-3-02-034] and
+  [REQ-TS-3-02-034][req-ts-3-02-034], and
   [REQ-TS-3-02-035][req-ts-3-02-035].
 - **A second reader nearby.** In mdoc central client mode the wallet connects
   to whichever device advertises the UUID. The Ident check keeps it from
   talking to the wrong counter by mistake,
   [REQ-TS-3-02-022][req-ts-3-02-022] and
   [REQ-TS-3-02-023][req-ts-3-02-023], but any device that saw the QR code can
-  compute Ident. What stops a device that copied the engagement is ReaderAuth:
+  compute Ident. ReaderAuth stops a device that copied the engagement:
   without the device key of a certified reader it gets no answer,
   [REQ-TS-3-02-048][req-ts-3-02-048] and
   [REQ-TS-3-02-051][req-ts-3-02-051]. A reader that relays the engagement to
   a far device and the messages back can still carry a session between two
-  places; what it gains is an answer to a request that a certified device
-  signed, with the bounds of that device.
+  places; it gains an answer to a request that a certified device signed, with
+  the bounds of that device.
 - **Two readers in one request.** A DeviceRequest whose DocRequests are signed
   under different certificates would let one reader borrow another's bound,
   so the wallet refuses it,
@@ -900,25 +903,23 @@ Each threat below is answered by the requirement named with it.
   encrypted under keys derived from an ECDH exchange no bystander takes part
   in, [REQ-TS-3-02-028][req-ts-3-02-028] to
   [REQ-TS-3-02-030][req-ts-3-02-030]. What travels in the clear is the
-  engagement, an ephemeral public key and a UUID, and the status code that
+  engagement, an ephemeral public key, and a UUID, and the status code that
   ends the session.
-- **A counter used twice.** A counter used twice under one key
-  breaks GCM, so each side counts from 1 and never reuses a key in a second
+- **A counter used twice.** Under one key it breaks GCM, so each side counts
+  from 1 and never reuses a key in a second
   session,
   [REQ-TS-3-02-031][req-ts-3-02-031] and
   [REQ-TS-3-02-035][req-ts-3-02-035].
 
 ## Privacy considerations {#ts-3-02-privacy-considerations}
 
-Each exposure below is named with what bounds it.
-
 - **The engagement says nothing about the citizen.** A QR code or an NFC tap
-  hands over an ephemeral key, a transport and a UUID, all new for each
+  hands over an ephemeral key, a transport, and a UUID, all new for each
   engagement, and no fixed device address, so a reader cannot recognize the
   same wallet twice from them,
   [REQ-TS-3-02-007][req-ts-3-02-007],
   [REQ-TS-3-02-020][req-ts-3-02-020],
-  [REQ-TS-3-02-070][req-ts-3-02-070] and
+  [REQ-TS-3-02-070][req-ts-3-02-070], and
   [REQ-TS-3-02-071][req-ts-3-02-071].
 - **Nothing leaves the wallet before consent.** The reader sends its request
   first and learns nothing until the citizen approves,
@@ -932,15 +933,16 @@ Each exposure below is named with what bounds it.
   application marks what its business system keeps, and the wallet shows it
   before the citizen approves,
   [REQ-TS-3-02-038][req-ts-3-02-038],
-  [REQ-TS-3-02-075][req-ts-3-02-075] and
+  [REQ-TS-3-02-075][req-ts-3-02-075], and
   [REQ-TS-3-02-053][req-ts-3-02-053]. What a merchant does with what it saw
   on the screen [is the Governance Framework's to bound][gf-what-a-merchant-does-with-what-it-is-shown].
-- **The intermediary stays off the screen.** The citizen sees the merchant's
-  name and the purpose, not the RP Intermediary that vouches for it,
-  [REQ-TS-3-02-054][req-ts-3-02-054] and
+- **The RP Intermediary stays off the screen.** The citizen sees the merchant's
+  name and the purpose, not the RP Intermediary that vouches for it, as
+  [how the intermediated group works][how-the-intermediated-group-works] sets
+  out, [REQ-TS-3-02-054][req-ts-3-02-054] and
   [REQ-TS-3-02-055][req-ts-3-02-055].
 - **No network means no trace elsewhere.** Neither side calls anyone during
-  the check, so no registry, issuer or intermediary learns that it happened,
+  the check, so no Trust Registry, issuer, or RP Intermediary learns that it happened,
   [REQ-TS-3-02-065][req-ts-3-02-065].
 
 ## Changelog {#ts-3-02-changelog}
@@ -949,6 +951,6 @@ Each exposure below is named with what bounds it.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

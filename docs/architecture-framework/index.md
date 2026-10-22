@@ -14,9 +14,7 @@ maps the Modules and their dependencies, then works down to Components and
 the tech stack.
 </p>
 
-Its software architecture is a chapter of this document,
-[Software Architecture](software-architecture/index.md). Rules that bind implementations are
-not written here but in
+Rules that bind implementations are not written here but in
 [Technical Specifications](../technical-specifications/index.md); the rules for
 joining the ecosystem and what each participant owes are in
 [Governance Framework](../governance-framework/index.md).

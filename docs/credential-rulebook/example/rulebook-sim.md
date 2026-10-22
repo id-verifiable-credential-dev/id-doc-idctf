@@ -9,30 +9,34 @@ description: An illustrative Rulebook for the Indonesian driving license in the 
 
 <p class="ekdn-lead" markdown="span">
 One credential type worked through from its Rulebook to the credential
-Issuer Core signs: the Surat Izin Mengemudi (SIM), the driving license of Korps Lalu
-Lintas Polri, issued as the mobile driving license (mDL) that
-[ISO/IEC 18013-5:2021][ref-iso-18013-5] defines, and the one type here whose
-name another body owns.
+Issuer Core signs: the Surat Izin Mengemudi (SIM), the driving license of
+Korps Lalu Lintas Polri. It is issued as the mobile driving license (mDL) that
+[ISO/IEC 18013-5:2021][ref-iso-18013-5] defines, and it is the one type here
+whose name another body owns.
 </p>
 
 !!! note "Informative page"
 
-    This Rulebook is an illustration and is not registered. Its values were
-    chosen to show how the fields of [Rulebook structure](../rulebook-structure.md)
-    fit together, and none of them has been approved by the Root Authority.
-    The addresses under `catalog.trust.go.id` do not exist yet; the files they
-    name are shown on this page instead.
+    This Rulebook is an illustration and is not registered. Its values show
+    how the fields of [Rulebook structure](../rulebook-structure.md) fit
+    together, and the Root Authority has approved none of them. The addresses
+    under `catalog.trust.go.id` do not exist yet, so this page shows the files
+    they name.
 
 ## The Rulebook {#sim-rulebook}
 
-The Rulebook for `org.iso.18013.5.1.mDL.1`, carrying every field
+The Rulebook for `org.iso.18013.5.1.mDL.1` carries every field
 [Rulebook structure](../rulebook-structure.md) lists. Three of them follow
-from the name belonging to ISO rather than to the ecosystem: the `id` is the
-document type ISO defines followed by the version number, as
-[REQ-CR-069][req-cr-069] requires; the `docType` keeps ISO's name rather than
-repeating the `id`, as [REQ-CR-005][req-cr-005] requires; and the `mdoc`
-entry carries `namespace`, because the data elements sit in ISO's namespace
-and not in one named after the type, as [REQ-CR-061][req-cr-061] requires.
+from the name belonging to ISO rather than to the ecosystem:
+
+- The `id` is the document type ISO defines followed by the version number, as
+  [REQ-CR-069][req-cr-069] requires.
+- The `docType` keeps ISO's name rather than repeating the `id`, as
+  [REQ-CR-005][req-cr-005] requires.
+- The `mdoc` entry carries `namespace`, because the data elements sit in ISO's
+  namespace and not in one named after the type, as
+  [REQ-CR-061][req-cr-061] requires.
+
 SIM is the name the credential carries in the wallet and in this catalog;
 `org.iso.18013.5.1.mDL` is what a reader asks for on the wire.
 
@@ -40,8 +44,8 @@ It lists `mdoc` alone, because a license is read at the roadside with no
 network reaching the reader, as [REQ-CR-018][req-cr-018] requires.
 `age_over_18` is derived from `birth_date`, so a merchant checking the age
 of a buyer never receives the date itself. `portrait` is `restricted`, which
-is what keeps it out of a merchant's reach: a merchant device never carries
-a `restricted` attribute, whatever its intermediary was accredited for, as
+keeps it out of a merchant's reach: a merchant device never carries
+a `restricted` attribute, whatever its RP Intermediary was accredited for, as
 [RP Intermediary and merchant](../../architecture-framework/roles/rp-intermediary-and-merchant.md)
 sets out.
 
@@ -51,11 +55,12 @@ sets out.
 
 ## Schema {#sim-schema}
 
-The [JSON Schema 2020-12][ref-json-schema] that [the schema field][rulebook-schema-field]
-points at. Issuer Core checks the twelve type claims against it before it
-signs. The schema requires every claim, as [REQ-CR-077][req-cr-077] requires
-of a type issued in mdoc, and no claim may be absent from the source record:
-a SIM with no entry in `driving_privileges` is not a SIM.
+This is the [JSON Schema 2020-12][ref-json-schema] that
+[the schema field][rulebook-schema-field] points at. Issuer Core checks the
+twelve type claims against it before it signs. The schema requires every claim,
+as [REQ-CR-077][req-cr-077] requires of a type issued in mdoc, and no claim may
+be absent from the source record: a SIM with no entry in `driving_privileges` is
+not a SIM.
 
 ``` { .json title="schema.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/sim/schema.json"
@@ -63,8 +68,9 @@ a SIM with no entry in `driving_privileges` is not a SIM.
 
 ## Display {#sim-display}
 
-The card a wallet draws, light and dark, and the
-[SD-JWT VC draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] that
+A wallet draws the card, light and dark, from the
+[SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type
+Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] that
 [the display field][rulebook-display-field] points at. Each claim `path`
 names ISO's namespace and then the data element, as
 [REQ-CR-074][req-cr-074] requires of a Rulebook that lists `mdoc` alone.
@@ -83,12 +89,12 @@ names ISO's namespace and then the data element, as
 </figure>
 </div>
 
-Templates: [`card-light.svg`](sim/card-light.svg) and
+The templates are [`card-light.svg`](sim/card-light.svg) and
 [`card-dark.svg`](sim/card-dark.svg).
 
 The design follows the physical SIM: the Polri emblem and the title in a red
 band, the driving privileges and the document number beside it, and the
-holder's details numbered below. The emblem, the map and the two figures are
+holder's details numbered below. The emblem, the map, and the two figures are
 drawn into the template, so they are the same on every card; everything in the
 numbered list comes from the credential.
 
@@ -97,9 +103,8 @@ Ten of the twelve claims carry an `svg_id`. `portrait` carries none, because
 the templates draw a fixed figure where the photo would sit; the wallet shows
 the photo from the claim, beside the card. `age_over_18` carries none either:
 it is derived from `birth_date`, which the card already shows.
-`driving_privileges` is an array of objects in ISO's namespace, and
-[REQ-CR-074][req-cr-074] fixes every claim `path` at the namespace and the
-attribute, so no path reaches one vehicle category. The template places the
+`driving_privileges` is an array of objects in ISO's namespace, and no claim
+`path` reaches one vehicle category. The template places the
 whole claim under *Golongan*, and what appears there is what the wallet
 renders for an array.
 
@@ -109,8 +114,8 @@ renders for an array.
 
 ## Issued credential {#sim-issued-credential}
 
-One credential as Issuer Core signs it, and where each of its parts comes
-from.
+This section shows one credential as Issuer Core signs it, and where each of
+its parts comes from.
 
 ``` { .text title="mdoc IssuerSigned and its Mobile Security Object" data-format="CBOR diag" }
 // IssuerSigned
@@ -178,7 +183,7 @@ from.
   "validityInfo": {
     "signed": 0("2026-10-18T03:12:00Z"),
     "validFrom": 0("2026-10-18T03:12:00Z"),
-    "validUntil": 0("2027-10-18T03:12:00Z")
+    "validUntil": 0("2027-01-16T03:12:00Z")
   },
   "status": {
     "status_list": { "idx": 207415,
@@ -191,7 +196,7 @@ from.
 
 | Part | Comes from |
 |---|---|
-| `nameSpaces` | One `IssuerSignedItem` per type claim, in ISO's namespace `org.iso.18013.5.1`, which the Rulebook's `mdoc` entry names. Each value is read from the issuer's source system by Issuer Core, using its Claims Provider Component, and checked against `schema.json`; `birth_date`, `issue_date` and `expiry_date` are `full-date`, and `portrait` is the decoded JPEG bytes, as [the table of mdoc encodings][tbl-mdoc-encodings] sets out. `driving_privileges` is an array of maps, one per vehicle category, with its dates as `full-date` too |
+| `nameSpaces` | One `IssuerSignedItem` per type claim, in ISO's namespace `org.iso.18013.5.1`, which the Rulebook's `mdoc` entry names. Each value is read from the issuer's source system by Issuer Core, using its Claims Provider Component, and checked against `schema.json`; `birth_date`, `issue_date`, and `expiry_date` are `full-date`, and `portrait` is the decoded JPEG bytes, as [the table of mdoc encodings][tbl-mdoc-encodings] sets out. `driving_privileges` is an array of maps, one per vehicle category, with its dates as `full-date` too |
 | `random` | Issuer Core, sixteen fresh bytes per item, so a verifier cannot guess a value from its digest |
 | `age_over_18` | Issuer Core, computed from `birth_date` at signing, as the Rulebook's `derived_from` names |
 | `issue_date`, `expiry_date` | The physical license, whose administrative validity the Rulebook's `legal_basis` sets |
@@ -207,10 +212,10 @@ from.
 
 ## Reading a license from another country {#sim-reading-one-from-another-country}
 
-A reader in the ecosystem meets two mDLs under this one document type: the
-SIM, whose Document Signer Certificate chains to the Issuer Root CA, and a
-license from a recognized authority abroad, whose root reaches the reader
-through the Verified Issuer Certificate Authority List (VICAL) that
+A reader in the ecosystem meets two mDLs under this one document type. One is
+the SIM, whose Document Signer Certificate chains to the Issuer Root CA. The
+other is a license from a recognized authority abroad, whose root reaches the
+reader through the Verified Issuer Certificate Authority List (VICAL) that
 [Issuing and validating the X.509 certificates and the VICAL](../../technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md)
 publishes. The Rulebook governs what may be asked for in both cases, because
 a permission names a credential type and the type is the same.
@@ -219,10 +224,12 @@ What the foreign authority writes into its own license is its own affair.
 This Rulebook binds the attributes an entity in this ecosystem may register
 a use over, and the minimization class each of them takes.
 
-The card is where the two part company. A wallet draws the templates above,
-and the name SIM, only for a license whose signer chains to the Issuer Root
-CA, as [REQ-TS-5-10-134][req-ts-5-10-134] requires. A license admitted through the
-VICAL is drawn plainly, named from its own `issuing_authority` and
-`issuing_country`, as [REQ-TS-5-10-136][req-ts-5-10-136] and [REQ-TS-5-10-137][req-ts-5-10-137] require: the design belongs
-to Korps Lalu Lintas Polri, and a German license wearing it would say
-something untrue about who issued it.
+The card is where the two part company. A wallet draws
+[the light and dark templates][fig-sim-light], and the name SIM, only for a
+license whose signer chains to the Issuer Root CA, as
+[REQ-TS-5-10-134][req-ts-5-10-134] requires. A license admitted through the
+VICAL is drawn from its own `issuing_authority` and
+`issuing_country`, as [REQ-TS-5-10-136][req-ts-5-10-136] and
+[REQ-TS-5-10-137][req-ts-5-10-137] require: the design belongs to Korps Lalu
+Lintas Polri, and a German license wearing it would say something untrue about
+who issued it.

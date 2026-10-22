@@ -25,7 +25,7 @@ without ever exposing the key that installation holds.
 | Credential type | `id.idctf.<type>.<N>`, or `<reverse-domain>.<type>.<N>` for a private party | A name that stays fixed for one version, and changes only by becoming a new version |
 | Attribute in scope | `<type>#<attribute>`, for example `id.idctf.ktp.1#usia_di_atas_17` | Names one attribute wherever a rule needs to point at it without pointing at the whole credential |
 | Registered use of a Relying Party | `use_id`, set by Trust Authority when the use is approved, unique within one entity | Lets a request template and a verification record name the approved use they were run under |
-| Wallet installation or verifier device | JWK thumbprint of the device key ([RFC 7638][ref-rfc7638]) | Identifies the device without transmitting the key it names |
+| Wallet or Mobile Verifier installation | JWK thumbprint of the device key ([RFC 7638][ref-rfc7638]) | Identifies the device without transmitting the key it names |
 
 </figure>
 
@@ -41,8 +41,8 @@ reads it is in
 [Decentralized Identifier (DID) Document][did-document] and
 [the update key][the-update-key].
 
-The log being append-only, with pre-rotation, is what makes the identifier
-survive a key rotation. An entity that rotates its signing key still needs
+The log being append-only, with pre-rotation, is what carries the identifier
+through a key rotation. An entity that rotates its signing key still needs
 every past signature to verify against whichever key was active when that
 signature was made, so a resolver has to walk the entity's full key history
 rather than trust only the current key. Pre-rotation lets the entity commit to
@@ -62,10 +62,11 @@ call beyond decoding the identifier itself. The wallet generates one key pair
 in the secure element at the citizen's first login to the wallet, and the
 identifier falls out of it for free.
 
-That one key serves every credential on the installation, and it is not
-created again per issuance. It has a known cost, which IDCTF accepts. A holder who presents the same identifier to a grocery store
-and to a bank can be matched by the two of them comparing notes, even
-without either one reading a single disclosed attribute.
+That one key serves every credential on the installation, and it is not created
+again per issuance. It has a known cost, which IDCTF accepts. A holder who
+presents the same identifier to a grocery store and to a bank can be matched by
+the two of them comparing notes, even without either one reading a single
+disclosed attribute.
 
 [](){ #fig-holder-identifier }
 
@@ -80,22 +81,21 @@ without either one reading a single disclosed attribute.
 - **Comparing notes** lets two verifiers match the holder, which is the exposure
   IDCTF accepts.
 
-This key is what the rest of the ecosystem calls the credential key: one key
-per wallet installation, used for holder binding and for presentation, kept
-separate from the device key that identifies the installation itself (covered in
-[devices][devices]). Each credential format asserts the same holder
-binding differently. [SD-JWT-based Verifiable Credentials (SD-JWT
-VC)][ref-i-d-ietf-oauth-sd-jwt-vc] draft -13 carries the key as a JSON Web
-Key in the `cnf` claim, under `jwk`. [ISO
-mdoc][ref-iso-18013-5] (ISO/IEC 18013-5:2021) carries the
-same key as the `DeviceKey` field inside the Mobile Security Object (MSO), a
-name that belongs to the mdoc specification's own vocabulary rather than to the
-physical device. [W3C Verifiable Credentials Data Model (VCDM)
-2.0][ref-vc-data-2-0] (`ldp_vc`) names the
-holder by the did:key itself, in `credentialSubject.id`, and proves possession
-with a [Data Integrity][ref-vc-data-integrity] 1.0 proof at
-the presentation level, signed over a `challenge` and a `domain` the verifier
-supplies.
+The rest of the ecosystem calls this key the credential key, and
+[the credential key][the-credential-key] says what it signs and how it is
+protected. Each credential format asserts the same holder binding differently.
+
+- [SD-JWT-based Verifiable Credentials (SD-JWT VC)][ref-i-d-ietf-oauth-sd-jwt-vc]
+  draft -13 carries the key as a JSON Web Key (JWK) in the `cnf` claim, under
+  `jwk`.
+- [ISO mdoc][ref-iso-18013-5] (ISO/IEC 18013-5:2021) carries the same key as the
+  `DeviceKey` field inside the Mobile Security Object (MSO), a name that belongs
+  to the mdoc specification's own vocabulary rather than to the physical device.
+- [W3C Verifiable Credentials Data Model (VCDM) 2.0][ref-vc-data-2-0] (`ldp_vc`)
+  names the holder by the did:key itself, in `credentialSubject.id`, and proves
+  possession with a [Data Integrity][ref-vc-data-integrity] 1.0 proof at the
+  presentation level, signed over a `challenge` and a `domain` the verifier
+  supplies.
 
 Because the credential key is shared across formats as well, a
 credential type that ships as both SD-JWT VC and ISO mdoc, per
@@ -110,15 +110,16 @@ the version is a bare integer, so the national ID digital credential is
 `id.idctf.ktp.1` and never `id.idctf.KTPDigital.v1`. For a type the ecosystem
 names, one identifier serves all three places a type is named: the `vct` of an SD-JWT VC, the `docType` of an
 mdoc, and the mdoc namespace its attributes sit in. The two representations of
-one credential therefore carry the same name, which is what keeps them
-identifiable as the same credential.
+one credential therefore carry the same name, which keeps them identifiable
+as the same type; what makes them one credential is the claim
+values and the status entry they share, per
+[one credential, two representations][one-credential-two-representations].
 
 `id.idctf` is the ecosystem's own root and Trust Authority holds it, so a
-credential type name cannot come from whoever happens to write a Credential
-Rulebook. It says nothing about who issues: an Attribute Issuer may be a
-university, a hospital, or a bank, and which institution issued a given
-credential is carried in the issuer's DID, never in
-the type.
+credential type name cannot come from whoever happens to write a
+Credential Rulebook. It says nothing about who issues: an Attribute Issuer may
+be a university, a hospital, or a bank, and which institution issued a given
+credential is carried in the issuer's DID, never in the type.
 
 A type another body already owns is the exception. The credential keeps that
 body's names, so software built to its standard reads it unchanged: a mobile
@@ -156,8 +157,7 @@ Rulebook freezes under that same version is in
 An attribute inside a credential type gets its own identifier, built by
 appending `#<attribute>` to the type's own:
 `id.idctf.ktp.1#usia_di_atas_17` names one derived attribute rather than the
-whole credential. This is what lets a rule point at a single
-attribute instead of at the credential that carries it. An Authority Statement
+whole credential. An Authority Statement
 can grant a role permission over one attribute, a Use Statement can narrow that
 down to the attribute a registered use is approved for, and the `ReaderAuthRole`
 extension can bind a Verifier Device Certificate to that same attribute, which
@@ -182,25 +182,23 @@ what the verifier then carries in its request, is the
 
 The wallet installation on a citizen's phone, and a verifier device, whether a
 merchant's or a Relying Party's own counter device, are each identified the
-same way: the JSON Web Key (JWK) thumbprint of their device key, computed the
+same way: the JWK thumbprint of their device key, computed the
 way RFC 7638 defines it. A thumbprint is a hash
 over the public key's own JSON fields, so anyone holding the public key can
 compute the identical identifier without asking a registry for it.
 
-This device key is not the credential key from [the holder
-identifier][holder-one-didkey-per-wallet-installation]. One is minted once per
-installation, when the wallet enrolls or the device is provisioned, and stays in
-the device's secure element from then on. The other is minted beside it at the
-citizen's first login to the wallet, binds every credential, and never touches
-the device's own identity. A
-phone carrying ten credentials has one credential key beside one device key, and
-the two are never the same key.
+This device key is not the credential key from
+[the holder identifier][holder-one-didkey-per-wallet-installation], and
+[the device key][the-device-key] says what it signs and how the two differ.
 
-Publishing only the thumbprint, and never the key, is deliberate: the
-identifier is safe to carry inside a request or write to a log, because it
+Naming the device by the thumbprint, and never by the key, keeps the
+identifier safe to carry inside a request or write to a log, because it
 gives an attacker nothing to impersonate the device with, while the private
-key stays wherever it was generated. The identifier surfaces in two places: in
-enrolling a wallet installation, and in the messages that ask for a Key
-Attestation. Both follow the same protocol paths as everything else a wallet
-exchanges with its backend, covered in
+key stays wherever it was generated. The public half travels once, to the
+party that vouches for the installation, which computes the identifier from
+it when the installation enrolls; [what vouches for a key on a
+device][what-vouches-for-a-key-on-a-device] says who that party is. The
+identifier surfaces in two places: in enrolling a wallet installation, and in
+the messages that ask for a Key Attestation. Both follow the same protocol paths as everything else a wallet
+exchanges with Wallet Backend Service, covered in
 [Protocols per interaction][protocols-per-interaction].

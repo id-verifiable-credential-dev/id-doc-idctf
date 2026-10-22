@@ -9,9 +9,8 @@ description: How Service, Module, and Component nest, and what each of the four 
 
 The ecosystem is described in three tiers, and each one sits inside the one
 above it. A Service is where responsibility is assigned, a Module is what gets
-deployed, and a Component is a part inside a Module. This chapter works at the
-first two and names the third: which Components sit in which Module is part of
-the map, while how a Component is built, and the layers inside a Module, belong to
+deployed, and a Component is a part inside a Module. How a Component is built,
+and the layers inside a Module, belong to
 [Software Architecture](../software-architecture/index.md).
 [Service, Module, and Component][fig-service-module-component] shows the three sitting
 inside one another.
@@ -30,10 +29,12 @@ inside one another.
   names of two Modules, Decentralized Identifier (DID) Service and Wallet Backend Service, and of some
   Components, such as Log Service; the capital letter and the word before it
   tell a Module or Component name apart from the tier.
-- **Module** is the tier at which software is deployed and operated. One
-  Module ships as one container image, which is the test that separates it from
-  everything inside it: if it does not ship on its own, it is not a Module. A
-  Service holds one or more.
+- **Module** is the tier at which software is deployed and operated. The test
+  that separates it from everything inside it is the map: a Module has a row of
+  its own in [who may call whom][who-may-call-whom] and answers there for what
+  it calls. A Service holds one or more. Eight of the ten ship as one container
+  image and two as a mobile application package, which is how they are packaged
+  rather than what makes them Modules.
 - **Component** is a part inside a Module, and it never appears on the map by
   itself. It is deployed because the Module around it is deployed. Six things
   are named often enough to be mistaken for Modules, and
@@ -54,9 +55,8 @@ what they protect.
 </figure>
 
 - **The rows inside each Module are its Components**, shown as a sample rather
-  than a list, which is what the dots at the foot of each Module mean. They are
-  a reminder that the third tier is real. What every Module is actually built
-  from is [Module Map](module-map.md).
+  than a list, which the dots at the foot of each Module mark. What
+  every Module is built from is [Module Map](module-map.md).
 - **Mobile Verifier carries a lighter shade** because it works without a server
   of its own.
 
@@ -89,12 +89,12 @@ agrees. Nothing here decides what a credential says or whether it is still
 valid. Those are the issuer's answers, and the wallet carries them
 rather than forming them.
 
-The backend behind the wallet holds no credentials at all. Its job is to vouch
+Wallet Backend Service holds no credentials at all. Its job is to vouch
 that an installation is a genuine one on genuine hardware, and to handle what
 happens when a device is lost or replaced.
 
 Many Wallet Providers hold this side at once. Each accredited Wallet Provider
-publishes a wallet of its own and runs the backend behind it, and a citizen
+publishes a wallet of its own and runs Wallet Backend Service behind it, and a citizen
 chooses among them. What makes that workable is that no issuer ever trusts a
 named Wallet Provider, and how a Wallet Provider reaches the list it is checked against is in
 [Wallet Provider][wallet-provider].
@@ -106,19 +106,20 @@ named Wallet Provider, and how a Wallet Provider reaches the list it is checked 
 
 ## Verifier Services {#verifier-services}
 
-Verifier Services is where a credential is checked and turned into a decision.
-A party asks for the attributes its accreditation covers, tests what comes back
+Verifier Services is where a credential is checked and turned into a decision. A
+party asks for the attributes its accreditation covers, tests what comes back
 against both chains of trust, and hands the result to its own business system.
 What it may ask for is fixed before the transaction, and the request it sends is
-bounded twice over: by the Authority Statement of the entity (its accreditation scope),
-and by the narrower Use Statement of the [registered use][registered-use] the
-request runs under. (A merchant is bounded three times over, adding the `ReaderAuthRole` in
-its Verifier Device Certificate.)
+bounded twice over: by the permissions of the entity, its accreditation scope,
+each answered by an Authority Statement, and by the narrower Use Statement of
+the [registered use][registered-use] the request runs under. (A merchant is
+bounded three times over, adding the `ReaderAuthRole` in its
+Verifier Device Certificate.)
 
 This is the only Service with a party riding on it that was never accredited. A
 business too small for accreditation verifies through the Verifier Core of an
-intermediary, using a certificate that intermediary issued and can revoke, and
-the intermediary answers for what that business does. Both are arrangements of
+RP Intermediary, using a certificate that RP Intermediary issued and can revoke,
+and the RP Intermediary answers for what that business does. Both are arrangements of
 one role rather than roles of their own.
 [RP Intermediary and merchant](../roles/rp-intermediary-and-merchant.md) is how
 that works.
@@ -138,11 +139,8 @@ without asking. Accreditation and authorization are settled here. So are the
 trusted list, the identifiers entities are known by, the witness on every
 change to their keys, and the two certificate roots the whole ecosystem hangs from.
 
-Publishing rather than answering is the whole point. What the other three
-Services consume from this one is a file that was signed and cached in advance,
-which is why [Trust Infrastructure is not a
-role][trust-infrastructure-is-not-a-role] can say that this Service is never
-present at the moment a credential is issued or verified.
+This Service publishes rather than answers. The other three Services consume a
+file that was signed and cached in advance.
 
 - **How many:** One.
 - **Roles:** [Root Authority][root-authority]
@@ -158,59 +156,55 @@ proposes lives in the Credential Rulebook repository inside
 
 ## Why the counts are what they are {#why-the-counts-are-what-they-are}
 
-Every section above ends with a count, and two of them are the counts that get
+Every Service section ends with a count, and two of them are the counts that get
 questioned: one Trust Infrastructure for a whole country, and no ceiling at all
-on the rest. Both are deliberate, and they hold for opposite reasons.
+on the rest. The two hold for opposite reasons.
 
 ### Trust Infrastructure is not a role {#trust-infrastructure-is-not-a-role}
 
-The first three Services are run by the roles in a transaction. Someone issues, someone
-holds, someone verifies, and each of the three appears in the exchange. Trust
-Infrastructure appears in none of them. It is the foundation that lets the other
-three be trusted, and it is **never on the transaction path**.
+Issuer Services, Wallet Services, and Verifier Services are run by the roles in
+a transaction. Someone issues, someone holds, someone verifies, and each of the
+three appears in the exchange. Trust Infrastructure appears in none of them.
+It lets the other three be trusted, and it is never on the transaction
+path.
 
-That absence is what makes the **one** in this Service's count affordable: a
+That absence makes the one in this Service's count affordable: a
 single national instance is a point of failure only if something waits on it,
 and [the trust path][the-trust-path] sets out why nothing on the transaction
 path does.
 
-Two things off that path do wait, and saying so is part of the claim rather
-than a qualification of it. An entity cannot onboard and cannot rotate a key
-while DID Service is unreachable, because an entry nobody witnessed is an entry
-every resolver rejects. Containment is the part that does not wait: the
-Root Authority revokes the key through Trust Authority, Trust Registry publishes an emergency trusted
-list naming it, and issuance with that key stops, so a compromised key is cut off
-within the hour whether or not the witness is reachable, and what waits is
-the replacement key. The witness stays a single one on that reasoning. An outage delays a
-replacement and never a containment, which bounds what the single instance can cost,
-and a second witness would add a standing operational arrangement to Trust
-Infrastructure for a case the incident schedule already absorbs.
+Two things off that path do wait: an entity cannot onboard and cannot rotate a
+key while DID Service is unreachable, because an entry nobody witnessed is an
+entry every resolver rejects. What waits for the witness and what does not is
+in
+[Keys: who creates, who signs](../trust-model/keys-who-creates-who-signs.md).
+
+The witness stays a single one on that reasoning. An outage delays a
+replacement and never a containment, which bounds what the single instance can
+cost, and a second witness would add a standing operational arrangement to
+Trust Infrastructure for a case the incident schedule already absorbs.
 
 The separation is drawn Module by Module in
 [The transaction path and the trust path](transaction-path-and-trust-path.md).
 
 ### The counts are the design {#the-counts-are-the-design}
 
-Issuer Services, Wallet Services, and Verifier Services are **many**, and that
-is how the ecosystem scales. Any accredited entity runs its own instance, so
-capacity grows by admitting participants rather than by enlarging a central
-system, and no participant's load is anyone else's problem. It also means
+Issuer Services, Wallet Services, and Verifier Services are many, and that
+is how the ecosystem scales. Capacity grows by admitting participants rather
+than by enlarging a central system, and no participant's load is anyone else's
+problem. It also means
 failure stays local: an issuer whose Issuer Core is down stops issuing its own
 credentials and nothing else.
 
-Trust Infrastructure is **one**, and the reason is the opposite of scale. Part
-of its job is to be the thing everybody else agrees on. Two trusted lists would
-be two answers to the question of who is accredited, and an ecosystem that can
-answer that question twice has not answered it. Singleness is the property, not
-a limitation waiting to be lifted.
+Trust Infrastructure is one. Part of its job is to be the thing everybody
+else agrees on, and two trusted lists would be two answers to the question of
+who is accredited.
 
-One more count sits underneath the others: the wallet's protocol part is kept
-separable from the interface a citizen sees, so it can be lifted out as an SDK.
-That is what makes **many** Wallet Providers realistic rather than nominal. The
-second Wallet Provider builds on an implementation the first one already proved in the
-field, instead of writing the protocol again and introducing a second set of
-bugs into the same exchange. The shared library that carries this is
-[Trust SDK][sa-trust-sdk].
+Many Wallet Providers are realistic rather than nominal because the wallet's
+protocol part is separable from the interface a citizen sees. The four Clients,
+with Credential Codec and [Trust SDK][sa-trust-sdk] beneath them, can be lifted
+out as an SDK, and [Architecture on the device](architecture-on-the-device.md)
+shows how the parts sit.
 
 The ten Modules named here, with what each is built as and who may call
 whom, are [Module Map](module-map.md). What sits inside each one is

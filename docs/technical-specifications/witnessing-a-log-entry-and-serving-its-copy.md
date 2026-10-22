@@ -22,43 +22,53 @@ The key words and the identifier `REQ-TS-4-01-nnn` follow
 
 ## Who runs this and what it needs {#ts-4-01-who-runs-this-and-what-it-needs}
 
-This specification binds the two interfaces of DID Service: the Publisher
-endpoint, at which it receives a candidate log entry from Trust Authority
-and answers with a witness proof or a refusal, and the Resolver endpoint,
-at which it serves its copy of every log it witnessed and resolves
-`did:webvh` for the Modules of Trust Infrastructure. Its conformance target
-is DID Service.
+This specification binds the two interfaces of DID Service:
 
-It leaves to other documents: the profile of the log, the DID Document, and
-the rules a reader applies to a log, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md) holds; the door through which an
-entity submits an entry to Trust Authority, which [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) holds; and which witness keys the trusted list
-names, which [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds.
+- The Publisher endpoint, at which it receives a candidate log entry from
+  Trust Authority and answers with a witness proof or a refusal.
+- The Resolver endpoint, at which it serves its copy of every log it
+  witnessed.
+
+Its conformance target is DID Service.
+
+It leaves to other documents:
+
+- The profile of the log, the DID Document, and the rules a reader applies to
+  a log, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- The door through which an entity submits an entry to Trust Authority, which
+  [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+  holds.
+- Which witness keys the trusted list names, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
 
 Before the first exchange, DID Service holds what the rules below assume:
-the witness key in its own partition of Trust Authority's hardware security
-module (HSM), reachable by its Log Service Component alone; a copy of every
-log it has witnessed; and the Publisher endpoint in the internal zone, where
-Trust Authority is its only caller.
+
+- The witness key in its own partition of Trust Authority's hardware security
+  module (HSM), reachable by its Log Service Component alone.
+- A copy of every log it has witnessed.
+- The Publisher endpoint in the internal zone, where Trust Authority is its
+  only caller.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-4-01-001 }**REQ-TS-4-01-001** DID Service MUST meet every requirement in [Witnessing][ts-4-01-witnessing], [The hand-off to the Publisher endpoint][ts-4-01-the-hand-off-to-the-publisher-endpoint] and [The copy DID Service keeps][ts-4-01-the-copy-did-service-keeps].
+- [](){ #req-ts-4-01-001 }**REQ-TS-4-01-001** DID Service MUST meet every requirement in [Witnessing][ts-4-01-witnessing], [The hand-off to the Publisher endpoint][ts-4-01-the-hand-off-to-the-publisher-endpoint], and [The copy DID Service keeps][ts-4-01-the-copy-did-service-keeps].
 
 </div>
 
 ## What DID Service does {#ts-4-01-overview}
 
-DID Service witnesses and does not publish. Every entity signs its own log
-and serves it on its own domain; DID Service validates each new entry and
-adds the witness proof without which no reader accepts it, as
-[DID Service][hla-did-service] and [the DID Document][did-document] set
-out. It is never on the transaction path: a reader resolves from a cached
+DID Service witnesses and does not publish, as
+[DID Service][hla-did-service] and [the DID Document][did-document] set out.
+The Publisher endpoint is named for the party that calls it, Trust Authority
+acting for the entity, and not for any publishing DID Service does.
+
+DID Service is never on the transaction path: a reader resolves from a cached
 copy of each log, and asks DID Service for its copy only when the entity's
-domain cannot be reached during the [trust cache sync][trust-cache-sync].
-Its five Components, and which of them does what below, are in
-[DID Service][sa-did-service].
+domain cannot be reached during the [trust cache sync][trust-cache-sync]. Its
+five Components are in [DID Service][sa-did-service].
 
 ## The exchange {#ts-4-01-the-exchange}
 
@@ -81,15 +91,21 @@ Infrastructure.
 
 ## The witness proof as returned {#ts-4-01-the-witness-proof-as-returned}
 
-Below is the witness proof DID Service returns for one candidate entry, in
-the form the entity writes into `did-witness.json`. It is the one message
-this specification defines; the log it answers is shown in
-[the log as published][ts-5-02-the-log-as-published]. The entity, its
-domain and the keys are invented, and no log has been witnessed yet. Every
-field is exact: the `versionId` is the one that log's second entry carries,
-the proof is a real `eddsa-jcs-2022` signature over it by Trust Authority's
-first witness key, and it verifies against the `did:key` the trusted list
-names as that witness.
+The witness proof is the one message this specification defines, in the form
+the entity writes into `did-witness.json`.
+
+The entity, its domain, and the keys are invented, and no log has been
+witnessed yet. Every field is exact.
+
+The example agrees with the pages that show the same artifacts:
+
+- The witness proof answers the log shown in
+  [the log as published][ts-5-02-the-log-as-published].
+- The `versionId` is the one that log's second entry carries.
+- The proof is a real `eddsa-jcs-2022` signature over it by Trust Authority's
+  first witness key.
+- The proof verifies against the `did:key` the trusted list names as that
+  witness.
 
 ``` { .json title="did-witness.json, the proof DID Service returns" data-format="JSON" }
 {
@@ -108,17 +124,14 @@ names as that witness.
 
 ## Witnessing {#ts-4-01-witnessing}
 
-DID Service is the one witness of every log in the ecosystem, Trust
-Authority's own included. It receives each candidate entry at its Publisher
-endpoint from Trust Authority, which collected it from the entity through
-the door [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) fixes, together
-with the proof of possession of every new key. What DID Service checks, and
-what it returns, is fixed here.
+DID Service witnesses every log in the ecosystem, Trust Authority's own
+included. Each candidate entry reaches its Publisher endpoint with the proof of
+possession of every new key.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-4-01-002 }**REQ-TS-4-01-002** DID Service MUST accept a candidate entry from Trust Authority only.
-- [](){ #req-ts-4-01-003 }**REQ-TS-4-01-003** DID Service MUST NOT expose the interface that receives a candidate entry outside Trust Infrastructure.
+- [](){ #req-ts-4-01-003 }**REQ-TS-4-01-003** DID Service MUST NOT expose the Publisher endpoint outside Trust Infrastructure.
 - [](){ #req-ts-4-01-004 }**REQ-TS-4-01-004** Before witnessing any entry after the first, DID Service MUST hold the published log of the DID.
 - [](){ #req-ts-4-01-005 }**REQ-TS-4-01-005** DID Service MUST verify the candidate as the next entry of that log by every step of the method's Read operation.
 - [](){ #req-ts-4-01-006 }**REQ-TS-4-01-006** DID Service MUST verify the proof of possession of every key the candidate publishes for the first time, as a signature by that key over the nonce Trust Authority supplied.
@@ -135,31 +148,27 @@ what it returns, is fixed here.
 
 </div>
 
-The proof of possession reaches DID Service through Trust Authority because
+The proof of possession reaches DID Service through Trust Authority, because
 an entity never submits an entry to DID Service, as
-[who may call whom][who-may-call-whom] fixes, and the second phase of
+[who may call whom][who-may-call-whom] fixes. The second phase of
 [entity key revocation][entity-key-revocation] is this same exchange run the
 same day. The two availability numbers are the witness target in
-[quality targets][quality-targets]; what waits when the witness is down is
-the replacement key, and nothing else.
+[quality targets][quality-targets], and the replacement key is what waits when
+the witness is down.
 
 ## The hand-off to the Publisher endpoint {#ts-4-01-the-hand-off-to-the-publisher-endpoint}
 
 The hand-off is one request and one answer on one connection inside Trust
-Infrastructure. Trust Authority sends the candidate entry, the proofs of
-possession it collected from the entity, and the nonce those proofs answer.
-DID Service runs the checks above and answers on the same connection, with
-the witness proof or with the reason it refused. Nothing is called back and
-nothing is polled, because the entity waits at Trust Authority's door for
-that answer.
+Infrastructure. Nothing is called back and nothing is polled, because the
+entity waits at Trust Authority's door for that answer.
 
-A refusal names one reason from a closed list, one reason per check, so
-that Trust Authority can tell the entity what to correct and an Assessment
-Body can test each check on its own.
-[The table of refusal reasons][tbl-ts-4-01-refusal-reasons] gives each
-reason with the status it is answered with. A request that is not a
-candidate, and a candidate DID Service could not judge, are answered by
-status alone, with no body, as the Resolver answers a copy it does not hold.
+A refusal names one reason from a closed list, one reason per check, so that
+Trust Authority can tell the entity what to correct and an Assessment Body can
+test each check on its own.
+[The table of refusal reasons][tbl-ts-4-01-refusal-reasons] gives each reason
+with the status it is answered with. A request that is not a candidate, and a
+candidate DID Service could not judge, are answered by status alone, with no
+body, as the Resolver answers a copy it does not hold.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -169,7 +178,7 @@ status alone, with no body, as the Resolver answers a copy it does not hold.
 - [](){ #req-ts-4-01-035 }**REQ-TS-4-01-035** DID Service MUST end the TLS handshake, and send no HTTP answer, when the client presents no certificate or one that does not authenticate Trust Authority.
 - [](){ #req-ts-4-01-026 }**REQ-TS-4-01-026** DID Service MUST answer a candidate it witnessed with `200`, media type `application/json`, and the witness proof in the form [The witness proof as returned][ts-4-01-the-witness-proof-as-returned] shows.
 - [](){ #req-ts-4-01-027 }**REQ-TS-4-01-027** DID Service MUST answer a candidate it refuses with the status and the `reason` that [the table of refusal reasons][tbl-ts-4-01-refusal-reasons] gives for the check that failed.
-- [](){ #req-ts-4-01-028 }**REQ-TS-4-01-028** DID Service MUST NOT answer with a `reason` that table does not hold.
+- [](){ #req-ts-4-01-028 }**REQ-TS-4-01-028** DID Service MUST NOT answer with a `reason` [the table of refusal reasons][tbl-ts-4-01-refusal-reasons] does not hold.
 - [](){ #req-ts-4-01-029 }**REQ-TS-4-01-029** DID Service MUST answer `503` when it cannot reach the witness key.
 - [](){ #req-ts-4-01-030 }**REQ-TS-4-01-030** DID Service MUST NOT treat a candidate it answered with `503` as refused.
 - [](){ #req-ts-4-01-037 }**REQ-TS-4-01-037** DID Service MUST send no body with a `503`.
@@ -180,10 +189,6 @@ status alone, with no body, as the Resolver answers a copy it does not hold.
 - [](){ #req-ts-4-01-034 }**REQ-TS-4-01-034** DID Service MUST refuse a candidate with `proof-of-possession-invalid` when a proof of possession carries a `nonce` other than the one the request carries.
 
 </div>
-
-A reason is a code and carries no detail of its own: what the entity has to
-correct follows from the check that raised it, and Trust Authority holds
-the exchange with the entity.
 
 [](){ #tbl-ts-4-01-refusal-reasons }
 
@@ -206,7 +211,7 @@ The request Trust Authority sends. Its body carries the entry
 line of that log, one proof of possession for each key that entry publishes
 for the first time, and the nonce those proofs answer. The entry publishes
 two such keys, its new update key and `issuance-jose-2`, so the body carries
-two proofs, and each names in `kid` the key it proves: the identifier the
+two proofs. Each names in `kid` the key it proves: the identifier the
 DID Document gives the issuance key, and the `did:key` form for the update
 key, which the DID Document does not carry.
 
@@ -303,13 +308,10 @@ Content-Type: application/json
 ## The copy DID Service keeps {#ts-4-01-the-copy-did-service-keeps}
 
 DID Service keeps a copy of every log it witnessed and serves it from its
-Resolver endpoint, which is a watcher in the method's sense: the entity
+Resolver endpoint. That endpoint is a watcher in the method's sense: the entity
 names it in `watchers`, and a reader that cannot reach the entity's domain
-asks it for the log. It is a copy and nothing more; a reader verifies it
-exactly as it verifies the original, and the copy adds no trust in DID
-Service. The same endpoint resolves `did:webvh` for the Modules of Trust
-Infrastructure, which carry no Trust SDK, as
-[DID Service][hla-did-service] sets out.
+asks it for the log. A reader verifies the copy exactly as it verifies the
+original, so the copy adds no trust in DID Service.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -325,9 +327,9 @@ Infrastructure, which carry no Trust SDK, as
 The notification operations are not used because no entity submits
 anything to DID Service: it learns of a new entry by witnessing it. Its Log
 Delivery Component watches that the log stays available, as
-[DID Service][sa-did-service] sets out, and an entry that appears on a
-domain without having been witnessed is what Trust Registry's conformance
-crawler catches, as [why nobody can rotate quietly][why-nobody-can-rotate-quietly]
+[DID Service][sa-did-service] sets out. Trust Registry's conformance
+crawler catches an entry that appears on a domain without having been
+witnessed, as [why nobody can rotate quietly][why-nobody-can-rotate-quietly]
 sets out.
 
 The two operations of the Resolver endpoint, as a reader calls them during
@@ -346,31 +348,30 @@ GET /witness?scid=QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4 HTTP/1.1
 Host: did.trust.go.id
 ```
 
-returns the copy of `did-witness.json`, as `application/json`. A SCID DID
-Service never witnessed answers `404`. The host is DID Service's Resolver
+returns the copy of `did-witness.json`, as `application/json`. A SCID that
+DID Service never witnessed answers `404`. The host is DID Service's Resolver
 endpoint, the address each entity writes in `watchers`; the one shown is an
 illustration, and the Governance Profile publishes the address in force.
 
 ## Security considerations {#ts-4-01-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A rewritten history.** DID Service holds the published log before it
   witnesses the next entry and verifies the candidate against it,
-  [REQ-TS-4-01-004][req-ts-4-01-004] and [REQ-TS-4-01-005][req-ts-4-01-005],
-  so an entry that does not chain to what was published is refused, and
-  the copy it keeps, [REQ-TS-4-01-017][req-ts-4-01-017], is what a dispute
-  is settled against.
-- **A compromised update key.** A candidate signed with a key the Public
-  Key Registry records as revoked is refused, [REQ-TS-4-01-008][req-ts-4-01-008].
+  [REQ-TS-4-01-004][req-ts-4-01-004] and [REQ-TS-4-01-005][req-ts-4-01-005].
+  An entry that does not chain to what was published is refused, and
+  a dispute is settled against the copy it keeps,
+  [REQ-TS-4-01-017][req-ts-4-01-017].
+- **A compromised update key.** A candidate signed with a key the
+  Public Key Registry records as revoked is refused,
+  [REQ-TS-4-01-008][req-ts-4-01-008].
 - **A witness key used elsewhere.** The key never leaves Trust Authority's
   HSM, [REQ-TS-4-01-011][req-ts-4-01-011].
 - **An entry submitted around Trust Authority.** The Publisher endpoint
   accepts candidates from Trust Authority only and is not exposed outside
   Trust Infrastructure, [REQ-TS-4-01-002][req-ts-4-01-002] and
-  [REQ-TS-4-01-003][req-ts-4-01-003], and it answers no request that
+  [REQ-TS-4-01-003][req-ts-4-01-003]. It answers no request that
   Trust Authority's client certificate did not authenticate, and it ends the
-  handshake with a client that cannot be authenticated as Trust Authority,
+  handshake with a client it cannot authenticate as Trust Authority,
   [REQ-TS-4-01-025][req-ts-4-01-025] and [REQ-TS-4-01-035][req-ts-4-01-035].
 - **A log that disappears.** Log Delivery watches each domain and records a
   log that has become unavailable, [REQ-TS-4-01-018][req-ts-4-01-018] and [REQ-TS-4-01-022][req-ts-4-01-022].
@@ -380,7 +381,7 @@ Each threat below is answered by the requirement named with it.
 DID Service holds public keys and nothing about any citizen. Its Resolver
 endpoint is asked only during the trust cache sync, and only when an
 entity's domain cannot be reached, so DID Service learns nothing about
-which citizen deals with which entity, and it serves the copy without
+which citizen deals with which entity. It serves the copy without
 authentication and without any identifier of the reader,
 [REQ-TS-4-01-020][req-ts-4-01-020].
 
@@ -390,6 +391,6 @@ authentication and without any identifier of the reader,
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

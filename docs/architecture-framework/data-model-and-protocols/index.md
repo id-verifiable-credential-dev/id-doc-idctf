@@ -8,39 +8,41 @@ description: The standards this ecosystem adopted, the ones it turned down, and 
 # Data Model and Protocols {#data-model-and-protocols}
 
 <p class="ekdn-lead" markdown="span">
-Take, do not build. Every format and every protocol in this chapter is a
-standard that already exists, already has implementations, and was already
-argued over by people outside Indonesia. What the ecosystem writes for itself is
-the set of rules sitting on top of them.
+Every format and every protocol in this chapter is a standard that already
+exists, has implementations, and was argued over by people outside Indonesia.
+The ecosystem writes for itself the rules sitting on top of them.
 </p>
 
-That set has three levels, and only the first of them belongs to this
-document. A **Credential Rulebook** covers one credential type: its schema, the
-formats it may take, how it is displayed, how far each attribute may be
-minimized, and the assurance it demands. Its shape is in
-[The Credential Rulebook][the-credential-rulebook], and the
-rulebooks themselves are a document of their own, [Credential Rulebook Catalog](../../credential-rulebook/index.md).
-Above it, a **Governance Profile** fixes the technical choices a standard
-leaves open across every credential type, such as algorithms, cache lifetimes,
-protocol versions, and how an assurance level maps onto an [ISO/IEC 18045:2022][ref-iso-18045] value.
-Above that, the **Governance Framework** covers institutions and people: who
-decides what, [which approval a change has to walk through][gf-amendment], and what happens
-when a rule is broken. It is set out in [Governance Framework](../../governance-framework/index.md).
+That set has three levels, and only the first of them belongs to this document.
+A **Credential Rulebook** covers one credential type: its schema, the formats it
+may take, how it is displayed, how far each attribute may be minimized, and the
+assurance it demands. Its shape is in
+[The Credential Rulebook][the-credential-rulebook], and the rulebooks themselves
+are a document of their own,
+[Credential Rulebook Catalog](../../credential-rulebook/index.md). Above it, a
+**Governance Profile** fixes the technical choices a standard leaves open:
+algorithms, cache lifetimes, protocol versions, how an assurance level maps onto
+an [ISO/IEC 18045:2022][ref-iso-18045] value, and the ceiling each credential
+type's validity period never exceeds. Above that, the **Governance Framework** covers institutions and
+people: who decides what,
+[which approval a change has to walk through][gf-amendment], and what happens
+when a rule is broken. It is set out in
+[Governance Framework](../../governance-framework/index.md).
+
 The Governance Profile is a signed file rather than a document of this
-framework: Root Authority approves what it says, Trust Authority signs it, and
-Trust Registry publishes it on the central content delivery network (CDN)
+framework: the Root Authority approves what it says, Trust Authority signs it,
+and Trust Registry publishes it on the central content delivery network (CDN)
 beside the trusted list. Its own address is the one address it does not carry,
-so an implementation holds that single value and reads out of the Profile
-every address of Trust Infrastructure it starts from; every other address it
-reads from the artifact that names it, a certificate, a credential, or a
-Decentralized Identifier (DID). Neither belongs to this document.
+so an implementation holds that single value and reads out of the Profile every
+address of Trust Infrastructure it starts from. Every other address it reads
+from the artifact that names it, a certificate, a credential, or a
+Decentralized Identifier (DID).
 
 ## Technology map {#technology-map}
 
 Choosing a standard means turning others down, and a rejected standard is worth
 recording because the question comes back. The dropped column of
-[the technology map][tbl-technology-map] is the one that saves an argument
-later.
+[the technology map][tbl-technology-map] records each one.
 
 [](){ #tbl-technology-map }
 
@@ -60,11 +62,11 @@ later.
 
 One pattern runs down the dropped column. Almost everything dropped is a second
 way of doing something the left column already does, and a second way costs an
-implementation in every wallet, every verifier, and both copies of the Trust
-SDK. The exceptions are the entries dropped for a different reason: an entity
-key generated anywhere but at the entity, or kept unencrypted, because a key
-that can be moved or read will eventually be; and a status register of its own,
-because it would tell Trust Infrastructure how many credentials are in
+implementation in every wallet, every verifier, and both copies of the
+Trust SDK. The exceptions are the entries dropped for a different reason: an
+entity key generated anywhere but at the entity, or kept unencrypted, because a
+key that can be moved or read will eventually be; and a status register of its
+own, because it would tell Trust Infrastructure how many credentials are in
 circulation.
 
 Two rows of the used column carry detail the cell leaves out. The Ed25519

@@ -14,21 +14,31 @@ each boundary works.
 
 ## Expiry and validity periods {#expiry-and-validity-periods}
 
-A credential remains valid until its `exp` timestamp, unless it is revoked
-earlier through [status list checking][status-list-checking-and-revocation]. How long that
-window runs depends on the format. mdoc is governed by ISO/IEC 18013-5:2021, which
-caps the lifetime of the [Document Signer
-Certificate][document-signer-certificate-verifier-issuing-ca-and-crl]
-that signs a Mobile Driving License (mDL) at 457 days. An SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 carries no
-such fixed ceiling.
+A credential remains technically valid until its `exp` timestamp, unless it is
+revoked earlier through
+[status list checking][status-list-checking-and-revocation]. What signs the
+credential, and what bounds that signer's own lifetime, differs by format.
 
-In every format a credential has two validity periods. The administrative
+ISO/IEC 18013-5:2021 caps the lifetime of the
+[Document Signer Certificate][document-signer-certificate-verifier-issuing-ca-and-crl]
+that signs a mobile driving license (mDL) at 457 days. That cap bounds the
+moment of signing rather than the window the mdoc verifies for, because a reader
+checks the signing time against the certificate and not the time it reads the
+credential.
+
+An SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 is
+signed with the issuer's `issuance-jose` key, which no certificate wraps.
+
+In every format a credential has a technical validity period, and it has an
+administrative one where the document underneath it has one. The administrative
 period is how long the credential is legally valid. It mirrors the underlying
 document, and [the Credential Rulebook][the-credential-rulebook] for that
-credential type names the law or issuing authority it comes from. The
-technical period is how long one signed copy verifies, the window that `exp`
-closes. The issuer chooses it within a ceiling the Governance Profile sets,
-and never past the administrative period.
+credential type names the law or issuing authority it comes from. A type whose
+document is valid for life, as a KTP Digital is, carries no administrative
+period, and its Rulebook names none. The technical period is how long one signed
+copy verifies, the window that `exp` closes. The issuer chooses it within a
+ceiling the Governance Profile sets, and never past the administrative period
+where the type has one.
 
 ## Status list checking and revocation {#status-list-checking-and-revocation}
 
@@ -53,17 +63,19 @@ state as a second list, with the `suspension` purpose, beside the revocation
 list.
 
 Verifiers do not fetch
-the token on every check: they read it from a cached copy, held for a
-Time to Live (TTL) set by the credential's risk profile.
+the token during a check: they read it from a cached copy, held for a
+Time to Live (TTL) the Governance Profile sets for that kind of status list,
+one value for every issuer and every credential type.
 
 ## Scheduled key rotation and blast radius {#scheduled-key-rotation-and-blast-radius}
 
-A credential's lifecycle is tied to the Document Signer Certificate that
-signed it. If that signing key is compromised, every credential it signed
-has to be revoked and reissued, the chain of events [entity key
-revocation][entity-key-revocation] sets out in full.
+A credential's lifecycle is tied to the key that signed it, the
+Document Signer Certificate for an mdoc and `issuance-jose` for an SD-JWT VC or
+an `ldp_vc`. If that signing key is compromised, every credential it signed has
+to be revoked and reissued, the chain of events
+[entity key revocation][entity-key-revocation] sets out in full.
 
-Scheduled key rotation is what keeps that chain short. The more often an
+Scheduled key rotation keeps that chain short. The more often an
 issuer rotates its signing key, the fewer credentials share any one key, and
 the fewer credentials an incident forces back through reissuance.
 
@@ -74,14 +86,16 @@ exported or backed up. A citizen who loses or replaces their phone ends the
 credential's life on that device, with nothing to carry over to the next
 one.
 
-What follows is [device migration][device-migration]: the old wallet
-installation is revoked under [revoking an installation][gf-revoking-an-installation] and obtains no further [Key Attestation][key-attestation], the citizen
-enrolls the new device, and the credential is requested again from the
-issuer rather than restored from a backup.
+[Device migration][device-migration] follows: the old wallet
+installation is revoked under
+[revoking an installation][gf-revoking-an-installation] and obtains no further
+[Key Attestation][key-attestation], the citizen enrolls the new device, and the
+credential is requested again from the issuer rather than restored from a
+backup.
 
-The presentation history is what does carry over. It holds no key and no
-attribute value, only what each verifier signed and the outcome, so it goes
-into the wallet's encrypted client-side backup. The citizen holds the key to
-that backup, and the Wallet Provider keeps no copy. On the new device Mobile
-Wallet offers to restore the history and the citizen decides; a restored
-history goes on from where it stopped.
+The presentation history does carry over. It holds no key and no
+attribute value, only what each verifier signed and the outcome, so it goes into
+the wallet's encrypted client-side backup. The wallet encrypts it on the device
+and Wallet Backend Service stores the ciphertext; the citizen holds the key. On the
+new device Mobile Wallet offers to restore the history and the citizen decides;
+a restored history goes on from where it stopped.

@@ -73,7 +73,7 @@ BKN_TOKEN_TRY = 1792216790
 BKN_TOKEN = 1792216791
 BKN_CREDENTIAL = 1792216806
 BKN_NOTIFY = 1792216812
-RENEWAL = 1884319200  # 17 September 2029 06:00 UTC
+RENEWAL = 1821420000  # 20 September 2027 06:00 UTC, 27 days before the Kartu ASN's exp
 
 # The Dukcapil issuance, which ends before the mdoc's signing time of 06:00:10.
 DUK_PAR = 1792216680

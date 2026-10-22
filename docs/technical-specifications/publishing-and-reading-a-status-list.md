@@ -25,35 +25,53 @@ and the identifier `REQ-TS-5-09-nnn` follow
 
 ## Who runs this and what it needs {#ts-5-09-who-runs-this-and-what-it-needs}
 
-This specification fixes the status lists of the ecosystem: how the bits are
-packed and compressed, what each value means, the token the array is published
-inside, the signature on it, where it is hosted, how often it is republished,
-and how a reader reads one entry out of a cached copy. It fixes one encoding
-for the three lists that cover JSON Web Token artifacts and one for the list
-that covers `ldp_vc` credentials.
+This specification fixes the status lists of the ecosystem:
 
-Its conformance targets are Issuer Core, which publishes the lists covering the
-credentials it issued; Trust Registry, which publishes the lists covering
-registered uses and accreditations; Trust Authority, which signs those two
-lists; and the Modules that read one: Mobile Wallet, Mobile Verifier, and
-Verifier Core. A reader meets its requirements through Trust SDK where the
-library performs the check.
+- How the bits are packed and compressed.
+- What each value means.
+- The token the array is published inside.
+- The signature on it.
+- Where it is hosted.
+- How often it is republished.
+- How a reader reads one entry out of a cached copy.
 
-It leaves to other documents: which artifact a given index stands for and what
-a reader does when that index is set, which the specification of that artifact
-holds, so
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-for a registered use and
-[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
-for an accreditation; the formats a credential is issued in and the
-`status` claim an SD-JWT-based Verifiable Credential (SD-JWT VC) or an mdoc
-carries, which
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md) holds; the Time to Live (TTL) of each list, the
-tolerance limit past which a cached copy is refused, and the republication
-interval, which the Governance Profile holds; [the grounds on which a status is changed, which the Governance Framework holds][gf-grounds]; and the keys that sign the
-lists and the logs they live in, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds.
+It fixes one encoding for the three lists that cover JSON Web Token artifacts
+and one for the list that covers `ldp_vc` credentials.
+
+Its conformance targets are:
+
+- Issuer Core.
+- Trust Registry.
+- Trust Authority.
+- The Modules that read one: Mobile Wallet, Mobile Verifier, and Verifier
+  Core.
+
+A reader meets its requirements through Trust SDK where the library performs
+the check.
+
+It leaves to other documents:
+
+- Which registered use a given index stands for and what a reader does when
+  that index is set, which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
+- Which accreditation a given index stands for and what a reader does when
+  that index is set, which
+  [Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
+  holds.
+- The formats a credential is issued in and the `status` claim an
+  SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 or an mdoc
+  carries, which
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  holds.
+- The Time to Live (TTL) of each list, the tolerance limit past which a
+  cached copy is refused, and the republication interval, which the
+  Governance Profile holds.
+- [The grounds on which a status is changed][gf-grounds], which the
+  Governance Framework holds.
+- The keys that sign the lists and the logs they live in, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
 
 Before the first publication, each target holds what the rules below assume:
 
@@ -99,13 +117,14 @@ An issuer publishes its own lists rather than handing them to Trust
 Infrastructure, so that nobody at the center learns how many credentials are in
 circulation or how often one citizen's credential is checked. The central
 content delivery network (CDN) is the host the Governance Profile names,
-`registry.trust.go.id` in the illustration below. The two lists
-Trust Registry publishes cover artifacts that are already public, so hosting
-them centrally reveals nothing that the trusted list does not.
+`registry.trust.go.id` in
+[The lists as published][ts-5-09-the-lists-as-published]. The two lists Trust
+Registry publishes cover artifacts that are already public, so hosting them
+centrally reveals nothing that the trusted list does not.
 
-A list is published whole. There is no endpoint that answers a question about
-one index, and the specification defines none, because an answer about one
-index would name the artifact a reader is interested in. Nothing in the
+A list is published whole. No endpoint answers a question about one index,
+because an answer about one index would name the artifact a reader is
+interested in. Nothing in the
 ecosystem consumes an aggregation of lists either, so none is published.
 
 <div class="ekdn-reqs" markdown="1">
@@ -121,19 +140,23 @@ ecosystem consumes an aggregation of lists either, so none is published.
 
 ## The lists as published {#ts-5-09-the-lists-as-published}
 
-The four lists below are an illustration: the issuers, the domains, the keys
+The four lists below are an illustration: the issuers, the domains, the keys,
 and the indices are invented, and no credential has been issued. Every field is
 exact. Each was signed with the key its `kid` or its `verificationMethod`
 names, each signature
 verifies, and each array decodes to the entries described beneath it, so an
 implementation can decompress these lists and find what the clauses below
-require. The entities are the ones
-[the trusted list][ts-5-01-trusted-list-payload] carries, with
-the same DIDs, and the indices are the ones
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-and
-[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
-name.
+require.
+
+The lists agree with the other examples on two points:
+
+- The entities are the ones [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same DIDs.
+- The indices are the ones
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  and
+  [Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
+  name.
 
 An issuer's credential status list, two bits per entry, with index 481920
 valid, 481921 invalid, and 481922 suspended:
@@ -222,8 +245,7 @@ eyJ0eXAiOiJzdGF0dXNsaXN0K2p3dCIsImFsZyI6IkVTMjU2Iiwia2lkIjoiZGlkOndlYnZoOlFtWmp5
 }
 ```
 
-The `ldp_vc` list is a credential rather than a token, secured with the same
-Data Integrity proof as the credentials it covers. The lists below are those
+The lists below are those
 of the Ministry of Religious Affairs, which issues the Kartu Nikah in
 `ldp_vc`; each holds 524288 entries, index 94721 is revoked, and every other
 entry is valid:
@@ -253,7 +275,7 @@ entry is valid:
     "created": "2026-10-17T06:00:00Z",
     "verificationMethod": "did:webvh:QmbAb7u9RMjqsZ9L98pe47szJZdnKQLh9KizqNW2WwKac1:kemenag.go.id#status-list-1",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z4nFvMnvFqtG3QYJu1qKaNZ291WyxNUxRhUtgiTp72o628W9ohNHhj2TWJ7XKqAU2HDBtkaBa9nz4m23BE5swVNLb"
+    "proofValue": "z5AuBTuDiDWRXVY2Y6umFM9D1E426xjQEYmhxw2DmrRV9SaGfPceSLexR24o9yvPUFtEQWJUigMtHpxBdwgRHKynR"
   }
 }
 ```
@@ -285,7 +307,7 @@ The suspension list of the same credentials, in which no entry is set:
     "created": "2026-10-17T06:00:00Z",
     "verificationMethod": "did:webvh:QmbAb7u9RMjqsZ9L98pe47szJZdnKQLh9KizqNW2WwKac1:kemenag.go.id#status-list-1",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z5Q9VLxc2h1SgJxhcNMhAAvrVG5U7q7D8VFCRTJ3R5PNnZHVbpAcVNhqqyXgEYSzaSqLNJDbiq1KNpRG7m11Va8pB"
+    "proofValue": "z5DvyCm7eroKFiHCwjKKynQ7gqiKfvDgPoZHRgW6XzYfycLAfjBA8a2oZpgMUcTWmZ4iLSQRCtxM3CNfsgDUA2AJf"
   }
 }
 ```
@@ -316,12 +338,13 @@ both lists, so it is valid:
 ## Format {#ts-5-09-format}
 
 The three lists that cover JSON Web Token (JWT) artifacts are published as a
-Status List Token in JWT format, as
-[IETF Token Status List draft -14][ref-i-d-ietf-oauth-status-list] defines it: a JSON Web
-Signature in compact serialization as [RFC 7515][ref-rfc7515] defines it, over
-a claims set as [RFC 7519][ref-rfc7519] defines it. Of the claims below, `iss`
-is the one the standard does not define for a Status List Token; the ecosystem
-adds it so that a reader resolves the signing key from the token itself.
+Status List Token in JWT format, which
+[IETF Token Status List draft -14][ref-i-d-ietf-oauth-status-list] defines as a
+JSON Web Signature in compact serialization, [RFC 7515][ref-rfc7515], over a
+claims set, [RFC 7519][ref-rfc7519]. Of the claims in
+[the table of claims][tbl-ts-5-09-claims], `iss` is the one the standard does
+not define for a Status List Token; the ecosystem adds it so that a reader
+resolves the signing key from the token itself.
 
 [](){ #tbl-ts-5-09-claims }
 
@@ -349,7 +372,7 @@ adds it so that a reader resolves the signing key from the token itself.
 - [](){ #req-ts-5-09-016 }**REQ-TS-5-09-016** `status_list` MUST carry `bits` and `lst`.
 - [](){ #req-ts-5-09-017 }**REQ-TS-5-09-017** A publisher MUST NOT include `aggregation_uri`.
 - [](){ #req-ts-5-09-080 }**REQ-TS-5-09-080** A publisher MUST NOT publish an aggregation of its status lists.
-- [](){ #req-ts-5-09-018 }**REQ-TS-5-09-018** Trust Registry MUST NOT publish the Use Statement status list or the accreditation status list in CBOR Web Token (CWT) format.
+- [](){ #req-ts-5-09-018 }**REQ-TS-5-09-018** Trust Registry MUST NOT publish the Use Statement status list or the accreditation status list in Concise Binary Object Representation (CBOR) Web Token (CWT) format.
 - [](){ #req-ts-5-09-019 }**REQ-TS-5-09-019** A reader MUST refuse a token whose `typ` is not `statuslist+jwt`.
 - [](){ #req-ts-5-09-020 }**REQ-TS-5-09-020** A reader MUST refuse a token whose `sub` is not the address the artifact it is checking names.
 
@@ -362,11 +385,13 @@ the `sub` inside it, which is the same string; nothing inside the array says
 which list it is.
 
 `lst` is the array of statuses, packed, compressed, and encoded in the order
-[IETF Token Status List][ref-i-d-ietf-oauth-status-list] fixes: each index
-addresses a block of `bits` bits, blocks are packed into each byte from the
-least significant bit upward, the byte array is compressed with DEFLATE in the
-ZLIB data format, and the result is base64url encoded without padding, as
-[RFC 4648][ref-rfc4648] defines it.
+[IETF Token Status List][ref-i-d-ietf-oauth-status-list] fixes:
+
+- each index addresses a block of `bits` bits;
+- blocks are packed into each byte from the least significant bit upward;
+- the byte array is compressed with DEFLATE in the ZLIB data format;
+- the result is base64url encoded without padding, as
+  [RFC 4648][ref-rfc4648] defines it.
 
 How wide an entry is follows from how many states the artifact has.
 [The table of status values][tbl-ts-5-09-values] gives the values in use.
@@ -378,7 +403,7 @@ How wide an entry is follows from how many states the artifact has.
 | Value | Name | What it says | Used by |
 |---|---|---|---|
 | `0x00` | Valid | The artifact has not been revoked or suspended | Every list |
-| `0x01` | Invalid | The artifact is revoked, and the decision is final | Every list |
+| `0x01` | Invalid | The artifact is revoked, and the decision is final | Every Status List Token, and the Bitstring revocation list |
 | `0x02` | Suspended | The artifact is set aside while a doubt is resolved, and may return to valid | The credential status list and the accreditation status list |
 
 </figure>
@@ -404,12 +429,9 @@ often as the doubt behind it is raised and resolved.
 ## Suspending a credential {#ts-5-09-suspending-a-credential}
 
 A suspension sets a credential aside while a doubt about it is resolved, and
-the credential may return to valid. Only the issuer sets the entry, through
-Issuer Core, and a doubt arises on three grounds: a citizen's report that the
-credential is lost, a correction or dispute from the issuer's source system, or
-the issuer's own check. The Root Authority does not suspend a credential. It
-acts on the issuer's registration, and the suspension of that registration
-stops every credential of the issuer. The Governance Profile bounds how long a
+the credential may return to valid. The Root Authority does not suspend a
+credential. It acts on the issuer's registration, and the suspension of that
+registration stops every credential of the issuer. The Governance Profile bounds how long a
 suspension may last in its `lifetimes.credential_suspension` member.
 
 The citizen learns of a suspension from Mobile Wallet, as
@@ -418,9 +440,7 @@ it to the citizen, and the notification endpoint of
 [Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
 is not used for it. While the entry of a credential is suspended, Issuer Core
 defers the renewal of that credential, as
-[REQ-TS-1-01-151][req-ts-1-01-151] of
-[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
-fixes.
+[REQ-TS-1-01-151][req-ts-1-01-151] fixes.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -432,8 +452,10 @@ fixes.
 
 ## Indices {#ts-5-09-indices}
 
-An index is allocated once, belongs to one artifact for as long as the list
-exists, and is never handed to another. A list is published at a fixed length
+An index is allocated once and belongs to one artifact for as long as the list
+exists. It is handed to another only where a replacement artifact's own
+specification requires it to carry the index of the artifact it replaces. A
+freed index is never allocated again. A list is published at a fixed length
 whatever share of it is allocated, so that the size of a list says nothing
 about how many credentials an issuer has issued.
 
@@ -446,7 +468,7 @@ the order in which two citizens were served.
 
 - [](){ #req-ts-5-09-030 }**REQ-TS-5-09-030** A publisher MUST allocate each artifact its own index.
 - [](){ #req-ts-5-09-104 }**REQ-TS-5-09-104** A publisher MUST give a replacement artifact the index of the artifact it replaces where the specification of that artifact requires it.
-- [](){ #req-ts-5-09-031 }**REQ-TS-5-09-031** A publisher MUST NOT allocate one index to two artifacts, in the same copy of a list or in any later copy.
+- [](){ #req-ts-5-09-031 }**REQ-TS-5-09-031** A publisher MUST NOT allocate one index to two artifacts, in the same copy of a list or in any later copy, other than as [REQ-TS-5-09-104][req-ts-5-09-104] requires.
 - [](){ #req-ts-5-09-032 }**REQ-TS-5-09-032** A publisher MUST draw an index at random from the indices of the list it has not allocated.
 - [](){ #req-ts-5-09-033 }**REQ-TS-5-09-033** A publisher MUST keep the number of entries in a list the same in every copy it publishes.
 - [](){ #req-ts-5-09-034 }**REQ-TS-5-09-034** A publisher MUST publish a list of at least 131072 entries.
@@ -459,14 +481,12 @@ the order in which two citizens were served.
 ## Signature {#ts-5-09-signature}
 
 A status list is signed with a key that exists for signing status lists and for
-nothing else: the entity's `status-list` key for an issuer's lists, Trust
-Authority's Use Statement status list key and its accreditation status list key
-for the two lists Trust Registry publishes.
+nothing else.
 
-The separation is what keeps revocation working. A list that revokes what a
-compromised key signed cannot be signed by that same key, because the key is
-frozen the moment the compromise is found, and the republication that revokes
-its credentials is exactly what has to happen next.
+The separation keeps revocation working. A list that revokes what a
+compromised key signed cannot be signed by that same key. The key is frozen the
+moment the compromise is found, and the republication that revokes its
+credentials is what has to happen next.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -485,8 +505,8 @@ its credentials is exactly what has to happen next.
 
 ## Publication {#ts-5-09-publication}
 
-A list is republished on a schedule and again whenever an entry changes, so
-that a revocation does not wait for the schedule and a reader cannot tell a
+A list is republished on a schedule, and again whenever an entry changes. A
+revocation therefore does not wait for the schedule, and a reader cannot tell a
 revocation from a routine republication by the time it arrives. Each copy
 carries the moment it was issued, the moment it expires, and how long a reader
 may use it before looking for a fresh one.
@@ -509,31 +529,27 @@ may use it before looking for a fresh one.
 
 ## The CWT form, for mdoc {#ts-5-09-the-cwt-form-for-mdoc}
 
-An mdoc does not carry its status reference as a claim in a JSON object. It
-carries the Status CBOR structure in its Mobile Security Object, and a reader
-that opens it has a Concise Binary Object Representation (CBOR) Object
-Signing and Encryption (COSE) stack and no JSON Object Signing and Encryption
-(JOSE) stack, because the mdoc's own issuer authentication is a CWT.
+An mdoc does not carry its status reference as a claim in a JSON object; it
+carries the Status CBOR structure in its Mobile Security Object. A reader
+that opens one has a CBOR Object Signing and Encryption (COSE) stack and no
+JSON Object Signing and Encryption (JOSE) stack, because the mdoc's own issuer
+authentication is a CWT.
 
-So an issuer that issues credentials in mdoc publishes its credential status
-list twice, in the JWT form for a reader that came to it from an SD-JWT VC
-and in the CWT form for a reader that came to it from an mdoc. One address
-serves both, and which one a reader gets follows from the `Accept` header it
-sends, as [IETF Token Status List][ref-i-d-ietf-oauth-status-list] fixes. The
-two tokens carry the same `bits`, the same array, and the same times, so
-there is one list and two encodings of it rather than two lists.
+So an issuer that issues credentials in mdoc publishes its credential
+status list twice, in the JWT form and in the CWT form. One
+address serves both, and which one a reader gets follows from the `Accept`
+header it sends, as [IETF Token Status List][ref-i-d-ietf-oauth-status-list]
+fixes. The two tokens carry the same `bits`, the same array, and the same times,
+so there is one list and two encodings of it rather than two lists. An mdoc
+is the format the ecosystem exports to readers it does not run.
 
 An issuer that issues in no other format than SD-JWT VC or `ldp_vc` has no
 reader that arrives carrying a COSE stack, so it publishes the JWT form
 alone. What the Credential Rulebook of each type it issues names as the
-format is what decides this, and nothing else.
+format decides this, and nothing else.
 
-The second edition of [ISO/IEC 18013-5][ref-iso-18013-5] requires the CWT
-form for the revocation list of a Mobile Security Object, and a reader built
-to it is entitled to refuse a JWT. That is the reason for the second form: an
-mdoc is the format the ecosystem exports to readers it does not run.
-
-The CWT form of the list the clauses above show, as served, tagged as a
+The CWT form of the list in
+[The lists as published][ts-5-09-the-lists-as-published], as served, tagged as a
 `COSE_Sign1` and carrying the same three entries:
 
 ``` { .text title="Credential status list, CWT form, in hex" data-format="CBOR" }
@@ -576,23 +592,23 @@ a2646269747302636c7374589b78daedd0310100000c0220c3d83fa3f7320c22
 c94dcf8360f2b051b0ee
 ```
 
-Its protected header is `{1: -7, 16: "application/statuslist+cwt", 33: …}`,
-where `-7` is `ES256` as [RFC 9053][ref-rfc9053] defines it and label 33 is
-`x5chain` as [RFC 9360][ref-rfc9360] defines it, holding Dukcapil's status
-list signer certificate, the one
+Its protected header is `{1: -7, 16: "application/statuslist+cwt", 33: …}`.
+`-7` is `ES256`, [RFC 9053][ref-rfc9053], and label 33 is `x5chain`,
+[RFC 9360][ref-rfc9360], holding Dukcapil's status list signer certificate, the
+one
 [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
 shows. Its unprotected header carries the `kid`
 `did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id#status-list-1`,
-and its claims are the issuer, the subject, the issued-at, the expiry, the
-time to live and the status list under the labels
-[the table of CWT claims][tbl-ts-5-09-cwt] gives.
-[RFC 9864][ref-rfc9864] deprecates `-7` in favor of `ESP256`, `-9`; the CWT
-form keeps `-7` because ISO/IEC 18013-5:2021, which an mdoc reader is built
-to, requires it.
+and its claims are the issuer, the subject, the issued-at, the expiry, the time
+to live, and the status list under the labels
+[the table of CWT claims][tbl-ts-5-09-cwt] gives. [RFC 9864][ref-rfc9864]
+deprecates `-7` in favor of `ESP256`, `-9`; the CWT form keeps `-7` because
+ISO/IEC 18013-5:2021, which an mdoc reader is built to, requires it.
 
 The Kartu ASN is issued in mdoc as well as in SD-JWT VC, so its issuer
-publishes the CWT form of its list too, at the same address, with the same
-array and the same times as the JWT form shown earlier, and index 481920
+publishes the CWT form of its list too. It sits at the same address, with the
+same array and the same times as the JWT form in
+[The lists as published][ts-5-09-the-lists-as-published], and index 481920
 valid:
 
 ``` { .text title="Kartu ASN status list, CWT form, in hex" data-format="CBOR" }
@@ -633,9 +649,9 @@ c9ddd283799a301d0603551d0e0416041457d594570230059fd4a9c126570666
 8bfa7729e997c97463602f1def4c2af4e10e92d9d564aa814922
 ```
 
-Its protected header is the same except that `x5chain` holds the status
-list signer certificate of the Kartu ASN issuer, its unprotected header
-carries the `kid`
+Its protected header is the same, except that `x5chain` holds the status list
+signer certificate of the Kartu ASN issuer. Its unprotected header carries the
+`kid`
 `did:webvh:Qme8RriGnKx5j2QjoaY1SgRSpxTHdjq11L2Exgy1zV2xsJ:bkn.go.id#status-list-1`,
 its issuer is the DID before the `#` of that `kid`, and its subject is
 `https://bkn.go.id/status/kartu-asn-1`.
@@ -655,29 +671,31 @@ its issuer is the DID before the `#` of that `kid`, and its subject is
 
 </figure>
 
-Of these claims, the issuer is the one
-[IETF Token Status List][ref-i-d-ietf-oauth-status-list] does not define for
-the CWT form, as it does not define `iss` for the JWT form. The ecosystem adds
-it for the same reason, so that a reader resolves the signing key from the
-token itself.
+Of the claims in [the table of CWT claims][tbl-ts-5-09-cwt], the issuer is
+the one [IETF Token Status List][ref-i-d-ietf-oauth-status-list] does not
+define for the CWT form, and the ecosystem adds it for the reason it adds
+`iss` to the JWT form.
+
 [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
 fixes how a JSON Web Signature names its key and leaves COSE out, so the
 clauses below carry its rules over to the CWT form. The `kid` sits in the
 unprotected header, where [RFC 9052][ref-rfc9052] allows a key identifier
-because it is a hint about which key to use. What ties the key to the
-publisher is the issuer in the signed payload, which the DID part of `kid`
-has to match.
+because it is a hint about which key to use. The issuer in the signed payload
+ties the key to the publisher, which the DID part of `kid` matches under
+[REQ-TS-5-09-110][req-ts-5-09-110].
 
-The protected header also carries `x5chain`, because a reader that came to
-the list from an mdoc verified that mdoc through the Issuer Root CA and may
-hold no DID resolver. The certificate in it certifies the same `status-list`
-key `kid` names, under the same root as the Document Signer Certificate,
-which is the path the second edition of [ISO/IEC 18013-5][ref-iso-18013-5]
-gives a revocation list. One root certifies every issuer, so for an mdoc the
-entity that issued it is the `organizationName` of its Document Signer
-Certificate, and the status list signer certificate has to carry the same
-one. The JWT form has no such certificate, so it cannot be tied to the
-issuer of an mdoc, and a reader checks an mdoc against the CWT form alone.
+The protected header also carries `x5chain`, because a reader that came to the
+list from an mdoc verified that mdoc through the Issuer Root CA and may hold no
+DID resolver. The certificate in it certifies the same `status-list` key
+`kid` names, under the same root as the Document Signer Certificate. That is
+the one path such a reader can already walk.
+
+One root certifies every issuer, so for an
+mdoc the entity that issued it is the `organizationName` of its
+Document Signer Certificate, and a reader refuses a CWT form whose status list
+signer certificate carries another, [REQ-TS-5-09-118][req-ts-5-09-118]. The JWT
+form has no such certificate, so it cannot be tied to the issuer of an mdoc, and
+a reader checks an mdoc against the CWT form alone.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -710,7 +728,7 @@ issuer of an mdoc, and a reader checks an mdoc against the CWT form alone.
 - [](){ #req-ts-5-09-116 }**REQ-TS-5-09-116** A reader MUST validate the certificate in `x5chain` as [Validating a chain][ts-5-04-validating-a-chain] of TS-5-04 requires for a Document Signer Certificate.
 - [](){ #req-ts-5-09-117 }**REQ-TS-5-09-117** A reader MUST refuse a CWT form whose certificate in `x5chain` does not certify the key `kid` names.
 - [](){ #req-ts-5-09-118 }**REQ-TS-5-09-118** A reader checking an mdoc MUST refuse a CWT form whose certificate in `x5chain` carries an `organizationName` other than that of the Document Signer Certificate that signed the mdoc.
-- [](){ #req-ts-5-09-119 }**REQ-TS-5-09-119** Mobile Wallet, Verifier Core and Mobile Verifier MUST check the status of an mdoc against the CWT form only.
+- [](){ #req-ts-5-09-119 }**REQ-TS-5-09-119** Mobile Wallet, Verifier Core, and Mobile Verifier MUST check the status of an mdoc against the CWT form only.
 
 </div>
 
@@ -720,13 +738,16 @@ A credential issued in `ldp_vc` points into a Bitstring Status List instead,
 which is a credential rather than a token, as
 [W3C Bitstring Status List v1.0][ref-bitstring-status-list] defines it. The standard
 advises that a status list be secured the way the credentials it covers are
-secured, and the ecosystem follows that advice: an `ldp_vc` credential is
-secured with a Data Integrity proof, so its status list is too.
+secured. An `ldp_vc` credential is secured with a Data Integrity proof, so its
+status list is too.
 
 The encoding differs from the Status List Token in three ways. An entry is one
 bit, so a purpose that needs a second state takes a second list: revocation and
 suspension are two credentials at two addresses, and a credential carries one
-`credentialStatus` entry for each. The bits are packed from the most
+`credentialStatus` entry for each. A set bit says the list's `statusPurpose`. The standard defines two: revoked
+and final in the revocation list, suspended and reversible in the suspension
+list, so [the table of status values][tbl-ts-5-09-values] reads `0x01` for the
+revocation list alone. The bits are packed from the most
 significant bit of each byte downward. The array is compressed with GZIP and
 written as a multibase string, `u` followed by base64url without padding.
 
@@ -764,36 +785,36 @@ written as a multibase string, `u` followed by base64url without padding.
 - [](){ #req-ts-5-09-066 }**REQ-TS-5-09-066** The index of one credential MUST be the same in the revocation list and in the suspension list.
 - [](){ #req-ts-5-09-067 }**REQ-TS-5-09-067** A reader MUST verify the Data Integrity proof before it reads an entry.
 - [](){ #req-ts-5-09-068 }**REQ-TS-5-09-068** A reader MUST refuse a Bitstring Status List credential whose `statusPurpose` is not the purpose of the entry it is reading.
+- [](){ #req-ts-5-09-125 }**REQ-TS-5-09-125** A set bit in a Bitstring Status List credential whose `statusPurpose` is `suspension` MUST be read as suspended and not as invalid, so that [REQ-TS-5-09-026][req-ts-5-09-026] applies to it and [REQ-TS-5-09-025][req-ts-5-09-025] does not.
 
 </div>
 
 ## Reading an entry {#ts-5-09-reading-an-entry}
 
-A reader works from a cached copy. It fetches a list on its own schedule, never
-while a transaction is in hand, because a fetch at that moment would tell the
-publisher which artifact is being checked and would make the check fail
+A reader works from a cached copy and fetches a list on its own schedule, never
+while a transaction is in hand. A fetch at that moment would tell the
+publisher which artifact is being checked, and would make the check fail
 whenever the network does.
 
 1. Take the address and the index out of the artifact being checked.
-2. Find the cached copy fetched from that address, or fetch one if there is
-   none.
+2. Find the cached copy fetched from that address. There is none when the
+   reader's sync has not yet fetched that publisher's list, and then no status
+   can be established.
 3. Check the signature on the copy, every time, not only when it was fetched.
 4. Check that `sub` is the address the artifact named.
 5. Decode `lst`, decompress it, and read the block of `bits` bits at the index.
 6. Decide on the value, and on how old the copy is.
 
 A copy is good until its `ttl` has passed. After that the reader goes on using
-it as its last-known-good copy, up to the tolerance limit the Governance
-Profile sets, and refuses to act on it past that limit, as
+it as its last-known-good copy, up to the tolerance limit. Past that limit it
+refuses to act on the copy, as
 [three rules for reading the copy][three-rules-for-reading-the-copy] sets out.
-The limit costs a transaction when it bites, which is the intended trade: a
-status that cannot be established may have been revoked weeks ago.
+The limit costs a transaction when it bites: a status that cannot be
+established may have been revoked weeks ago.
 
 A verifier's refusal says only that the credential was refused, as
-[REQ-TS-5-10-121][req-ts-5-10-121] requires. The citizen learns which it was
-from Mobile Wallet, which reads the status of each credential it holds. A
-suspended credential is set aside and may return to valid, so the citizen can
-ask the issuer why. A revoked one stays revoked.
+[REQ-TS-5-10-121][req-ts-5-10-121] requires. Mobile Wallet tells the citizen
+which it was, as [REQ-TS-5-09-120][req-ts-5-09-120] requires.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -812,13 +833,11 @@ ask the issuer why. A revoked one stays revoked.
 - [](){ #req-ts-5-09-121 }**REQ-TS-5-09-121** Where the entry of a credential issued in `ldp_vc` is set in the revocation list its `credentialStatus` names, Mobile Wallet MUST show the credential as revoked, whatever the suspension list says.
 - [](){ #req-ts-5-09-077 }**REQ-TS-5-09-077** A reader MUST NOT act on an entry read from a copy it has discarded.
 - [](){ #req-ts-5-09-078 }**REQ-TS-5-09-078** A reader MUST discard a cached copy whose signature no longer verifies.
-- [](){ #req-ts-5-09-082 }**REQ-TS-5-09-082** A reader MUST fetch the list again after it discards a copy.
+- [](){ #req-ts-5-09-082 }**REQ-TS-5-09-082** A reader MUST fetch the list again at its next sync after it discards a copy.
 
 </div>
 
 ## Security considerations {#ts-5-09-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A replaced list.** An attacker who serves an older copy hides a
   revocation. [REQ-TS-5-09-071][req-ts-5-09-071] makes a reader check the
@@ -835,12 +854,12 @@ Each threat below is answered by the requirement named with it.
   artifacts do, and [REQ-TS-5-09-076][req-ts-5-09-076] makes the reader's
   answer a refusal rather than an assumption.
 - **A substituted list from another publisher.**
-  [REQ-TS-5-09-020][req-ts-5-09-020] and [REQ-TS-5-09-046][req-ts-5-09-046]
-  tie the copy to the address the artifact named and to the entity that issued
-  the artifact, so a valid list from the wrong issuer is refused. For an mdoc,
-  [REQ-TS-5-09-118][req-ts-5-09-118] reads that entity from the Document
-  Signer Certificate, and [REQ-TS-5-09-119][req-ts-5-09-119] keeps the JWT
-  form, which carries no certificate, out of the check.
+  [REQ-TS-5-09-020][req-ts-5-09-020] and [REQ-TS-5-09-046][req-ts-5-09-046] tie
+  the copy to the address the artifact named and to the entity that issued the
+  artifact, so a valid list from the wrong issuer is refused. For an mdoc,
+  [REQ-TS-5-09-118][req-ts-5-09-118] reads that entity from the
+  Document Signer Certificate, and [REQ-TS-5-09-119][req-ts-5-09-119] keeps the
+  JWT form, which carries no certificate, out of the check.
 - **A list served differently to different readers.** A publisher that answers
   one reader with a clean list and everyone else with a revoked one would make
   revocation untestable. [REQ-TS-5-09-054][req-ts-5-09-054] forbids it, and a
@@ -856,10 +875,10 @@ checked. [REQ-TS-5-09-008][req-ts-5-09-008] and
 [REQ-TS-5-09-055][req-ts-5-09-055] keeps the fetch itself from becoming a
 record.
 
-Two things about an issuer would otherwise leak through the list. How many
-credentials it has issued, which the fixed length of
-[REQ-TS-5-09-033][req-ts-5-09-033] hides, and the order in which it issued
-them, which the random allocation of [REQ-TS-5-09-032][req-ts-5-09-032] hides.
+Two things about an issuer would otherwise leak through the list: how many
+credentials it has issued, and the order in which it issued them. The fixed
+length of [REQ-TS-5-09-033][req-ts-5-09-033] hides the first, and the random
+allocation of [REQ-TS-5-09-032][req-ts-5-09-032] the second.
 Neither is the citizen's secret, but both would let an outsider watch an
 agency's operations through a public file.
 
@@ -874,6 +893,6 @@ citizen it belongs to.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

@@ -1,6 +1,6 @@
 ---
 title: "Technology stack"
-description: The language, database, cache, key store, and policy engine behind each building block of a Module, which of those choices something else depends on, how each Module is packaged and shipped, and the four risks the stack carries.
+description: The language, database, cache, keystore, and policy engine behind each building block of a Module, which of those choices something else depends on, how each Module is packaged and shipped, and the four risks the stack carries.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §6 (Kep. 15, 16, 17), §6.2; Rincian Perangkat Lunak dan Deployment §3, §4, §5. Trust Authority satu image atas keputusan user (13 Oktober 2026), bukan dua seperti Rincian §3; tracks/0211, tracks/0407 -->
@@ -11,11 +11,11 @@ Go for every server Module, React for every web application, Flutter for both
 mobile applications, and one container image per Module. Those four decisions
 settle most of the stack before a single Module is designed.
 
-This page is where the product names live. The Module Map describes what each
-Module is built as in generic terms, a REST API or a web application, because
-the shape of a Module outlives the technology that implements it. What that
-shape is built from is here, in one table, so a later change of tooling touches
-one page rather than ten entries.
+The Module Map describes what each Module is built as in generic terms, a
+REST API or a web application, because the shape of a Module outlives the
+technology that implements it. What that shape is built from is here, in one
+table, so a later change of tooling touches one page rather than ten
+entries.
 
 ## The stack {#the-stack}
 
@@ -44,27 +44,23 @@ one page rather than ten entries.
 
 Most of [the stack][tbl-stack] could be decided again tomorrow
 without anything
-else moving. Three rows could not.
+else moving. Three rows could not:
 
-**Redis is not a cache in the usual sense.** A nonce issued by one instance
-has to be readable by the next, because the request that carries it back may
-land anywhere. Take Redis out and Issuer Core and Verifier Core run as single
-instances, which is a scaling limit rather than a slower build.
-
-**The Trust SDK is written twice because nothing lets it be written once.**
-Go runs on the servers and Dart runs in the applications, and no runtime spans
-both. The pair is held together by a shared set of test vectors rather than by
-shared code, and
-[Trust SDK][sa-trust-sdk] names the
-six parts and the drift risk each one carries.
-
-**Where an entity keeps its keys is a governance fact, not an operations
-choice.** The three options behind Key Manager are not interchangeable: which
-one an entity uses is recorded as `keyStorage` when it registers a public key,
-and that value is what its `issuer_assurance` is read from. An entity that
-keeps its keys in the software keystore its own software ships with sits at the
-lowest one, which decides the credential types it can be authorized to issue
-rather than how fast it runs.
+- **Redis is not a cache in the usual sense.** A nonce issued by one instance
+  has to be readable by the next, because the request that carries it back may
+  land anywhere. Take Redis out and Issuer Core and Verifier Core run as single
+  instances, which is a scaling limit rather than a slower build.
+- **The Trust SDK is written twice.** Go runs on the servers and Dart runs in
+  the applications, and no runtime spans both. The pair is held together by a shared set of test vectors rather
+  than by shared code, and [Trust SDK][sa-trust-sdk] names the six parts and
+  the drift risk each one carries.
+- **Where an entity keeps its keys is a governance fact, not an operations
+  choice.** The three options behind Key Manager are not interchangeable: which
+  one an entity uses is recorded as `keyStorage` when it registers a public
+  key, and its `issuer_assurance` is read from that value. An entity
+  that keeps its keys in the software keystore its own software ships with sits
+  at the lowest one, which decides the credential types it can be authorized to
+  issue rather than how fast it runs.
 
 ## Packaging and deployment {#packaging-and-deployment}
 
@@ -90,22 +86,22 @@ together would pull the Console into the public zone, which the
 
 </figure>
 
-Two rows need a word. Running in an image of its own does not make Claims
-Provider a Module: it still belongs to Issuer Core, as
+Running in an image of its own does not make
+Claims Provider a Module: it still belongs to Issuer Core, as
 [Module Map](../high-level-architecture/module-map.md) says. Trust Authority is
 one image holding both its API and its portal. The entity endpoint and the
-portal answer in the public zone and the back office in the internal one,
-which is [one application, two doors][one-application-two-doors] as for Issuer Core,
-so placement gives no reason to split them, and one image per Module holds
-without exception. The Go binary embeds the portal's React build and serves
-it, so the image needs no web server and takes the same distroless base as
-the other Go images.
+portal answer in the public zone and the back office in the internal one, which
+is [one application, two doors][one-application-two-doors] as for Issuer Core.
+Placement is no reason to split them, and one image per Module holds for every
+Module that ships one. The Go binary embeds the portal's React build and
+serves it, so the image needs no web server and takes the same distroless base
+as the other Go images.
 
-Four artifacts are not container images:
+Four of the things the pipeline builds are not container images:
 
 <figure markdown="1" class="ekdn-table">
 
-| Artifact | Form |
+| Build output | Form |
 |---|---|
 | Mobile Wallet, Mobile Verifier | An Android App Bundle (AAB) and an iOS App Store Package (IPA) |
 | Trust SDK for Go | A Go module |
@@ -116,7 +112,7 @@ Four artifacts are not container images:
 
 ### Deployment profiles {#deployment-profiles}
 
-Both profiles run the same images. What differs is how they are put together.
+Both profiles run the same images, and they differ in how those images are put together.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -127,8 +123,7 @@ Both profiles run the same images. What differs is how they are put together.
 
 </figure>
 
-Neither profile lets several issuers share one installation. Every issuer runs
-its own Issuer Core, for the reason given under
+Every issuer runs its own Issuer Core, for the reason given under
 [Issuer Services][issuer-services].
 
 ### Placement rules {#placement-rules}
@@ -140,13 +135,13 @@ Four rules complete the [network zones][network-zones-and-placement].
 - **An entity's keys stay with the entity.** Key Manager and its driver run in
   the entity's own zone, and the key encryption key (KEK) of the software
   keystore never comes from the database it protects, as
-  [where an entity key lives][where-an-entity-key-lives] sets out. Trust
-  Authority receives a public key, a proof of possession, and a certificate
-  request, and nothing more.
+  [where an entity key lives][where-an-entity-key-lives] sets out.
+  Trust Authority receives a public key, a proof of possession, and a
+  certificate request, and nothing more.
 - **The source system is not opened.** Claims Provider enters the agency's
   closed network, and that network is never opened toward the ecosystem.
 - **Claims Provider scales with its source.** How many instances it needs
-  follows from how the source system is integrated: read over REST, or
+  follows from how that source is integrated: read over REST, or
   replicated overnight, as on
   [Layers inside a Module](layers-inside-a-module.md).
 

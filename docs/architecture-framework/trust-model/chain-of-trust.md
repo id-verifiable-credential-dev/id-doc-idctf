@@ -8,25 +8,28 @@ description: Who accredits whom, the two routes a verifier takes to a trust anch
 # Chain of trust {#chain-of-trust}
 
 Trust rests on two things that do not stand in for each other. An entity's
-Decentralized Identifier (DID) Document proves that a signature really is the
+Decentralized Identifier (DID) Document proves that a signature is the
 entity's. Trust Registry proves that the entity is authorized to have made it.
-An impostor can mint a DID in five minutes; what stops them is Trust Registry.
+An impostor can mint a DID in five minutes, and Trust Registry is what stops
+them being believed.
 
-The [Root Authority][root-authority] accredits and authorizes every entity
-directly, and Trust Authority, the Module it runs, records each decision. There is no
-intermediate authority: no sector body that accredits on its behalf, and no
-delegation to a ministry. The long tail is absorbed on the verifier side
-instead. Issuers, Relying Parties, and RP Intermediaries register with Trust
-Authority; the millions of merchants are registered by their own RP
-Intermediary, which vouches for each merchant's device with a Verifier Device
-Certificate. The same pattern holds on the wallet side, where a Wallet Provider
-vouches for each wallet installation with a Key Attestation. Which obligations
-each of those parties takes on is covered in
+The [Root Authority][root-authority] accredits every entity directly and
+authorizes the issuers and Relying Parties among them, and Trust Authority, the
+Module it runs, records each decision. There is no intermediate authority: no
+sector body that accredits on its behalf, and no delegation to a ministry. The
+long tail is absorbed on the verifier side instead.
+
+Issuers, Relying Parties,
+and RP Intermediaries register with Trust Authority; the millions of merchants
+are registered by their own RP Intermediary, which vouches for each merchant's
+device with a Verifier Device Certificate. The same pattern holds on the wallet
+side, where a Wallet Provider vouches for each wallet installation with a
+Key Attestation. Which obligations each of those parties takes on is covered in
 [RP Intermediary and merchant][rp-intermediary-and-merchant] and in
 [the Wallet Provider role][wallet-provider].
 
 A sector regulator's license, a university's accreditation, a hospital's
-operating permit, a financial authority's business license, is still used, but
+operating permit, or a financial authority's business license is still used, but
 as evidence the applicant attaches at registration, in the same class as a
 notarial deed. It is never a role in the ecosystem, and the sector regulator
 does not need to know the ecosystem exists.
@@ -47,13 +50,14 @@ by what.
   <figcaption><span class="ekdn-fignum"></span> The chain of trust, from the Root Authority to the devices in the field.</figcaption>
 </figure>
 
-- **Root Authority** accredits and authorizes every entity in the band
-  below it, with no authority in between.
+- **Root Authority** accredits every entity in the band below it, and
+  authorizes the issuers and Relying Parties among them, with no authority in
+  between.
 - **Another ecosystem** is recognized, drawn dashed because recognition is
   answered on request rather than granted at registration.
 - **Identity Issuer, Attribute Issuer, Wallet Provider, Relying Party, and
-  RP Intermediary** are the accredited entities, each accredited by the Root
-  Authority directly.
+  RP Intermediary** are the accredited entities, each accredited by the
+  Root Authority directly.
 - **The citizen's wallet** is vouched for by its Wallet Provider, through a
   Key Attestation.
 - **The merchant device** is vouched for by its RP Intermediary, through a
@@ -65,8 +69,8 @@ Whether an entity is accredited, what it may do, and whether a signing key is
 its own are three questions with three separate answers, set out in [three
 questions, three answers][three-questions-three-answers]. The third has two
 answers rather than one, because a verifier reaches an anchor by one of two
-routes. This section sets out both: the DID route, and
-the X.509 route that proximity reading obliges every reader to hold as well.
+routes: the DID route, and the X.509 route that proximity reading obliges
+every reader to hold as well.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -82,7 +86,7 @@ The DID route is the one every online transaction takes, and the pages on
 its two artifacts. The X.509 route exists because ISO/IEC 18013-5:2021 knows no
 DID: an mdoc is signed under a certificate, and a reader authenticates with
 one. It is built from two certificate authority (CA) roots, one for each
-side of a proximity session, and the rest of this section describes them.
+side of a proximity session.
 [The two anchor paths][fig-two-trust-anchor-paths] draws both chains side
 by side.
 
@@ -119,34 +123,41 @@ two names side by side.
 Under the root sits the issuer's leaf, the **Document Signer Certificate**
 (DSC). An issuer holds one unless the Governance Profile lets it hold one per
 group of credential types, which it may do where the types' certificate
-lifetimes differ; the architecture fixes nothing about the count, because the
-mdoc carries whichever DSC signed it. The issuer's own Key Manager generates the `issuance-cose` key, signs a
-CSR with it, and Trust Authority issues the DSC
-from that request, so the certificate introduces no new key and Trust
-Authority never holds the private half.
-[An issuer's keys][an-issuers-keys] sets out that key beside the issuer's
-others. The DSC carries the extended key usage (EKU) `1.0.18013.5.1.2`, and
-the key it certifies signs the IssuerAuth of every mdoc the issuer
-produces. The mdoc carries the DSC in `x5chain`, so a reader finds the
-certificate inside the credential it is checking.
+lifetimes differ. The architecture fixes nothing about the count, because the
+mdoc carries whichever DSC signed it.
+
+The issuer's own Key Manager generates the `issuance-cose` key, signs a CSR
+with it, and Trust Authority issues the DSC from that request, so the
+certificate introduces no new key and Trust Authority never holds the private
+half. [An issuer's keys][an-issuers-keys] sets out that key beside the issuer's
+others.
+
+The DSC carries the extended key usage (EKU) `1.0.18013.5.1.2`, and the key it
+certifies signs the IssuerAuth of every mdoc the issuer produces. The mdoc
+carries the DSC in `x5chain`, so a reader finds the certificate inside the
+credential it is checking.
 
 There is no intermediate certificate between the two. ISO/IEC 18013-5 Annex B
-limits the chain to the root and the leaf, and the Issuer Root CA is built
-with a path length of zero accordingly. The issuer appears in the trusted
-list as itself; its DSC reaches readers in two ways. A reader inside the
-ecosystem carries the Issuer Root CA from build time, through Trust SDK,
-learns the root of each recognized foreign authority from the Verified
-Issuer Certificate Authority List (VICAL) its sync caches, and checks the
-DSC against the cached CRL, because an mdoc carries no DID to look up in the
-trusted list. A reader abroad, which never sees the trusted list, reads the
-VICAL instead, which Trust Registry publishes under ISO/IEC 18013-5 Annex C,
-and checks it against the anchor it was [handed under recognition][gf-what-idctf-hands-over];
-[the VICAL][vical] says what that list carries.
+limits the chain to the root and the leaf, and the Issuer Root CA is built with
+a path length of zero accordingly.
+
+The issuer appears in the trusted list as itself, and its DSC reaches readers
+in two ways. A reader inside the ecosystem carries the Issuer Root CA from
+build time, through Trust SDK, and learns the root of each recognized foreign
+authority from the Verified Issuer Certificate Authority List (VICAL) its sync
+caches. It checks the DSC against the cached CRL, because an mdoc carries no
+DID to look up in the trusted list. A reader abroad, which never sees the
+trusted list, reads the VICAL instead, which Trust Registry publishes under
+ISO/IEC 18013-5 Annex C, and checks it against the anchor it was
+[handed under recognition][gf-what-idctf-hands-over]; [the VICAL][vical] says
+what that list carries.
 
 An issuer that issues in mdoc holds a second leaf, the **status list signer
-certificate**, over its `status-list` key. The CWT form of its status list
-carries it in `x5chain`, and its subject repeats the `organizationName` of
-the DSC, so a reader ties the list to the issuer of the mdoc it is checking.
+certificate**, over its `status-list` key. The Concise Binary Object
+Representation (CBOR) Web Token (CWT) form of its status list carries it in
+`x5chain`, and its subject repeats the `organizationName` of the DSC, so a
+reader ties the list to the issuer of the mdoc it is checking.
+
 The Issuer Root CA signs two certificates that belong to no issuer. The
 **VICAL signer certificate** certifies the key that signs the VICAL, carries
 the EKU `1.0.18013.5.1.8`, and travels in the VICAL's own `x5chain`, so the
@@ -158,26 +169,27 @@ sets out. Nothing else is signed under the Issuer Root CA.
 ### The reader side: Verifier Root CA, Verifier Issuing CA, Verifier Device Certificate {#the-reader-side}
 
 The reader side proves that the party asking is authorized to ask. Its root is
-the **Verifier Root CA**, a second self-signed certificate that Trust
-Authority holds in a second offline HSM.
+the **Verifier Root CA**, a second self-signed certificate that Trust Authority
+holds in a second offline HSM.
 
-This side has three levels where the issuer side has two. Under the root sits
-a **Verifier Issuing CA** for each RP Intermediary, and for each Relying Party
-that reads credentials in proximity at its own counter. The entity generates
-the key itself and submits a CSR through Trust Authority, which issues the
-Verifier Issuing CA certificate from the Verifier Root CA, in the same way a
-DSC is issued on the issuer side. Because that key signs a certificate for
-every reader device and the CRL that withdraws one, it may not live in the
-software driver; [a Relying Party's keys][a-relying-partys-keys] says which drivers
-may hold it. Under each Verifier Issuing CA sits one
-**Verifier Device Certificate** per reader device, with a limited lifetime,
-the EKU `1.0.18013.5.1.6`, and a `ReaderAuthRole` extension that names the
-attributes the device may request. The entity that holds the Verifier Issuing
-CA issues these device certificates itself and publishes the CRL that
-withdraws one early; Trust Authority issues no
-device certificate at all.
-[A Relying Party's keys][a-relying-partys-keys] and [keys on devices][keys-on-devices]
-cover the key at each level.
+This side has three levels where the issuer side has two. Under the root sits a
+**Verifier Issuing CA** for each RP Intermediary, and for each Relying Party
+that reads credentials in proximity at its own counter. The entity generates the
+key itself and submits a CSR through Trust Authority. Trust Authority issues the
+Verifier Issuing CA certificate from the Verifier Root CA, the same way a DSC is
+issued on the issuer side.
+
+Because that key signs a certificate for every reader device and the CRL that
+withdraws one, it may not live in the software driver;
+[a Relying Party's keys][a-relying-partys-keys] says which drivers may hold it.
+
+Under each Verifier Issuing CA sits one **Verifier Device Certificate**
+per reader device, with a limited lifetime, the EKU `1.0.18013.5.1.6`, and a
+`ReaderAuthRole` extension that names the attributes the device may request. The
+entity that holds the Verifier Issuing CA issues these device certificates
+itself and publishes the CRL that withdraws one early; Trust Authority issues no
+device certificate at all. A Relying Party's keys and
+[keys on devices][keys-on-devices] cover the key at each level.
 
 The device certificate signs the ReaderAuth of a DeviceRequest in
 proximity, and online, for a merchant, it signs the Request Object as well,
@@ -186,21 +198,22 @@ merchant therefore holds one certificate for both channels, and
 [short-lived attestations][short-lived-attestations] explains why that one
 thing is a certificate rather than a DID.
 
-A wallet checks a reader in two steps, in both channels. First it validates
-the chain from the Verifier Device Certificate, through the Verifier Issuing
-CA, to the Verifier Root CA it carries from build time; the root is never
-downloaded. Then it confirms from the cached trusted list that the Verifier
-Issuing CA in that chain belongs to an entity whose status is granted and
-whose entry does not name that CA as revoked, and from the cached CRL that the
-device certificate has not been withdrawn. A
-merchant is never in the trusted list; what the list carries is the Verifier
-Issuing CA of its RP Intermediary. That is how a wallet tells a genuine
-intermediary from an invented one, and it is why a stolen Verifier Issuing CA
-key is caught by the list even while its certificate still chains correctly:
-the CA is struck in the entry and its certificate put on the CRL, while the RP
-Intermediary stays granted.
+A wallet checks a reader in two steps, in both channels. First it validates the
+chain from the Verifier Device Certificate, through the Verifier Issuing CA, to
+the Verifier Root CA it carries from build time; the root is never downloaded.
+Then it confirms from the cached trusted list that the Verifier Issuing CA in
+that chain belongs to an entity whose status is granted and whose entry does not
+name that CA as revoked, and from the cached CRL that the device certificate has
+not been withdrawn.
 
-The X.509 route is not reserved for merchants. Every party that reads an mdoc
+A merchant is never in the trusted list. What the list carries is the
+Verifier Issuing CA of its RP Intermediary, which is how a wallet tells a
+genuine RP Intermediary from an invented one. A stolen Verifier Issuing CA key
+is caught by the list even while its certificate still chains correctly: the
+CA is struck in the entry and its certificate put on the CRL, while the
+RP Intermediary stays granted.
+
+Every party that reads an mdoc
 in proximity holds a Verifier Device Certificate, an accredited Relying Party
 at its counter included, because ISO/IEC 18013-5 gives a reader no other way
 to identify itself. The same party, reading online, introduces itself by its
@@ -209,19 +222,21 @@ to identify itself. The same party, reading online, introduces itself by its
 The number inside the limited lifetime, and how long a stale CRL is still
 accepted offline, belong to the Governance Profile.
 
-A wallet from another ecosystem reaches the reader side through the trusted
-list itself. The list is a List of Trusted Entities (LoTE) under
-ETSI TS 119 602 V1.1.1, and a wallet that reads one finds each Verifier Issuing CA
-beside the entity that holds it. What such a
-wallet needs is a pointer to the IDCTF list and the Verifier Root CA to check
-the chain against, and both are handed over under recognition, [which the Governance Framework governs][gf-what-idctf-hands-over]. ISO/IEC 18013-5 is adding a reader-side
-counterpart of the VICAL in its second edition; the ecosystem will publish
-one for mdoc-native wallets once that edition is final, and not before, since
-[the technology map][technology-map] admits no draft as a normative basis.
+A wallet from another ecosystem reaches the reader side through the trusted list
+itself. The list is a List of Trusted Entities (LoTE) under ETSI TS 119 602
+V1.1.1, and a wallet that reads one finds each Verifier Issuing CA beside the
+entity that holds it. Such a wallet needs a pointer to the IDCTF list and the
+Verifier Root CA to check the chain against, and both are handed over under
+recognition, [which the Governance Framework governs][gf-what-idctf-hands-over].
+
+ISO/IEC 18013-5 is adding a reader-side counterpart of the VICAL in its second
+edition; the ecosystem will publish one for mdoc-native wallets once that
+edition is final, and not before, since [the technology map][technology-map]
+admits no draft as a normative basis.
 
 ### Two parallel roots that never sign each other {#two-parallel-roots-that-never-sign-each-other}
 
-The two roots are parallel and neither ever signs the other. A key leaked on
+A key leaked on
 the reader side must not let anyone forge a credential, and a key leaked on
 the issuer side must not let anyone pose as a reader. Each root therefore
 lives in its own offline HSM at Trust Authority, and each chain is validated
@@ -248,7 +263,7 @@ under [Trust Authority's own keys][trust-authoritys-own-keys].
 
 ### Naming and its ISO/IEC 18013-5 equivalents {#naming-and-its-isoiec-18013-5-equivalents}
 
-The names above are used throughout IDCTF because each says what the
+The IDCTF names are used throughout the framework because each says what the
 certificate is for. ISO/IEC 18013-5 names the same objects differently, and
 anyone reading both needs the mapping:
 
@@ -263,8 +278,8 @@ anyone reading both needs the mapping:
 
 </figure>
 
-A holder never has a certificate. The two sides above account for every
-certificate in the ecosystem, and the credential key is bound to a credential by
+A holder never has a certificate. The issuer side and the reader side
+account for every certificate in the ecosystem, and the credential key is bound to a credential by
 other means, as [holder binding][what-one-credential-carries] describes.
 
 ## Entity chain and transaction chain {#entity-chain-and-transaction-chain}
@@ -312,13 +327,14 @@ is reached only when a credential comes from outside the ecosystem.
    withdrawn keeps verifying, as [Versions][rulebook-versions] sets out,
    and one signed after it fails. Without it, an accredited university
    could sign a KTP Digital.
-4. **E4, the X.509 certificate chains to the right root.** On the issuer
-   side, the Document Signer Certificate in `x5chain` chains to the Issuer
-   Root CA, or to a root in the VICAL; on the reader side, the Verifier
-   Device Certificate chains to the Verifier Root CA, with the Verifier
-   Issuing CA granted on the trusted list and not named revoked in its
-   entry. This is the whole of the entity
-   chain for an mdoc, which carries no DID whether it is read in proximity or presented online.
+4. **E4, the X.509 certificate chains to the right root.** On the issuer side,
+   the DSC in `x5chain` chains to the Issuer Root CA, or to a root in the VICAL;
+   on the reader side, the Verifier Device Certificate chains to the
+   Verifier Root CA, with the Verifier Issuing CA granted on the trusted list
+   and not named revoked in its entry. An mdoc carries no DID and is read in
+   proximity alone, so E1 and E3 do not run for it; E2 does, from the entry
+   whose legal name the DSC carries as its `organizationName`, so that an
+   issuer's suspension stops its mdocs as it stops its other credentials.
 5. **E5, an authority from another ecosystem is recognized.** For a
    credential issued abroad, the cached answer to a recognition query says
    the Root Authority recognizes the foreign authority behind it.
@@ -331,8 +347,8 @@ advance, because each is about the presentation in front of the verifier.
 2. **T2, the credential has not expired and has not been revoked.** Its own
    `exp` has not passed, and the bit the issuer's status list keeps for it is
    clear.
-3. **T3, the holder proves the key the credential is bound to.** The Key
-   Binding JWT (KB-JWT) is signed with the key in `cnf`, the proof on an
+3. **T3, the holder proves the key the credential is bound to.** The
+   Key Binding JWT (KB-JWT) is signed with the key in `cnf`, the proof on an
    `ldp_vc` presentation with the holder's `did:key`, or DeviceAuth with the
    `DeviceKey`. Without it, a copied credential presents as well as the
    original.
@@ -352,8 +368,8 @@ advance, because each is about the presentation in front of the verifier.
 
 Each chain catches what the other cannot. A verifier that ran only the
 transaction chain would accept a perfectly signed credential from an issuer
-nobody ever accredited. A verifier that ran only the entity chain would accept
-a genuine credential, stolen and replayed. Only both together catch both.
+nobody ever accredited, and one that ran only the entity chain would accept a
+genuine credential, stolen and replayed.
 
 The step flows for [online verification][online-verification] and
 [offline verification][offline-verification] show where each link falls in a

@@ -23,15 +23,23 @@ identifier `REQ-TS-4-03-nnn` follow [Common provisions](common-provisions.md).
 
 ## Who runs this and what it needs {#ts-4-03-who-runs-this-and-what-it-needs}
 
-This specification binds two doors of Trust Authority. The portal is where
-an entity's staff register a body, collect the registration code, submit
-uses and ask for further permissions, report a key incident and file its
-post-mortem, ask for the registration to be withdrawn, and read the
-registration's record and audit trail. The entity endpoint is where the
-entity's Key Manager registers keys: the nonce, the signed request, log
-entries with their proofs of possession, key storage evidence, certificate
-signing requests (CSRs), the binding of a registration's first entry, and
-the errors.
+This specification binds two doors of Trust Authority:
+
+- The portal, where an entity's staff:
+    - Register a body.
+    - Collect the registration code.
+    - Submit uses and ask for further permissions.
+    - Report a key incident and file its post-mortem.
+    - Ask for the registration to be withdrawn.
+    - Read the registration's record and audit trail.
+- The entity endpoint, where the entity's Key Manager registers keys, through:
+    - The nonce.
+    - The signed request.
+    - Log entries with their proofs of possession.
+    - Key storage evidence.
+    - Certificate signing requests (CSRs).
+    - The binding of a registration's first entry.
+    - The errors.
 
 Its conformance targets are Trust Authority, which runs both doors, and the
 three Modules that hold an entity's keys in their Key Manager Component and
@@ -39,42 +47,56 @@ call the entity endpoint: Issuer Core, Verifier Core, and Wallet Backend
 Service. A requirement that names *the calling Module* binds whichever of
 the three holds the registration's update key.
 
-It leaves to other documents: whether a body is registered, accredited,
-authorized, or granted a use, [which the Root Authority decides under the Governance Framework][gf-approval-tiers]; how the portal looks and how a person proves who
-they are before an account is opened, which are Trust Authority's and [the Governance Framework's][gf-obligations-of-every-participant]; the log and its keys, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; what Decentralized Identifier (DID) Service checks before it
-witnesses an entry, which
-[Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
-holds; the profile of each certificate, which
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-holds; the Use Statement and the lifecycle of a use, which
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-holds; the Accreditation Credential, which
-[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
-holds; the entry a registration gets on the trusted list, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds; and the address of each door, the second factors accepted at the
-portal, the lifetime of a nonce and of a registration code, the rate
-limits, the roots accepted for each storage value, and the grade each
-storage value gives, which the Governance Profile holds. A request at the
-entity endpoint names the update key by its `did:key`, which the trusted
-list never carries, its countersignature is checked only here, and its
-first entry carries a binding that is a message authentication code, not a
-signature:
-neither is one of the tokens
+It leaves to other documents:
+
+- Whether a body is registered, accredited, authorized, or granted a use,
+  which the Root Authority decides under [the approval tiers][gf-approval-tiers],
+  and how a person proves who they are before an account is opened, under
+  [the obligations of every participant][gf-obligations-of-every-participant],
+  which the Governance Framework holds.
+- How the portal looks, which Trust Authority decides.
+- The log and its keys, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- What Decentralized Identifier (DID) Service checks before it witnesses an
+  entry, which
+  [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
+  holds.
+- The profile of each certificate, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The Use Statement and the lifecycle of a use, which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
+- The Accreditation Credential, which
+  [Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
+  holds.
+- The entry a registration gets on the trusted list, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- The address of each door, the second factors accepted at the portal, the
+  lifetime of a nonce and of a registration code, the rate limits, the roots
+  accepted for each storage value, and the grade each storage value gives,
+  which the Governance Profile holds.
+
+A request at the entity endpoint names the update key by its `did:key`, which
+the trusted list never carries. Its countersignature is checked only here, and
+its first entry carries a binding that is a message authentication code rather
+than a signature. Neither is one of the tokens
 [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
-lists, and this specification alone says how each is checked.
+lists, so this specification alone says how each is checked.
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Trust Authority** holds the Entity Repository, the Public Key Registry
-  and the Transparency Log as its Components, the two certificate authority
-  roots, each in an offline hardware security module (HSM) of its own, the
-  Accreditation Credential key in its HSM, and the client certificate it
-  presents to DID Service's Publisher endpoint. Its portal and its entity
-  endpoint answer in the public zone, and its back office in the internal
-  one.
+- **Trust Authority** holds:
+    - The Entity Repository, the Public Key Registry, and the Transparency
+      Log, as its Components.
+    - The two certificate authority roots, each in an offline hardware
+      security module (HSM) of its own.
+    - The Accreditation Credential key, in its HSM.
+    - The client certificate it presents to DID Service's Publisher endpoint.
+    - Its portal and its entity endpoint in the public zone, and its back
+      office in the internal one.
 - **A body that applies** holds the documents that establish it as a legal
   body, a person answerable for it, and the domain its identifier will
   name.
@@ -91,30 +113,27 @@ Before the first exchange, each target holds what the rules below assume:
 
 ## What the two doors do {#ts-4-03-overview}
 
-People and Modules come to Trust Authority for different things, and each
-gets its own door. A body's staff register it, follow the Root Authority's
-decisions, and act for it afterward; that work runs through the portal,
-under an account bound to one person and a second factor at every sign-in,
-the way a certificate authority runs an account portal beside its
-certificate protocol. A body's Key Manager registers and rotates keys as a
-step of its own `rotate` operation, with nobody signing in; that runs
-through the entity endpoint, and it is the only reason Issuer Core,
-Verifier Core and Wallet Backend Service call Trust Authority, never while a
-transaction runs, as [who may call whom][who-may-call-whom] fixes.
+A body's staff register it, follow the Root Authority's decisions, and act for
+it afterward. That work runs through the portal, under an account bound to one
+person and a second factor at every sign-in, the way a certificate authority
+runs an account portal beside its certificate protocol.
+
+A body's Key Manager registers and rotates keys as a step of its own `rotate`
+operation, with nobody signing in. That runs through the entity endpoint, and it
+is the only reason Issuer Core, Verifier Core, and Wallet Backend Service call
+Trust Authority, never while a transaction runs, as
+[who may call whom][who-may-call-whom] fixes.
 
 The two meet at one point. The registration code the portal shows once,
-after the Root Authority approves a registration, is what binds the first
-log entry the Key Manager sends to that registration. After that the
-entity endpoint knows the registration by its update key: every request is
-signed with the update key of the latest log entry Trust Authority
-witnessed for it, or, once that key is revoked, with the next one, and
-carries a nonce Trust Authority issued and the address it was sent to, the
+after the Root Authority approves a registration, binds the first log entry
+the Key Manager sends to that registration. After that the entity endpoint knows the registration by its update key, in the
 pattern [RFC 8555][ref-rfc8555] uses for an account. The update key signs
-nothing but the log, its own proof of possession, and those requests.
+nothing but the log, its own proof of possession, and the submissions
+the Key Manager sends to the entity endpoint.
 
 Registration opens a file that is pending; the first log entry, bound to
-the registration the Root Authority approved, is what makes its
-accreditation granted. [Three stages of authority][three-stages-of-authority]
+the registration the Root Authority approved, makes its accreditation
+granted. [Three stages of authority][three-stages-of-authority]
 says what each stage decides, and [entity onboarding][entity-onboarding]
 draws the path. Trust Authority holds no private key of an entity: it
 receives public keys, a proof that the entity holds each matching private
@@ -141,41 +160,43 @@ A body joins in twelve steps.
    storage evidence of each transaction key, any certificate signing
    request, and the binding made with the registration code, signed with
    the update key.
-7. Trust Authority checks the request, the binding, the storage evidence,
-   and each certificate signing request.
-8. It hands the entry to DID Service and receives the witness proof.
-9. It issues each certificate, records each key, sets the registration
-   granted, issues the Accreditation Credential, and records the
-   registration's entry in Trust Registry.
-10. It answers with the witness proof, any certificate, and the
-    Accreditation Credential.
-11. Trust Registry publishes the new trusted list.
-12. The calling Module publishes the witness file, then the log, on the
+7. Trust Authority checks the submission, has DID Service witness the entry,
+   issues each certificate, and records each key, as
+   [Registering keys][ts-4-03-registering-keys] sets out.
+8. It sets the registration granted, records its entry in Trust Registry,
+   issues the Accreditation Credential, and answers with the witness proof,
+   any certificate, and that credential.
+9. Trust Registry publishes the new trusted list.
+10. The calling Module publishes the witness file, then the log, on the
     body's domain.
 
-A later rotation takes the same path from step 4, signed with the update
-key of the latest witnessed entry, or the next one once that key is
-revoked, with no binding, and with no grant and
-no credential at step 9. A certificate request without an entry skips the
-witness at step 8 as well.
+A later rotation takes the same path from step 4, with no binding at step 6,
+and with no grant and no credential at step 8.
+[REQ-TS-4-03-110][req-ts-4-03-110] fixes which update key signs it. A
+certificate request without an entry skips the witness at step 7 as well.
 
 ## The first entry, as exchanged {#ts-4-03-the-first-entry-as-exchanged}
 
-Below is the exchange that brings a body into the ecosystem, from the
-nonce to the answer that carries its first witness proof. The body, its
-domain, its keys, and the HSM its keys live in are invented, and nothing
-has been registered. Every field is exact. The body is the Identity Issuer
-[the trusted list][ts-5-01-trusted-list-payload] carries, with the same
-domain; the entry is the first line of
-[the log as published][ts-5-02-the-log-as-published]; the request signature
-verifies under the update key its `kid` names, each proof of possession
-under the key it proves, and the binding under the registration code
-`y2iq8fghK-zVwWZBPvUolZecIMURxv-tOfrDeGV7eZQ`, shown here so that it can be checked, which the portal showed
-with the registration identifier `R2026-000117`. The witness proof is a
-real `eddsa-jcs-2022` signature by Trust Authority's first witness key, and
-the Accreditation Credential is the one
-[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
-shows for the same body.
+The body, its domain, its keys, and the HSM its keys live in are invented, and
+nothing has been registered. Every field is exact.
+
+The example agrees with the pages that show the same artifacts:
+
+- The body is the Identity Issuer [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same domain.
+- The entry is the first line of
+  [the log as published][ts-5-02-the-log-as-published].
+- The request signature verifies under the update key its `kid` names, and
+  each proof of possession under the key it proves.
+- The binding verifies under the registration code
+  `y2iq8fghK-zVwWZBPvUolZecIMURxv-tOfrDeGV7eZQ`, shown here so that it can be
+  checked, which the portal showed with the registration identifier
+  `R2026-000117`.
+- The witness proof is a real `eddsa-jcs-2022` signature by Trust Authority's
+  first witness key.
+- The Accreditation Credential is the one
+  [Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
+  shows for the same body.
 
 The calling Module fetches a nonce:
 
@@ -202,7 +223,7 @@ eyJhbGciOiJFZERTQSIsImtpZCI6ImRpZDprZXk6ejZNa2hEWFp0QkhMVUtLMjdHMWQ1czVDTjRKNmVr
 ```
 
 Decoded, its protected header names the update key the entry carries, the
-nonce, and the address; its payload carries the entry, three proofs of
+nonce, and the address. Its payload carries the entry, three proofs of
 possession, the storage evidence of three transaction keys, the request for
 the Document Signer Certificate of the `issuance-cose` key, which the log
 does not carry, and the binding:
@@ -327,10 +348,10 @@ does not carry, and the binding:
 }
 ```
 
-Trust Authority answers with the witness proof, the Document Signer
-Certificate, and the Accreditation Credential, and with the nonce the next
-request takes. The certificate is the one the trusted list later names
-revoked by its subject key identifier, and whose serial number is on
+Trust Authority answers with the witness proof, the Document Signer Certificate,
+and the Accreditation Credential, and with the nonce the next request takes. The
+certificate is the one the trusted list later names revoked by its subject key
+identifier, and whose serial number is on
 [the Issuer Root CA revocation list][ts-5-04-revocation]:
 
 ``` { .http title="200, the answer to the first entry" data-format="HTTP" }
@@ -367,11 +388,8 @@ of the endpoint in force.
 
 ## The portal {#ts-4-03-the-portal}
 
-The portal is a web application for people, and it is not a protocol: this
-specification fixes what Trust Authority takes in it, checks, keeps and
-shows, and not how it looks. Everything a person does there is done under
-an account, and every account acts for the registrations the person
-answerable for each of them names.
+The portal is a web application for people. This specification fixes what
+Trust Authority takes in it, checks, keeps, and shows.
 
 ### Accounts {#ts-4-03-accounts}
 
@@ -414,7 +432,9 @@ gives each item.
 
 </figure>
 
-A body that holds neither a BKN institution code nor an NIB has no legal identifier. Its registration then lacks an item the table marks present, and Trust Authority does not open it ([REQ-TS-4-03-011][req-ts-4-03-011]).
+A body that holds neither a BKN institution code nor an NIB has no legal
+identifier. Its registration then lacks an item the table marks present, and
+Trust Authority does not open it ([REQ-TS-4-03-011][req-ts-4-03-011]).
 
 [](){ #tbl-ts-4-03-document-kinds }
 
@@ -441,7 +461,8 @@ A body that holds neither a BKN institution code nor an NIB has no legal identif
 - [](){ #req-ts-4-03-017 }**REQ-TS-4-03-017** Trust Authority MUST record the decision the Root Authority takes on a registration, and the time it took it.
 - [](){ #req-ts-4-03-018 }**REQ-TS-4-03-018** Trust Authority MUST show that decision in the portal to every account that acts for the registration.
 - [](){ #req-ts-4-03-126 }**REQ-TS-4-03-126** Trust Authority MUST NOT open a registration that asks for the Wallet Provider role and lacks a document of the kind Key storage evaluation, where its Key Attestations will report a value above `iso_18045_enhanced-basic`.
-- [](){ #req-ts-4-03-127 }**REQ-TS-4-03-127** Trust Authority MUST accept through the portal a further document of the kind Key storage evaluation from an account of a Wallet Provider's registration, and MUST hand it to an Assessment Body for assessment, so that the Root Authority decides on the report of the Assessment Body.
+- [](){ #req-ts-4-03-127 }**REQ-TS-4-03-127** Trust Authority MUST accept through the portal a further document of the kind Key storage evaluation from an account of a Wallet Provider's registration.
+- [](){ #req-ts-4-03-128 }**REQ-TS-4-03-128** Trust Authority MUST hand a further document of the kind Key storage evaluation to an Assessment Body for assessment, so that the Root Authority decides on the report of the Assessment Body.
 
 </div>
 
@@ -465,27 +486,27 @@ to claim a registration; holding the code is.
 </div>
 
 A code that expires unused, or that an account lost before it was used, is
-replaced by a new one on the Root Authority's word, and the registration
-stays pending until a first entry is bound. The Root Authority's approval
-takes effect as the grant of the accreditation at that moment, which is
-when [Issuing and carrying an Accreditation
-Credential](issuing-and-carrying-an-accreditation-credential.md)
-issues the credential and [Publishing and reading the trusted
-list](publishing-and-reading-the-trusted-list.md)
+replaced by a new one on the Root Authority's word, and the registration stays
+pending until a first entry is bound. The Root Authority's approval takes effect
+as the grant of the accreditation at that moment.
+[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
+then issues the credential, and
+[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
 lists the registration as granted.
 
 ### Uses and further permissions {#ts-4-03-uses-and-further-permissions}
 
-A Relying Party submits each use it wants to run, and collects the Use
-Statement once the Root Authority approves it, as
+A Relying Party submits each use it wants to run, and collects the Use Statement
+once the Root Authority approves it, as
 [Registering, renewing, and withdrawing a use][ts-5-06-registering-renewing-and-withdrawing-a-use]
-sets out. The submission names what the statement will carry, its purpose,
-its legal basis and its attributes, in the forms
-[What a use names][ts-5-06-what-a-use-names] fixes; Trust Authority
-allocates the `use_id` when the use is approved, not when it is submitted.
-An accredited registration also asks here for a permission it does not yet
-hold, which the Root Authority grants one at a time through the approval
-tier the permission falls in, as [authorization][authorization] sets out.
+sets out. The submission names what the statement will carry, its purpose, its
+legal basis, and its attributes, in the forms
+[What a use names][ts-5-06-what-a-use-names] fixes. Trust Authority allocates
+the `use_id` when the use is approved, not when it is submitted.
+
+An accredited registration also asks here for a permission it does not yet hold.
+The Root Authority grants one at a time, through the approval tier the
+permission falls in, as [authorization][authorization] sets out.
 
 [](){ #tbl-ts-4-03-use-statuses }
 
@@ -502,7 +523,7 @@ tier the permission falls in, as [authorization][authorization] sets out.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-4-03-024 }**REQ-TS-4-03-024** Trust Authority MUST take a use's purpose, legal basis and attributes in the forms [What a use names][ts-5-06-what-a-use-names] fixes.
+- [](){ #req-ts-4-03-024 }**REQ-TS-4-03-024** Trust Authority MUST take a use's purpose, legal basis, and attributes in the forms [What a use names][ts-5-06-what-a-use-names] fixes.
 - [](){ #req-ts-4-03-025 }**REQ-TS-4-03-025** Trust Authority MUST NOT accept a use from a registration that does not hold the Relying Party role.
 - [](){ #req-ts-4-03-026 }**REQ-TS-4-03-026** Trust Authority MUST NOT accept a use from a registration that is suspended.
 - [](){ #req-ts-4-03-027 }**REQ-TS-4-03-027** Trust Authority MUST NOT accept a request for a further permission from a registration that is suspended.
@@ -520,10 +541,11 @@ tier the permission falls in, as [authorization][authorization] sets out.
 
 An entity that learns one of its keys is compromised or lost reports it
 here, without waiting for a scheduled rotation, and files its post-mortem
-here once the incident is over. The report revokes nothing on its own: the
-Root Authority revokes the key through Trust Authority, within the hour
-[entity key revocation][entity-key-revocation] counts from the moment the
-compromise is confirmed, and the report is what sets that going. Because the
+here once the incident is over. The report revokes nothing on its own. The
+Root Authority revokes the key through Trust Authority within the hour, counted
+from the moment the compromise is confirmed, as
+[entity key revocation][entity-key-revocation] sets out, and the report sets
+that going. Because the
 portal needs no key of the entity, the
 update key is reported the same way as any other.
 [The table of report items][tbl-ts-4-03-report-items] gives each item.
@@ -560,15 +582,15 @@ one.
 
 ### Withdrawing the registration {#ts-4-03-withdrawing-the-registration}
 
-A body may leave. Its staff ask in the portal; the Root Authority decides
-and withdraws the accreditation, and the trusted list and the Accreditation
-Credential status list carry the withdrawal as
+A body may leave. Its staff ask in the portal; the Root Authority decides and
+withdraws the accreditation, and the trusted list and the
+Accreditation Credential status list carry the withdrawal as
 [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-and [Issuing and carrying an Accreditation
-Credential](issuing-and-carrying-an-accreditation-credential.md)
+and
+[Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
 fix. Withdrawal revokes no key: what the body signed while accredited still
-verifies, because its log stays resolvable and its entry stays on the list
-at status `withdrawn`.
+verifies, because its log stays resolvable and its entry stays on the list at
+status `withdrawn`.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -618,7 +640,7 @@ witnessed, and the trusted list, never the Transparency Log.
 - [](){ #req-ts-4-03-044 }**REQ-TS-4-03-044** Trust Authority MUST show each account the registration's identifier, its `did:webvh`, its status, its roles, and every permission in force.
 - [](){ #req-ts-4-03-045 }**REQ-TS-4-03-045** Trust Authority MUST offer, while the registration is granted or suspended, the Accreditation Credential [REQ-TS-5-07-077][req-ts-5-07-077] treats as in force.
 - [](){ #req-ts-4-03-046 }**REQ-TS-4-03-046** Trust Authority MUST offer every certificate it issued to the registration that has neither expired nor been revoked.
-- [](){ #req-ts-4-03-047 }**REQ-TS-4-03-047** Trust Authority MUST show every event of the registration, in the order it happened, with its time, the key, certificate, use, permission or incident it concerns, and the account that caused it where one did.
+- [](){ #req-ts-4-03-047 }**REQ-TS-4-03-047** Trust Authority MUST show every event of the registration, in the order it happened, with its time, the key, certificate, use, permission, or incident it concerns, and the account that caused it where one did.
 - [](){ #req-ts-4-03-048 }**REQ-TS-4-03-048** Trust Authority MUST NOT show an event of another registration.
 - [](){ #req-ts-4-03-120 }**REQ-TS-4-03-120** Trust Authority MUST write every event [the table of events][tbl-ts-4-03-events] lists into the Transparency Log when it happens.
 - [](){ #req-ts-4-03-121 }**REQ-TS-4-03-121** Trust Authority MUST NOT change or remove an entry of the Transparency Log.
@@ -659,10 +681,10 @@ entity, outside Trust Infrastructure, as
 
 ### Nonce {#ts-4-03-nonce}
 
-A nonce is what makes a signed request impossible to replay. Trust
-Authority issues one at its nonce operation and a fresh one on every
-answer, in the `Replay-Nonce` header [RFC 8555][ref-rfc8555] defines, so
-that a Module sending several requests asks for a nonce only once.
+A nonce makes a signed request impossible to replay. Trust Authority
+issues one at its nonce operation and a fresh one on every answer, in the
+`Replay-Nonce` header [RFC 8555][ref-rfc8555] defines, so that a Module sending
+several requests asks for a nonce only once.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -716,10 +738,8 @@ each member of the protected header.
 
 </div>
 
-A withdrawn registration's log stays resolvable, so that what it signed
-while accredited still verifies, and its update key may still sign; the
-endpoint refuses it all the same. A suspended registration may still
-rotate its keys; what it may not do is ask for a certificate.
+A suspended registration can still rotate its keys; what it cannot do is ask
+for a certificate.
 
 ### Registering keys {#ts-4-03-registering-keys}
 
@@ -742,8 +762,8 @@ request][ts-4-03-the-signed-request]
    will be signed with.
 6. It hands the entry to DID Service, with the proofs of possession and the
    request's nonce, and receives the witness proof or a refusal.
-7. It issues each certificate and records each key in the Public Key
-   Registry and the event in the Transparency Log.
+7. It issues each certificate and records each key in the Public Key Registry
+   and the event in the Transparency Log.
 8. For a first entry, it sets the registration granted and issues the
    Accreditation Credential.
 9. It records each key against the registration's entry in Trust Registry,
@@ -783,17 +803,17 @@ whatever driver holds the others.
 
 </figure>
 
-The evidence is what [two assurance levels][issuer-assurance] takes the
-storage on: a statement the device that holds the key signs, under a root
-its manufacturer or provider placed in it, or, where the device gives none
-this specification reads, the report of an Assessment Body covering the
-key ceremony, which reaches Trust Authority outside this interface.
+[Two assurance levels][issuer-assurance] takes the storage on this
+evidence: a statement the device that holds the key signs, under a root
+its manufacturer or provider placed in it. Where the device gives none this
+specification reads, the report of an Assessment Body covering the key ceremony
+serves instead, and it reaches Trust Authority outside this interface.
 Devices sign that statement in several forms, and only some as a
 certificate over the key, so `format` names the form.
 [The table of evidence members][tbl-ts-4-03-evidence-members] gives the
 two forms this version reads. A key in the software keystore carries no
-evidence, as the Relying Party of the Verifier Issuing CA example below
-declared its Request Object key:
+evidence, as the Relying Party of the Verifier Issuing CA example in
+[Registering keys][ts-4-03-registering-keys] declared its Request Object key:
 
 ``` { .json title="A storage item for a key in the software keystore" data-format="JSON" }
 {
@@ -869,9 +889,10 @@ declared its Request Object key:
 
 </figure>
 
-The checks run before the hand-off, and the keys the answer needs are
-reached before it too, so that an entry is witnessed only when everything
-its answer carries can be signed. Once it holds the answer, the calling
+An entry is witnessed only when everything its answer carries can be signed,
+which is why [REQ-TS-4-03-092][req-ts-4-03-092] and
+[REQ-TS-4-03-093][req-ts-4-03-093] put the checks before the hand-off. Once
+it holds the answer, the calling
 Module publishes the entry as [REQ-TS-5-02-034][req-ts-5-02-034] and its
 neighbors require, and when the witness cannot be reached it keeps the
 signed entry and submits it again, as [REQ-TS-5-02-041][req-ts-5-02-041]
@@ -879,15 +900,17 @@ requires.
 
 A submission that carries a certificate signing request and no entry
 renews a certificate over a key the registration holds, or certifies a key
-that is not in the log. Its countersignature is what keeps the update key
-from being enough on its own: a key that signs nothing a wallet or a
-verifier sees cannot get a certificate over a key of its holder's choosing
-without a transaction key that the registration already holds, as
-[the update key][the-update-key] promises. Below, the issuer of the example
-above asks for a Document Signer Certificate over a new `issuance-cose` key
-held in its HSM, and for a status list signer certificate over the
-`status-list` key its first entry published, countersigned with its
-`issuance-jose` key. The first request is the one
+that is not in the log. Its countersignature keeps the update key from being
+enough on its own: a key that signs nothing a wallet or a verifier sees
+cannot get a certificate over a key of its holder's choosing without a
+transaction key that the registration already holds, as
+[the update key][the-update-key] promises.
+
+The issuer of
+[the first entry, as exchanged][ts-4-03-the-first-entry-as-exchanged] asks
+for a Document Signer Certificate over a new `issuance-cose` key held in its
+HSM, and for a status list signer certificate over the `status-list` key its
+first entry published, countersigned with its `issuance-jose` key. The first request is the one
 [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
 shows, and the two certificates in the answer are the ones it shows.
 
@@ -956,12 +979,11 @@ Content-Type: application/json
 }
 ```
 
-A Relying Party that registers merchants asks for its Verifier Issuing CA
-the same way. The key lives in a cloud key service whose statement over a
-key this specification does not read, so its evidence is the Assessment
-Body report on the key ceremony; the request is countersigned with the
-Relying Party's Request Object key, and the certificate in the answer is
-the one
+A Relying Party that registers merchants asks for its Verifier Issuing CA the
+same way. The key lives in a cloud key service whose statement over a key this
+specification does not read, so its evidence is the Assessment Body report on
+the key ceremony; the request is countersigned with the Relying Party's Request
+Object key, and the certificate in the answer is the one
 [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
 shows.
 
@@ -1019,9 +1041,9 @@ Content-Type: application/json
 }
 ```
 
-A rotation carries the next log entry. Below is the one
+A rotation carries the next log entry, the one
 [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
-shows Trust Authority handing on, as the entity sent it: the same entry,
+shows Trust Authority handing on, as the entity sent it, with the same entry,
 the same two proofs of possession over the same nonce, and the storage
 evidence of the new `issuance-jose` key. The request is signed with the
 update key of the first entry, because that is the latest entry witnessed
@@ -1152,13 +1174,13 @@ Content-Type: application/json
 
 ### The first entry {#ts-4-03-the-first-entry}
 
-A registration's first entry is the only one whose update key Trust
-Authority has never seen. It is bound to the registration by a second JWS,
-inside the payload, keyed with the 32 octets the registration code
-encodes, under Hash-based Message Authentication Code (HMAC) with SHA-256,
-`HS256` as [RFC 7518][ref-rfc7518] defines it.
-[The table of binding members][tbl-ts-4-03-binding-members] gives its
-protected header and its payload.
+A registration's first entry is the only one whose update key Trust Authority
+has never seen. It is bound to the registration by a second JWS, inside the
+payload, keyed with the 32 octets the registration code encodes, under
+Hash-based Message Authentication Code (HMAC) with SHA-256, `HS256` as
+[RFC 7518][ref-rfc7518] defines it.
+[The table of binding members][tbl-ts-4-03-binding-members] gives its protected
+header and its payload.
 
 [](){ #tbl-ts-4-03-binding-members }
 
@@ -1194,12 +1216,11 @@ signs the request cannot claim the registration.
 
 ### After a revoked update key {#ts-4-03-after-a-revoked-update-key}
 
-A registration whose update key is recorded revoked has no key Trust
-Authority accepts a request from, and the way out is the key pre-rotation
-held back for this: the next update key, whose hash the latest entry
-announced and which nobody has seen. The request that carries the next
-entry is signed with that key, as the first entry is, and DID Service
-checks that it is the key the hash committed to.
+A registration whose update key is recorded revoked has no key Trust Authority
+accepts a request from. The way out is the key pre-rotation held back for this:
+the next update key, whose hash the latest entry announced and which nobody has
+seen. The request that carries the next entry is signed with that key, as the
+first entry is, and DID Service checks it against the hash.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1211,9 +1232,9 @@ checks that it is the key the hash committed to.
 ### Errors {#ts-4-03-errors}
 
 A request the entity endpoint does not carry out is answered with a
-problem document as [RFC 9457][ref-rfc9457] defines one, in the form Trust
-Registry uses in [Errors][ts-4-02-errors]: the `type` is the IDCTF root
-`https://idctf.id/ns/problems/` followed by the code, and names one entry
+problem document, as [RFC 9457][ref-rfc9457] defines one and Trust
+Registry uses it in [Errors][ts-4-02-errors]. The `type` is the IDCTF root
+`https://idctf.id/ns/problems/` followed by the code, and it names one entry
 of a closed list. [The table of problem types][tbl-ts-4-03-problem-types]
 gives each entry.
 
@@ -1271,8 +1292,6 @@ Content-Type: application/problem+json
 
 ## Security considerations {#ts-4-03-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A stolen portal password.** Every sign-in asks for a second factor,
   [REQ-TS-4-03-004][req-ts-4-03-004], and an account acts only for the registrations its
   holder was named for, [REQ-TS-4-03-007][req-ts-4-03-007].
@@ -1300,7 +1319,7 @@ Each threat below is answered by the requirement named with it.
 - **A key that never reached Trust Authority.** No resolver accepts an
   entry DID Service did not witness, and DID Service takes entries from
   Trust Authority only, [REQ-TS-4-01-002][req-ts-4-01-002]; an entry that
-  appears on a domain all the same is what the conformance crawler finds,
+  appears on a domain all the same is caught by the conformance crawler,
   as [why nobody can rotate quietly][why-nobody-can-rotate-quietly] sets out.
 - **An entry witnessed without its certificate.** Every check runs, and
   every key the answer needs is reached, before the hand-off,
@@ -1311,9 +1330,9 @@ Each threat below is answered by the requirement named with it.
 
 Neither door handles a citizen. What Trust Authority holds about a person
 is the name and e-mail address of the person answerable for each body, the
-holder of each portal account, and the documents a body sent; these serve
-the Root Authority's decision and are published nowhere, because the
-trusted list carries the body and not the person, as
+holder of each portal account, and the documents a body sent. These serve
+the Root Authority's decision and are published nowhere: the trusted list
+carries the body and not the person, as
 [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
 fixes.
 
@@ -1330,6 +1349,6 @@ fixes.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

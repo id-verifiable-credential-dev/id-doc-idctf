@@ -12,8 +12,8 @@ description: The signed file every other specification takes its numbers and alg
 <p class="ekdn-lead" markdown="span">
 The one file every Module reads before anything else. It names the version
 of each specification in force and every number and algorithm the ecosystem
-may change without changing an interface. This specification fixes its
-form, its signature, its address, and how long a copy counts.
+may change without changing an interface, except the few a specification
+fixes for a reason it states.
 </p>
 
 Every sentence on this page binds Trust Authority, Trust Registry, and every
@@ -41,12 +41,19 @@ Reader SDK. Issuer Console and Verifier Console apply no value of their own
 and read nothing. A reader meets its requirements through Trust SDK where it
 embeds the library, and otherwise by its own means.
 
-It leaves to other documents: the values themselves, which the Governance
-Profile as published holds and the Root Authority approves; [who may amend the Profile and through which approval, which the Governance Framework holds][gf-amending-the-governance-profile]; and
-the rule each value feeds, which the specification named beside each member
-holds. A value the Profile carries never changes an interface: an algorithm
-it allows still has to be one the interface's specification admits, and a
-lifetime it sets still has to fit the ceiling that specification fixes.
+It leaves to other documents:
+
+- The values themselves, which the Governance Profile as published holds and
+  the Root Authority approves.
+- [Who may amend the Profile and through which approval][gf-amending-the-governance-profile],
+  which the Governance Framework holds.
+- The rule each value feeds, which the specification named beside each member
+  holds.
+
+A value the Profile carries never changes an interface:
+[REQ-TS-02-023][req-ts-02-023] keeps an algorithm it allows within what the
+interface's specification admits, and a specification that fixes a ceiling for
+a lifetime holds the Profile's value to it.
 
 Before the first exchange, each target holds what the rules below assume:
 
@@ -68,14 +75,13 @@ Before the first exchange, each target holds what the rules below assume:
 
 ## What the Profile answers {#ts-02-overview}
 
-A specification states what an implementation does, and leaves out the
-numbers and algorithms the ecosystem may want to change on a different
-cadence: how long a nonce lives, which algorithm signs an Authority
-Statement, at which address the trusted list is served. Each of those
-sentences ends in "the Governance Profile sets", and the Profile is where
-the value is. [Data Model and Protocols](../architecture-framework/data-model-and-protocols/index.md)
-places the Profile between the Credential Rulebook and the Governance
-Framework.
+A specification states what an implementation does. It leaves out the numbers
+and algorithms the ecosystem may want to change on a different cadence: how long
+a nonce lives, which algorithm signs an Authority Statement, at which address
+the trusted list is served. Each of those sentences ends in "the
+Governance Profile sets", and the Profile is where the value is.
+[Data Model and Protocols](../architecture-framework/data-model-and-protocols/index.md)
+places the Profile between the Credential Rulebook and the Governance Framework.
 
 The Profile is a file, not a document of IDCTF. The Root Authority approves
 what it says, Trust Authority signs it, and Trust Registry publishes it.
@@ -92,24 +98,32 @@ both.
 
 ## Governance Profile payload {#ts-02-governance-profile-payload}
 
-The payload of an edition as Trust Registry publishes it, before
-[Signature][ts-02-signature] wraps it in the JWS. It shows every member this
-specification defines and every form a member admits: the three signer
-states, a specification in force at two versions during a transition, the
-three algorithm forms of an issuance key, a credential type map, and a key
-storage value with no accepted root.
-
 The Profile is an illustration: the addresses and the keys are invented, and
 no Root Authority has approved an edition. Most values are the ones IDCTF sets
-for the pilot, and the rest are invented.
-Every field is exact. Where another example on these pages shows a value the Profile sets,
-the Profile carries the same one: the trusted list address is the one the
-[trusted list payload][ts-5-01-trusted-list-payload] repeats, the credential
-types are the ones the catalog registers, the key storage root is the one
-the entity endpoint's evidence chains to, and each lifetime is the interval
-the example tokens carry. Version 2.0 of TS-5-01 does not exist; it stands
-in for the transition a major version opens. The Profile was signed with the
-key its own `signers` names at `granted`, and the signature verifies.
+for the pilot, and the rest are invented. Every field is exact.
+
+The payload is the edition as Trust Registry publishes it, before
+[Signature][ts-02-signature] wraps it in the JSON Web Signature (JWS). It shows
+every member this specification defines and every form a member admits:
+
+- The three signer states.
+- A specification in force at two versions during a transition.
+- The three algorithm forms of an issuance key.
+- A credential type map.
+- A key storage value with no accepted root.
+
+Where another example on these pages shows a value the Profile sets, the
+Profile carries the same one:
+
+- The trusted list address: the one the
+  [trusted list payload][ts-5-01-trusted-list-payload] repeats.
+- The credential types: the ones the catalog registers.
+- The key storage root: the one the entity endpoint's evidence chains to.
+- Each lifetime: the interval the example tokens carry.
+
+Version 2.0 of TS-5-01 does not exist; it stands in for the transition a major
+version opens. The Profile was signed with the key its own `signers` names at
+`granted`, and the signature verifies.
 
 ``` { .json title="governance-profile.json, the Profile payload" data-format="JSON" }
 {
@@ -311,6 +325,9 @@ key its own `signers` names at `granted`, and the signature verifies.
     "status_list": [
       "ES256"
     ],
+    "vical": [
+      "ES256"
+    ],
     "issuance": {
       "dc+sd-jwt": [
         "ES256"
@@ -336,6 +353,7 @@ key its own `signers` names at `granted`, and the signature verifies.
     "authority_statement": "PT12H",
     "recognition_answer": "PT12H",
     "catalog": "P1D",
+    "key_attestation": "P1D",
     "status_list_ttl": {
       "credential": "PT12H",
       "use_statement": "PT12H",
@@ -425,7 +443,8 @@ key its own `signers` names at `granted`, and the signature verifies.
     "correction_period": "P30D",
     "incident_report": "PT24H",
     "post_mortem": "P30D",
-    "amendment_notice": "P90D"
+    "amendment_notice": "P90D",
+    "citizen_notice": "P7D"
   },
   "rotation": {
     "issuance-jose": {
@@ -458,8 +477,7 @@ key its own `signers` names at `granted`, and the signature verifies.
         "lead_time": "P90D"
       },
       "vical": {
-        "interval": "P2Y",
-        "lead_time": "P90D"
+        "interval": "P2Y"
       },
       "governance-profile": {
         "interval": "P2Y",
@@ -508,6 +526,7 @@ key its own `signers` names at `granted`, and the signature verifies.
       "per": "PT1M"
     },
     "portal_failed_sign_ins": 10,
+    "crawl_fetch_failures": 2,
     "use_statement_cut_off": "2026-10-01T00:00:00Z",
     "key_attestation_clock_skew": "PT1M",
     "transaction_code_attempts": 3,
@@ -554,7 +573,7 @@ key its own `signers` names at `granted`, and the signature verifies.
     "attestation_root_refusal": [
       {
         "root": "CEDB1CB6DC896AE5EC797348BCE9286753C2B38EE71CE0FBE34A9A1248800DFC",
-        "from": "2036-01-01T00:00:00Z"
+        "from": "2030-01-01T00:00:00Z"
       }
     ]
   },
@@ -623,15 +642,18 @@ key its own `signers` names at `granted`, and the signature verifies.
 
 ## Format {#ts-02-format}
 
-The Profile is one JSON object in UTF-8. Its members are the edition
-information, the signers, and the parameters, each defined below with its
-type. The types are these: `integer` and `number` as JSON gives them; a
-`string`; a `date-time` in Coordinated Universal Time (UTC) as the
-`date-time` of [RFC 3339][ref-rfc3339] with no fraction of a second and the
-`Z` designator, as [ETSI TS 119 602 V1.1.1][ref-etsi-ts-119602] asks of the trusted list; a `duration` as
-the `duration` of [RFC 3339][ref-rfc3339] Appendix A, without the week
-form; and a `URL`, an absolute Uniform Resource Locator (URL) with the
-`https` scheme, no query and no fragment.
+The Profile is one JSON object in UTF-8, with the edition information, the
+signers, and the parameters as its members, each defined below with its type.
+A type is one of these:
+
+- `integer` and `number`, as JSON gives them;
+- a `string`;
+- a `date-time` in Coordinated Universal Time (UTC), the `date-time` of
+  [RFC 3339][ref-rfc3339] with no fraction of a second and the `Z` designator,
+  as [ETSI TS 119 602 V1.1.1][ref-etsi-ts-119602] asks of the trusted list;
+- a `duration`, the `duration` of RFC 3339 Appendix A, without the week form;
+- a `URL`, an absolute Uniform Resource Locator (URL) with the `https` scheme,
+  no query and no fragment.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -672,15 +694,14 @@ it; a member is never removed or retyped except in a major version.
 
 </div>
 
-An edition is a complete Profile, never a change to the one before. The
-six-month ceiling is the one the trusted list keeps,
+The six-month ceiling is the one the trusted list keeps,
 [REQ-TS-5-01-012][req-ts-5-01-012].
 
 ## Signers {#ts-02-signers}
 
 `signers` names every key that may sign an edition, and every key that did
-and may no longer. A key is announced in an edition before it signs one, and
-withdrawn in an edition when it stops, as
+and may no longer. Trust Authority announces a key in an edition before it
+signs one, and withdraws it in an edition when it stops, as
 [how Trust Authority's keys are replaced][how-trust-authoritys-keys-are-replaced]
 describes for the lists. Each entry is an object.
 
@@ -708,10 +729,8 @@ describes for the lists. Each entry is an object.
 ## Parameters {#ts-02-parameters}
 
 Every value another specification defers to the Profile is one member below,
-grouped as the values are. Each table gives the member, its type, and the
-requirement that applies it; a member whose table names no requirement is
-applied where the specification names the Profile in prose. The values
-themselves are the Root Authority's.
+grouped as the values are. A member whose table names no requirement is
+applied where the specification names the Profile in prose.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -725,14 +744,15 @@ themselves are the Root Authority's.
 Specification, each an object with `id`, the identifier as `TS-5-01`;
 `versions`, the array of versions in force as `1.0`; and, when `versions`
 holds two, `transition_ends`, the `date-time` the older one stops counting.
-`standards` is an object whose names are the labels of
-[References](../references/index.md) and whose values are the version of that
+`standards` is an object. Its names are the labels of
+[References](../references/index.md), and each value is the version of that
 standard in force, as the entry writes it.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-02-019 }**REQ-TS-02-019** `specifications` MUST name every Technical Specification once.
-- [](){ #req-ts-02-020 }**REQ-TS-02-020** An entry MUST hold two versions only during the transition period of a major change, and MUST then carry `transition_ends`.
+- [](){ #req-ts-02-020 }**REQ-TS-02-020** An entry MUST hold two versions only during the transition period of a major change.
+- [](){ #req-ts-02-060 }**REQ-TS-02-060** An entry that holds two versions MUST carry `transition_ends`.
 - [](){ #req-ts-02-021 }**REQ-TS-02-021** A Module MUST conform to a version `specifications` holds for each specification that binds it, as [REQ-TS-00-004][req-ts-00-004] to [REQ-TS-00-006][req-ts-00-006] require.
 - [](){ #req-ts-02-022 }**REQ-TS-02-022** A Module MUST NOT run a standard that `standards` names at a version other than the one it gives.
 
@@ -780,6 +800,7 @@ the same algorithm: `ES256` is `-7` under
 | `accreditation_credential` | [REQ-TS-5-07-006][req-ts-5-07-006] |
 | `key_attestation` | [REQ-TS-5-08-006][req-ts-5-08-006], [REQ-TS-1-01-017][req-ts-1-01-017], [REQ-TS-1-01-018][req-ts-1-01-018] |
 | `status_list` | [REQ-TS-5-09-012][req-ts-5-09-012] |
+| `vical` | [REQ-TS-5-04-085][req-ts-5-04-085] |
 | `issuance` | [REQ-TS-5-10-013][req-ts-5-10-013], [REQ-TS-5-10-063][req-ts-5-10-063], [REQ-TS-1-01-014][req-ts-1-01-014], [REQ-TS-1-01-022][req-ts-1-01-022], [REQ-TS-3-01-041][req-ts-3-01-041] |
 | `credential_key` | [REQ-TS-5-11-025][req-ts-5-11-025], [REQ-TS-5-11-058][req-ts-5-11-058], [REQ-TS-1-01-018][req-ts-1-01-018], [REQ-TS-3-01-041][req-ts-3-01-041] |
 | `dpop` | [REQ-TS-1-01-079][req-ts-1-01-079], [REQ-TS-1-01-037][req-ts-1-01-037] |
@@ -796,7 +817,7 @@ the same algorithm: `ES256` is `-7` under
 ### Lifetimes {#ts-02-lifetimes}
 
 Every member of `lifetimes` is a `duration`, except `status_list_ttl`, an
-object of three durations named `credential`, `use_statement` and
+object of three durations named `credential`, `use_statement`, and
 `accreditation`, one for each kind of status list.
 
 <figure markdown="1" class="ekdn-table">
@@ -806,10 +827,11 @@ object of three durations named `credential`, `use_statement` and
 | `authority_statement` | From `iat` to `exp` of an Authority Statement | [REQ-TS-5-05-032][req-ts-5-05-032] |
 | `recognition_answer` | From `iat` to `exp` of a recognition answer | [REQ-TS-4-02-042][req-ts-4-02-042] |
 | `catalog` | From `iat` to `exp` of the catalog list | [REQ-TS-4-02-067][req-ts-4-02-067] |
+| `key_attestation` | From `iat` to `exp` of a Key Attestation | [REQ-TS-5-08-036][req-ts-5-08-036] |
 | `status_list_ttl` | `ttl` of each kind of status list | [REQ-TS-5-09-052][req-ts-5-09-052] |
 | `credential_suspension` | The longest a credential's entry stays suspended | [REQ-TS-5-09-124][req-ts-5-09-124] |
 | `use_statement` | From `iat` to `exp` of a registered use | [REQ-TS-5-06-036][req-ts-5-06-036] |
-| `trusted_list_horizon` | From `ListIssueDateTime` to `NextUpdate` | [REQ-TS-5-01-011][req-ts-5-01-011] |
+| `trusted_list_horizon` | From `ListIssueDateTime` to `NextUpdate`, and one crawl pass over every registration | [REQ-TS-5-01-011][req-ts-5-01-011], [REQ-GF-084][req-gf-084] |
 | `verifier_device_certificate` | Validity of a Verifier Device Certificate | [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md) |
 | `verifier_issuing_ca` | Validity of a Verifier Issuing CA certificate, never past its root | [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md) |
 | `accreditation_period` | An accreditation period | [REQ-TS-5-07-050][req-ts-5-07-050] |
@@ -827,7 +849,7 @@ object of three durations named `credential`, `use_statement` and
 | `request_object` | A Request Object | [REQ-TS-3-01-035][req-ts-3-01-035] |
 | `relayed_response` | The time the relay holds a response its device has not collected | [REQ-TS-3-01-095][req-ts-3-01-095] |
 | `relay_record` | How long the relay keeps the record of a relayed transaction | [REQ-TS-3-01-113][req-ts-3-01-113] |
-| `consent_receipt` | How long a verifier keeps the record of an OpenID4VP presentation and its consent receipt, where no law binding the Relying Party requires longer | [REQ-TS-5-11-099][req-ts-5-11-099] |
+| `consent_receipt` | How long a verifier keeps the record of an OpenID4VP presentation and its consent receipt, where no law binding the party it acts for requires longer | [REQ-TS-5-11-099][req-ts-5-11-099] |
 | `presentation_history` | The longest Mobile Wallet keeps the record of a presentation | [REQ-TS-5-11-102][req-ts-5-11-102] |
 | `dispute_period` | How long an entity keeps the records a dispute may call for | [Retention][gf-retention] |
 | `registration_suspension` | The longest a registration stays suspended before the Root Authority restores or withdraws it | [Grounds for suspension][gf-grounds-for-suspension] |
@@ -862,10 +884,10 @@ validity period never exceeds, which
 Every member of `tolerances` is a `duration`: how long past its own expiry a
 reader may still use a cached copy, as
 [the three rules for reading the copy][three-rules-for-reading-the-copy]
-set out. One value applies to every reader of the copy, online or
-not: no reader fetches during a transaction, so a reader that reaches the
-network refreshes on the [trust cache sync][trust-cache-sync] and seldom
-nears the limit, and one that cannot stops at the same limit.
+set out. One value applies to every reader of the copy, online or not. No
+reader fetches during a transaction: a reader that reaches the network
+refreshes on the [trust cache sync][trust-cache-sync] and seldom nears the
+limit, and one that cannot stops at the same limit.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -892,42 +914,49 @@ nears the limit, and one that cannot stops at the same limit.
 | `status_list_republication` | duration | Republication of a status list whether or not an entry changed | [REQ-TS-5-09-048][req-ts-5-09-048] |
 | `status_list_change` | duration | Republication after an entry changes | [REQ-TS-5-09-049][req-ts-5-09-049] |
 | `accreditation_status_change` | duration | Setting an accreditation status entry after the Root Authority changes it | [REQ-TS-5-07-065][req-ts-5-07-065] |
-| `crl_publication` | duration | Publication of every CRL, Trust Authority's and each Verifier Issuing CA's, and the longest time from its `thisUpdate` to its `nextUpdate` | [REQ-TS-5-04-069][req-ts-5-04-069], [REQ-TS-5-04-166][req-ts-5-04-166] |
+| `crl_publication` | duration | Publication of every CRL, Trust Authority's and each Verifier Issuing CA's, and the longest time from its `thisUpdate` to its `nextUpdate`, and how often an RP Intermediary examines the refused requests in its relay record | [REQ-TS-5-04-069][req-ts-5-04-069], [REQ-TS-5-04-166][req-ts-5-04-166], [REQ-GF-211][req-gf-211] |
 | `vical_publication` | duration | The longest time from a VICAL's `date` to its `nextUpdate` | [REQ-TS-5-04-167][req-ts-5-04-167] |
 | `dsc_expiry_warning` | duration | How long before a Document Signer Certificate expires its issuer is warned | [REQ-TS-5-04-162][req-ts-5-04-162] |
-| `credential_renewal_lead` | duration | The longest time before `exp` a wallet starts renewal | [REQ-TS-1-01-127][req-ts-1-01-127], [REQ-TS-1-01-149][req-ts-1-01-149] |
-| `accreditation_renewal_lead` | duration | How long before `exp` an accreditation renewal is prepared | [REQ-TS-5-07-051][req-ts-5-07-051] |
-| `merchant_withdrawal` | duration | Withdrawing a merchant from the Relying Party that vouches for it | [Withdrawing a merchant][gf-withdrawing-a-merchant] |
+| `credential_renewal_lead` | duration | How long before `exp` a wallet has started renewal at the latest | [REQ-TS-1-01-127][req-ts-1-01-127], [REQ-TS-1-01-149][req-ts-1-01-149] |
+| `accreditation_renewal_lead` | duration | How long before `exp` an accreditation renewal is prepared, and the notice a Wallet Provider owes each citizen before it withdraws or lets its accreditation lapse | [REQ-GF-069][req-gf-069], [REQ-GF-178][req-gf-178] |
+| `merchant_withdrawal` | duration | Withdrawing a merchant from the Relying Party that vouches for it: the merchant's report of a lost, stolen, or misused device, and the RP Intermediary's own time to the certificate revocation list | [REQ-GF-203][req-gf-203], [Withdrawing a merchant][gf-withdrawing-a-merchant] |
 | `registration_change_notice` | duration | Telling Trust Authority of a change to what an entity registered | [Keeping the registration true][gf-keeping-the-registration-true] |
 | `loss_report_action` | duration | Acting on a report that a credential or device is lost | [Loss reports][gf-loss-reports] |
 | `license_change_report` | duration | Reporting a change to a sector license | [Sector license][gf-sector-license] |
-| `correction_period` | duration | The time an entity has to correct the grounds for a warning | [Grounds for a warning][gf-grounds-for-a-warning] |
+| `correction_period` | duration | The time an entity is given to correct the grounds for a warning | [Grounds for a warning][gf-grounds-for-a-warning] |
 | `incident_report` | duration | Reporting an incident after it is found | [Reporting an incident][gf-reporting-an-incident] |
 | `post_mortem` | duration | Delivering the post-mortem of an incident | [Post-mortem][gf-post-mortem] |
 | `amendment_notice` | duration | Notice given before an amendment takes effect | [Notice of an amendment][gf-notice-of-an-amendment] |
+| `citizen_notice` | duration | Telling a citizen that an installation was revoked, or that a Wallet Provider is suspended or withdrawn, counted from the decision | [Revoking an installation][gf-revoking-an-installation] |
 
 </figure>
 
 ### Rotation {#ts-02-rotation}
 
 `rotation` holds one member per entity key purpose, `issuance-jose`,
-`issuance-cose`, `request-object`, `verifier-issuing-ca`, `key-attestation`
-and `update`, each an object of two durations: `interval`, the time between
-two scheduled rotations, and `overlap`, the time in which the old and the new
-key are both accepted. `update` carries `interval` alone, because under
+`issuance-cose`, `request-object`, `verifier-issuing-ca`, `key-attestation`,
+and `update`. Each is an object of two durations: `interval`, the time
+between two scheduled rotations, and `overlap`, the time in which the old and
+the new key are both accepted. `update` carries `interval` alone, because under
 pre-rotation the old update key signs nothing after the entry that commits to
 its successor ([REQ-TS-5-02-036][req-ts-5-02-036],
 [REQ-TS-5-02-038][req-ts-5-02-038]). The `status-list` key has no member of
-its own and rotates on the calendar of `issuance-jose`. `retired_private_key` is `destroy` or `retain`: what a
-Key Manager does with a private key once it is retired. `trust_authority`
-holds one member for each of Trust Authority's twelve keys other than the
+its own and rotates on the calendar of `issuance-jose`.
+`retired_private_key` is `destroy` or `retain`: what a Key Manager does with
+a private key once it is retired.
+
+`trust_authority` holds one member for each of Trust Authority's twelve keys other than the
 two roots, each an object with `interval`, the time between two scheduled
-replacements; the trusted list key, the VICAL key and the Governance Profile
-key, which are replaced by announcement, also carry `lead_time`, how long
-before its first signature a new key is announced.
+replacements; the trusted list key and the Governance Profile key, which are
+replaced by announcement, also carry `lead_time`, how long before its first
+signature a new key is announced. The key of the Verified Issuer Certificate
+Authority List (VICAL) carries none, because a reader reaches a new one
+through the `x5chain` of the list it signs.
 [How an entity rotates a key][how-an-entity-rotates-a-key] and
 [how Trust Authority's keys are replaced][how-trust-authoritys-keys-are-replaced]
-apply them. The `interval` of `verifier-issuing-ca` bounds the time the key
+apply them.
+
+The `interval` of `verifier-issuing-ca` bounds the time the key
 signs; the certificate that carries it stays valid for
 `lifetimes.verifier_issuing_ca`, past the end of that interval, so that a
 Verifier Device Certificate it signed never outlasts it
@@ -935,7 +964,7 @@ Verifier Device Certificate it signed never outlasts it
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-02-026 }**REQ-TS-02-026** The `interval` of `issuance-cose` MUST NOT exceed the shortest validity period a Document Signer Certificate may have under [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md) for the credential types its issuer signs.
+- [](){ #req-ts-02-026 }**REQ-TS-02-026** The `interval` of `issuance-cose` MUST NOT exceed the shortest ceiling [REQ-TS-5-04-036][req-ts-5-04-036] and [REQ-TS-5-04-037][req-ts-5-04-037] set for the credential types its issuer signs.
 
 </div>
 
@@ -949,6 +978,7 @@ Verifier Device Certificate it signed never outlasts it
 | `entity_endpoint_rate` | object | The same at the entity endpoint | [REQ-TS-4-03-053][req-ts-4-03-053] |
 | `portal_rate` | object | The same at the portal | [REQ-TS-4-03-010][req-ts-4-03-010] |
 | `portal_failed_sign_ins` | integer | Consecutive failed sign-ins after which a portal account is locked | [REQ-TS-4-03-122][req-ts-4-03-122] |
+| `crawl_fetch_failures` | integer | Consecutive failed crawl fetches of one issuer address after which the Root Authority opens an incident | [REQ-GF-089][req-gf-089] |
 | `use_statement_cut_off` | date-time | The time after which a request carrying no Use Statement is refused | [REQ-TS-5-06-075][req-ts-5-06-075], [REQ-TS-5-06-102][req-ts-5-06-102], [REQ-TS-02-059][req-ts-02-059] |
 | `key_attestation_clock_skew` | duration | How far a Key Attestation's `iat` may lie in the future | [REQ-TS-5-08-038][req-ts-5-08-038] |
 | `transaction_code_attempts` | integer | Wrong transaction codes after which a pre-authorized code is invalidated | [REQ-TS-1-01-072][req-ts-1-01-072] |
@@ -960,12 +990,16 @@ Verifier Device Certificate it signed never outlasts it
 
 Every edition carries `use_statement_cut_off`, so the edition that sets the
 date or brings it forward is the notice of it, and Mobile Wallet reads it at
-its next sync. The 90 days below are a constant of this specification and not
-a member of the Profile, because an edition that set its own notice could
-shorten it in the edition that uses it, the same reason
-[REQ-TS-02-056][req-ts-02-056] fixes its seven days here. Postponing the date,
-or keeping it, needs no notice. Who tells the staff of a Relying Party, and
-what notice a law requires, [is the Governance Framework's][gf-amendment].
+its next sync. The 90 days of [REQ-TS-02-059][req-ts-02-059] are a constant
+of this specification and not a member of the Profile, because an edition
+that set its own notice could shorten it in the edition that uses it, which
+is also why [REQ-TS-02-056][req-ts-02-056] fixes its seven days here.
+
+Postponing the date, or keeping it, needs no notice. Bringing the date forward also tightens a
+value, so the Governance Framework's notice runs beside this one, and an edition
+meets the later of the two dates. Who tells the staff of a Relying Party, and
+what notice a law requires, are set by
+[the Governance Framework's rules on amendment][gf-amendment].
 
 
 <div class="ekdn-reqs" markdown="1">
@@ -984,8 +1018,8 @@ what notice a law requires, [is the Governance Framework's][gf-amendment].
 | `recognition_actions` | array of string | The `action` values admitted for recognition | [REQ-TS-4-02-025][req-ts-4-02-025], [REQ-TS-4-02-033][req-ts-4-02-033] |
 | `key_storage_roots` | object | For `hsm` and `cloudkms`, the array of root certificates accepted as key storage evidence, each DER in base64url without padding, as the `certs` of the evidence carry the rest of the chain | [REQ-TS-4-03-083][req-ts-4-03-083] |
 | `portal_second_factors` | array of string | The second factors accepted at sign-in to the portal, `webauthn` or `totp` | [REQ-TS-4-03-004][req-ts-4-03-004] |
-| `android_device_recognition_verdict` | array of object | `from_version`, an Android major version, and `requires`, the `deviceRecognitionVerdict` value a verdict from that version on has to hold | [REQ-TS-2-01-033][req-ts-2-01-033], [REQ-TS-5-04-145][req-ts-5-04-145] |
-| `attestation_root_refusal` | array of object | `root`, the fingerprint of an accepted attestation root, and `from`, the `date-time` from which a chain ending at it is refused | [REQ-TS-2-01-047][req-ts-2-01-047], [REQ-TS-5-04-151][req-ts-5-04-151] |
+| `android_device_recognition_verdict` | array of object | `from_version`, an Android major version, and `requires`, the `deviceRecognitionVerdict` value a verdict is accepted with from that version on | [REQ-TS-2-01-033][req-ts-2-01-033], [REQ-TS-2-01-080][req-ts-2-01-080], [REQ-TS-5-04-145][req-ts-5-04-145] |
+| `attestation_root_refusal` | array of object | `root`, the fingerprint of an accepted attestation root, and `from`, the `date-time` from which a chain ending at it is refused | [REQ-TS-2-01-047][req-ts-2-01-047], [REQ-TS-5-04-173][req-ts-5-04-173] |
 | `recognized_evaluation_schemes` | array of string | The schemes whose Common Criteria certificates count as an evaluation reaching `iso_18045_high`, each of the codes [the table of evaluation scheme codes][tbl-ts-02-evaluation-scheme-codes] gives | [REQ-TS-5-08-081][req-ts-5-08-081], [REQ-TS-5-08-088][req-ts-5-08-088] |
 
 </figure>
@@ -996,8 +1030,8 @@ what notice a law requires, [is the Governance Framework's][gf-amendment].
 
 | Code | Scheme |
 |---|---|
-| `eucc` | The European Union Common Criteria based cybersecurity certification scheme, Regulation (EU) 2024/482 |
-| `sogis` | The Senior Officials Group Information Systems Security (SOG-IS) Mutual Recognition Agreement |
+| `eucc` | The European Union Common Criteria based cybersecurity certification scheme, [Regulation (EU) 2024/482][ref-eucc] |
+| `sogis` | The Senior Officials Group Information Systems Security (SOG-IS) [Mutual Recognition Agreement][ref-sogis-mra] |
 | `id-bssn` | Skema Common Criteria Indonesia (SCCI), run by Badan Siber dan Sandi Negara (BSSN) under Peraturan BSSN Nomor 15 Tahun 2019, with certificates issued by its product certification body (LSPro) |
 
 </figure>
@@ -1009,30 +1043,30 @@ laboratories.
 
 The entry of `android_device_recognition_verdict` that applies to a device
 is the one with the highest `from_version` that is not above the device's
-Android version.
-
-<div class="ekdn-reqs" markdown="1">
-
-- [](){ #req-ts-02-027 }**REQ-TS-02-027** Wallet Backend Service MUST refuse an integrity verdict from an Android version below the lowest `from_version` of `android_device_recognition_verdict`.
-
-</div>
+Android version. A device whose version is below every `from_version` has no
+entry, and the reader of its verdict refuses it, as
+[REQ-TS-2-01-080][req-ts-2-01-080] requires.
 
 ### Mappings {#ts-02-mappings}
 
-`mappings` holds `min_assurance`, an object with one member for each of
-`low`, `substantial` and `high`, each holding `key_storage` and
-`user_authentication`, the arrays of `iso_18045_*` values an issuer announces
-in `key_attestations_required`, and `proof_types`, the proof types it
-accepts; and `issuer_assurance`, an object that names the grade each Key
-Manager driver, `software`, `cloudkms` and `hsm`, earns.
-[`min_assurance`][min-assurance] and [`issuer_assurance`][issuer-assurance]
-explain both, and [REQ-TS-1-01-016][req-ts-1-01-016] and
-[REQ-TS-4-03-086][req-ts-4-03-086] apply them.
+`mappings` holds two members.
+
+- `min_assurance` is an object with one member for each of `low`, `substantial`,
+  and `high`. Each holds `key_storage` and `user_authentication`, the arrays of
+  `iso_18045_*` values an issuer announces in `key_attestations_required`, and
+  `proof_types`, the proof types it accepts.
+- `issuer_assurance` names the grade each Key Manager driver, `software`,
+  `cloudkms`, and `hsm`, earns.
+
+[`min_assurance`][min-assurance] and
+[`issuer_assurance`][issuer-assurance] explain both, and
+[REQ-TS-1-01-016][req-ts-1-01-016] and [REQ-TS-4-03-086][req-ts-4-03-086] apply
+them.
 
 ### Key storage and permissions {#ts-02-key-storage-and-permissions}
 
 `key_storage` holds one member per key purpose whose driver is bound, each
-the array of drivers that key may live in, as `verifier-issuing-ca` for the
+the array of drivers that key may live in. `verifier-issuing-ca` is one, the
 Verifier Issuing CA key, which [a Relying Party's keys][a-relying-partys-keys]
 keeps out of the software keystore. `permissions` holds
 `dsc_per_group_of_types`, a boolean that says whether an issuer may hold one
@@ -1041,16 +1075,11 @@ Document Signer Certificate for a group of credential types, as
 
 ## Signature {#ts-02-signature}
 
-The Profile is signed as a JSON Web Signature (JWS) in the compact
-serialization of [RFC 7515][ref-rfc7515], the payload being the Profile. The
-signing key is the Governance Profile key that
-[Trust Authority's own keys][trust-authoritys-own-keys] names, held in Trust
-Authority's HSM. The Profile names its key in `kid` as a `did:key`, as
-[Naming the key][ts-01-naming-under-did-key] of TS-01 requires, and the key
-is authorized by the Profile a reader already verified rather than by the
-trusted list. The algorithm is fixed here, because the Profile cannot name
-the algorithm it is verified with; changing it is a major version of this
-specification.
+The Profile is signed as a JWS over itself, with the Governance Profile key that
+[Trust Authority's own keys][trust-authoritys-own-keys] names. The key is
+authorized by the Profile a reader already verified rather than by the
+trusted list. The algorithm is fixed here, because the Profile cannot name the algorithm
+it is verified with; changing it is a major version of this specification.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1066,8 +1095,8 @@ specification.
 
 </div>
 
-The protected header of the Profile above, and the compact serialization it
-sits in. The payload is the base64url encoding of the JSON shown in
+The protected header of the Profile, and the compact serialization it sits
+in. The payload is the base64url encoding of the JSON shown in
 [Governance Profile payload][ts-02-governance-profile-payload], byte for
 byte, and the signature is 64 bytes, the concatenation of `r` and `s`.
 
@@ -1135,136 +1164,138 @@ CAgIkVTMjU2IgogICAgXSwKICAgICJhdXRob3JpdHlfc3RhdGVtZW50IjogWwogICAgICAiRVMyNTY
 iCiAgICBdLAogICAgInVzZV9zdGF0ZW1lbnQiOiBbCiAgICAgICJFUzI1NiIKICAgIF0sCiAgICAiY
 WNjcmVkaXRhdGlvbl9jcmVkZW50aWFsIjogWwogICAgICAiRVMyNTYiCiAgICBdLAogICAgImtleV9
 hdHRlc3RhdGlvbiI6IFsKICAgICAgIkVTMjU2IgogICAgXSwKICAgICJzdGF0dXNfbGlzdCI6IFsKI
-CAgICAgIkVTMjU2IgogICAgXSwKICAgICJpc3N1YW5jZSI6IHsKICAgICAgImRjK3NkLWp3dCI6IFs
-KICAgICAgICAiRVMyNTYiCiAgICAgIF0sCiAgICAgICJtc29fbWRvYyI6IFsKICAgICAgICAtNwogI
-CAgICBdLAogICAgICAibGRwX3ZjIjogWwogICAgICAgICJlY2RzYS1yZGZjLTIwMTkiCiAgICAgIF0
-KICAgIH0sCiAgICAiY3JlZGVudGlhbF9rZXkiOiBbCiAgICAgICJFUzI1NiIKICAgIF0sCiAgICAiZ
-HBvcCI6IFsKICAgICAgIkVTMjU2IgogICAgXSwKICAgICJyZXF1ZXN0X29iamVjdCI6IFsKICAgICA
-gIkVTMjU2IgogICAgXQogIH0sCiAgImxpZmV0aW1lcyI6IHsKICAgICJhdXRob3JpdHlfc3RhdGVtZ
-W50IjogIlBUMTJIIiwKICAgICJyZWNvZ25pdGlvbl9hbnN3ZXIiOiAiUFQxMkgiLAogICAgImNhdGF
-sb2ciOiAiUDFEIiwKICAgICJzdGF0dXNfbGlzdF90dGwiOiB7CiAgICAgICJjcmVkZW50aWFsIjogI
-lBUMTJIIiwKICAgICAgInVzZV9zdGF0ZW1lbnQiOiAiUFQxMkgiLAogICAgICAiYWNjcmVkaXRhdGl
-vbiI6ICJQVDEySCIKICAgIH0sCiAgICAiY3JlZGVudGlhbF9zdXNwZW5zaW9uIjogIlAzMEQiLAogI
-CAgInVzZV9zdGF0ZW1lbnQiOiAiUDFZIiwKICAgICJ0cnVzdGVkX2xpc3RfaG9yaXpvbiI6ICJQN0Q
-iLAogICAgInZlcmlmaWVyX2RldmljZV9jZXJ0aWZpY2F0ZSI6ICJQNzMwRCIsCiAgICAidmVyaWZpZ
-XJfaXNzdWluZ19jYSI6ICJQNVkiLAogICAgImFjY3JlZGl0YXRpb25fcGVyaW9kIjogIlAyWSIsCiA
-gICAiZW50aXR5X2VuZHBvaW50X25vbmNlIjogIlBUNU0iLAogICAgInJlZ2lzdHJhdGlvbl9jb2RlI
-jogIlAxNEQiLAogICAgImVucm9sbG1lbnRfY2hhbGxlbmdlIjogIlBUNU0iLAogICAgInByZV9hdXR
-ob3JpemVkX2NvZGUiOiAiUFQxME0iLAogICAgInBhcl9yZXF1ZXN0X3VyaSI6ICJQVDFNIiwKICAgI
-CJhdXRob3JpemF0aW9uX2NvZGUiOiAiUFQxTSIsCiAgICAiYWNjZXNzX3Rva2VuIjogIlBUNU0iLAo
-gICAgInJlZnJlc2hfdG9rZW5faW5hY3Rpdml0eSI6ICJQOTBEIiwKICAgICJkcG9wX25vbmNlIjogI
-lBUNU0iLAogICAgImNfbm9uY2UiOiAiUFQ1TSIsCiAgICAiZGVmZXJyZWRfcmVxdWVzdCI6ICJQMUQ
-iLAogICAgInJlcXVlc3Rfb2JqZWN0IjogIlBUNU0iLAogICAgInJlbGF5ZWRfcmVzcG9uc2UiOiAiU
-FQxME0iLAogICAgInJlbGF5X3JlY29yZCI6ICJQOTBEIiwKICAgICJjb25zZW50X3JlY2VpcHQiOiA
-iUDFZIiwKICAgICJwcmVzZW50YXRpb25faGlzdG9yeSI6ICJQMVkiLAogICAgImRpc3B1dGVfcGVya
-W9kIjogIlA1WSIsCiAgICAicmVnaXN0cmF0aW9uX3N1c3BlbnNpb24iOiAiUDkwRCIKICB9LAogICJ
-yb290cyI6IHsKICAgICJpc3N1ZXJfcm9vdF9jYSI6IHsKICAgICAgImxvbmdlc3RfY2VydGlmaWNhd
-GUiOiAiUDEwWSIsCiAgICAgICJzaWduaW5nX3BlcmlvZCI6ICJQM1kiLAogICAgICAibGVhZF90aW1
-lIjogIlAyWSIKICAgIH0sCiAgICAidmVyaWZpZXJfcm9vdF9jYSI6IHsKICAgICAgImxvbmdlc3RfY
-2VydGlmaWNhdGUiOiAiUDVZIiwKICAgICAgInNpZ25pbmdfcGVyaW9kIjogIlA4WSIsCiAgICAgICJ
-sZWFkX3RpbWUiOiAiUDJZIgogICAgfQogIH0sCiAgImNyZWRlbnRpYWxfdHlwZXMiOiB7CiAgICAia
-WQuaWRjdGYua3RwLjEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlA5MEQiCiAgICB9LAo
-gICAgImlkLmlkY3RmLmthcnR1LWluZG9uZXNpYS1zZWhhdC4xIjogewogICAgICAidmFsaWRpdHlfY
-2VpbGluZyI6ICJQMVkiCiAgICB9LAogICAgImlkLmlkY3RmLmthcnR1LWFzbi4xIjogewogICAgICA
-idmFsaWRpdHlfY2VpbGluZyI6ICJQMVkiCiAgICB9LAogICAgImlkLmlkY3RmLmthcnR1LW5pa2FoL
-jEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlAxWSIKICAgIH0sCiAgICAib3JnLmlzby4
-xODAxMy41LjEubURMLjEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlA5MEQiCiAgICB9C
-iAgfSwKICAidG9sZXJhbmNlcyI6IHsKICAgICJyZWNvZ25pdGlvbl9hbnN3ZXIiOiAiUDFEIiwKICA
-gICJjYXRhbG9nIjogIlA3RCIsCiAgICAiYXV0aG9yaXR5X3N0YXRlbWVudCI6ICJQMUQiLAogICAgI
-mRpZF93ZWJ2aF9sb2ciOiAiUDdEIiwKICAgICJzdGF0dXNfbGlzdCI6ICJQM0QiLAogICAgInVzZV9
-zdGF0ZW1lbnRfc3RhdHVzX2xpc3QiOiAiUDNEIiwKICAgICJjcmwiOiAiUDdEIiwKICAgICJ2aWNhb
-CI6ICJQN0QiCiAgfSwKICAiaW50ZXJ2YWxzIjogewogICAgInRydXN0X2NhY2hlX3N5bmMiOiB7CiA
-gICAgICJldmVyeSI6ICJQVDZIIiwKICAgICAgImppdHRlciI6ICJQVDMwTSIKICAgIH0sCiAgICAic
-3RhdHVzX2xpc3RfcmVwdWJsaWNhdGlvbiI6ICJQVDEySCIsCiAgICAic3RhdHVzX2xpc3RfY2hhbmd
-lIjogIlBUMUgiLAogICAgImFjY3JlZGl0YXRpb25fc3RhdHVzX2NoYW5nZSI6ICJQVDFIIiwKICAgI
-CJjcmxfcHVibGljYXRpb24iOiAiUDFEIiwKICAgICJ2aWNhbF9wdWJsaWNhdGlvbiI6ICJQMUQiLAo
-gICAgImRzY19leHBpcnlfd2FybmluZyI6ICJQOTBEIiwKICAgICJjcmVkZW50aWFsX3JlbmV3YWxfb
-GVhZCI6ICJQMzBEIiwKICAgICJhY2NyZWRpdGF0aW9uX3JlbmV3YWxfbGVhZCI6ICJQOTBEIiwKICA
-gICJtZXJjaGFudF93aXRoZHJhd2FsIjogIlAxRCIsCiAgICAicmVnaXN0cmF0aW9uX2NoYW5nZV9ub
-3RpY2UiOiAiUDdEIiwKICAgICJsb3NzX3JlcG9ydF9hY3Rpb24iOiAiUFQyNEgiLAogICAgImxpY2V
-uc2VfY2hhbmdlX3JlcG9ydCI6ICJQMTREIiwKICAgICJjb3JyZWN0aW9uX3BlcmlvZCI6ICJQMzBEI
-iwKICAgICJpbmNpZGVudF9yZXBvcnQiOiAiUFQyNEgiLAogICAgInBvc3RfbW9ydGVtIjogIlAzMEQ
-iLAogICAgImFtZW5kbWVudF9ub3RpY2UiOiAiUDkwRCIKICB9LAogICJyb3RhdGlvbiI6IHsKICAgI
-CJpc3N1YW5jZS1qb3NlIjogewogICAgICAiaW50ZXJ2YWwiOiAiUDFZIiwKICAgICAgIm92ZXJsYXA
-iOiAiUDYwRCIKICAgIH0sCiAgICAiaXNzdWFuY2UtY29zZSI6IHsKICAgICAgImludGVydmFsIjogI
-lAxWSIsCiAgICAgICJvdmVybGFwIjogIlA2MEQiCiAgICB9LAogICAgInJlcXVlc3Qtb2JqZWN0Ijo
-gewogICAgICAiaW50ZXJ2YWwiOiAiUDFZIiwKICAgICAgIm92ZXJsYXAiOiAiUDYwRCIKICAgIH0sC
-iAgICAidmVyaWZpZXItaXNzdWluZy1jYSI6IHsKICAgICAgImludGVydmFsIjogIlAzWSIsCiAgICA
-gICJvdmVybGFwIjogIlA5MEQiCiAgICB9LAogICAgImtleS1hdHRlc3RhdGlvbiI6IHsKICAgICAgI
-mludGVydmFsIjogIlAxWSIsCiAgICAgICJvdmVybGFwIjogIlA2MEQiCiAgICB9LAogICAgInVwZGF
-0ZSI6IHsKICAgICAgImludGVydmFsIjogIlAyWSIKICAgIH0sCiAgICAicmV0aXJlZF9wcml2YXRlX
-2tleSI6ICJkZXN0cm95IiwKICAgICJ0cnVzdF9hdXRob3JpdHkiOiB7CiAgICAgICJ0cnVzdGVkLWx
-pc3QiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSIsCiAgICAgICAgImxlYWRfdGltZSI6ICJQO
-TBEIgogICAgICB9LAogICAgICAidmljYWwiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSIsCiA
-gICAgICAgImxlYWRfdGltZSI6ICJQOTBEIgogICAgICB9LAogICAgICAiZ292ZXJuYW5jZS1wcm9ma
-WxlIjogewogICAgICAgICJpbnRlcnZhbCI6ICJQMlkiLAogICAgICAgICJsZWFkX3RpbWUiOiAiUDk
-wRCIKICAgICAgfSwKICAgICAgImFjY3JlZGl0YXRpb24tY3JlZGVudGlhbCI6IHsKICAgICAgICAia
-W50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAiYWNjcmVkaXRhdGlvbi1zdGF0dXMtbGlzdCI
-6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAidXNlLXN0YXRlbWVud
-CI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAidXNlLXN0YXRlbWV
-udC1zdGF0dXMtbGlzdCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgI
-CAiYXV0aG9yaXR5LXN0YXRlbWVudCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB
-9LAogICAgICAicmVjb2duaXRpb24tc3RhdGVtZW50IjogewogICAgICAgICJpbnRlcnZhbCI6ICJQM
-lkiCiAgICAgIH0sCiAgICAgICJjYXRhbG9nIjogewogICAgICAgICJpbnRlcnZhbCI6ICJQMlkiCiA
-gICAgIH0sCiAgICAgICJ1cGRhdGUiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSIKICAgICAgf
-SwKICAgICAgIndpdG5lc3MiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSIKICAgICAgfQogICA
-gfQogIH0sCiAgImxpbWl0cyI6IHsKICAgICJxdWVyeV9yYXRlIjogewogICAgICAicmVxdWVzdHMiO
-iA2MDAsCiAgICAgICJwZXIiOiAiUFQxTSIKICAgIH0sCiAgICAiZW50aXR5X2VuZHBvaW50X3JhdGU
-iOiB7CiAgICAgICJyZXF1ZXN0cyI6IDYwLAogICAgICAicGVyIjogIlBUMU0iCiAgICB9LAogICAgI
-nBvcnRhbF9yYXRlIjogewogICAgICAicmVxdWVzdHMiOiAxMjAsCiAgICAgICJwZXIiOiAiUFQxTSI
-KICAgIH0sCiAgICAicG9ydGFsX2ZhaWxlZF9zaWduX2lucyI6IDEwLAogICAgInVzZV9zdGF0ZW1lb
-nRfY3V0X29mZiI6ICIyMDI2LTEwLTAxVDAwOjAwOjAwWiIsCiAgICAia2V5X2F0dGVzdGF0aW9uX2N
-sb2NrX3NrZXciOiAiUFQxTSIsCiAgICAidHJhbnNhY3Rpb25fY29kZV9hdHRlbXB0cyI6IDMsCiAgI
-CAiZGlkX3NlcnZpY2VfYXZhaWxhYmlsaXR5IjogewogICAgICAic2hhcmUiOiAwLjk5NSwKICAgICA
-gIndpbmRvdyI6ICJQOTBEIgogICAgfSwKICAgICJkaWRfc2VydmljZV9yZWNvdmVyeSI6ICJQVDRII
-iwKICAgICJpbnRlZ3JpdHlfdmVyZGljdF93aW5kb3ciOiAiUFQ1TSIKICB9LAogICJsaXN0cyI6IHs
-KICAgICJhdXRob3JpemF0aW9uX2FjdGlvbnMiOiBbCiAgICAgICJpc3N1ZSIsCiAgICAgICJyZXF1Z
-XN0IgogICAgXSwKICAgICJyZWNvZ25pdGlvbl9hY3Rpb25zIjogWwogICAgICAiaXNzdWUiCiAgICB
-dLAogICAgImtleV9zdG9yYWdlX3Jvb3RzIjogewogICAgICAiaHNtIjogWwogICAgICAgICJNSUlCM
-WpDQ0FYdWdBd0lCQWdJRVN4MEFBVEFLQmdncWhrak9QUVFEQWpCUE1Rc3dDUVlEVlFRR0V3SkpSREV
-qTUNFR0ExVUVDZ3dhVUZRZ1EyOXVkRzlvSUZCbGNtRnVaMnRoZENCTGNtbHdkRzh4R3pBWkJnTlZCQ
-U1NRWtOdmJuUnZhQ0JJVTAwZ1VtOXZkQ0JEUVRBZUZ3MHlOREF4TURFd01EQXdNREJhRncwME5EQXh
-NREV3TURBd01EQmFNRTh4Q3pBSkJnTlZCQVlUQWtsRU1TTXdJUVlEVlFRS0RCcFFWQ0JEYjI1MGIyZ
-2dVR1Z5WVc1bmEyRjBJRXR5YVhCMGJ6RWJNQmtHQTFVRUF3d1NRMjl1ZEc5b0lFaFRUU0JTYjI5MEl
-FTkJNRmt3RXdZSEtvWkl6ajBDQVFZSUtvWkl6ajBEQVFjRFFnQUVSai05Y3ZyTjFpU19OMEZnWGtDY
-jJKQVd5VWlvYTdMQlppQkpyN0k5U2FIV3lscDVvUEt3TDAzUGVrbjJQUlJhT0NaVHFsQTltOFdhWEN
-0ZDFqUDVwNk5GTUVNd0VnWURWUjBUQVFIX0JBZ3dCZ0VCX3dJQkFEQU9CZ05WSFE4QkFmOEVCQU1DQ
-WdRd0hRWURWUjBPQkJZRUZLYzdGaUZVems5LTc0RUg3RnZzUkxMR2l1aGhNQW9HQ0NxR1NNNDlCQU1
-DQTBrQU1FWUNJUURKODd3Q1N4VHFDdUVSUU9fSGhCQUFvUmtkaDY2ZEFvVzZlRk5MWVJTelFnSWhBT
-zV0bUtjdXdaX3hINWlzVDJMVVRWa25QMUo4Z0VmNUp2My1MWUtoNkt5RiIKICAgICAgXSwKICAgICA
-gImNsb3Vka21zIjogW10KICAgIH0sCiAgICAicG9ydGFsX3NlY29uZF9mYWN0b3JzIjogWwogICAgI
-CAid2ViYXV0aG4iLAogICAgICAidG90cCIKICAgIF0sCiAgICAicmVjb2duaXplZF9ldmFsdWF0aW9
-uX3NjaGVtZXMiOiBbCiAgICAgICJldWNjIiwKICAgICAgInNvZ2lzIiwKICAgICAgImlkLWJzc24iC
-iAgICBdLAogICAgImFuZHJvaWRfZGV2aWNlX3JlY29nbml0aW9uX3ZlcmRpY3QiOiBbCiAgICAgIHs
-KICAgICAgICAiZnJvbV92ZXJzaW9uIjogMTMsCiAgICAgICAgInJlcXVpcmVzIjogIk1FRVRTX1NUU
-k9OR19JTlRFR1JJVFkiCiAgICAgIH0sCiAgICAgIHsKICAgICAgICAiZnJvbV92ZXJzaW9uIjogMTA
-sCiAgICAgICAgInJlcXVpcmVzIjogIk1FRVRTX0RFVklDRV9JTlRFR1JJVFkiCiAgICAgIH0KICAgI
-F0sCiAgICAiYXR0ZXN0YXRpb25fcm9vdF9yZWZ1c2FsIjogWwogICAgICB7CiAgICAgICAgInJvb3Q
-iOiAiQ0VEQjFDQjZEQzg5NkFFNUVDNzk3MzQ4QkNFOTI4Njc1M0MyQjM4RUU3MUNFMEZCRTM0QTlBM
-TI0ODgwMERGQyIsCiAgICAgICAgImZyb20iOiAiMjAzNi0wMS0wMVQwMDowMDowMFoiCiAgICAgIH0
-KICAgIF0KICB9LAogICJtYXBwaW5ncyI6IHsKICAgICJtaW5fYXNzdXJhbmNlIjogewogICAgICAia
-GlnaCI6IHsKICAgICAgICAia2V5X3N0b3JhZ2UiOiBbCiAgICAgICAgICAiaXNvXzE4MDQ1X2hpZ2g
-iCiAgICAgICAgXSwKICAgICAgICAidXNlcl9hdXRoZW50aWNhdGlvbiI6IFsKICAgICAgICAgICJpc
-29fMTgwNDVfbW9kZXJhdGUiLAogICAgICAgICAgImlzb18xODA0NV9oaWdoIgogICAgICAgIF0sCiA
-gICAgICAgInByb29mX3R5cGVzIjogWwogICAgICAgICAgImF0dGVzdGF0aW9uIgogICAgICAgIF0KI
-CAgICAgfSwKICAgICAgInN1YnN0YW50aWFsIjogewogICAgICAgICJrZXlfc3RvcmFnZSI6IFsKICA
-gICAgICAgICJpc29fMTgwNDVfbW9kZXJhdGUiLAogICAgICAgICAgImlzb18xODA0NV9oaWdoIgogI
-CAgICAgIF0sCiAgICAgICAgInVzZXJfYXV0aGVudGljYXRpb24iOiBbCiAgICAgICAgICAiaXNvXzE
-4MDQ1X21vZGVyYXRlIiwKICAgICAgICAgICJpc29fMTgwNDVfaGlnaCIKICAgICAgICBdLAogICAgI
-CAgICJwcm9vZl90eXBlcyI6IFsKICAgICAgICAgICJhdHRlc3RhdGlvbiIsCiAgICAgICAgICAiand
-0IgogICAgICAgIF0KICAgICAgfSwKICAgICAgImxvdyI6IHsKICAgICAgICAia2V5X3N0b3JhZ2UiO
-iBbCiAgICAgICAgICAiaXNvXzE4MDQ1X2VuaGFuY2VkLWJhc2ljIiwKICAgICAgICAgICJpc29fMTg
-wNDVfbW9kZXJhdGUiLAogICAgICAgICAgImlzb18xODA0NV9oaWdoIgogICAgICAgIF0sCiAgICAgI
-CAgInVzZXJfYXV0aGVudGljYXRpb24iOiBbCiAgICAgICAgICAiaXNvXzE4MDQ1X2VuaGFuY2VkLWJ
-hc2ljIiwKICAgICAgICAgICJpc29fMTgwNDVfbW9kZXJhdGUiLAogICAgICAgICAgImlzb18xODA0N
-V9oaWdoIgogICAgICAgIF0sCiAgICAgICAgInByb29mX3R5cGVzIjogWwogICAgICAgICAgImF0dGV
-zdGF0aW9uIiwKICAgICAgICAgICJqd3QiCiAgICAgICAgXQogICAgICB9CiAgICB9LAogICAgImlzc
-3Vlcl9hc3N1cmFuY2UiOiB7CiAgICAgICJzb2Z0d2FyZSI6ICJsb3ciLAogICAgICAiY2xvdWRrbXM
-iOiAic3Vic3RhbnRpYWwiLAogICAgICAiaHNtIjogImhpZ2giCiAgICB9CiAgfSwKICAia2V5X3N0b
-3JhZ2UiOiB7CiAgICAidmVyaWZpZXItaXNzdWluZy1jYSI6IFsKICAgICAgImNsb3Vka21zIiwKICA
-gICAgImhzbSIKICAgIF0KICB9LAogICJwZXJtaXNzaW9ucyI6IHsKICAgICJkc2NfcGVyX2dyb3VwX
-29mX3R5cGVzIjogZmFsc2UKICB9Cn0.fzuvq_duxkZ3oJuvsc4zkbCc1ESD39xEX4N0SmYXkNA1u2I
-z0HdsZDzhWYkZwrC4fOH-Pc-QN07KvRb61PTi4g
+CAgICAgIkVTMjU2IgogICAgXSwKICAgICJ2aWNhbCI6IFsKICAgICAgIkVTMjU2IgogICAgXSwKICA
+gICJpc3N1YW5jZSI6IHsKICAgICAgImRjK3NkLWp3dCI6IFsKICAgICAgICAiRVMyNTYiCiAgICAgI
+F0sCiAgICAgICJtc29fbWRvYyI6IFsKICAgICAgICAtNwogICAgICBdLAogICAgICAibGRwX3ZjIjo
+gWwogICAgICAgICJlY2RzYS1yZGZjLTIwMTkiCiAgICAgIF0KICAgIH0sCiAgICAiY3JlZGVudGlhb
+F9rZXkiOiBbCiAgICAgICJFUzI1NiIKICAgIF0sCiAgICAiZHBvcCI6IFsKICAgICAgIkVTMjU2Igo
+gICAgXSwKICAgICJyZXF1ZXN0X29iamVjdCI6IFsKICAgICAgIkVTMjU2IgogICAgXQogIH0sCiAgI
+mxpZmV0aW1lcyI6IHsKICAgICJhdXRob3JpdHlfc3RhdGVtZW50IjogIlBUMTJIIiwKICAgICJyZWN
+vZ25pdGlvbl9hbnN3ZXIiOiAiUFQxMkgiLAogICAgImNhdGFsb2ciOiAiUDFEIiwKICAgICJrZXlfY
+XR0ZXN0YXRpb24iOiAiUDFEIiwKICAgICJzdGF0dXNfbGlzdF90dGwiOiB7CiAgICAgICJjcmVkZW5
+0aWFsIjogIlBUMTJIIiwKICAgICAgInVzZV9zdGF0ZW1lbnQiOiAiUFQxMkgiLAogICAgICAiYWNjc
+mVkaXRhdGlvbiI6ICJQVDEySCIKICAgIH0sCiAgICAiY3JlZGVudGlhbF9zdXNwZW5zaW9uIjogIlA
+zMEQiLAogICAgInVzZV9zdGF0ZW1lbnQiOiAiUDFZIiwKICAgICJ0cnVzdGVkX2xpc3RfaG9yaXpvb
+iI6ICJQN0QiLAogICAgInZlcmlmaWVyX2RldmljZV9jZXJ0aWZpY2F0ZSI6ICJQNzMwRCIsCiAgICA
+idmVyaWZpZXJfaXNzdWluZ19jYSI6ICJQNVkiLAogICAgImFjY3JlZGl0YXRpb25fcGVyaW9kIjogI
+lAyWSIsCiAgICAiZW50aXR5X2VuZHBvaW50X25vbmNlIjogIlBUNU0iLAogICAgInJlZ2lzdHJhdGl
+vbl9jb2RlIjogIlAxNEQiLAogICAgImVucm9sbG1lbnRfY2hhbGxlbmdlIjogIlBUNU0iLAogICAgI
+nByZV9hdXRob3JpemVkX2NvZGUiOiAiUFQxME0iLAogICAgInBhcl9yZXF1ZXN0X3VyaSI6ICJQVDF
+NIiwKICAgICJhdXRob3JpemF0aW9uX2NvZGUiOiAiUFQxTSIsCiAgICAiYWNjZXNzX3Rva2VuIjogI
+lBUNU0iLAogICAgInJlZnJlc2hfdG9rZW5faW5hY3Rpdml0eSI6ICJQOTBEIiwKICAgICJkcG9wX25
+vbmNlIjogIlBUNU0iLAogICAgImNfbm9uY2UiOiAiUFQ1TSIsCiAgICAiZGVmZXJyZWRfcmVxdWVzd
+CI6ICJQMUQiLAogICAgInJlcXVlc3Rfb2JqZWN0IjogIlBUNU0iLAogICAgInJlbGF5ZWRfcmVzcG9
+uc2UiOiAiUFQxME0iLAogICAgInJlbGF5X3JlY29yZCI6ICJQOTBEIiwKICAgICJjb25zZW50X3JlY
+2VpcHQiOiAiUDFZIiwKICAgICJwcmVzZW50YXRpb25faGlzdG9yeSI6ICJQMVkiLAogICAgImRpc3B
+1dGVfcGVyaW9kIjogIlA1WSIsCiAgICAicmVnaXN0cmF0aW9uX3N1c3BlbnNpb24iOiAiUDkwRCIKI
+CB9LAogICJyb290cyI6IHsKICAgICJpc3N1ZXJfcm9vdF9jYSI6IHsKICAgICAgImxvbmdlc3RfY2V
+ydGlmaWNhdGUiOiAiUDEwWSIsCiAgICAgICJzaWduaW5nX3BlcmlvZCI6ICJQM1kiLAogICAgICAib
+GVhZF90aW1lIjogIlAyWSIKICAgIH0sCiAgICAidmVyaWZpZXJfcm9vdF9jYSI6IHsKICAgICAgImx
+vbmdlc3RfY2VydGlmaWNhdGUiOiAiUDVZIiwKICAgICAgInNpZ25pbmdfcGVyaW9kIjogIlA4WSIsC
+iAgICAgICJsZWFkX3RpbWUiOiAiUDJZIgogICAgfQogIH0sCiAgImNyZWRlbnRpYWxfdHlwZXMiOiB
+7CiAgICAiaWQuaWRjdGYua3RwLjEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlA5MEQiC
+iAgICB9LAogICAgImlkLmlkY3RmLmthcnR1LWluZG9uZXNpYS1zZWhhdC4xIjogewogICAgICAidmF
+saWRpdHlfY2VpbGluZyI6ICJQMVkiCiAgICB9LAogICAgImlkLmlkY3RmLmthcnR1LWFzbi4xIjoge
+wogICAgICAidmFsaWRpdHlfY2VpbGluZyI6ICJQMVkiCiAgICB9LAogICAgImlkLmlkY3RmLmthcnR
+1LW5pa2FoLjEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlAxWSIKICAgIH0sCiAgICAib
+3JnLmlzby4xODAxMy41LjEubURMLjEiOiB7CiAgICAgICJ2YWxpZGl0eV9jZWlsaW5nIjogIlA5MEQ
+iCiAgICB9CiAgfSwKICAidG9sZXJhbmNlcyI6IHsKICAgICJyZWNvZ25pdGlvbl9hbnN3ZXIiOiAiU
+DFEIiwKICAgICJjYXRhbG9nIjogIlA3RCIsCiAgICAiYXV0aG9yaXR5X3N0YXRlbWVudCI6ICJQMUQ
+iLAogICAgImRpZF93ZWJ2aF9sb2ciOiAiUDdEIiwKICAgICJzdGF0dXNfbGlzdCI6ICJQM0QiLAogI
+CAgInVzZV9zdGF0ZW1lbnRfc3RhdHVzX2xpc3QiOiAiUDNEIiwKICAgICJjcmwiOiAiUDdEIiwKICA
+gICJ2aWNhbCI6ICJQN0QiCiAgfSwKICAiaW50ZXJ2YWxzIjogewogICAgInRydXN0X2NhY2hlX3N5b
+mMiOiB7CiAgICAgICJldmVyeSI6ICJQVDZIIiwKICAgICAgImppdHRlciI6ICJQVDMwTSIKICAgIH0
+sCiAgICAic3RhdHVzX2xpc3RfcmVwdWJsaWNhdGlvbiI6ICJQVDEySCIsCiAgICAic3RhdHVzX2xpc
+3RfY2hhbmdlIjogIlBUMUgiLAogICAgImFjY3JlZGl0YXRpb25fc3RhdHVzX2NoYW5nZSI6ICJQVDF
+IIiwKICAgICJjcmxfcHVibGljYXRpb24iOiAiUDFEIiwKICAgICJ2aWNhbF9wdWJsaWNhdGlvbiI6I
+CJQMUQiLAogICAgImRzY19leHBpcnlfd2FybmluZyI6ICJQOTBEIiwKICAgICJjcmVkZW50aWFsX3J
+lbmV3YWxfbGVhZCI6ICJQMzBEIiwKICAgICJhY2NyZWRpdGF0aW9uX3JlbmV3YWxfbGVhZCI6ICJQO
+TBEIiwKICAgICJtZXJjaGFudF93aXRoZHJhd2FsIjogIlAxRCIsCiAgICAicmVnaXN0cmF0aW9uX2N
+oYW5nZV9ub3RpY2UiOiAiUDdEIiwKICAgICJsb3NzX3JlcG9ydF9hY3Rpb24iOiAiUFQyNEgiLAogI
+CAgImxpY2Vuc2VfY2hhbmdlX3JlcG9ydCI6ICJQMTREIiwKICAgICJjb3JyZWN0aW9uX3BlcmlvZCI
+6ICJQMzBEIiwKICAgICJpbmNpZGVudF9yZXBvcnQiOiAiUFQyNEgiLAogICAgInBvc3RfbW9ydGVtI
+jogIlAzMEQiLAogICAgImFtZW5kbWVudF9ub3RpY2UiOiAiUDkwRCIsCiAgICAiY2l0aXplbl9ub3R
+pY2UiOiAiUDdEIgogIH0sCiAgInJvdGF0aW9uIjogewogICAgImlzc3VhbmNlLWpvc2UiOiB7CiAgI
+CAgICJpbnRlcnZhbCI6ICJQMVkiLAogICAgICAib3ZlcmxhcCI6ICJQNjBEIgogICAgfSwKICAgICJ
+pc3N1YW5jZS1jb3NlIjogewogICAgICAiaW50ZXJ2YWwiOiAiUDFZIiwKICAgICAgIm92ZXJsYXAiO
+iAiUDYwRCIKICAgIH0sCiAgICAicmVxdWVzdC1vYmplY3QiOiB7CiAgICAgICJpbnRlcnZhbCI6ICJ
+QMVkiLAogICAgICAib3ZlcmxhcCI6ICJQNjBEIgogICAgfSwKICAgICJ2ZXJpZmllci1pc3N1aW5nL
+WNhIjogewogICAgICAiaW50ZXJ2YWwiOiAiUDNZIiwKICAgICAgIm92ZXJsYXAiOiAiUDkwRCIKICA
+gIH0sCiAgICAia2V5LWF0dGVzdGF0aW9uIjogewogICAgICAiaW50ZXJ2YWwiOiAiUDFZIiwKICAgI
+CAgIm92ZXJsYXAiOiAiUDYwRCIKICAgIH0sCiAgICAidXBkYXRlIjogewogICAgICAiaW50ZXJ2YWw
+iOiAiUDJZIgogICAgfSwKICAgICJyZXRpcmVkX3ByaXZhdGVfa2V5IjogImRlc3Ryb3kiLAogICAgI
+nRydXN0X2F1dGhvcml0eSI6IHsKICAgICAgInRydXN0ZWQtbGlzdCI6IHsKICAgICAgICAiaW50ZXJ
+2YWwiOiAiUDJZIiwKICAgICAgICAibGVhZF90aW1lIjogIlA5MEQiCiAgICAgIH0sCiAgICAgICJ2a
+WNhbCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAiZ292ZXJuYW5
+jZS1wcm9maWxlIjogewogICAgICAgICJpbnRlcnZhbCI6ICJQMlkiLAogICAgICAgICJsZWFkX3Rpb
+WUiOiAiUDkwRCIKICAgICAgfSwKICAgICAgImFjY3JlZGl0YXRpb24tY3JlZGVudGlhbCI6IHsKICA
+gICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAiYWNjcmVkaXRhdGlvbi1zdGF0d
+XMtbGlzdCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAidXNlLXN
+0YXRlbWVudCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB9LAogICAgICAidXNlL
+XN0YXRlbWVudC1zdGF0dXMtbGlzdCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZIgogICAgICB
+9LAogICAgICAiYXV0aG9yaXR5LXN0YXRlbWVudCI6IHsKICAgICAgICAiaW50ZXJ2YWwiOiAiUDJZI
+gogICAgICB9LAogICAgICAicmVjb2duaXRpb24tc3RhdGVtZW50IjogewogICAgICAgICJpbnRlcnZ
+hbCI6ICJQMlkiCiAgICAgIH0sCiAgICAgICJjYXRhbG9nIjogewogICAgICAgICJpbnRlcnZhbCI6I
+CJQMlkiCiAgICAgIH0sCiAgICAgICJ1cGRhdGUiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSI
+KICAgICAgfSwKICAgICAgIndpdG5lc3MiOiB7CiAgICAgICAgImludGVydmFsIjogIlAyWSIKICAgI
+CAgfQogICAgfQogIH0sCiAgImxpbWl0cyI6IHsKICAgICJxdWVyeV9yYXRlIjogewogICAgICAicmV
+xdWVzdHMiOiA2MDAsCiAgICAgICJwZXIiOiAiUFQxTSIKICAgIH0sCiAgICAiZW50aXR5X2VuZHBva
+W50X3JhdGUiOiB7CiAgICAgICJyZXF1ZXN0cyI6IDYwLAogICAgICAicGVyIjogIlBUMU0iCiAgICB
+9LAogICAgInBvcnRhbF9yYXRlIjogewogICAgICAicmVxdWVzdHMiOiAxMjAsCiAgICAgICJwZXIiO
+iAiUFQxTSIKICAgIH0sCiAgICAicG9ydGFsX2ZhaWxlZF9zaWduX2lucyI6IDEwLAogICAgImNyYXd
+sX2ZldGNoX2ZhaWx1cmVzIjogMiwKICAgICJ1c2Vfc3RhdGVtZW50X2N1dF9vZmYiOiAiMjAyNi0xM
+C0wMVQwMDowMDowMFoiLAogICAgImtleV9hdHRlc3RhdGlvbl9jbG9ja19za2V3IjogIlBUMU0iLAo
+gICAgInRyYW5zYWN0aW9uX2NvZGVfYXR0ZW1wdHMiOiAzLAogICAgImRpZF9zZXJ2aWNlX2F2YWlsY
+WJpbGl0eSI6IHsKICAgICAgInNoYXJlIjogMC45OTUsCiAgICAgICJ3aW5kb3ciOiAiUDkwRCIKICA
+gIH0sCiAgICAiZGlkX3NlcnZpY2VfcmVjb3ZlcnkiOiAiUFQ0SCIsCiAgICAiaW50ZWdyaXR5X3Zlc
+mRpY3Rfd2luZG93IjogIlBUNU0iCiAgfSwKICAibGlzdHMiOiB7CiAgICAiYXV0aG9yaXphdGlvbl9
+hY3Rpb25zIjogWwogICAgICAiaXNzdWUiLAogICAgICAicmVxdWVzdCIKICAgIF0sCiAgICAicmVjb
+2duaXRpb25fYWN0aW9ucyI6IFsKICAgICAgImlzc3VlIgogICAgXSwKICAgICJrZXlfc3RvcmFnZV9
+yb290cyI6IHsKICAgICAgImhzbSI6IFsKICAgICAgICAiTUlJQjFqQ0NBWHVnQXdJQkFnSUVTeDBBQ
+VRBS0JnZ3Foa2pPUFFRREFqQlBNUXN3Q1FZRFZRUUdFd0pKUkRFak1DRUdBMVVFQ2d3YVVGUWdRMjl
+1ZEc5b0lGQmxjbUZ1WjJ0aGRDQkxjbWx3ZEc4eEd6QVpCZ05WQkFNTUVrTnZiblJ2YUNCSVUwMGdVb
+Tl2ZENCRFFUQWVGdzB5TkRBeE1ERXdNREF3TURCYUZ3MDBOREF4TURFd01EQXdNREJhTUU4eEN6QUp
+CZ05WQkFZVEFrbEVNU013SVFZRFZRUUtEQnBRVkNCRGIyNTBiMmdnVUdWeVlXNW5hMkYwSUV0eWFYQ
+jBiekViTUJrR0ExVUVBd3dTUTI5dWRHOW9JRWhUVFNCU2IyOTBJRU5CTUZrd0V3WUhLb1pJemowQ0F
+RWUlLb1pJemowREFRY0RRZ0FFUmotOWN2ck4xaVNfTjBGZ1hrQ2IySkFXeVVpb2E3TEJaaUJKcjdJO
+VNhSFd5bHA1b1BLd0wwM1Bla24yUFJSYU9DWlRxbEE5bThXYVhDdGQxalA1cDZORk1FTXdFZ1lEVlI
+wVEFRSF9CQWd3QmdFQl93SUJBREFPQmdOVkhROEJBZjhFQkFNQ0FnUXdIUVlEVlIwT0JCWUVGS2M3R
+mlGVXprOS03NEVIN0Z2c1JMTEdpdWhoTUFvR0NDcUdTTTQ5QkFNQ0Ewa0FNRVlDSVFESjg3d0NTeFR
+xQ3VFUlFPX0hoQkFBb1JrZGg2NmRBb1c2ZUZOTFlSU3pRZ0loQU81dG1LY3V3Wl94SDVpc1QyTFVUV
+mtuUDFKOGdFZjVKdjMtTFlLaDZLeUYiCiAgICAgIF0sCiAgICAgICJjbG91ZGttcyI6IFtdCiAgICB
+9LAogICAgInBvcnRhbF9zZWNvbmRfZmFjdG9ycyI6IFsKICAgICAgIndlYmF1dGhuIiwKICAgICAgI
+nRvdHAiCiAgICBdLAogICAgInJlY29nbml6ZWRfZXZhbHVhdGlvbl9zY2hlbWVzIjogWwogICAgICA
+iZXVjYyIsCiAgICAgICJzb2dpcyIsCiAgICAgICJpZC1ic3NuIgogICAgXSwKICAgICJhbmRyb2lkX
+2RldmljZV9yZWNvZ25pdGlvbl92ZXJkaWN0IjogWwogICAgICB7CiAgICAgICAgImZyb21fdmVyc2l
+vbiI6IDEzLAogICAgICAgICJyZXF1aXJlcyI6ICJNRUVUU19TVFJPTkdfSU5URUdSSVRZIgogICAgI
+CB9LAogICAgICB7CiAgICAgICAgImZyb21fdmVyc2lvbiI6IDEwLAogICAgICAgICJyZXF1aXJlcyI
+6ICJNRUVUU19ERVZJQ0VfSU5URUdSSVRZIgogICAgICB9CiAgICBdLAogICAgImF0dGVzdGF0aW9uX
+3Jvb3RfcmVmdXNhbCI6IFsKICAgICAgewogICAgICAgICJyb290IjogIkNFREIxQ0I2REM4OTZBRTV
+FQzc5NzM0OEJDRTkyODY3NTNDMkIzOEVFNzFDRTBGQkUzNEE5QTEyNDg4MDBERkMiLAogICAgICAgI
+CJmcm9tIjogIjIwMzAtMDEtMDFUMDA6MDA6MDBaIgogICAgICB9CiAgICBdCiAgfSwKICAibWFwcGl
+uZ3MiOiB7CiAgICAibWluX2Fzc3VyYW5jZSI6IHsKICAgICAgImhpZ2giOiB7CiAgICAgICAgImtle
+V9zdG9yYWdlIjogWwogICAgICAgICAgImlzb18xODA0NV9oaWdoIgogICAgICAgIF0sCiAgICAgICA
+gInVzZXJfYXV0aGVudGljYXRpb24iOiBbCiAgICAgICAgICAiaXNvXzE4MDQ1X21vZGVyYXRlIiwKI
+CAgICAgICAgICJpc29fMTgwNDVfaGlnaCIKICAgICAgICBdLAogICAgICAgICJwcm9vZl90eXBlcyI
+6IFsKICAgICAgICAgICJhdHRlc3RhdGlvbiIKICAgICAgICBdCiAgICAgIH0sCiAgICAgICJzdWJzd
+GFudGlhbCI6IHsKICAgICAgICAia2V5X3N0b3JhZ2UiOiBbCiAgICAgICAgICAiaXNvXzE4MDQ1X21
+vZGVyYXRlIiwKICAgICAgICAgICJpc29fMTgwNDVfaGlnaCIKICAgICAgICBdLAogICAgICAgICJ1c
+2VyX2F1dGhlbnRpY2F0aW9uIjogWwogICAgICAgICAgImlzb18xODA0NV9tb2RlcmF0ZSIsCiAgICA
+gICAgICAiaXNvXzE4MDQ1X2hpZ2giCiAgICAgICAgXSwKICAgICAgICAicHJvb2ZfdHlwZXMiOiBbC
+iAgICAgICAgICAiYXR0ZXN0YXRpb24iLAogICAgICAgICAgImp3dCIKICAgICAgICBdCiAgICAgIH0
+sCiAgICAgICJsb3ciOiB7CiAgICAgICAgImtleV9zdG9yYWdlIjogWwogICAgICAgICAgImlzb18xO
+DA0NV9lbmhhbmNlZC1iYXNpYyIsCiAgICAgICAgICAiaXNvXzE4MDQ1X21vZGVyYXRlIiwKICAgICA
+gICAgICJpc29fMTgwNDVfaGlnaCIKICAgICAgICBdLAogICAgICAgICJ1c2VyX2F1dGhlbnRpY2F0a
+W9uIjogWwogICAgICAgICAgImlzb18xODA0NV9lbmhhbmNlZC1iYXNpYyIsCiAgICAgICAgICAiaXN
+vXzE4MDQ1X21vZGVyYXRlIiwKICAgICAgICAgICJpc29fMTgwNDVfaGlnaCIKICAgICAgICBdLAogI
+CAgICAgICJwcm9vZl90eXBlcyI6IFsKICAgICAgICAgICJhdHRlc3RhdGlvbiIsCiAgICAgICAgICA
+iand0IgogICAgICAgIF0KICAgICAgfQogICAgfSwKICAgICJpc3N1ZXJfYXNzdXJhbmNlIjogewogI
+CAgICAic29mdHdhcmUiOiAibG93IiwKICAgICAgImNsb3Vka21zIjogInN1YnN0YW50aWFsIiwKICA
+gICAgImhzbSI6ICJoaWdoIgogICAgfQogIH0sCiAgImtleV9zdG9yYWdlIjogewogICAgInZlcmlma
+WVyLWlzc3VpbmctY2EiOiBbCiAgICAgICJjbG91ZGttcyIsCiAgICAgICJoc20iCiAgICBdCiAgfSw
+KICAicGVybWlzc2lvbnMiOiB7CiAgICAiZHNjX3Blcl9ncm91cF9vZl90eXBlcyI6IGZhbHNlCiAgf
+Qp9.-z7ZKmaFhWRJzyVCWnFEy27jQ6BKq8FnaGEWdWq0UvcJqM3prHcVt4BpIucIpoaU1rAAYDXPJw
+6lF1aWTlcFyw
 ```
 
 ## Publication {#ts-02-publication}
@@ -1275,16 +1306,15 @@ An edition reaches a reader in four steps, each on the trust path.
    approved.
 2. Trust Authority signs it with the Governance Profile key, using its
    Certificate Authority Component, and returns the JWS.
-3. Trust Registry serves the JWS at the address below, using its Object
-   Storage Provider Component.
+3. Trust Registry serves the JWS at the Profile's address, using its
+   Object Storage Provider Component.
 4. Every reader fetches it on its next trust cache sync, never on demand.
 
-The address is `https://idctf.id/governance-profile`. It is the one address a
-reader is built with, and it lies outside `https://idctf.id/ns/`, because
+The address is `https://idctf.id/governance-profile`. It lies outside
+`https://idctf.id/ns/`, because
 everything under that root is an identifier no reader fetches, as
 [The scheme identifiers][ts-5-01-the-scheme-identifiers] fixes. Moving the
-address is a major version of this specification, with the transition period
-that version names.
+address is a major change under [Common provisions](common-provisions.md).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1313,10 +1343,10 @@ specification defers to the Profile.
    is within its tolerance, and takes the member it needs.
 3. It never asks Trust Registry for a single value.
 
-A copy counts until `next_update` plus seven days. The grace is there because
-a late edition would otherwise stop every Module in the ecosystem at once;
-the values in it change by plan, so a week of an old edition costs little,
-while a reader with no edition can check nothing.
+A copy counts until `next_update` plus seven days. Without the grace a late
+edition would stop every Module in the ecosystem at once. The values in it
+change by plan, so a week of an old edition costs little, and a reader with no
+edition can check nothing.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1338,13 +1368,7 @@ while a reader with no edition can check nothing.
 
 </div>
 
-A reader that holds no copy it may use refuses rather than guesses, because
-every check it runs rests on a value it would have to invent: an algorithm,
-an address, a lifetime.
-
 ## Security considerations {#ts-02-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A forged Profile that sends readers elsewhere.** An edition is accepted
   only under a key the reader was built with or a verified edition
@@ -1370,7 +1394,7 @@ Each threat below is answered by the requirement named with it.
 
 The Profile carries no citizen data. It is fetched whole, without
 authentication and without any identifier of the reader,
-[REQ-TS-02-039][req-ts-02-039], [REQ-TS-02-040][req-ts-02-040] and
+[REQ-TS-02-039][req-ts-02-039], [REQ-TS-02-040][req-ts-02-040], and
 [REQ-TS-02-058][req-ts-02-058], on the sync rather than during a
 transaction, [REQ-TS-02-045][req-ts-02-045] and
 [REQ-TS-02-046][req-ts-02-046], so that its fetch reveals nothing about which
@@ -1382,6 +1406,6 @@ citizen dealt with which party.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

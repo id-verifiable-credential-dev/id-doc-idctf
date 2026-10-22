@@ -15,23 +15,24 @@ Affairs, issued as an [ISO/IEC 18013-5:2021 mdoc][ref-iso-18013-5].
 
 !!! note "Informative page"
 
-    This Rulebook is an illustration and is not registered. Its values were
-    chosen to show how the fields of [Rulebook structure](../rulebook-structure.md)
-    fit together, and none of them has been approved by the Root Authority.
-    The addresses under `catalog.trust.go.id` do not exist yet; the files they
-    name are shown on this page instead.
+    This Rulebook is an illustration and is not registered. Its values show
+    how the fields of [Rulebook structure](../rulebook-structure.md) fit
+    together, and the Root Authority has approved none of them. The addresses
+    under `catalog.trust.go.id` do not exist yet, so this page shows the files
+    they name.
 
 ## The Rulebook {#ktp-digital-rulebook}
 
-The Rulebook for `id.idctf.ktp.1`, carrying every field
+The Rulebook for `id.idctf.ktp.1` carries every field
 [Rulebook structure](../rulebook-structure.md) lists. It lists `mdoc` alone,
 because a KTP Digital has to verify with no network reaching the verifier, as
-[REQ-CR-018][req-cr-018] requires. It covers the card of an Indonesian
-citizen alone, so `kewarganegaraan` is always `WNI`. It lists no
-`expiry_date`, because that card is valid for life under its legal basis and
-so has no administrative validity period. A foreign resident's card expires
-with the residence permit, and a type covering it would need an `expiry_date`. `usia_di_atas_17` is derived from `tanggal_lahir`, so a Relying Party
-that needs only the holder's age never receives the birth date.
+[REQ-CR-018][req-cr-018] requires. It covers the card of an Indonesian citizen
+alone, so `kewarganegaraan` is always `WNI`. It lists no `expiry_date`, because
+that card is valid for life under its legal basis and so has no administrative
+validity period. A foreign resident's card expires with the residence permit,
+and a type covering it would need an `expiry_date`. `usia_di_atas_17` is derived
+from `tanggal_lahir`, so a Relying Party that needs only the holder's age never
+receives the birth date.
 
 ``` { .json title="rulebook.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/ktp-digital/rulebook.json"
@@ -39,14 +40,16 @@ that needs only the holder's age never receives the birth date.
 
 ## Schema {#ktp-digital-schema}
 
-The [JSON Schema 2020-12][ref-json-schema] that [the schema field][rulebook-schema-field] points at.
-Issuer Core checks the twenty type claims against it before it signs.
-The schema requires every claim, so every KTP Digital carries the same
-number of digests, as [REQ-CR-077][req-cr-077] requires of a type issued in
-mdoc. `golongan_darah` is the one claim the source record may hold no value
-for; Issuer Core then writes `-`, as the printed KTP-el does. Each claim becomes a data element of the
-same name in the namespace `id.idctf.ktp.1`, encoded as
-[the table of mdoc encodings][tbl-mdoc-encodings] sets out.
+This is the [JSON Schema 2020-12][ref-json-schema] that
+[the schema field][rulebook-schema-field] points at. Issuer Core checks the
+twenty type claims against it before it signs. The schema requires every claim,
+so every KTP Digital carries the same number of digests, as
+[REQ-CR-077][req-cr-077] requires of a type issued in mdoc. `golongan_darah` is
+the one claim the source record may hold no value for, so it carries
+`absent_value` `-`. Issuer Core writes that value in its place, as the printed
+KTP-el does. Each claim becomes a data element of the same name in the namespace
+`id.idctf.ktp.1`, encoded as [the table of mdoc encodings][tbl-mdoc-encodings]
+sets out.
 
 ``` { .json title="schema.json" data-format="JSON" }
 --8<-- "docs/credential-rulebook/example/ktp-digital/schema.json"
@@ -54,11 +57,12 @@ same name in the namespace `id.idctf.ktp.1`, encoded as
 
 ## Display {#ktp-digital-display}
 
-The card a wallet draws, light and dark, and the [SD-JWT-based Verifiable
-Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] that [the display field][rulebook-display-field]
-points at. The Type Metadata carries both templates and the logo. Each claim
-`path` names the namespace and then the data element, as
-[REQ-CR-074][req-cr-074] requires of a Rulebook that lists `mdoc` alone.
+A wallet draws the card, light and dark, from the
+[SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc]
+that [the display field][rulebook-display-field] points at. The Type Metadata
+carries both templates and the logo. Each claim `path` names the namespace and
+then the data element, as [REQ-CR-074][req-cr-074] requires of a Rulebook that
+lists `mdoc` alone.
 
 [](){ #fig-ktp-digital-light }
 [](){ #fig-ktp-digital-dark }
@@ -74,7 +78,7 @@ points at. The Type Metadata carries both templates and the logo. Each claim
 </figure>
 </div>
 
-Templates: [`card-light.svg`](ktp-digital/card-light.svg) and
+The templates are [`card-light.svg`](ktp-digital/card-light.svg) and
 [`card-dark.svg`](ktp-digital/card-dark.svg).
 
 ``` { .json title="type-metadata.json" data-format="JSON" }
@@ -83,8 +87,8 @@ Templates: [`card-light.svg`](ktp-digital/card-light.svg) and
 
 ## Issued credential {#ktp-digital-issued-credential}
 
-One credential as Issuer Core signs it, and where each of its parts comes
-from.
+This section shows one credential as Issuer Core signs it, and where each of
+its parts comes from.
 
 ``` { .text title="mdoc IssuerSigned and its Mobile Security Object" data-format="CBOR diag" }
 // IssuerSigned

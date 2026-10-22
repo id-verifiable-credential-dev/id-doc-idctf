@@ -27,90 +27,121 @@ puts in force. The key words and the identifier `REQ-TS-3-01-nnn` follow
 
 This specification fixes the profile of
 [OpenID for Verifiable Presentations (OpenID4VP) 1.0][ref-openid4vp] that
-IDCTF runs: the authorization request a wallet receives, the signed Request
-Object behind it and how the wallet fetches it, the two Client Identifier
-Prefixes a verifier introduces itself with, the checks the wallet runs before
-the citizen is asked, the response mode and its encryption, the answer at the
-response endpoint, the relay through which a merchant's device asks, and the
-errors.
+IDCTF runs:
 
-Its conformance targets are three. Verifier Core asks, as the remote
-Relying Party Instance of a Relying Party or an RP Intermediary, and relays
-a merchant's request and response, as
-[Relying Party Instance][relying-party-instance] sets out. Mobile Verifier
-asks online for a merchant, through the relay of the RP Intermediary's
-Verifier Core, as
-[Mobile Verifier to Verifier Core][mobile-verifier-to-verifier-core] sets
-out. Mobile Wallet answers.
+- The authorization request a wallet receives.
+- The signed Request Object behind it and how the wallet fetches it.
+- The two Client Identifier Prefixes a verifier introduces itself with.
+- The checks the wallet runs before the citizen is asked.
+- The response mode and its encryption.
+- The answer at the response endpoint.
+- The relay through which a merchant's device asks.
+- The errors.
 
-It leaves to other documents: the presentation itself, which claims travel,
-the proof of the credential key and the checks a verifier runs on both,
-which
-[Building and verifying a presentation](building-and-verifying-a-presentation.md)
-holds; the Use Statement a request carries in `verifier_info` and the checks
-a wallet runs on it, which
-[Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
-holds; how a signer under a Decentralized Identifier (DID) names its key and
-how a reader finds it, which
-[Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
-holds; the Verifier Device Certificate, its `ReaderAuthRole` and how a chain
-to the Verifier Root CA is validated, which
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-holds; the trusted list and the Authority Statement a wallet reads to decide
-whether a verifier may ask at all, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-and [Answering with an Authority Statement](answering-with-an-authority-statement.md)
-hold; the proximity exchange, which
-[Verifying a credential in proximity via ISO/IEC 18013-5](verifying-a-credential-in-proximity-via-iso-iec-18013-5.md)
-holds; the session through
-which Verifier Core hands the result to the Relying Party's business system,
-which carries no ecosystem artifact, as
-[verifier to business system][verifier-to-business-system] sets out; [what a merchant does with the data it receives, which the Governance Framework holds][gf-what-a-merchant-does-with-what-it-is-shown]; and the numbers, which the Governance Profile holds: the lifetime of a
-Request Object, the time a relay holds a response nobody collected, the time
-Verifier Core keeps the record of a relayed request, and the algorithms a
-Request Object key, an issuance key and a credential key may use.
+Its conformance targets are:
+
+- Verifier Core, which runs as the remote Relying Party Instance of a Relying
+  Party or an RP Intermediary and relays a merchant's request and response,
+  as [Relying Party Instance][relying-party-instance] sets out.
+- Mobile Verifier, as
+  [Mobile Verifier to Verifier Core][mobile-verifier-to-verifier-core] sets
+  out.
+- Mobile Wallet.
+
+It leaves to other documents:
+
+- The presentation itself, which claims travel, the proof of the credential key,
+  and the checks a verifier runs on both, which
+  [Building and verifying a presentation](building-and-verifying-a-presentation.md)
+  holds.
+- The Use Statement a request carries in `verifier_info` and the checks a
+  wallet runs on it, which
+  [Registering and carrying a Use Statement](registering-and-carrying-a-use-statement.md)
+  holds.
+- How a signer under a Decentralized Identifier (DID) names its key and how a
+  reader finds it, which
+  [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
+  holds.
+- The Verifier Device Certificate, its `ReaderAuthRole`, and how a chain to
+  the Verifier Root CA is validated, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The trusted list and the Authority Statement a wallet reads to decide
+  whether a verifier may ask at all, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  and [Answering with an Authority Statement](answering-with-an-authority-statement.md)
+  hold.
+- The proximity exchange, which
+  [Verifying a credential in proximity via ISO/IEC 18013-5](verifying-a-credential-in-proximity-via-iso-iec-18013-5.md)
+  holds.
+- The session through which Verifier Core hands the result to the
+  Relying Party's business system, which carries no ecosystem artifact, as
+  [verifier to business system][verifier-to-business-system] sets out.
+- [What a merchant does with the data it receives][gf-what-a-merchant-does-with-what-it-is-shown],
+  which the Governance Framework holds.
+- The numbers, which the Governance Profile holds:
+    - The lifetime of a Request Object.
+    - The time a relay holds a response nobody collected.
+    - The time Verifier Core keeps the record of a relayed request.
+    - The algorithms a Request Object key, an issuance key, and a credential key
+      may use.
 
 The profile follows the
 [OpenID4VC High Assurance Interoperability Profile (HAIP) 1.0][ref-openid4vc-haip],
-which IDCTF reads as a comparison and is not bound by, except in the
-places this paragraph names. A Relying Party and an RP Intermediary introduce themselves with the
-`decentralized_identifier` prefix and their `did:webvh`, where HAIP asks for
-`x509_hash` on every signed request; only a merchant uses `x509_hash`,
-because it has no DID, as
-[Wallet to Verifier, online][wallet-to-verifier-online] sets out. A response is encrypted with
-`A128GCM` alone, the default of OpenID4VP, where HAIP asks a verifier to
-offer `A256GCM` as well. A verifier may ask across devices, from a QR
-code, where HAIP recommends the same-device flow alone, and Mobile Verifier
-asks across devices only, where HAIP requires every verifier to support the
-same-device flow; where Verifier Core asks on the same device it runs the
-redirect HAIP requires. A credential query carries no `trusted_authorities`,
-which HAIP requires a verifier to support, because the trusted list decides
-which issuers a verifier accepts. The presented SD-JWT VC names its issuer's
-key by `kid` and not by the `x5c` HAIP requires, as
-[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
-records. Appendix A of OpenID4VP, which runs the exchange over a platform
-credential interface, is not used.
+which IDCTF reads as a comparison and is not bound by, except in these
+places:
+
+- A Relying Party and an RP Intermediary introduce themselves with the
+  `decentralized_identifier` prefix and their `did:webvh`, where HAIP asks
+  for `x509_hash` on every signed request. Only a merchant uses `x509_hash`,
+  because it has no DID, as
+  [Wallet to Verifier, online][wallet-to-verifier-online] sets out.
+- A response is encrypted with `ECDH-ES` and `A128GCM` alone, the key
+  agreement OpenID4VP fixes for an encrypted response and its default
+  content encryption, where HAIP asks a verifier to offer `A256GCM` as well.
+  Neither is a Governance Profile member, because both come from the
+  protocol.
+- A verifier may ask across devices, from a QR code, where HAIP recommends
+  the same-device flow alone.
+- Mobile Verifier asks across devices only, where HAIP requires every
+  verifier to support the same-device flow. Where Verifier Core asks on the
+  same device it runs the redirect HAIP requires.
+- A credential query carries no `trusted_authorities`, which HAIP requires a
+  verifier to support, because the trusted list decides which issuers a
+  verifier accepts.
+- The presented SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13
+  names its issuer's key by `kid` and not by the `x5c` HAIP requires, as
+  [Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
+  records.
+
+Appendix A of OpenID4VP, which runs the exchange over a platform credential
+interface, is not used.
 
 Before the first exchange, each target holds what the rules below assume:
 
-- **Verifier Core** holds an entry in the trusted list whose Relying Party
-  service reads `granted`, which is the role an RP Intermediary is accredited
-  in as well; its Request Object key in its DID
-  Document under the purpose `request-object`; the Use Statement of every use it runs; and, where it
-  vouches for reader devices, its Verifier Issuing CA and a public address of
-  its own for the relay.
+- **Verifier Core** holds:
+    - An entry in the trusted list whose Relying Party service reads
+      `granted`, which is the role an RP Intermediary is accredited in as
+      well.
+    - Its Request Object key in its DID Document under the purpose
+      `request-object`.
+    - The Use Statement of every use it runs.
+    - Where it vouches for reader devices, its Verifier Issuing CA and a
+      public address of its own for the relay.
 - **Mobile Verifier** holds its device key in the secure element it was
-  generated in, its Verifier Device Certificate, and the category Use
-  Statements its device is bound to, all handed over at provisioning.
-- **Mobile Wallet** holds the credentials of the citizen with their
-  disclosures, the credential key in its secure storage, the Verifier Root CA
-  from build time, and the trusted list, the Authority Statements, every
-  entity's `did:webvh` log, the certificate revocation lists (CRLs) and the
-  Use Statement status list its [trust cache sync][trust-cache-sync] fetched.
+  generated in, its Verifier Device Certificate, and the category Use Statements
+  its device is bound to, all handed over at provisioning.
+- **Mobile Wallet** holds:
+    - The credentials of the citizen with their disclosures.
+    - The credential key in its secure storage.
+    - The Verifier Root CA, from build time.
+    - What its [trust cache sync][trust-cache-sync] fetched: the trusted list,
+      the Authority Statements, every entity's `did:webvh` log, the
+      certificate revocation lists (CRLs), and the Use Statement status list.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-3-01-001 }**REQ-TS-3-01-001** Verifier Core MUST meet every requirement on this page that names Verifier Core, and every requirement on what Verifier Core writes: its authorization requests, its Request Objects and its answers.
+- [](){ #req-ts-3-01-001 }**REQ-TS-3-01-001** Verifier Core MUST meet every requirement on this page that names Verifier Core, and every requirement on what Verifier Core writes: its authorization requests, its Request Objects, and its answers.
 - [](){ #req-ts-3-01-002 }**REQ-TS-3-01-002** Mobile Verifier MUST meet every requirement on this page that names Mobile Verifier, and every requirement on what Mobile Verifier writes: its authorization requests and the Request Objects it signs.
 - [](){ #req-ts-3-01-003 }**REQ-TS-3-01-003** Mobile Wallet MUST meet every requirement on this page that names Mobile Wallet, and every requirement on what Mobile Wallet sends: its fetch of a Request Object and its responses.
 
@@ -120,20 +151,20 @@ Before the first exchange, each target holds what the rules below assume:
 
 A verifier asks for the claims a registered use allows, and a citizen
 answers from their wallet with a presentation bound to that one request. One
-protocol carries both representations that travel online, an
-SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 and an `ldp_vc`;
-an mdoc is presented in proximity only, as
+protocol carries both representations that travel online, an SD-JWT VC
+and an `ldp_vc`; an mdoc is presented in proximity only, as
 [online and offline][online-and-offline] sets out.
 
-The verifier proves who it is before the citizen sees anything. It signs
-the request, a JSON Web Token (JWT), and the shape of its `client_id` tells the wallet how to check
-that signature. A Relying Party and an RP Intermediary sign with the Request
-Object key their DID Document lists, and the wallet finds that key in its own
-cache. A merchant signs with the device key its Verifier Device Certificate
-certifies, and the wallet validates that certificate up to the Verifier Root
-CA it carries from build time. Either way, the wallet reads from the same
-cache whether the verifier is accredited and what it registered the request
-for, and the network carries nothing beyond the request and the answer.
+The verifier proves who it is before the citizen sees anything. It signs the
+request, a JSON Web Token (JWT), and the shape of its `client_id` tells the
+wallet how to check that signature. A Relying Party and an RP Intermediary sign
+with the Request Object key their DID Document lists, and the wallet finds that
+key in its own cache. A merchant signs with the device key its
+Verifier Device Certificate certifies, and the wallet validates that certificate
+up to the Verifier Root CA it carries from build time. Either way, the wallet
+reads from the same cache whether the verifier is accredited and what it
+registered the request for, and the network carries nothing beyond the request
+and the answer.
 
 The answer travels encrypted as a JSON Web Encryption (JWE) to a key the
 verifier drew for that one request and named in its signed request, as
@@ -171,19 +202,24 @@ An online verification runs in nine steps.
 
 ## An exchange, as exchanged {#ts-3-01-an-exchange-as-exchanged}
 
-Below are two exchanges end to end. The citizen, the verifier, its domain,
-the merchant and every key are invented, and no transaction has taken place.
-Every field is exact. The verifier is the Relying Party
-[the trusted list][ts-5-01-trusted-list-payload] carries, with the same DID,
-and the merchant's device is the one whose Verifier Device Certificate
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-shows. Each Request Object verifies under the key its header names, each
-response decrypts under the key its header names, and each presentation is
-the Kartu ASN that
-[Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
-issues. Request identifiers, `state` values and response codes are opaque
-strings the verifier drew; nothing reads them but the verifier that drew
-them.
+The citizen, the verifier, its domain, the merchant, and every key are
+invented, and no transaction has taken place. Every field is exact.
+
+The examples agree with the pages that show the same parties and artifacts:
+
+- The verifier is the Relying Party [the trusted list][ts-5-01-trusted-list-payload]
+  carries, with the same DID.
+- The merchant's device is the one whose Verifier Device Certificate
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  shows.
+- Each Request Object verifies, and each response decrypts, under the key its
+  header names.
+- Each presentation is the Kartu ASN that
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  issues.
+
+Request identifiers, `state` values, and response codes are opaque strings
+the verifier drew; nothing reads them but the verifier that drew them.
 
 ### The Kartu ASN, from a Relying Party {#ts-3-01-the-kartu-asn-from-a-relying-party}
 
@@ -307,10 +343,10 @@ request's `state` alone:
 ### The Kartu ASN, from a merchant {#ts-3-01-the-kartu-asn-from-a-merchant}
 
 Warung Bu Ani gives civil servants a discount, under a business category
-Terminal Nusantara registered for its merchants and bound the warung's
-device to. The device has no DID, so it introduces itself by its Verifier
-Device Certificate. It builds the Request Object, signs it with its device
-key, leaves it with the relay at Terminal Nusantara's Verifier Core, and
+Terminal Nusantara registered for its merchants and bound the warung's device
+to. The device has no DID, so it introduces itself by its
+Verifier Device Certificate. It builds the Request Object, signs it with its
+device key, leaves it with the relay at Terminal Nusantara's Verifier Core, and
 shows a QR code that points there:
 
 ``` { .text title="The authorization request in the merchant's QR code" data-format="URL" }
@@ -394,8 +430,8 @@ xemRHRjBaVzFsYm5SekxURWlmWDBzSW1saGRDSTZNVGM1TWpBeU1qUXdNQ3dpWlhod0lqb3hPREl
 hsrXyGrAySC0nPTr8Uro3B6k2Jr-zz3jt829rmpA
 ```
 
-Its protected header carries the device certificate and the Verifier Issuing
-CA certificate that issued it, and not the Verifier Root CA, which the wallet
+Its protected header carries the device certificate and the Verifier Issuing CA
+certificate that issued it, and not the Verifier Root CA, which the wallet
 carries from build time:
 
 ``` { .json title="Protected header of the merchant's Request Object" data-format="JSON" }
@@ -554,11 +590,11 @@ the wallet learns its address, and the clause that fixes it.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-3-01-004 }**REQ-TS-3-01-004** Verifier Core MUST serve every endpoint of [the table of endpoints][tbl-ts-3-01-endpoints] over HTTP with TLS only.
-- [](){ #req-ts-3-01-005 }**REQ-TS-3-01-005** Verifier Core MUST serve every endpoint of that table at an address a wallet on the public internet can reach.
+- [](){ #req-ts-3-01-005 }**REQ-TS-3-01-005** Verifier Core MUST serve every endpoint of [the table of endpoints][tbl-ts-3-01-endpoints] at an address a wallet on the public internet can reach.
 - [](){ #req-ts-3-01-006 }**REQ-TS-3-01-006** Verifier Core MUST carry a `Cache-Control: no-store` header on every answer of either endpoint.
 - [](){ #req-ts-3-01-007 }**REQ-TS-3-01-007** Mobile Wallet MUST NOT send a request of this specification over anything but HTTP with TLS.
 - [](){ #req-ts-3-01-008 }**REQ-TS-3-01-008** Verifier Core and Mobile Verifier MUST NOT call Mobile Wallet, because [nothing calls the wallet][who-may-call-whom]: every message of this specification is a request the wallet sends, or the answer to one.
-- [](){ #req-ts-3-01-009 }**REQ-TS-3-01-009** Mobile Wallet MUST NOT send an identifier of the citizen, of the wallet installation or of the device, or a header that names its software version, to either endpoint, as [OpenID4VP][ref-openid4vp] section 15.8 asks.
+- [](){ #req-ts-3-01-009 }**REQ-TS-3-01-009** Mobile Wallet MUST NOT send an identifier of the citizen, of the wallet installation, or of the device, or a header that names its software version, to either endpoint, as [OpenID4VP][ref-openid4vp] section 15.8 asks.
 
 </div>
 
@@ -566,11 +602,11 @@ the wallet learns its address, and the clause that fixes it.
 
 The authorization request is what the verifier shows the citizen: a QR
 code when the wallet runs on another device, or a link when it runs on the
-same one. It carries two parameters and nothing else: a request passed
-across devices goes by reference, as [OpenID4VP][ref-openid4vp] section 5.7
-recommends, so the QR code stays small enough to read, and every other value
-travels signed inside the Request Object. Its scheme is `openid4vp://`, the
-custom scheme OpenID4VP section 9 names for invoking a wallet.
+same one. Its scheme is `openid4vp://`, the custom scheme OpenID4VP section 9
+names for invoking a wallet. It carries two parameters and nothing else. A
+request passed across devices goes by reference, as
+[OpenID4VP][ref-openid4vp] section 5.7 recommends, so the QR code stays small
+enough to read. Every other value travels signed inside the Request Object.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -631,7 +667,7 @@ both forms.
 - [](){ #req-ts-3-01-025 }**REQ-TS-3-01-025** Verifier Core and Mobile Verifier MUST write the header parameters [the table of Request Object headers][tbl-ts-3-01-header] marks present for the prefix of its `client_id`, and no other.
 - [](){ #req-ts-3-01-026 }**REQ-TS-3-01-026** `typ` MUST be `oauth-authz-req+jwt`.
 - [](){ #req-ts-3-01-027 }**REQ-TS-3-01-027** Under `decentralized_identifier`, `alg` MUST name an algorithm the Governance Profile allows for a Request Object key.
-- [](){ #req-ts-3-01-028 }**REQ-TS-3-01-028** Under `x509_hash`, `alg` MUST be `ES256`, the algorithm of the device key its Verifier Device Certificate certifies.
+- [](){ #req-ts-3-01-028 }**REQ-TS-3-01-028** Under `x509_hash`, `alg` MUST be `ES256`, the algorithm of the P-256 device key its Verifier Device Certificate certifies under [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md), and not a Governance Profile member.
 - [](){ #req-ts-3-01-029 }**REQ-TS-3-01-029** Under `x509_hash`, `x5c` MUST hold exactly two certificates, the Verifier Device Certificate first and the Verifier Issuing CA certificate second.
 - [](){ #req-ts-3-01-102 }**REQ-TS-3-01-102** Under `x509_hash`, `x5c` MUST NOT hold the Verifier Root CA certificate, which the wallet carries from build time.
 - [](){ #req-ts-3-01-030 }**REQ-TS-3-01-030** Mobile Wallet MUST refuse a Request Object whose `typ` is absent or is not `oauth-authz-req+jwt`, as [OpenID4VP][ref-openid4vp] section 5 requires.
@@ -676,9 +712,9 @@ request in [the Kartu ASN, from a merchant][ts-3-01-the-kartu-asn-from-a-merchan
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-3-01-031 }**REQ-TS-3-01-031** Verifier Core and Mobile Verifier MUST write every claim [the table of Request Object claims][tbl-ts-3-01-claims] marks present.
-- [](){ #req-ts-3-01-032 }**REQ-TS-3-01-032** Verifier Core and Mobile Verifier MUST NOT write a claim that table marks absent.
+- [](){ #req-ts-3-01-032 }**REQ-TS-3-01-032** Verifier Core and Mobile Verifier MUST NOT write a claim [the table of Request Object claims][tbl-ts-3-01-claims] marks absent.
 - [](){ #req-ts-3-01-033 }**REQ-TS-3-01-033** Verifier Core and Mobile Verifier MUST draw `state` afresh for every Request Object, from a cryptographically secure random number generator, with at least 128 bits of entropy, the strength [OpenID4VP][ref-openid4vp] section 5.3 asks of `state` where it requires one.
-- [](){ #req-ts-3-01-034 }**REQ-TS-3-01-034** `nonce` and `state` MUST hold only the characters [OpenID4VP][ref-openid4vp] section 5.2 allows: letters, digits, hyphen, period, underscore and tilde.
+- [](){ #req-ts-3-01-034 }**REQ-TS-3-01-034** `nonce` and `state` MUST hold only the characters [OpenID4VP][ref-openid4vp] section 5.2 allows: letters, digits, hyphen, period, underscore, and tilde.
 - [](){ #req-ts-3-01-035 }**REQ-TS-3-01-035** `exp` MUST be later than `iat` by no more than the lifetime the Governance Profile sets for a Request Object.
 - [](){ #req-ts-3-01-036 }**REQ-TS-3-01-036** Verifier Core and Mobile Verifier MUST sign one Request Object for one transaction.
 - [](){ #req-ts-3-01-103 }**REQ-TS-3-01-103** Verifier Core MUST NOT serve a Request Object for any transaction but the one it was signed for.
@@ -750,7 +786,7 @@ IDCTF. What each claim names, and the options of `claim_sets`, are fixed by
 | `id` | Present | An identifier unique within the query |
 | `format` | Present | `dc+sd-jwt` or `ldp_vc` |
 | `meta` | Present | `vct_values` naming the Rulebook `id` for `dc+sd-jwt`; `type_values` naming the expanded types for `ldp_vc` |
-| `claims` | Present | One claims query per attribute, each with `path`, and each with `id` where the query carries `claim_sets`, as [OpenID4VP][ref-openid4vp] section 6.3 requires |
+| `claims` | Present | One claims query per attribute, each with `path`, and each with `id` where the query carries `claim_sets`, as [OpenID4VP][ref-openid4vp] section 6.3 requires; for `ldp_vc`, one per attribute of the type |
 | `claim_sets` | Optional | As [carrying it online][ts-5-06-carrying-it-online] fixes; never for `ldp_vc` |
 | `multiple` | Absent | None: one credential answers one query |
 | `trusted_authorities` | Absent | None: the trusted list decides which issuers a verifier accepts |
@@ -764,6 +800,8 @@ IDCTF. What each claim names, and the options of `claim_sets`, are fixed by
 - [](){ #req-ts-3-01-044 }**REQ-TS-3-01-044** Verifier Core and Mobile Verifier MUST NOT write a credential query whose `format` is `mso_mdoc`, because an mdoc is presented in proximity alone, as [REQ-TS-5-11-007][req-ts-5-11-007] sets out.
 - [](){ #req-ts-3-01-045 }**REQ-TS-3-01-045** Verifier Core and Mobile Verifier MUST NOT write `values` in a claims query, because a match on a value tells the verifier something about the value whether or not the citizen consents, as [OpenID4VP][ref-openid4vp] section 15.4.1 warns.
 - [](){ #req-ts-3-01-046 }**REQ-TS-3-01-046** Mobile Wallet MUST refuse a credential query that carries a member [the table of credential query members][tbl-ts-3-01-dcql] marks absent, or a claims query that carries `values`.
+- [](){ #req-ts-3-01-115 }**REQ-TS-3-01-115** Verifier Core and Mobile Verifier MUST name in `claims` every attribute of the credential type in a credential query whose `format` is `ldp_vc`, because an `ldp_vc` presentation carries every claim, as [REQ-TS-5-11-010][req-ts-5-11-010] sets out.
+- [](){ #req-ts-3-01-116 }**REQ-TS-3-01-116** Mobile Wallet MUST refuse a credential query whose `format` is `ldp_vc` and whose `claims` names fewer than every attribute of the credential type.
 
 </div>
 
@@ -801,22 +839,34 @@ Mobile Wallet checks a request from its own cache before it shows the
 citizen anything, in the order below, and nothing in it touches the network
 beyond the fetch of the Request Object. Steps 1 to 5, and steps 1 to 4 of
 [Reading it][ts-5-06-reading-it], refuse the request whole: a request that
-fails one of them *fails a check*. Step 6 refuses attributes one at a time,
+fails one of them *fails a check*. So does a request refused under one of
+three requirements that no step repeats, each leaving the wallet nothing to
+answer with:
+
+- a query the wallet cannot read, [REQ-TS-3-01-046][req-ts-3-01-046];
+- a `client_id` prefix it does not know,
+  [REQ-TS-3-01-051][req-ts-3-01-051];
+- a request that names no response mode or no key to encrypt an answer to,
+  [REQ-TS-3-01-105][req-ts-3-01-105].
+
+Step 6 refuses attributes one at a time,
 and what it refuses decides what can be presented, as
 [REQ-TS-5-06-110][req-ts-5-06-110] and [REQ-TS-5-06-111][req-ts-5-06-111]
 set out; a refused attribute is not a failed check.
 
 1. **Match the request.** The `client_id` of the authorization request equals
    the `client_id` of the Request Object, including its prefix.
-2. **Check the signature by the prefix.** Under `decentralized_identifier`,
-   check that `typ` is `oauth-authz-req+jwt`, find the key the `kid` names in the verifier's DID Document version in
-   force at `iat`, as [Finding the key][ts-01-finding-the-key] sets out, and
-   check that the purpose is `request-object`. Under `x509_hash`, validate
-   the chain of `x5c` to the Verifier Root CA, as
-   [Validating a chain][ts-5-04-validating-a-chain] sets out, check `typ`
-   the same way, check that the
-   digest of `x5c[0]` equals the value after the prefix, and verify the
-   signature with the key of `x5c[0]`.
+2. **Check the signature by the prefix.**
+
+      - Under `decentralized_identifier`, check that `typ` is
+        `oauth-authz-req+jwt`, find the key the `kid` names in the verifier's
+        DID Document version in force at `iat`, as
+        [Finding the key][ts-01-finding-the-key] sets out, and check that the
+        purpose is `request-object`.
+      - Under `x509_hash`, validate the chain of `x5c` to the Verifier Root CA,
+        as [Validating a chain][ts-5-04-validating-a-chain] sets out, check
+        `typ` the same way, check that the digest of `x5c[0]` equals the value
+        after the prefix, and verify the signature with the key of `x5c[0]`.
 3. **Check the time and the audience.** `exp` has not passed, and `aud` is
    `https://self-issued.me/v2`.
 4. **Check the verifier's standing.** Under `decentralized_identifier`, the
@@ -824,11 +874,10 @@ set out; a refused attribute is not a failed check.
    service reads `granted`, an RP Intermediary included. Under `x509_hash`,
    the Verifier Issuing CA of `x5c[1]` is named there at status `granted`, in
    the entry of an entity whose Relying Party service reads `granted`.
-5. **Check the permissions.** For every attribute the query asks for, the
-   cached Authority Statement of the verifier, or under `x509_hash` of the
-   entity holding the Verifier Issuing CA, is present, within its tolerance
-   limit and answers `true`, as
-   [Reading the answer][ts-5-05-reading-the-answer] sets out.
+5. **Check the permissions.** For every attribute the query asks for, the cached
+   Authority Statement of the verifier, or under `x509_hash` of the entity
+   holding the Verifier Issuing CA, is present, within its tolerance limit, and
+   answers `true`, as [Reading the answer][ts-5-05-reading-the-answer] sets out.
 6. **Check the Use Statement and the attributes**, as
    [Reading it][ts-5-06-reading-it] sets out; under `x509_hash`, an attribute
    outside the `ReaderAuthRole` of `x5c[0]`, or one its Credential Rulebook
@@ -838,18 +887,14 @@ set out; a refused attribute is not a failed check.
    subject of `x5c[0]`, which names the merchant.
 
 The `ReaderAuthRole` names a type by its mdoc `docType` where its Rulebook
-names an mdoc representation, and by the Rulebook `id` where it names none, so
-under `x509_hash` the wallet reads a credential query against the entry whose
-`docType` is the mdoc `docType` of the Rulebook the query names in
-`vct_values` or `type_values`, or the `id` of that Rulebook where it has no
-mdoc representation.
+names an mdoc representation, and by the Rulebook `id` where it names none.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-3-01-053 }**REQ-TS-3-01-053** Mobile Wallet MUST stop the exchange when the `client_id` of the authorization request and that of the Request Object differ, as [OpenID4VP][ref-openid4vp] section 5.10.1 requires.
 - [](){ #req-ts-3-01-054 }**REQ-TS-3-01-054** Mobile Wallet MUST take every parameter it acts on from the Request Object, and none from the authorization request.
 - [](){ #req-ts-3-01-055 }**REQ-TS-3-01-055** Under `decentralized_identifier`, Mobile Wallet MUST verify the Request Object as a reader under [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md), with `request-object` as the purpose the format names and `iat` as the time the token states it was made.
-- [](){ #req-ts-3-01-056 }**REQ-TS-3-01-056** Under `x509_hash`, Mobile Wallet MUST validate the chain of `x5c` to the Verifier Root CA as [REQ-TS-5-04-099][req-ts-5-04-099], [REQ-TS-5-04-102][req-ts-5-04-102] and [REQ-TS-5-04-103][req-ts-5-04-103] require.
+- [](){ #req-ts-3-01-056 }**REQ-TS-3-01-056** Under `x509_hash`, Mobile Wallet MUST validate the chain of `x5c` to the Verifier Root CA as [REQ-TS-5-04-099][req-ts-5-04-099], [REQ-TS-5-04-102][req-ts-5-04-102], and [REQ-TS-5-04-103][req-ts-5-04-103] require.
 - [](){ #req-ts-3-01-057 }**REQ-TS-3-01-057** Under `x509_hash`, Mobile Wallet MUST refuse a Request Object unless the base64url SHA-256 of the DER of `x5c[0]` equals the value after the prefix.
 - [](){ #req-ts-3-01-058 }**REQ-TS-3-01-058** Under `x509_hash`, Mobile Wallet MUST verify the signature of the Request Object with the public key of `x5c[0]`.
 - [](){ #req-ts-3-01-059 }**REQ-TS-3-01-059** Mobile Wallet MUST refuse a Request Object whose `exp` has passed, or whose `aud` is not `https://self-issued.me/v2`.
@@ -917,16 +962,25 @@ the verifier's request expires on its own. A request that passed every check
 and was refused gets `access_denied`, whatever the reason: the citizen
 refused, the wallet holds no credential that answers, or the attributes
 refused under [REQ-TS-5-06-067][req-ts-5-06-067],
-[REQ-TS-3-01-062][req-ts-3-01-062] or [REQ-TS-3-01-063][req-ts-3-01-063] left
-nothing that could be presented. The three reasons are one code, so that a
-verifier cannot tell from the answer what the citizen holds, as
-[OpenID4VP][ref-openid4vp] sections 15.4.1 and 15.9 ask.
+[REQ-TS-3-01-062][req-ts-3-01-062], or [REQ-TS-3-01-063][req-ts-3-01-063] left
+nothing that could be presented.
+
+The three reasons are one code, so that a verifier cannot tell from the
+answer what the citizen holds, as [OpenID4VP][ref-openid4vp] sections 15.4.1
+and 15.9 ask. Where the wallet holds no credential that answers, or the
+attributes refused leave nothing to present, the refusal is settled under the
+request, the Use Statement, and the certificate of
+[Choosing what to disclose][ts-5-11-choosing-what-to-disclose], before the
+citizen is shown anything, and the wallet shows the request even so:
+[REQ-TS-3-01-117][req-ts-3-01-117] has it name the requester and the purpose
+and say that it cannot answer. A verifier therefore learns no more from how
+long a refusal took than from the code it carries.
 
 Two mistakes of a verifier that has proven who it is get `invalid_request`
-instead, because [OpenID4VP][ref-openid4vp] sections 8.2 and 8.4 require a
-wallet to answer them with an error: a Request Object that carries
-`redirect_uri`, and one that carries `transaction_data`, which no wallet in
-IDCTF supports.
+instead: a Request Object that carries `redirect_uri`, and one that carries
+`transaction_data`, which no wallet in IDCTF supports.
+[OpenID4VP][ref-openid4vp] sections 8.2 and 8.4 require a wallet to answer both
+with an error.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -935,6 +989,7 @@ IDCTF supports.
 - [](){ #req-ts-3-01-079 }**REQ-TS-3-01-079** Mobile Wallet MUST answer with `error` set to `access_denied` where the request passed every check, carries neither `redirect_uri` nor `transaction_data`, and the wallet does not present.
 - [](){ #req-ts-3-01-080 }**REQ-TS-3-01-080** Mobile Wallet MUST NOT carry `error_description` or any other member that says why it did not present.
 - [](){ #req-ts-3-01-081 }**REQ-TS-3-01-081** Mobile Wallet MUST NOT send `access_denied` before the citizen has seen the request.
+- [](){ #req-ts-3-01-117 }**REQ-TS-3-01-117** Mobile Wallet MUST show the citizen the requester and the registered purpose, as [REQ-TS-3-01-066][req-ts-3-01-066] requires, and that it cannot answer the request, before it sends `access_denied` where the request, the Use Statement, and the certificate of [Choosing what to disclose][ts-5-11-choosing-what-to-disclose] leave no claim to present.
 
 </div>
 
@@ -948,20 +1003,22 @@ wallet learns nothing from it about which check of
 [REQ-TS-5-10-121][req-ts-5-10-121] requires.
 
 Where the request was opened as a link on the device the wallet runs on, the
-answer carries a `redirect_uri`, and the browser session that started the
-request has to come back with the response code inside it before Verifier
-Core hands over the result. That is what stops an attacker who started a
-request on their own device and relayed it to a victim from collecting the
-victim's answer, the session fixation of [OpenID4VP][ref-openid4vp] section
-14.2. A QR code read across devices has no browser session on the wallet's
-side to come back to, so it gets an empty answer.
+answer carries a `redirect_uri`, and [REQ-TS-3-01-087][req-ts-3-01-087] has the
+browser session that started the request come back with the response code inside
+it before Verifier Core hands over the result. That stops an attacker
+who started a request on their own device and relayed it to a victim from
+collecting the victim's answer, the session fixation of
+[OpenID4VP][ref-openid4vp] section 14.2. A QR code read across devices has no
+browser session on the wallet's side to come back to, so it gets an empty
+answer.
 
-A response arriving after the Request Object's `exp` is refused, so the
-time a citizen has to read the consent screen and decide is bounded by the
+Verifier Core and Mobile Verifier refuse a response arriving after the Request
+Object's `exp`. The time a
+citizen takes to read the consent screen and decide is therefore bounded by the
 lifetime of the Request Object, and the value the Governance Profile sets
-has to leave room for it. A response posted to a relayed response URI is
-the relay's, which [The relay][ts-3-01-the-relay] fixes, and none of the
-requirements below on decrypting, matching or answering applies to it.
+leaves room for it. A response posted to a relayed response URI is the
+relay's, which [The relay][ts-3-01-the-relay] fixes, and none of the
+requirements below on decrypting, matching, or answering applies to it.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -979,28 +1036,24 @@ requirements below on decrypting, matching or answering applies to it.
 
 ## The relay {#ts-3-01-the-relay}
 
-A merchant's device asks online through the Verifier Core of the RP
-Intermediary that vouches for it, because a phone at a warung has no public
-address a wallet can post to. The relay holds two things for one
-transaction: the Request Object the device signed, for the wallet to fetch,
-and the encrypted response, for the device to collect. It reads the first,
-which is signed and not encrypted, and cannot read the second, which is
-encrypted to a key only the device holds.
+A merchant's device asks online through the Verifier Core of the RP Intermediary
+that vouches for it, because a phone at a warung has no public address a wallet
+can post to. The relay holds two things for one transaction: the Request Object
+the device signed, for the wallet to fetch, and the encrypted response, for the
+device to collect. It reads the first, which is signed and not encrypted, and
+cannot read the second, which is encrypted to a key only the device holds.
 
 How the device leaves a Request Object and collects a response is between
-the device and the Verifier Core that vouches for it, which belong to the
-same RP Intermediary, so this specification fixes what the relay checks and
-holds and leaves the messages to that RP Intermediary.
+the device and the Verifier Core that vouches for it, both of the same
+RP Intermediary. This specification fixes what the relay checks and holds, and
+leaves the messages to that RP Intermediary.
 
 Verifier Core also keeps a record of each Request Object it receives for the
 relay, so that the RP Intermediary can tell which merchant asked for what, and
-when. The record covers a refused request as well as an accepted one, because
-the refusal under [REQ-TS-3-01-092][req-ts-3-01-092] is what shows a merchant
-asking beyond its category, which [merchant certificate withdrawal][merchant-certificate-withdrawal]
-rests on. The record holds the fields of [the table of relay record fields][tbl-ts-3-01-relay-record]
-and nothing else, and the Governance Profile sets how long it is kept.
-Operational logs carry the request identifier to correlate a transaction and
-nothing of the request.
+when, a refused request included: the refusal under
+[REQ-TS-3-01-092][req-ts-3-01-092] shows a merchant asking beyond its category,
+which [merchant certificate withdrawal][merchant-certificate-withdrawal] rests
+on.
 
 [](){ #tbl-ts-3-01-relay-record }
 
@@ -1019,13 +1072,13 @@ nothing of the request.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-3-01-091 }**REQ-TS-3-01-091** Verifier Core MUST accept a Request Object for the relay only after it has verified its signature under the key of `x5c[0]` and found that certificate issued by its own Verifier Issuing CA, unexpired and not on its own CRL.
+- [](){ #req-ts-3-01-091 }**REQ-TS-3-01-091** Verifier Core MUST accept a Request Object for the relay only after it has verified its signature under the key of `x5c[0]` and found that certificate issued by its own Verifier Issuing CA, unexpired, and not on its own CRL.
 - [](){ #req-ts-3-01-092 }**REQ-TS-3-01-092** Verifier Core MUST refuse for the relay a Request Object whose query asks for an attribute outside the `claims` of the Use Statement it carries, or a Use Statement of a category the device is not bound to.
 - [](){ #req-ts-3-01-093 }**REQ-TS-3-01-093** Verifier Core MUST assign each relayed transaction its own request URI and its own response URI.
 - [](){ #req-ts-3-01-107 }**REQ-TS-3-01-107** Verifier Core MUST serve a relayed Request Object at its request URI byte for byte as the device signed it.
 - [](){ #req-ts-3-01-094 }**REQ-TS-3-01-094** Verifier Core MUST hand a response posted to a relayed response URI to the device that left the Request Object, and to no one else.
 - [](){ #req-ts-3-01-095 }**REQ-TS-3-01-095** Verifier Core MUST delete a relayed response once the device has collected it, or once the time the Governance Profile sets has passed, whichever comes first.
-- [](){ #req-ts-3-01-096 }**REQ-TS-3-01-096** Verifier Core MUST NOT decrypt, log or keep a copy of a relayed response.
+- [](){ #req-ts-3-01-096 }**REQ-TS-3-01-096** Verifier Core MUST NOT decrypt, log, or keep a copy of a relayed response.
 - [](){ #req-ts-3-01-097 }**REQ-TS-3-01-097** Verifier Core MUST answer the wallet's `POST` to a relayed response URI with status `200` and an empty JSON object once it holds the response, because the device and not the relay matches it to its request.
 - [](){ #req-ts-3-01-098 }**REQ-TS-3-01-098** Verifier Core MUST NOT link two relayed transactions as coming from one wallet, by the network address a response came from or by any other value.
 - [](){ #req-ts-3-01-099 }**REQ-TS-3-01-099** Mobile Verifier MUST decrypt a response and match it by `state` on the device, as [REQ-TS-3-01-082][req-ts-3-01-082] and [REQ-TS-3-01-083][req-ts-3-01-083] require of Verifier Core.
@@ -1038,9 +1091,9 @@ nothing of the request.
 
 ## Errors {#ts-3-01-errors}
 
-Verifier Core answers with an error at the two endpoints, the response URI
-of its own requests and never a relayed one. The wallet's own refusal
-travels as a response, as
+Verifier Core answers with an error at two endpoints, the request URI and the
+response URI of its own requests, and never at that of a relayed one. The
+wallet's own refusal travels as a response, as
 [When the wallet does not answer][ts-3-01-when-the-wallet-does-not-answer]
 fixes. [The table of errors][tbl-ts-3-01-errors] gives every error this
 profile uses.
@@ -1067,8 +1120,6 @@ profile uses.
 
 ## Security considerations {#ts-3-01-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A request from a party that is not what it claims.** Every request is
   signed, and the wallet checks the signature by the prefix before anything
   else, [REQ-TS-3-01-055][req-ts-3-01-055] to
@@ -1079,8 +1130,8 @@ Each threat below is answered by the requirement named with it.
 - **A request URI that serves another verifier's request.** A Request Object
   copied from one verifier and served from another address still names its
   own `response_uri` and `client_id` under its signature, so the answer goes
-  to the verifier that signed it, and the `client_id` of the QR code has to
-  match, [REQ-TS-3-01-053][req-ts-3-01-053].
+  to the verifier that signed it, and the wallet stops when the `client_id` of the QR
+  code does not match, [REQ-TS-3-01-053][req-ts-3-01-053].
 - **A request replayed.** A Request Object expires,
   [REQ-TS-3-01-059][req-ts-3-01-059], serves one transaction,
   [REQ-TS-3-01-036][req-ts-3-01-036], and stops being served once
@@ -1106,10 +1157,10 @@ Each threat below is answered by the requirement named with it.
   device the redirect and its response code close it,
   [REQ-TS-3-01-086][req-ts-3-01-086] and
   [REQ-TS-3-01-087][req-ts-3-01-087]. Across devices nothing in the protocol
-  closes it, because the wallet has no session to come back to; what stands
-  in for it is the consent screen, which names the requester and the
-  registered purpose, [REQ-TS-3-01-066][req-ts-3-01-066], so the citizen sees
-  who is asking before anything is sent.
+  closes it, because the wallet has no session to come back to. The consent
+  screen stands in for it: it names the requester and the registered purpose,
+  [REQ-TS-3-01-066][req-ts-3-01-066], so the citizen sees who is asking before
+  anything is sent.
 - **A merchant reaching past its category.** The relay refuses the request
   before it serves it, [REQ-TS-3-01-092][req-ts-3-01-092], and the wallet
   refuses what lies outside the certificate and the statement,
@@ -1123,8 +1174,8 @@ Each threat below is answered by the requirement named with it.
 ## Privacy considerations {#ts-3-01-privacy-considerations}
 
 A verifier learns from an exchange the presentation and nothing about the
-wallet that made it: the wallet sends no identifier of the installation, of
-the device or of its software, [REQ-TS-3-01-009][req-ts-3-01-009], and the
+wallet that made it. The wallet sends no identifier of the installation, of
+the device, or of its software, [REQ-TS-3-01-009][req-ts-3-01-009], and the
 checks it runs read its own cache, [REQ-TS-3-01-067][req-ts-3-01-067], so
 neither Trust Infrastructure nor the issuer learns that an exchange
 happened.
@@ -1146,6 +1197,6 @@ keep, is fixed by
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

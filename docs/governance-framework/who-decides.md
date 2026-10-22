@@ -8,10 +8,9 @@ description: Which institution decides what, at which approval tier, how the Gov
 # Who decides {#gf-who-decides}
 
 <p class="ekdn-lead" markdown="span">
-This page names the institution that decides, and what it decides. The Root
-Authority decides every registration, accreditation and authorization, and it
-alone changes the Governance Profile, a Technical Specification version in
-force, and this Framework.
+The Root Authority decides every registration, accreditation, and
+authorization, and it alone changes the Governance Profile, a Technical
+Specification version in force, and this Framework.
 </p>
 
 !!! info "Normative page"
@@ -27,7 +26,7 @@ force, and this Framework.
 ## Legal basis {#gf-legal-basis}
 
 This Framework operates inside Indonesian law and adds to it. Every entity
-that runs Issuer Core, Verifier Core or Wallet Backend Service operates an
+that runs Issuer Core, Verifier Core, or Wallet Backend Service operates an
 electronic system under [UU No. 11 Tahun 2008 tentang Informasi dan Transaksi Elektronik][ref-uu-11-2008]
 and [PP No. 71 Tahun 2019][ref-pp-71-2019]. Each issuer and Relying Party
 handles personal data under
@@ -58,9 +57,8 @@ addressed to the Root Authority binds whichever institution is designated.
 Framework states it.
 
 The Root Authority decides, Trust Authority records and carries out what it
-decides, and Trust Registry publishes the result. A decision
-is never Trust Authority's own. Trust Authority acts for the Root Authority
-and has no discretion over a request.
+decides, and Trust Registry publishes the result. Trust Authority acts for the
+Root Authority and has no discretion over a request.
 
 The Root Authority holds the two roots of trust, the Issuer Root CA and the
 Verifier Root CA, in separate offline hardware. It operates them itself,
@@ -68,17 +66,17 @@ unless the regulation that designates it names another state institution as
 operator. That operator signs only what the Root Authority has decided.
 
 An Assessment Body tests and reports, and the Root Authority decides on the
-report. A Root Authority that were also an Assessment Body would decide on its
-own findings, so the two roles never meet in one institution.
+report. If the Root Authority were also an Assessment Body, it would decide on
+its own findings, so the two roles never meet in one institution.
 
-The Root Authority also publishes a register a person can read. The trusted
-list is the one home of the fact that a registration exists, and its readers
-are software. A citizen, a journalist or an auditor who wants to know whether
-an institution is registered, and in which roles, needs a page. The register
-is that page, generated from the trusted list and never maintained beside it,
-so the two cannot disagree. It lives on the Root Authority's own official
-site, which makes it an act of the institution and changes no Module. A
-merchant is not on the trusted list and so not in the register.
+The Root Authority also publishes a register a person can read. The trusted list
+is the one home of the fact that a registration exists, and its readers are
+software. A citizen, a journalist, or an auditor who wants to know whether an
+institution is registered, and in which roles, needs a page. The register is
+that page, generated from the trusted list and never maintained beside it, so
+the two cannot disagree. It lives on the Root Authority's own official site,
+which makes it an act of the institution and changes no Module. A merchant is
+not on the trusted list and so not in the register.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -86,7 +84,7 @@ merchant is not on the trusted list and so not in the register.
 - [](){ #req-gf-003 }**REQ-GF-003** An operator the designating regulation names MUST act only on the decisions of the Root Authority.
 - [](){ #req-gf-004 }**REQ-GF-004** The Root Authority MUST NOT be an Assessment Body.
 - [](){ #req-gf-005 }**REQ-GF-005** The Root Authority MUST carry out each of its decisions through Trust Authority.
-- [](){ #req-gf-006 }**REQ-GF-006** The Root Authority MUST publish a register that lists every registration on the trusted list with its legal name, operating name, roles and status.
+- [](){ #req-gf-006 }**REQ-GF-006** The Root Authority MUST publish a register that lists every registration on the trusted list with its legal name, operating name, roles, and status.
 - [](){ #req-gf-007 }**REQ-GF-007** The Root Authority MUST generate the register from the trusted list in force.
 - [](){ #req-gf-008 }**REQ-GF-008** The Root Authority MUST NOT edit the register apart from the trusted list.
 - [](){ #req-gf-009 }**REQ-GF-009** The Root Authority MUST publish the register on its own official site.
@@ -96,14 +94,13 @@ merchant is not on the trusted list and so not in the register.
 ## Approval tiers {#gf-approval-tiers}
 
 [Three stages of authority](../architecture-framework/roles/three-stages-of-authority.md)
-describes [registration][registration], [accreditation][accreditation] and
+describes [registration][registration], [accreditation][accreditation], and
 [authorization][authorization], and the three approval tiers that grade a
-request. This section makes the tiers binding. A tier grades a request by the
-highest minimization class among the attributes it reaches, and never grades a
-party: an accredited party asking for an open attribute is at Approval Tier A
-today and at Approval Tier C tomorrow if it asks for a restricted one. A
-credential type nobody has issued before is already at Approval Tier C under
-[REQ-CR-046][req-cr-046], and this page does not repeat that rule.
+request. A tier grades the request and never the party, so an accredited party
+asking for an open attribute within its scope is at Approval Tier A today and
+at Approval Tier C tomorrow if it asks for a restricted one. A credential type
+nobody has issued before is already at Approval Tier C under
+[REQ-CR-046][req-cr-046].
 
 The Architecture Framework says a decision takes days at Approval Tier B and
 weeks at Approval Tier C. Those are expectations. This Framework sets no
@@ -115,10 +112,11 @@ merchants, and the Root Authority decides nothing about a merchant directly.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-010 }**REQ-GF-010** The Root Authority MUST decide every registration, accreditation, authorization and [registered use][registered-use] of every institution other than a merchant.
+- [](){ #req-gf-010 }**REQ-GF-010** The Root Authority MUST decide every registration, accreditation, authorization, and [registered use][registered-use] of every institution other than a merchant.
 - [](){ #req-gf-011 }**REQ-GF-011** The Root Authority MUST review an authorization request or a request for a registered use at Approval Tier A when the highest minimization class among the attributes it reaches is `open`, at Approval Tier B when it is `normal`, and at Approval Tier C when it is `restricted`.
 - [](){ #req-gf-012 }**REQ-GF-012** The Root Authority MUST review a request from an accredited party to change the scope it holds at Approval Tier B or higher.
 - [](){ #req-gf-013 }**REQ-GF-013** The Root Authority MUST review the first accreditation of a registration at Approval Tier C, whatever attributes the party asks for.
+- [](){ #req-gf-291 }**REQ-GF-291** The Root Authority MUST review at Approval Tier C a Relying Party's request for the standing to issue Verifier Device Certificates, for merchants it registers or for its own proximity readers, which [REQ-TS-5-04-047][req-ts-5-04-047] admits a Verifier Issuing CA on.
 - [](){ #req-gf-014 }**REQ-GF-014** At Approval Tier A, the Root Authority MUST grant the request without review when the party is accredited and the attributes lie within its accreditation scope.
 - [](){ #req-gf-015 }**REQ-GF-015** The Root Authority MUST have one reviewer decide a request at Approval Tier B.
 - [](){ #req-gf-016 }**REQ-GF-016** The Root Authority MUST have a committee it constitutes decide a request at Approval Tier C.
@@ -146,13 +144,14 @@ which is why the reason is recorded.
 
 Three things change by decision of the Root Authority: the
 [Governance Profile](../technical-specifications/publishing-and-reading-the-governance-profile.md),
-the version of a Technical Specification in force, and this Framework. The
-Credential Rulebook Catalog changes through its own
+the version of a Technical Specification in force, and this Framework. A
+Rulebook enters the Credential Rulebook Catalog through its own
 [admission cycle](../credential-rulebook/admission-and-versions.md) and is
-outside this section. Amendment is not an approval tier. A tier grades one
-request by the attributes it reaches, while an edition of the Governance
-Profile binds every party and carries no attribute. Applying a committee and an
-Assessment Body report to it would ask for a report that has no subject.
+outside this section; the Catalog's own rules are amended as this Framework is.
+Amendment is not an approval tier. A tier grades one request by the attributes
+it reaches, while an edition of the Governance Profile binds every party and
+carries no attribute. Applying a committee and an Assessment Body report to it
+would ask for an assessment of something that is not an entity.
 
 ### Who may propose {#gf-who-may-propose}
 
@@ -162,7 +161,7 @@ for it.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-022 }**REQ-GF-022** An accredited entity, a Credential Rulebook Provider and a recognized Assessment Body MAY propose to the Root Authority an amendment to the Governance Profile, a Technical Specification or this Framework.
+- [](){ #req-gf-022 }**REQ-GF-022** An accredited entity, a Credential Rulebook Provider, and a recognized Assessment Body MAY propose to the Root Authority an amendment to the Governance Profile, a Technical Specification, this Framework, or the rules of the Credential Rulebook Catalog.
 - [](){ #req-gf-023 }**REQ-GF-023** The Root Authority MUST record every proposal it receives and the decision it reaches on it.
 
 </div>
@@ -170,8 +169,9 @@ for it.
 ### Amending the Governance Profile {#gf-amending-the-governance-profile}
 
 Only the Root Authority decides what an edition says, and Trust Registry
-publishes the edition ([Publishing and reading the Governance Profile][ts-02-publishing-and-reading-the-governance-profile]
-fixes its format). An edition that changes a value is published as a draft
+publishes the edition.
+[Publishing and reading the Governance Profile][ts-02-publishing-and-reading-the-governance-profile]
+fixes its format. An edition that changes a value is published as a draft
 beside the edition in force before it is approved, so the people it binds can
 read it. An edition that changes no value, such as one that only renews
 `next_update`, announces or withdraws a signer, or adds a `credential_types`
@@ -179,18 +179,19 @@ member for a Rulebook the Root Authority already approved, follows from a
 decision taken elsewhere and needs no review.
 
 A tightening makes a rule harder to meet: removing an algorithm, shortening a
-lifetime or a tolerance, narrowing a closed list, bringing a date forward or
+lifetime or a tolerance, narrowing a closed list, bringing a date forward, or
 ending a transition. A tightening needs notice, which is the member
 `intervals.amendment_notice` in [Intervals][ts-02-intervals]. The period is
 read from the edition in force on the day the draft is published. An edition
-therefore cannot shorten the notice it is itself subject to, the same reason
-TS-02 gives for keeping its own notice constants outside the Profile. A
-relaxation, a new option or a postponed date needs no notice beyond its
+therefore cannot shorten the notice it is itself subject to. TS-02 keeps its
+own notice constants outside the Profile for the same reason. A
+relaxation, a new option, or a postponed date needs no notice beyond its
 publication.
 
-A value that has to tighten at once to contain a security incident, such as an
-algorithm or an attestation root shown to be broken, cannot wait for review or
-notice. The reason is then published as part of the incident's post-mortem.
+A security incident, such as an algorithm or an attestation root shown to be
+broken, can call for a value to tighten at once and cannot wait for review or
+notice ([REQ-GF-029][req-gf-029]). The reason is then published as part of the
+incident's post-mortem.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -198,7 +199,7 @@ notice. The reason is then published as part of the incident's post-mortem.
 - [](){ #req-gf-025 }**REQ-GF-025** Before it approves an edition that changes a value, the Root Authority MUST publish the draft edition for review beside the edition in force.
 - [](){ #req-gf-026 }**REQ-GF-026** The Root Authority MAY approve an edition that changes no value without a review.
 - [](){ #req-gf-027 }**REQ-GF-027** The Root Authority MUST NOT bring an edition that tightens a value into force earlier than the period the Governance Profile sets as `intervals.amendment_notice` in the edition in force when the draft is published.
-- [](){ #req-gf-028 }**REQ-GF-028** The Root Authority MAY bring an edition that relaxes a value, adds an option or postpones a date into force on its publication.
+- [](){ #req-gf-028 }**REQ-GF-028** The Root Authority MAY bring an edition that relaxes a value, adds an option, or postpones a date into force on its publication.
 - [](){ #req-gf-029 }**REQ-GF-029** The Root Authority MAY approve an edition without review or notice when a value has to tighten at once to contain a security incident.
 - [](){ #req-gf-030 }**REQ-GF-030** The Root Authority MUST publish the reason for an edition approved under [REQ-GF-029][req-gf-029] as part of the post-mortem of that incident.
 
@@ -206,11 +207,12 @@ notice. The reason is then published as part of the incident's post-mortem.
 
 ### Putting a specification version in force {#gf-putting-a-specification-version-in-force}
 
-Drafting a Technical Specification stays with the technical team, and
+Drafting a Technical Specification stays with the technical team, the drafting
+body the Root Authority constitutes, which decides nothing by itself.
 [Versions][ts-00-versions] already requires a draft of every revision to be
-published for review. What this Framework adds is who puts a version in force:
-the Root Authority, through the `specifications` member of the Governance
-Profile, so that the same edition that names the version carries its notice.
+published for review. What this Framework adds is who puts a version in force: the Root Authority, through the `specifications` member of the
+Governance Profile, so that the same edition that names the version carries its
+notice.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -221,7 +223,7 @@ Profile, so that the same edition that names the version carries its notice.
 
 ### Amending the Governance Framework {#gf-amending-the-governance-framework}
 
-This Framework is amended by the same hand that applies it. A revision is
+The Root Authority amends this Framework and also applies it. A revision is
 published as a draft for review, adopted by the Root Authority, and numbered
 by the major and minor rule that Technical Specifications follow. A major
 version names its own transition period and takes effect no earlier than its
@@ -245,16 +247,14 @@ Framework, because a recognition is an act and adding one changes no rule.
 ### Notice of an amendment {#gf-notice-of-an-amendment}
 
 The published edition is the notice to every Module, and software needs
-nothing beyond the sync TS-02 describes. People are another matter. The
-person answerable for an entity, the one who answers to the Root Authority for
-it, may never read the Governance Profile. The Root Authority therefore tells
-that person itself, as its own act and not through Incident Service, which is
-for incidents. The entity then tells its own people: a Relying Party tells the
+nothing beyond the sync TS-02 describes. The person answerable to the
+Root Authority for an entity may never read the Governance Profile, so the
+Root Authority tells that person itself, as its own act and not through
+Incident Service. The entity then tells its own people: a Relying Party tells the
 staff who operate a verifier, and an RP Intermediary tells its merchants.
 
-A participant meets a tightened value from the moment its Modules hold the
-edition that carries it. The notice is the time the participant has to
-prepare, and ends when the edition takes effect.
+The notice is the participant's time to prepare, and ends when the
+edition takes effect.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -274,7 +274,7 @@ copy, so a revocation can go unseen for as long as the copy lives. See
 [Transaction path and trust path](../architecture-framework/high-level-architecture/transaction-path-and-trust-path.md)
 for the paragraph on what the limit bounds. The Governance Profile already
 holds the members that make the window: the `lifetimes.trusted_list_horizon`
-of [Lifetimes][ts-02-lifetimes], the members of [Tolerances][ts-02-tolerances]
+of [Lifetimes][ts-02-lifetimes], the members of [Tolerances][ts-02-tolerances],
 and the publication members of [Intervals][ts-02-intervals]. This Framework
 adds no member of its own. It fixes the relation the existing ones keep.
 
@@ -282,33 +282,37 @@ The trusted list horizon is already the staleness accepted from a device with
 no network, so every other path is anchored to it. The longest a reader with
 no network may accept a revoked key or credential is then the horizon plus the
 longest republication interval of a list that carries a revocation. No
-tolerance outlasts the horizon, and no list outlives the interval at which it
-is republished. The Root Authority accepts that single window for every
-credential type before it puts an edition in force. Windows per type would
+tolerance outlasts the horizon, and no copy of a list counts as current past
+the interval at which the list is republished. The `exp` of a list runs past
+that interval by the tolerance, so that a copy a reader may still use has not
+expired.
+
+The Root Authority accepts that single window for every credential type before
+it puts an edition in force. Windows per type would
 need tolerances per type, which no reader implements, and the strictest type
 is the one the window is judged against.
 
-Past the tolerance a verifier refuses, as the Technical Specifications
-already require. Accepting under a stated risk would reopen the grace period that
-[the three rules for reading the copy][three-rules-for-reading-the-copy] exclude. A Relying Party whose use carries more risk than the
-window allows may stop using a cached copy earlier, which is where the risk
-analysis of that use belongs.
+Past the tolerance a verifier refuses, as the Technical Specifications already
+require. Accepting under a stated risk would reopen the grace period that
+[the three rules for reading the copy][three-rules-for-reading-the-copy]
+exclude. A Relying Party whose use carries more risk than the window allows may
+stop using a cached copy earlier, which is where the risk analysis of that use
+belongs.
 
-A credential's own technical validity is bounded the same way. Key
-Attestation expiry, installation revocation and Wallet Provider suspension
-reach issuance only, so the technical period is what limits how long a
-disowned installation's credentials go on presenting when the citizen never
-told the issuer.
+A credential's own technical validity is bounded the same way. Key Attestation
+expiry, installation revocation, and Wallet Provider suspension reach issuance
+only. Only the technical period limits how long a disowned installation's
+credentials go on presenting when the citizen never told the issuer.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-044 }**REQ-GF-044** The Root Authority MUST set the Governance Profile so that no member of [Tolerances][ts-02-tolerances] exceeds `lifetimes.trusted_list_horizon`.
-- [](){ #req-gf-045 }**REQ-GF-045** The Root Authority MUST set the Governance Profile so that every list a reader uses to learn of a revocation is republished within an interval a member of the Profile sets, and is valid no longer than that interval.
+- [](){ #req-gf-045 }**REQ-GF-045** The Root Authority MUST set the Governance Profile so that every list a reader uses to learn of a revocation is republished within an interval a member of the Profile sets, and so that a copy of it counts as current no longer than that interval, which for the trusted list is `lifetimes.trusted_list_horizon`.
 - [](){ #req-gf-046 }**REQ-GF-046** The Root Authority MUST accept the window that the trusted list horizon and the longest such interval give, for every credential type, before it puts an edition in force.
 - [](){ #req-gf-047 }**REQ-GF-047** A Relying Party MUST refuse, at every verifier it runs, a credential once a copy it needs to check the credential is past its tolerance.
 - [](){ #req-gf-048 }**REQ-GF-048** A Relying Party MUST NOT accept a credential under a stated risk once a copy it needs is past its tolerance.
 - [](){ #req-gf-049 }**REQ-GF-049** A Relying Party MAY stop using a cached copy before its tolerance for a use whose risk calls for it.
 - [](){ #req-gf-050 }**REQ-GF-050** The Root Authority MUST set `validity_ceiling` in [Credential types][ts-02-credential-types] for every credential type a Rulebook registers.
-- [](){ #req-gf-051 }**REQ-GF-051** The Root Authority MUST NOT set a `validity_ceiling` longer than the administrative validity of a credential type, where its Rulebook names one.
+- [](){ #req-gf-051 }**REQ-GF-051** The Root Authority MUST NOT set a `validity_ceiling` longer than the administrative validity period the legal basis of the type gives the document underneath it, where its Rulebook names an `expiry_date`.
 
 </div>

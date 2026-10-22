@@ -5,7 +5,7 @@
   "formats": {
     "ldp_vc": {
       "context": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/context.jsonld",
-      "context_digest": "sha384-KDUCcr70a0bgOCAEX6VwDhZlhvD+fFdDX+EfAlMgeNp3rPknl1CPN311x1vUZPf2",
+      "context_digest": "sha384-ErVJLbXXGsdZ0mvL4HtMA4Dwl7dMnxcnhK+jImOOH+m1S8zO2PwkugKR8NDGDPxG",
       "type": "KartuNikah",
       "cryptosuite": "ecdsa-rdfc-2019",
       "credential_schema": "https://catalog.trust.go.id/type-metadata/kartu-nikah-v1/credential-schema.json"
@@ -20,9 +20,7 @@
     { "name": "nomor_akta_nikah", "minimization": "normal" },
     { "name": "kua", "minimization": "open" },
     { "name": "kabupaten_kota", "minimization": "open" },
-    { "name": "provinsi", "minimization": "open" },
-    { "name": "foto_suami", "minimization": "normal" },
-    { "name": "foto_istri", "minimization": "normal" }
+    { "name": "provinsi", "minimization": "open" }
   ],
   "min_assurance": "substantial",
   "issuer_assurance": "substantial"

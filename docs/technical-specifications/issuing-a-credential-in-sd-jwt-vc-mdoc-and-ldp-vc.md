@@ -11,9 +11,7 @@ description: The three representations a credential is issued in, what each carr
 
 <p class="ekdn-lead" markdown="span">
 A credential is the signed set of statements an issuer hands a citizen, and it
-takes one of three shapes on the wire. This specification fixes all three: what
-each carries, which key signs it, how the citizen's key is bound into it, and
-what a reader checks before it believes a single claim.
+takes one of three shapes on the wire. This specification fixes all three.
 </p>
 
 Every sentence on this page binds Issuer Core, which assembles and signs a
@@ -26,16 +24,20 @@ identifier `REQ-TS-5-10-nnn` follow
 ## Who runs this and what it needs {#ts-5-10-who-runs-this-and-what-it-needs}
 
 This specification fixes the three representations a credential is issued in:
-an [SD-JWT-based Verifiable Credential (SD-JWT VC)][ref-i-d-ietf-oauth-sd-jwt-vc]
-draft -13, an [ISO mdoc][ref-iso-18013-5] under ISO/IEC 18013-5:2021, and a
-[W3C Verifiable Credentials Data Model (VCDM) 2.0][ref-vc-data-2-0] document
-secured with a Data Integrity proof, which OpenID4VCI 1.0 calls `ldp_vc`. For
-each it fixes the claims and fields, the encoding of a value, the signature, the
+
+- An [SD-JWT-based Verifiable Credential (SD-JWT VC)][ref-i-d-ietf-oauth-sd-jwt-vc]
+  draft -13.
+- An [ISO mdoc][ref-iso-18013-5] under ISO/IEC 18013-5:2021.
+- A [W3C Verifiable Credentials Data Model (VCDM) 2.0][ref-vc-data-2-0]
+  document secured with a Data Integrity proof, which OpenID4VCI 1.0 calls
+  `ldp_vc`.
+
+For each it fixes the claims and fields, the encoding of a value, the signature, the
 holder binding, the status pointer, the validity period, and the checks a reader
 runs on the credential itself.
 
 Its conformance targets are Issuer Core, which builds and signs a credential;
-Mobile Wallet, which receives, stores and parses one; and Verifier Core and
+Mobile Wallet, which receives, stores, and parses one; and Verifier Core and
 Mobile Verifier, which read one. A Relying Party's own application built on
 Reader SDK reads an mdoc through that library, and the requirements addressed to
 Mobile Verifier bind the application as well.
@@ -44,25 +46,32 @@ This specification binds a credential of a type a Credential Rulebook
 governs. The Accreditation Credential is an SD-JWT VC that no Rulebook
 governs, and
 [Issuing and carrying an Accreditation Credential](issuing-and-carrying-an-accreditation-credential.md)
-fixes it on its own terms; nothing on this page binds it.
+fixes it on its own terms.
 
-Six things a credential depends on sit elsewhere. Which representations a
-credential type takes, what its claims are called, and how each value is typed
-come from its Credential Rulebook, whose fields
-[Rulebook structure](../credential-rulebook/rulebook-structure.md) fixes. The
-exchange that carries a credential to a wallet is OpenID4VCI, which
-[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
-fixes. The presentation of a credential is
-[Building and verifying a presentation](building-and-verifying-a-presentation.md).
-The status list a credential points into is
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md).
-The Document Signer Certificate an mdoc carries is
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md).
-Finding the issuer's signing key from its identifier is
-[Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md).
-Each signature algorithm, and the ceiling on a technical validity period, are
-values the Governance Profile sets; this specification names where each one
-applies.
+It leaves to other documents:
+
+- Which representations a credential type takes, what its claims are called,
+  and how each value is typed, which the Credential Rulebook of that type
+  holds, in the fields
+  [Rulebook structure](../credential-rulebook/rulebook-structure.md) fixes.
+- The exchange that carries a credential to a wallet, which
+  [Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
+  holds.
+- The presentation of a credential, which
+  [Building and verifying a presentation](building-and-verifying-a-presentation.md)
+  holds.
+- The status list a credential points into, which
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  holds.
+- The Document Signer Certificate an mdoc carries, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- Finding the issuer's signing key from its identifier, which
+  [Finding a signer's key from its DID](finding-a-signers-key-from-its-did.md)
+  holds.
+- Each signature algorithm and the ceiling on a technical validity period,
+  which the Governance Profile holds, this specification naming where each
+  one applies.
 
 Before Issuer Core signs anything it holds four things: the credential key the
 wallet attested, as
@@ -89,11 +98,11 @@ before the transaction.
 
 A credential carries five things, as
 [what one credential carries][what-one-credential-carries] sets out: the claims,
-the type identifier that names the governing Credential Rulebook, the holder
-binding, the status pointer, and the issuer's signature over all four. The three
-representations differ in how each of the five is written down, and in nothing
-else. [The table of five parts][tbl-ts-5-10-five-parts] gives the field that
-carries each one.
+the type identifier that names the governing Credential Rulebook, the
+holder binding, the status pointer, and the issuer's signature over all four.
+The three representations differ in how each of the five is written down, and in
+nothing else. [The table of five parts][tbl-ts-5-10-five-parts] gives the field
+that carries each one.
 
 [](){ #tbl-ts-5-10-five-parts }
 
@@ -112,46 +121,51 @@ carries each one.
 A citizen holds one credential and the wallet may hold it twice, as
 [one credential, two representations][one-credential-two-representations] sets
 out. An SD-JWT VC and an mdoc of the same credential carry the same claim values,
-the same credential key, and the same status entry, which is how a verifier can tell they are two
-views of one thing rather than two credentials that happen to agree. `ldp_vc`
+the same credential key, and the same status entry. A verifier can therefore
+tell they are two views of one thing rather than two credentials that happen to
+agree. `ldp_vc`
 never pairs with either, because a Credential Rulebook that lists it lists
 nothing else.
 
-There are three because each one does a job the others cannot. An
-SD-JWT VC is read online and has no proximity profile. An mdoc is the only
-representation a verifier can check with no network at either end. `ldp_vc`
-exists so that a credential issued here is readable by JSON-LD software written
-outside the ecosystem, and it pays for that with no selective disclosure at all.
+Each representation does a job the others cannot, as
+[three credential formats][three-credential-formats] sets out: an SD-JWT VC is
+read online, an mdoc is the only one presented in proximity, and `ldp_vc` is the
+one JSON for Linked Data (JSON-LD) software outside the ecosystem can read.
 
 ## The credentials as issued {#ts-5-10-the-credentials-as-issued}
 
 The three credentials below are an illustration: the citizens, the issuers, the
-addresses and the keys are invented, and no credential has been issued. Every
+addresses, and the keys are invented, and no credential has been issued. Every
 field is exact. Each was signed with the key its `kid`, its certificate, or its
 `verificationMethod` names, each signature verifies, and each digest recomputes,
 so an implementation can parse these artifacts and find what the clauses below
-require. There is one per representation, each of a type whose Credential
-Rulebook names that representation, and all three are bound to the one
-credential key
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-attests, whose holder identifier
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-publishes. Their three issuers are the ones
-[the trusted list][ts-5-01-trusted-list-payload] carries. Each
-signature was made with the key its `kid` or its `verificationMethod` names,
-under the key purposes
-[the table of keys by role][tbl-ts-5-02-keys-by-role] fixes, and the mdoc was
-signed under the Document Signer Certificate
-[the Document Signer Certificate as issued][ts-5-04-document-signer-certificate-as-issued]
-publishes. Each status pointer names a list
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md)
-serves, at an index that page shows as valid.
+require.
+
+There is one per representation, each of a type whose Credential Rulebook
+names that representation. The credentials agree with the other examples on
+five points:
+
+- All three are bound to the one credential key
+  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  attests, whose holder identifier
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  publishes.
+- Their three issuers are the ones
+  [the trusted list][ts-5-01-trusted-list-payload] carries.
+- Each signature was made under the key purposes
+  [the table of keys by role][tbl-ts-5-02-keys-by-role] fixes.
+- The mdoc was signed under the Document Signer Certificate
+  [the Document Signer Certificate as issued][ts-5-04-document-signer-certificate-as-issued]
+  publishes.
+- Each status pointer names a list
+  [Publishing and reading a status list](publishing-and-reading-a-status-list.md)
+  serves, at an index that page shows as valid.
 
 ### A Kartu ASN as an SD-JWT VC {#ts-5-10-a-kartu-asn-as-an-sd-jwt-vc}
 
 The credential as the wallet receives it: the issuer-signed JSON Web Token
-(JWT), then one disclosure per claim, then the empty slot where a Key Binding
-JWT goes at presentation time.
+(JWT), then one disclosure per claim, then the empty slot where a
+Key Binding JWT goes at presentation time.
 
 ``` { .text title="A Kartu ASN in SD-JWT VC, as issued" data-format="SD-JWT VC" }
 eyJ0eXAiOiJkYytzZC1qd3QiLCJhbGciOiJFUzI1NiIsImtpZCI6ImRpZDp3ZWJ2aDpRbWU4UnJp
@@ -371,9 +385,7 @@ c0000b080001000101011100ffc40014000100000000000000000000000000000009ffc40014
 ```
 
 The same bytes in Concise Binary Object Representation (CBOR) diagnostic
-notation. `issuerAuth` is a `COSE_Sign1` of four members: the protected header,
-the unprotected header carrying the Document Signer Certificate under label 33,
-the payload, and the signature:
+notation:
 
 ``` { .text title="The mdoc IssuerSigned, in CBOR diagnostic notation" data-format="CBOR diag" }
 {
@@ -568,8 +580,7 @@ The payload of that `COSE_Sign1`, decoded, is the Mobile Security Object:
 ### A Kartu Nikah as an `ldp_vc` {#ts-5-10-a-kartu-nikah-as-an-ldp-vc}
 
 A third type, from a second Attribute Issuer, in the representation that carries
-no selective disclosure. Its claims are open or normal throughout, which is what
-lets its Credential Rulebook name `ldp_vc` at all:
+no selective disclosure. Its claims are open or normal throughout:
 
 ``` { .json title="A Kartu Nikah in ldp_vc, as issued" data-format="JSON-LD" }
 {
@@ -592,9 +603,7 @@ lets its Credential Rulebook name `ldp_vc` at all:
     "nomor_akta_nikah": "0123/0007/V/2025",
     "kua": "KUA Kec. Cibinong",
     "kabupaten_kota": "Kabupaten Bogor",
-    "provinsi": "Jawa Barat",
-    "foto_suami": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q==",
-    "foto_istri": "/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/wAALCAABAAEBAREA/8QAFAABAAAAAAAAAAAAAAAAAAAACf/EABQQAQAAAAAAAAAAAAAAAAAAAAD/2gAIAQEAAD8AKp//2Q=="
+    "provinsi": "Jawa Barat"
   },
   "credentialStatus": [
     {
@@ -623,15 +632,14 @@ lets its Credential Rulebook name `ldp_vc` at all:
     "created": "2026-10-17T06:00:10Z",
     "verificationMethod": "did:webvh:QmbAb7u9RMjqsZ9L98pe47szJZdnKQLh9KizqNW2WwKac1:kemenag.go.id#issuance-jose-1",
     "proofPurpose": "assertionMethod",
-    "proofValue": "z23RrsniSuQSX6EgQ5VByC1PYJhY8P9TFupfVXiJoiaaEqdDKYrXj36hFVXaUUinQVoRNfLrWGodfjWM9XCqRaQao"
+    "proofValue": "z3JTvebTQCkzF6G4dX57mTnykwTtDGWD1gBCfBjzpWmkx2PdTocdowomBTR7Qzaef1L34erTcPA16ArhQhiNxS5UW"
   }
 }
 ```
 
 ## Choosing the representations {#ts-5-10-choosing-the-representations}
 
-A credential type is issued in the representations its Credential Rulebook
-names, and in no other. The Rulebook is the only place the choice is written
+The Rulebook is the only place the choice of representations is written
 down, so an issuer cannot add a representation for one citizen and withhold it
 from another.
 
@@ -649,10 +657,9 @@ from another.
 
 Which representations an issuer offers for a type, and how they reach a wallet
 in one exchange, belong to
-[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md):
-the issuer announces them in `credential_configurations_supported`, and a wallet
-that received one representation of a credential and not the other has a
-credential it cannot present in both modes.
+[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md).
+A wallet that received one representation of a credential and not the other has
+a credential it cannot present in both modes.
 
 ## The SD-JWT VC representation {#ts-5-10-the-sd-jwt-vc-representation}
 
@@ -670,7 +677,7 @@ that make its claims selectively disclosable.
 - [](){ #req-ts-5-10-013 }**REQ-TS-5-10-013** The `alg` header parameter MUST be one the Governance Profile allows for an issuance key.
 - [](){ #req-ts-5-10-014 }**REQ-TS-5-10-014** *Withdrawn: [REQ-TS-01-033][req-ts-01-033] covers it.*
 - [](){ #req-ts-5-10-015 }**REQ-TS-5-10-015** The `kid` header parameter MUST name a key of the purpose `issuance-jose`, as [Naming the key][ts-01-naming-the-key] of TS-01 requires.
-- [](){ #req-ts-5-10-016 }**REQ-TS-5-10-016** The header MUST carry `typ`, `alg` and `kid` and no other parameter.
+- [](){ #req-ts-5-10-016 }**REQ-TS-5-10-016** The header MUST carry `typ`, `alg`, and `kid` and no other parameter.
 
 </div>
 
@@ -715,10 +722,8 @@ them: each one travels as a disclosure, and only its digest is signed.
 
 Every attribute of a type carries an `sd` flag in its Type Metadata, and it is
 `always` whatever the attribute's minimization class, as
-[the schema in each format][schema-in-each-format] requires. Every type claim
-is therefore selectively disclosable and none of them travels in the clear, so
-the issuer makes no choice here and two issuers of one type cannot disclose
-differently. Issuer Core builds one disclosure per type claim and signs its
+[the schema in each format][schema-in-each-format] requires. The issuer therefore makes no choice here, and two issuers of one type cannot
+disclose differently. Issuer Core builds one disclosure per type claim and signs its
 digest.
 
 1. **Draw a salt.** Issuer Core draws fresh random bytes for this claim and no
@@ -732,15 +737,15 @@ digest.
    the algorithm `_sd_alg` names, encoded with base64url.
 5. **Pad the count, where the type has an optional attribute.** A credential
    that carries a digest per claim it holds tells a verifier how many claims
-   the citizen has, and for a type whose schema leaves an attribute out of
-   `required` that count says whether the citizen has that attribute at all.
-   Issuer Core adds decoy digests until the count is the same for every
-   credential of the type.
+   the citizen has. For a type whose schema leaves an attribute out of
+   `required`, that count says whether the citizen has that attribute at all.
+   Issuer Core therefore adds decoy digests until the count is the same for
+   every credential of the type.
 6. **Collect the digests.** The digests go into `_sd`, sorted ascending.
    [RFC 9901][ref-rfc9901] section 4.2.4.1 requires the issuer to hide the
-   original order of the claims and leaves the method open; sorting is the
+   original order of the claims and leaves the method open. Sorting is the
    method IDCTF uses, because an Assessment Body can test it against the
-   artifact alone, and a shuffle it cannot.
+   artifact alone and cannot test a shuffle.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -764,11 +769,9 @@ A value whose schema sets `contentEncoding: base64` travels as a data URI,
 which [REQ-CR-070][req-cr-070] fixes for every SD-JWT VC.
 
 None of the three illustrative types carries a decoy. The Kartu ASN and the
-Kartu Nikah require every attribute of their schema, and the KTP Digital
-requires every attribute of its own because [REQ-CR-077][req-cr-077] admits a
-type as an mdoc on no other terms, so all three have the same digest count for
-every citizen. The rule bites on a type whose schema leaves an attribute out
-of `required`.
+Kartu Nikah require every attribute of their schema. The KTP Digital does too,
+because [REQ-CR-077][req-cr-077] admits a type as an mdoc on no other terms.
+All three therefore have the same digest count for every citizen.
 
 ### Serialization {#ts-5-10-serialization}
 
@@ -791,10 +794,10 @@ An mdoc is the `IssuerSigned` structure of the proximity standard, encoded in
 CBOR as [RFC 8949][ref-rfc8949] defines it. It holds the claims as
 `IssuerSignedItem` structures and a Mobile Security Object, signed as a
 `COSE_Sign1` under [RFC 9052][ref-rfc9052], that digests each of them. No
-registry names a media type for an mdoc standing on its own, so one that moves
-over HTTP outside the issuance exchange carries `application/cbor`, the type
+registry names a media type for an mdoc standing on its own, so the type
 [ISO/IEC 18013-5][ref-iso-18013-5] gives the messages in which an mdoc already
-travels.
+travels, `application/cbor`, is the one it carries over HTTP outside the
+issuance exchange.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -808,16 +811,16 @@ travels.
 ### Each claim as an IssuerSignedItem {#ts-5-10-each-claim-as-an-issuersigneditem}
 
 One `IssuerSignedItem` carries one claim. The item is encoded, wrapped in CBOR
-tag 24, and it is the tagged form that the digest is taken over, because it is
-the tagged form that travels: a reader that digests the untagged item gets a
-value that matches nothing.
+tag 24, and the digest is taken over the tagged form, because the tagged form is
+what travels. A reader that digests the untagged item gets a value that matches
+nothing.
 
-The `digestID` is the key the item's digest sits under, and it is drawn at
-random. [ISO/IEC 18013-5][ref-iso-18013-5] asks for no correlation between the
+The `digestID` is drawn at random.
+[ISO/IEC 18013-5][ref-iso-18013-5] asks for no correlation between the
 `digestID` values two Mobile Security Objects give the same claim, and this
-specification makes that a requirement: a value a verifier can predict turns
-`valueDigests` into a list of which claims a credential carries, including the
-claims the holder withheld.
+specification makes it a requirement. A predictable value turns `valueDigests`
+into a list of which claims a credential carries, including the claims the
+holder withheld.
 
 [](){ #tbl-ts-5-10-issuer-signed-item }
 
@@ -835,7 +838,7 @@ claims the holder withheld.
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-10-045 }**REQ-TS-5-10-045** Issuer Core MUST build one `IssuerSignedItem` for every type claim the Credential Rulebook names and the source record holds.
-- [](){ #req-ts-5-10-127 }**REQ-TS-5-10-127** Issuer Core MUST build an item for every attribute the type's schema requires, carrying the value [REQ-CR-077][req-cr-077] names where the source record holds none, so that two credentials of the type never differ in how many items they carry.
+- [](){ #req-ts-5-10-127 }**REQ-TS-5-10-127** Issuer Core MUST build an item for every attribute the type's schema requires, carrying the `absent_value` [REQ-CR-081][req-cr-081] names where the source record holds none, so that two credentials of the type never differ in how many items they carry.
 - [](){ #req-ts-5-10-046 }**REQ-TS-5-10-046** An `IssuerSignedItem` MUST carry every field [the table of an IssuerSignedItem][tbl-ts-5-10-issuer-signed-item] lists and no other field.
 - [](){ #req-ts-5-10-047 }**REQ-TS-5-10-047** `random` MUST be at least sixteen bytes drawn from a cryptographically secure random number generator.
 - [](){ #req-ts-5-10-048 }**REQ-TS-5-10-048** Issuer Core MUST use a `random` value in one item only.
@@ -850,7 +853,7 @@ claims the holder withheld.
 
 ### The Mobile Security Object {#ts-5-10-the-mobile-security-object}
 
-The Mobile Security Object is what the issuer actually signs. It carries a
+The Mobile Security Object is what the issuer signs. It carries a
 digest of every item, the credential key, the type, the validity period, and the
 status entry.
 
@@ -865,7 +868,7 @@ status entry.
 | `valueDigests` | map | Present | The digest of every item, by namespace and `digestID` |
 | `deviceKeyInfo` | map | Present | The credential key, under `deviceKey`, as a COSE key |
 | `docType` | `tstr` | Present | The `id` of the Credential Rulebook that governs the type, or, for a type another body named, that body's name |
-| `validityInfo` | map | Present | `signed`, `validFrom` and `validUntil` |
+| `validityInfo` | map | Present | `signed`, `validFrom`, and `validUntil` |
 | `status` | map | Present | The credential's entry in the issuer's status list |
 
 </figure>
@@ -890,15 +893,15 @@ status entry.
 algorithm and nothing else, and the Document Signer Certificate travels in the
 unprotected header, in the `x5chain` parameter [RFC 9360][ref-rfc9360] registers
 as label 33, where clause 9.1.2.4 of the proximity standard places it. A reader
-that looks for the certificate in the protected header finds nothing, and JSON Object Signing and Encryption (JOSE)
-habit is to look there.
+that looks for the certificate in the protected header finds nothing, and JSON
+Object Signing and Encryption (JOSE) habit is to look there.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-10-061 }**REQ-TS-5-10-061** `issuerAuth` MUST be a `COSE_Sign1` as [RFC 9052][ref-rfc9052] defines it, with the payload attached.
 - [](){ #req-ts-5-10-062 }**REQ-TS-5-10-062** The protected header MUST carry label 1 and no other label.
 - [](){ #req-ts-5-10-063 }**REQ-TS-5-10-063** Label 1 MUST name an algorithm the Governance Profile allows for an issuance key.
-- [](){ #req-ts-5-10-064 }**REQ-TS-5-10-064** The unprotected header MUST carry label 33 holding the issuer's Document Signer Certificate in DER, as [REQ-TS-5-04-041][req-ts-5-04-041] requires.
+- [](){ #req-ts-5-10-064 }**REQ-TS-5-10-064** The unprotected header MUST carry label 33 holding the issuer's Document Signer Certificate in Distinguished Encoding Rules (DER), as [REQ-TS-5-04-041][req-ts-5-04-041] requires.
 - [](){ #req-ts-5-10-065 }**REQ-TS-5-10-065** The unprotected header MUST NOT carry any other label.
 - [](){ #req-ts-5-10-066 }**REQ-TS-5-10-066** Issuer Core MUST sign an mdoc with the private key of the Document Signer Certificate in label 33, which is the key of the purpose `issuance-cose`.
 - [](){ #req-ts-5-10-067 }**REQ-TS-5-10-067** Issuer Core MUST set `signed` to a moment inside the validity period of that Document Signer Certificate.
@@ -913,8 +916,7 @@ An `ldp_vc` credential is a W3C VCDM 2.0 document secured with a
 cryptosuite of [VC-DI-ECDSA][ref-vc-di-ecdsa], which signs the
 [RDFC-1.0][ref-rdfc-1-0] canonicalization of the document's
 [JSON-LD 1.1][ref-json-ld] expansion. The whole document is signed and nothing
-in it can be withheld, which is why a Credential Rulebook that names `ldp_vc`
-carries no restricted attribute and names no second representation. The proof
+in it can be withheld. The proof
 sits inside the document, so the credential is a VCDM 2.0 document on the wire
 and carries that model's own media type, `application/vc`.
 
@@ -956,29 +958,26 @@ and carries that model's own media type, `application/vc`.
 
 </div>
 
-`credentialSchema` carries the Rulebook's `credential_schema` with its digest,
-which [REQ-TS-5-10-135][req-ts-5-10-135] fixes.
-
 ## Holder binding {#ts-5-10-holder-binding}
 
-One wallet installation holds one credential key, and every credential it holds
-is bound to that key, whatever the representation. The holder identifier is the
-`did:key` of that key, as
-[The holder identifier][ts-5-03-the-holder-identifier] forms it, and the three
-representations write the binding down differently: two carry the key itself,
-in the encoding their own standard uses for a key, and the third carries the
-identifier. An `ldp_vc` credential names its holder and proves nothing about
-who holds it, because its proof is the issuer's; the proof that the holder
-holds the key is made at presentation time, as
-[the three presentations compared][tbl-ts-5-11-three-presentations] sets out.
-The key a credential is bound to is the one the Key Attestation of that
-issuance attests, which [REQ-TS-5-08-062][req-ts-5-08-062] fixes.
+One wallet installation holds one credential key, and every credential it
+holds is bound to that key, whatever the representation. The key is the one
+the Key Attestation of that issuance attests, which
+[REQ-TS-5-08-062][req-ts-5-08-062] fixes, and the holder identifier is its
+`did:key`, as [The holder identifier][ts-5-03-the-holder-identifier] forms
+it.
+
+An `ldp_vc` credential names its holder and proves nothing about who holds
+it, because its proof is the issuer's. The proof that the holder holds the
+key is made at presentation time, as
+[the three presentations compared][tbl-ts-5-11-three-presentations] sets
+out.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-10-082 }**REQ-TS-5-10-082** In an SD-JWT VC, `cnf` MUST carry the credential key under `jwk`, as a JSON Web Key with `kty`, `crv`, `x` and `y` and no other member.
+- [](){ #req-ts-5-10-082 }**REQ-TS-5-10-082** In an SD-JWT VC, `cnf` MUST carry the credential key under `jwk`, as a JSON Web Key with `kty`, `crv`, `x`, and `y` and no other member.
 - [](){ #req-ts-5-10-083 }**REQ-TS-5-10-083** In an SD-JWT VC, `cnf` MUST NOT carry `kid`, `jwe`, or `jku`.
-- [](){ #req-ts-5-10-084 }**REQ-TS-5-10-084** In an mdoc, `deviceKeyInfo.deviceKey` MUST carry the credential key as a COSE key.
+- [](){ #req-ts-5-10-084 }**REQ-TS-5-10-084** In an mdoc, `deviceKeyInfo.deviceKey` MUST carry the credential key as a CBOR Object Signing and Encryption (COSE) key.
 - [](){ #req-ts-5-10-085 }**REQ-TS-5-10-085** In an `ldp_vc`, `credentialSubject.id` MUST carry the holder identifier of the credential key.
 - [](){ #req-ts-5-10-086 }**REQ-TS-5-10-086** Issuer Core MUST NOT issue a credential bound to a key the wallet has not attested in the same exchange.
 
@@ -989,8 +988,7 @@ issuance attests, which [REQ-TS-5-08-062][req-ts-5-08-062] fixes.
 Every credential carries a pointer into a status list its issuer publishes, so
 that a verifier can learn the credential was withdrawn before it expired. The
 list itself, its format, its indices and how a reader decodes an entry are
-[Publishing and reading a status list](publishing-and-reading-a-status-list.md);
-what the credential carries is here.
+[Publishing and reading a status list](publishing-and-reading-a-status-list.md).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -1014,14 +1012,15 @@ A credential has two validity periods, as
 [Expiry and validity periods][expiry-and-validity-periods] sets out. The
 administrative period is the one the underlying document has in law, and where a
 type has one it is a claim of the credential, named by the Credential Rulebook.
-The technical period is how long this issued artifact may be presented, and it
-is what the fields below carry. Every representation records two moments and
-not one: when the issuer signed, and when the credential becomes usable. They
-are usually the same moment, and an issuer that prepares a credential ahead of
-the day it takes effect sets them apart. The technical period is the shorter of the two,
-because a credential that outlives the document behind it states something that
-is no longer true. [The table of validity fields][tbl-ts-5-10-validity] gives
-the field each representation carries it in.
+The technical period is how long this issued artifact may be presented, and
+it is the shorter of the two, because a credential that outlives the document
+behind it states something that is no longer true.
+
+Every representation records two moments and not one: when the issuer signed,
+and when the credential becomes usable. They are usually the same moment, and
+an issuer that prepares a credential ahead of the day it takes effect sets
+them apart. [The table of validity fields][tbl-ts-5-10-validity] gives the
+field each representation carries it in.
 
 [](){ #tbl-ts-5-10-validity }
 
@@ -1053,12 +1052,10 @@ the field each representation carries it in.
 A reader checks the credential itself before it checks anything about the party
 that presented it. These are the checks of the transaction chain that reach the
 credential, T1 and T2 of
-[entity chain and transaction chain][entity-chain-and-transaction-chain]; the
+[entity chain and transaction chain][entity-chain-and-transaction-chain]. The
 proof that the presenter holds the credential key is T3, which
 [Building and verifying a presentation](building-and-verifying-a-presentation.md)
-fixes. For an SD-JWT VC and an `ldp_vc` the reader also runs E3 of the entity
-chain, in step 8, because those two name their issuer by a DID that an
-Authority Statement can be asked about.
+fixes.
 
 1. **Parse it.** The reader decodes the representation and refuses a credential
    it cannot decode, without reporting which field failed.
@@ -1073,91 +1070,93 @@ Authority Statement can be asked about.
    `Sig_structure` of the `COSE_Sign1`, or over the canonicalized document and
    proof configuration.
 4. **Recompute the digests.** For an SD-JWT VC, the digest of every disclosure
-   received has to be in `_sd`. For an mdoc, the digest of every item received
-   has to match its entry in `valueDigests`.
-5. **Check the type.** `vct`, `docType` or `type` has to be the type the reader
-   asked for.
-6. **Check the validity period.** The present moment has to fall inside the
-   technical validity period, and for an mdoc the signing time has to fall
-   inside the validity period of the Document Signer Certificate.
+   received is looked for in `_sd`, [REQ-TS-5-10-106][req-ts-5-10-106]. For an
+   mdoc, the digest of every item received is compared with its entry in
+   `valueDigests`, [REQ-TS-5-10-111][req-ts-5-10-111].
+5. **Check the type.** `vct`, `docType`, or `type` is compared with the type
+   the reader asked for, [REQ-TS-5-10-148][req-ts-5-10-148].
+6. **Check the validity period.** The present moment falls inside the technical
+   validity period, [REQ-TS-5-10-115][req-ts-5-10-115], and for an mdoc the
+   signing time falls inside the validity period of the
+   Document Signer Certificate, [REQ-TS-5-10-114][req-ts-5-10-114].
 7. **Check the status.** The reader reads the entry the status pointer names
    from its own cache and refuses a credential whose entry is not valid.
 8. **Check the permission.** For an SD-JWT VC and an `ldp_vc`, the reader takes
    from its own cache the Authority Statement answer for the issuer's DID, the
-   action `issue`, and the type and version the credential names, and the
-   signing time, `iat` or the proof's `created`, has to fall inside one of the
-   `periods` of that answer. An mdoc carries no DID, so E3 does not reach it;
-   its issuer is checked by the chain to the Issuer Root CA, E4.
+   action `issue`, and the type and version the credential names. The signing
+   time, `iat` or the proof's `created`, falls inside one of the
+   `periods` of that answer, [REQ-TS-5-10-141][req-ts-5-10-141]. An mdoc carries
+   no DID, so E3 does not reach it; its issuer is checked by the chain to the
+   Issuer Root CA, E4.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-10-102 }**REQ-TS-5-10-102** Mobile Wallet, Verifier Core and Mobile Verifier MUST verify the issuer's signature before it reads any claim of a credential.
-- [](){ #req-ts-5-10-103 }**REQ-TS-5-10-103** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse a credential whose signature does not verify.
-- [](){ #req-ts-5-10-104 }**REQ-TS-5-10-104** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an SD-JWT VC whose `typ` is not `dc+sd-jwt`.
-- [](){ #req-ts-5-10-105 }**REQ-TS-5-10-105** Mobile Wallet, Verifier Core and Mobile Verifier MUST recompute the digest of every disclosure it received.
-- [](){ #req-ts-5-10-106 }**REQ-TS-5-10-106** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse the credential if the digest of a disclosure it received is absent from `_sd`.
-- [](){ #req-ts-5-10-107 }**REQ-TS-5-10-107** Mobile Wallet, Verifier Core and Mobile Verifier MUST ignore a digest in `_sd` that matches no disclosure it received, because a decoy digest matches none by design.
-- [](){ #req-ts-5-10-108 }**REQ-TS-5-10-108** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse a credential in which the same digest appears twice.
-- [](){ #req-ts-5-10-109 }**REQ-TS-5-10-109** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an SD-JWT VC that carries two disclosures for one claim name.
-- [](){ #req-ts-5-10-110 }**REQ-TS-5-10-110** Mobile Wallet, Verifier Core and Mobile Verifier MUST recompute the digest of the encoded tag 24 form of every `IssuerSignedItem` it received.
-- [](){ #req-ts-5-10-111 }**REQ-TS-5-10-111** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse the mdoc if the digest of an item it received does not match its entry in `valueDigests`.
-- [](){ #req-ts-5-10-112 }**REQ-TS-5-10-112** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an mdoc whose `docType` does not equal the namespace of the items it received, unless the Credential Rulebook names a separate `namespace`.
-- [](){ #req-ts-5-10-113 }**REQ-TS-5-10-113** Mobile Wallet, Verifier Core and Mobile Verifier MUST read `x5chain` from the unprotected header of `issuerAuth`.
-- [](){ #req-ts-5-10-114 }**REQ-TS-5-10-114** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an mdoc whose `signed` falls outside the validity period of the Document Signer Certificate that signed it.
-- [](){ #req-ts-5-10-115 }**REQ-TS-5-10-115** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse a credential presented before the start or after the end of its technical validity period.
-- [](){ #req-ts-5-10-116 }**REQ-TS-5-10-116** Mobile Wallet, Verifier Core and Mobile Verifier MUST check every status entry the credential points at.
-- [](){ #req-ts-5-10-117 }**REQ-TS-5-10-117** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an SD-JWT VC or an mdoc whose status entry is not `0x00`.
-- [](){ #req-ts-5-10-118 }**REQ-TS-5-10-118** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` credential whose entry is set in either of the two lists its `credentialStatus` entries name.
-- [](){ #req-ts-5-10-119 }**REQ-TS-5-10-119** Mobile Wallet, Verifier Core and Mobile Verifier MUST canonicalize an `ldp_vc` credential with RDFC-1.0 over its JSON-LD expansion, reading every context from its own cache.
-- [](){ #req-ts-5-10-120 }**REQ-TS-5-10-120** Mobile Wallet, Verifier Core and Mobile Verifier MUST NOT fetch a status list, a schema, or a context while it verifies a credential.
-- [](){ #req-ts-5-10-121 }**REQ-TS-5-10-121** Mobile Wallet, Verifier Core and Mobile Verifier MUST NOT report which check failed to the party that presented the credential, beyond that the credential was refused.
-- [](){ #req-ts-5-10-131 }**REQ-TS-5-10-131** Mobile Wallet, Verifier Core and Mobile Verifier MUST check a cached context against the `context_digest` of the Rulebook that names it before it uses the context.
-- [](){ #req-ts-5-10-132 }**REQ-TS-5-10-132** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` credential whose `@context` names a context that is neither the [VCDM 2.0][ref-vc-data-2-0] context nor the `context` of a published Rulebook.
-- [](){ #req-ts-5-10-133 }**REQ-TS-5-10-133** Mobile Wallet, Verifier Core and Mobile Verifier MUST NOT refuse a credential only because the permission to issue its version has been withdrawn.
-- [](){ #req-ts-5-10-138 }**REQ-TS-5-10-138** Mobile Wallet, Verifier Core and Mobile Verifier MUST find the issuer's key of an `ldp_vc` credential as [Finding the key][ts-01-finding-the-key] of TS-01 requires, taking `kid` from the proof's `verificationMethod`, the signer's DID from `issuer`, and the time the credential states it was made from the proof's `created`.
-- [](){ #req-ts-5-10-139 }**REQ-TS-5-10-139** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` credential whose proof carries no `created`.
-- [](){ #req-ts-5-10-140 }**REQ-TS-5-10-140** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an `ldp_vc` credential whose proof has a `proofPurpose` other than `assertionMethod`.
-- [](){ #req-ts-5-10-141 }**REQ-TS-5-10-141** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an SD-JWT VC or an `ldp_vc` credential unless a cached Authority Statement answer for the issuer's DID, the action `issue` and the credential's `resource`, verified as [Reading the answer][ts-5-05-reading-the-answer] of TS-5-05 requires, holds in `periods` a period that contains the signing time.
+- [](){ #req-ts-5-10-102 }**REQ-TS-5-10-102** Mobile Wallet, Verifier Core, and Mobile Verifier MUST verify the issuer's signature before they read any claim of a credential.
+- [](){ #req-ts-5-10-103 }**REQ-TS-5-10-103** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse a credential whose signature does not verify.
+- [](){ #req-ts-5-10-104 }**REQ-TS-5-10-104** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an SD-JWT VC whose `typ` is not `dc+sd-jwt`.
+- [](){ #req-ts-5-10-105 }**REQ-TS-5-10-105** Mobile Wallet, Verifier Core, and Mobile Verifier MUST recompute the digest of every disclosure they received.
+- [](){ #req-ts-5-10-106 }**REQ-TS-5-10-106** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse the credential if the digest of a disclosure they received is absent from `_sd`.
+- [](){ #req-ts-5-10-107 }**REQ-TS-5-10-107** Mobile Wallet, Verifier Core, and Mobile Verifier MUST ignore a digest in `_sd` that matches no disclosure they received, because a decoy digest matches none by design.
+- [](){ #req-ts-5-10-108 }**REQ-TS-5-10-108** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse a credential in which the same digest appears twice.
+- [](){ #req-ts-5-10-109 }**REQ-TS-5-10-109** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an SD-JWT VC that carries two disclosures for one claim name.
+- [](){ #req-ts-5-10-110 }**REQ-TS-5-10-110** Mobile Wallet, Verifier Core, and Mobile Verifier MUST recompute the digest of the encoded tag 24 form of every `IssuerSignedItem` they received.
+- [](){ #req-ts-5-10-111 }**REQ-TS-5-10-111** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse the mdoc if the digest of an item they received does not match its entry in `valueDigests`.
+- [](){ #req-ts-5-10-112 }**REQ-TS-5-10-112** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an mdoc whose `docType` does not equal the namespace of the items they received, unless the Credential Rulebook names a separate `namespace`.
+- [](){ #req-ts-5-10-113 }**REQ-TS-5-10-113** Mobile Wallet, Verifier Core, and Mobile Verifier MUST read `x5chain` from the unprotected header of `issuerAuth`.
+- [](){ #req-ts-5-10-114 }**REQ-TS-5-10-114** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an mdoc whose `signed` falls outside the validity period of the Document Signer Certificate that signed it.
+- [](){ #req-ts-5-10-115 }**REQ-TS-5-10-115** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse a credential presented before the start or after the end of its technical validity period.
+- [](){ #req-ts-5-10-116 }**REQ-TS-5-10-116** Mobile Wallet, Verifier Core, and Mobile Verifier MUST check every status entry the credential points at.
+- [](){ #req-ts-5-10-117 }**REQ-TS-5-10-117** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an SD-JWT VC or an mdoc whose status entry is not `0x00`.
+- [](){ #req-ts-5-10-118 }**REQ-TS-5-10-118** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an `ldp_vc` credential whose entry is set in either of the two lists its `credentialStatus` entries name.
+- [](){ #req-ts-5-10-119 }**REQ-TS-5-10-119** Mobile Wallet, Verifier Core, and Mobile Verifier MUST canonicalize an `ldp_vc` credential with RDFC-1.0 over its JSON-LD expansion, reading every context from its own cache.
+- [](){ #req-ts-5-10-120 }**REQ-TS-5-10-120** Mobile Wallet, Verifier Core, and Mobile Verifier MUST NOT fetch a status list, a schema, or a context while they verify a credential.
+- [](){ #req-ts-5-10-121 }**REQ-TS-5-10-121** Mobile Wallet, Verifier Core, and Mobile Verifier MUST NOT report which check failed to the party that presented the credential, beyond that the credential was refused.
+- [](){ #req-ts-5-10-131 }**REQ-TS-5-10-131** Mobile Wallet, Verifier Core, and Mobile Verifier MUST check a cached context against the `context_digest` of the Rulebook that names it before they use the context.
+- [](){ #req-ts-5-10-132 }**REQ-TS-5-10-132** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an `ldp_vc` credential whose `@context` names a context that is neither the [VCDM 2.0][ref-vc-data-2-0] context nor the `context` of a published Rulebook.
+- [](){ #req-ts-5-10-133 }**REQ-TS-5-10-133** Mobile Wallet, Verifier Core, and Mobile Verifier MUST NOT refuse a credential only because the permission to issue its version has been withdrawn.
+- [](){ #req-ts-5-10-138 }**REQ-TS-5-10-138** Mobile Wallet, Verifier Core, and Mobile Verifier MUST find the issuer's key of an `ldp_vc` credential as [Finding the key][ts-01-finding-the-key] of TS-01 requires, taking `kid` from the proof's `verificationMethod`, the signer's DID from `issuer`, and the time the credential states it was made from the proof's `created`.
+- [](){ #req-ts-5-10-139 }**REQ-TS-5-10-139** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an `ldp_vc` credential whose proof carries no `created`.
+- [](){ #req-ts-5-10-140 }**REQ-TS-5-10-140** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an `ldp_vc` credential whose proof has a `proofPurpose` other than `assertionMethod`.
+- [](){ #req-ts-5-10-141 }**REQ-TS-5-10-141** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an SD-JWT VC or an `ldp_vc` credential unless a cached Authority Statement answer for the issuer's DID, the action `issue`, and the credential's `resource`, verified as [Reading the answer][ts-5-05-reading-the-answer] of TS-5-05 requires, holds in `periods` a period that contains the signing time.
 - [](){ #req-ts-5-10-142 }**REQ-TS-5-10-142** The signing time of an SD-JWT VC MUST be its `iat`, and that of an `ldp_vc` credential the `created` of its proof.
 - [](){ #req-ts-5-10-143 }**REQ-TS-5-10-143** A period MUST contain the signing time when `valid_from` is not later than it and `valid_until`, where the period carries one, is later than it.
-- [](){ #req-ts-5-10-144 }**REQ-TS-5-10-144** Mobile Wallet, Verifier Core and Mobile Verifier MUST refuse an SD-JWT VC or an `ldp_vc` credential when its cache holds no such answer.
-- [](){ #req-ts-5-10-145 }**REQ-TS-5-10-145** Mobile Wallet, Verifier Core and Mobile Verifier MUST NOT fetch an Authority Statement answer while they verify a credential.
-- [](){ #req-ts-5-10-146 }**REQ-TS-5-10-146** Mobile Wallet, Verifier Core and Mobile Verifier MUST fill their cache at [trust cache sync][trust-cache-sync] with an answer for each issuer granted on the trusted list and for each type and version they accept.
-- [](){ #req-ts-5-10-147 }**REQ-TS-5-10-147** The `resource` of an SD-JWT VC MUST be its `vct`, and that of an `ldp_vc` credential MUST be the `id` of the Credential Rulebook whose `formats.ldp_vc.context` is the second entry of its `@context`.
+- [](){ #req-ts-5-10-144 }**REQ-TS-5-10-144** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse an SD-JWT VC or an `ldp_vc` credential when its cache holds no such answer.
+- [](){ #req-ts-5-10-145 }**REQ-TS-5-10-145** Mobile Wallet, Verifier Core, and Mobile Verifier MUST NOT fetch an Authority Statement answer while they verify a credential.
+- [](){ #req-ts-5-10-146 }**REQ-TS-5-10-146** Mobile Wallet, Verifier Core, and Mobile Verifier MUST fill their cache at [trust cache sync][trust-cache-sync] with an answer for each issuer granted on the trusted list and for each type and version they accept.
+- [](){ #req-ts-5-10-147 }**REQ-TS-5-10-147** The `resource` of an SD-JWT VC MUST be the `id` of the Credential Rulebook whose `vct` it carries, and that of an `ldp_vc` credential MUST be the `id` of the Credential Rulebook whose `formats.ldp_vc.context` is the second entry of its `@context`.
+- [](){ #req-ts-5-10-148 }**REQ-TS-5-10-148** Mobile Wallet, Verifier Core, and Mobile Verifier MUST refuse a credential whose `vct`, `docType`, or `type` is not the type the reader asked for.
 
 </div>
 
-The version is named in the type identifier of an SD-JWT VC, whose `vct` is the
-`id` of its Rulebook, and not in the `type` of an `ldp_vc`, which names the type
-alone. A reader finds the version of an `ldp_vc` through its context, which each
-Rulebook version defines for itself, and builds the `resource` the way
-[Resources][ts-5-05-resources] of TS-5-05 forms one.
+The version is named in the `vct` of an SD-JWT VC, which is the `id` of its
+Rulebook. The `type` of an `ldp_vc` names the type alone, so a reader finds the
+version through its context, which each Rulebook version defines for itself, and
+builds the `resource` the way [Resources][ts-5-05-resources] of TS-5-05 forms
+one. A type another body owns carries that body's name as its `vct`, without
+the version.
 
-The step asks about the signing time and not about today, which keeps
-[REQ-TS-5-10-133][req-ts-5-10-133] true. A withdrawal of the permission to
+Checking the permission asks about the signing time and not about today, which
+keeps [REQ-TS-5-10-133][req-ts-5-10-133] true. A withdrawal of the permission to
 issue a version closes the period that was open, so a credential signed before
 the withdrawal still falls inside that period, and a credential signed after it
-falls inside none. A reader never asks the registry at verification time,
+falls inside none. A reader never asks Trust Registry at verification time,
 because [REQ-TS-5-10-120][req-ts-5-10-120] keeps it from fetching anything
 then and a proximity check has no network to ask.
 
-The card a wallet draws is not one of these checks, and a rendered card
-proves nothing. A wallet draws the templates of a type, and its name, only for
-a credential whose issuer the ecosystem's own roots vouch for; a credential
-whose root reached the wallet through the [VICAL][vical] is drawn with the
-issuer and the country its own attributes give.
+The card a wallet draws is not one of these checks. A wallet draws the templates
+of a type, and its name, only for a credential whose issuer the ecosystem's own
+roots vouch for. Every other credential is drawn with the issuer and the country
+its own attributes give.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-10-134 }**REQ-TS-5-10-134** Mobile Wallet MUST draw a type's `display[].rendering.svg_templates`, and the type's name from its [Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc], only for a credential whose signer chains to a root the Root Authority publishes.
-- [](){ #req-ts-5-10-136 }**REQ-TS-5-10-136** Mobile Wallet MUST draw neither the templates nor the type's name for a credential of the same type whose root reached it through the [VICAL][vical].
+- [](){ #req-ts-5-10-136 }**REQ-TS-5-10-136** Mobile Wallet MUST draw neither the templates nor the type's name for a credential of the same type whose signer chains to no root the Root Authority publishes.
 - [](){ #req-ts-5-10-137 }**REQ-TS-5-10-137** Mobile Wallet MUST name the issuer and the country of such a credential from the credential's own attributes.
 
 </div>
 
 ## Security considerations {#ts-5-10-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A digest taken over the wrong bytes passes nothing.** The commonest mdoc
   defect is digesting the `IssuerSignedItem` instead of its tag 24 form,
@@ -1176,16 +1175,17 @@ Each threat below is answered by the requirement named with it.
 - **The certificate in an mdoc is not a trust anchor.** Label 33 carries the
   Document Signer Certificate the issuer chose to send. It proves nothing
   until the reader validates it to the Issuer Root CA it already holds, or
-  finds it through the VICAL. [REQ-TS-5-10-064][req-ts-5-10-064] fixes what
-  travels and [Validating a chain][ts-5-04-validating-a-chain] fixes what
-  the reader does with it.
+  finds it through the Verified Issuer Certificate Authority List (VICAL).
+  [REQ-TS-5-10-064][req-ts-5-10-064] fixes what travels and
+  [Validating a chain][ts-5-04-validating-a-chain] fixes what the reader does
+  with it.
 - **An unverified context decides what the signature covers.** In
   `ecdsa-rdfc-2019` the signature is taken over the canonicalization of the
   expanded document, and the expansion depends on every context. A context
   fetched at verification time, or a context the issuer named freely, lets
   whoever serves that document change the meaning of a signed credential.
-  [REQ-TS-5-10-080][req-ts-5-10-080], [REQ-TS-5-10-120][req-ts-5-10-120] and
-  [REQ-TS-5-10-121][req-ts-5-10-121] close all three doors.
+  [REQ-TS-5-10-080][req-ts-5-10-080], [REQ-TS-5-10-120][req-ts-5-10-120], and
+  [REQ-TS-5-10-121][req-ts-5-10-121] cover all three.
 - **A credential copied off a device is inert.** Every representation binds
   the credential key, and nothing in a credential is useful to a party that
   cannot sign with it. That is why [REQ-TS-5-10-086][req-ts-5-10-086]
@@ -1195,12 +1195,10 @@ Each threat below is answered by the requirement named with it.
   `exp` is years away is a credential a verifier accepts for years on the
   strength of a status list it may not have refreshed.
   [REQ-TS-5-10-097][req-ts-5-10-097] holds the period to the Governance
-  Profile's ceiling, and the ceiling is what the Governance Profile has to
-  set with the offline tolerance limit in mind.
+  Profile's ceiling, and the Governance Profile sets the ceiling
+  with the offline tolerance limit in mind.
 
 ## Privacy considerations {#ts-5-10-privacy-considerations}
-
-Each exposure below is named with what bounds it.
 
 - **One credential key means one identifier.** Every credential a wallet
   holds carries the same key, so two verifiers that compare notes can match
@@ -1212,40 +1210,36 @@ Each exposure below is named with what bounds it.
 - **`ldp_vc` discloses everything.** A presentation of an `ldp_vc`
   credential carries every claim in it, because the proof covers the whole
   document. The ecosystem answers by keeping the format away from restricted
-  attributes rather than by accepting the disclosure, which is what
+  attributes rather than by accepting the disclosure, which
   [REQ-TS-5-10-006][req-ts-5-10-006] and [REQ-CR-017][req-cr-017] enforce
   from two sides.
-- **The number of claims is public; whether the citizen has one need not
-  be.** A verifier that receives two disclosures learns how many digests it
-  did not match. For a type whose schema requires every attribute, that
-  count is the same for everyone and already public, because the Credential
-  Rulebook lists the claims of the type. For a type with an optional
-  attribute the count would say whether this citizen has it, which is the
-  side channel [RFC 9901][ref-rfc9901] section 10.4 names.
-  [REQ-TS-5-10-031][req-ts-5-10-031] pads the count with decoys where the
-  type needs it, and [REQ-TS-5-10-032][req-ts-5-10-032] spends no bytes
-  where it does not. None of the illustrative types needs it.
+- **The number of claims is public; whether the citizen has one need not be.**
+  The digest count a verifier can see is the side channel
+  [RFC 9901][ref-rfc9901] section 10.4 names. For a type whose schema requires
+  every attribute it says nothing, because the Credential Rulebook already
+  lists the claims of the type. For a type with an optional attribute the decoy
+  digests of [REQ-TS-5-10-031][req-ts-5-10-031] and
+  [REQ-TS-5-10-032][req-ts-5-10-032] answer it.
 - **An mdoc closes the same count from the other side.** The `valueDigests`
   of a Mobile Security Object carry one digest per item in the same way, and
-  ISO/IEC 18013-5 defines no decoy to pad the count with. The answer is the
-  Rulebook rather than the credential: [REQ-CR-077][req-cr-077] admits an
+  ISO/IEC 18013-5 defines no decoy to pad the count with. The Rulebook answers
+  it rather than the credential: [REQ-CR-077][req-cr-077] admits an
   mdoc type only when its schema requires every attribute and names the value
-  that stands for no value, so every credential of the type carries the same
-  number of digests and a citizen with no blood type on record is not the one
-  carrying fewer. [REQ-TS-5-10-122][req-ts-5-10-122] and
+  that stands for no value. Every credential of the type then carries the
+  same number of digests, and a citizen with no blood type on record is not
+  the one carrying fewer. [REQ-TS-5-10-122][req-ts-5-10-122] and
   [REQ-TS-5-10-123][req-ts-5-10-123] close the second half of it, where the
   key of a digest rather than the count of them would name the claim.
 - **A status list index is a handle.** The index in a credential is stable
   for the life of that credential, and a verifier that records it can
   recognize the same credential later. The defense is on the publishing
-  side, where [REQ-TS-5-09-032][req-ts-5-09-032] draws the index at random
-  inside a large list so that it reveals nothing about when the credential
+  side: [REQ-TS-5-09-032][req-ts-5-09-032] draws the index at random
+  inside a large list, so it reveals nothing about when the credential
   was issued or by whom it was held.
 - **An issuer learns nothing from a presentation.** Nothing in a credential
   points back at its issuer in a way that makes the issuer reachable during
   verification, and [REQ-TS-5-10-120][req-ts-5-10-120] forbids the fetch
-  that would. An issuer that wanted a record of where its credentials are
-  used would have to be asked, and no interface asks it.
+  that would.
 
 ## Changelog {#ts-5-10-changelog}
 
@@ -1253,6 +1247,6 @@ Each exposure below is named with what bounds it.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

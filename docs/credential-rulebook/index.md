@@ -9,19 +9,19 @@ description: "IDCTF-CR: the rules for each credential type, one Rulebook per typ
 
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-CR</code>. One Rulebook per credential type: its attributes, the
-formats it may take, and the assurance it demands. Each Rulebook is changed by
-the owner of that credential type, not by the architects.
+formats it may take, and the assurance it demands. Each Rulebook is proposed by
+the owner of that credential type, not by the technical team, and approved by
+the Root Authority.
 </p>
 
-A Credential Rulebook holds the rules for one credential type. This catalog is
-the list of every Rulebook the Root Authority has approved, together with the
-rules every Rulebook has to follow: the fields it carries, and the path a
-proposal takes before it is published. Where a Rulebook sits beside the
-Governance Profile and the Governance Framework is in
-[The Credential Rulebook][the-credential-rulebook].
+This catalog is the list of every Rulebook the Root Authority has approved,
+together with the rules every Rulebook has to follow: the fields it carries,
+and the path a proposal takes before it is published.
+[The Credential Rulebook][the-credential-rulebook] shows where a Rulebook sits
+beside the Governance Profile and the Governance Framework.
 
 Trust Registry publishes the catalog on the central content delivery network
-(CDN), as a list of types and one file per Rulebook version. Issuers, wallets
+(CDN), as a list of types and one file per Rulebook version. Issuers, wallets,
 and Relying Parties read it from cache. A participant is compliant with this
 document when it meets the Rulebook of every credential type it issues or asks
 for.
@@ -34,9 +34,12 @@ another body already named keeps that name with its version appended, as
 ## Registered Rulebooks {#registered-rulebooks}
 
 No Rulebook has been approved yet. Each approved version is added here as one
-row. The five rows below are illustrations worked through in
-[Examples](example/index.md), and none is registered. `id.idctf.ktp.1` is also
-the identifier the Architecture Framework uses in its examples.
+row. The five rows of [the table of Rulebooks][tbl-catalog-rulebooks] are
+illustrations worked through in [Examples](example/index.md).
+`id.idctf.ktp.1` is also the identifier the Architecture Framework uses in its
+examples.
+
+[](){ #tbl-catalog-rulebooks }
 
 <figure markdown="1" class="ekdn-table">
 

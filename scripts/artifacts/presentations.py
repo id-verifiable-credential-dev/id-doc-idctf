@@ -52,7 +52,7 @@ LDP = ART / "ldp.json"
 # ---- block titles
 T_VPTOKEN = "The vp_token of an SD-JWT VC presentation"
 T_PRES = "An SD-JWT VC presentation"
-T_DISC = "The disclosures that travelled"
+T_DISC = "The disclosures that traveled"
 T_KBH = "Key Binding JWT header"
 T_KBC = "Key Binding JWT claims"
 T_DRHEX = "The DeviceResponse, as sent"
@@ -104,7 +104,7 @@ LDP_TYPES = [
 ]
 LDP_ATTRIBUTES = [
     "nama_suami", "nama_istri", "tanggal_akad", "nomor_akta_nikah", "kua",
-    "kabupaten_kota", "provinsi", "foto_suami", "foto_istri",
+    "kabupaten_kota", "provinsi",
 ]
 
 # SessionTranscript elements of the proximity session. The two ephemeral keys
@@ -803,7 +803,7 @@ def verify(b: dict) -> int:
         nikah["use_id"] == LDP_USE_ID
         and nikah["claims"] == [f"id.idctf.kartu-nikah.1#{n}" for n in LDP_ATTRIBUTES]
         and [c["path"] for c in query["claims"]] == [["credentialSubject", n] for n in LDP_ATTRIBUTES],
-        "the Kartu Nikah statement and query name the same nine attributes",
+        "the Kartu Nikah statement and query name the same attributes",
     )
     vp = json.loads(inp["ldp"]["blocks"][T_LDP_VPTOKEN])[LDP_QUERY_ID][0]
     report(

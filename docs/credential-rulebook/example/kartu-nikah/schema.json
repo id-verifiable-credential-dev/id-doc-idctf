@@ -32,18 +32,6 @@
     "provinsi": {
       "type": "string",
       "minLength": 1
-    },
-    "foto_suami": {
-      "type": "string",
-      "contentEncoding": "base64",
-      "contentMediaType": "image/jpeg",
-      "minLength": 1
-    },
-    "foto_istri": {
-      "type": "string",
-      "contentEncoding": "base64",
-      "contentMediaType": "image/jpeg",
-      "minLength": 1
     }
   },
   "required": [
@@ -53,8 +41,6 @@
     "nomor_akta_nikah",
     "kua",
     "kabupaten_kota",
-    "provinsi",
-    "foto_suami",
-    "foto_istri"
+    "provinsi"
   ]
 }

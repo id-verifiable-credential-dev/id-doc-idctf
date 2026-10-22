@@ -9,8 +9,9 @@ description: Illustrative Rulebooks, each worked through from its fields to the 
 
 <p class="ekdn-lead" markdown="span">
 Each page here takes one credential type through every field of
-[Rulebook structure](../rulebook-structure.md), down to the [SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc] and
-the card templates a wallet draws from.
+[Rulebook structure](../rulebook-structure.md), down to the
+[SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13 Type Metadata][ref-i-d-ietf-oauth-sd-jwt-vc]
+and the card templates a wallet draws from.
 </p>
 
 !!! note "Informative pages"

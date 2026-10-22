@@ -8,7 +8,9 @@ description: What a Relying Party, an RP Intermediary and a merchant owe, how a 
 # Relying Parties and merchants {#gf-relying-parties-and-merchants}
 
 <p class="ekdn-lead" markdown="span">
-A Relying Party asks for credentials under the permissions it was granted. An RP Intermediary does the same on behalf of small businesses, and answers to the Root Authority for each business it registers. This page sets what each of them owes, and what a merchant may do with what it is shown.
+A Relying Party asks for credentials under the permissions it was granted. An
+RP Intermediary does the same on behalf of small businesses, and answers to the
+Root Authority for each business it registers.
 </p>
 
 !!! info "Normative page"
@@ -23,9 +25,23 @@ A Relying Party asks for credentials under the permissions it was granted. An RP
 
 ## Relying Parties {#gf-relying-parties}
 
-A Relying Party is accredited, and its [registered use][registered-use] fixes what it may ask for and why. [Registering and carrying a Use Statement](../../technical-specifications/registering-and-carrying-a-use-statement.md) binds how the use is carried and checked. The Technical Specifications bind how a verifier keeps its verification record and consent receipt. This section adds the organizational duties: a Relying Party stays inside its use, and what it was shown serves that use and the legal duties of its business system.
+A Relying Party is accredited, and its [registered use][registered-use] fixes
+what it may ask for and why.
+[Registering and carrying a Use Statement](../../technical-specifications/registering-and-carrying-a-use-statement.md)
+binds how the use is carried and checked. The Technical Specifications bind how
+a verifier keeps its verification record and consent receipt. A rule addressed
+to a Relying Party binds the accredited participant; a merchant is bound where a
+rule names it, in
+[RP Intermediary and its merchants][gf-rp-intermediary-and-merchants].
 
-A Relying Party's own application can keep an attribute value beyond the transaction. Mobile Verifier keeps only the transaction record [REQ-TS-5-11-096][req-ts-5-11-096] lists and no attribute value ([REQ-TS-5-11-092][req-ts-5-11-092]), so the declaration of what is kept belongs to the Relying Party alone, and the citizen's consent screen shows it.
+A Relying Party's own application can keep an attribute value beyond the
+transaction. In proximity, Mobile Verifier keeps the transaction record
+[REQ-TS-5-11-096][req-ts-5-11-096] lists. Online it keeps the record
+[REQ-TS-5-11-089][req-ts-5-11-089] and [REQ-TS-5-11-090][req-ts-5-11-090] list,
+together with the consent receipt of [REQ-TS-5-11-097][req-ts-5-11-097]. In
+neither mode does it keep an attribute value
+([REQ-TS-5-11-092][req-ts-5-11-092]), so the declaration of what is kept belongs
+to the Relying Party alone, and the citizen's consent screen shows it.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -38,17 +54,29 @@ A Relying Party's own application can keep an attribute value beyond the transac
 
 ## RP Intermediary and its merchants {#gf-rp-intermediary-and-merchants}
 
-An RP Intermediary holds the authority of a Relying Party and lends a subset of it to merchants. [What the intermediary takes on][what-the-intermediary-takes-on] describes the role. A merchant is never accredited and never registered by the Root Authority, so the Root Authority holds the intermediary to every rule below, and the intermediary holds each merchant through a written agreement. A breach by a merchant is a breach by the intermediary that registered it.
+An RP Intermediary holds the authority of a Relying Party and lends a subset of
+it to merchants.
+[What the RP Intermediary takes on][what-the-intermediary-takes-on] describes
+the role. A merchant is never accredited and never registered by the Root
+Authority, so the Root Authority holds the RP Intermediary to every rule below,
+and the RP Intermediary holds each merchant through a written agreement.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-gf-186 }**REQ-GF-186** An RP Intermediary MUST answer to the Root Authority for each breach of this section by a merchant it registered, as for a breach of its own.
+- [](){ #req-gf-186 }**REQ-GF-186** An RP Intermediary MUST answer to the Root Authority for each breach of this section by a merchant it registered, as for a breach of its own, whatever the merchant's standing under the law.
 
 </div>
 
 ### Registering a merchant {#gf-registering-a-merchant}
 
-A merchant is a business with a legal identity: a private business holds a Nomor Induk Berusaha (NIB), and a public body such as a village clinic holds an institution code from the Badan Kepegawaian Negara (BKN), as the same identifiers name any legal body in the [trusted list](../../architecture-framework/trust-model/trusted-list-and-short-lived-attestations.md). A body with neither is not registered. A natural person answers for the merchant, so a citizen who is harmed has someone to turn to, and the agreement carries the duties of [what a merchant does with what it is shown][gf-what-a-merchant-does-with-what-it-is-shown].
+A merchant is a business with a legal identity. A private business holds a Nomor
+Induk Berusaha (NIB), and a public body such as a village clinic holds an
+institution code from the Badan Kepegawaian Negara (BKN). The same identifiers
+name any legal body in the
+[trusted list](../../architecture-framework/trust-model/trusted-list-and-short-lived-attestations.md).
+A natural person answers for the merchant, so a citizen who is harmed has
+someone to turn to, and the agreement carries the duties of
+[what a merchant does with what it is shown][gf-what-a-merchant-does-with-what-it-is-shown].
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -63,7 +91,9 @@ A merchant is a business with a legal identity: a private business holds a Nomor
 
 ### A merchant's scope {#gf-merchant-scope}
 
-A merchant asks for less than its intermediary may. The rule has two homes: this section holds the intermediary to it, and the Verifier Device Certificate carries it as a bound a wallet enforces on sight. A use is registered per business category, so one Use Statement serves every merchant of that kind and none is written for a single merchant.
+A merchant asks for less than its RP Intermediary may, and the rule has two
+homes: this section holds the RP Intermediary to it, and the
+Verifier Device Certificate carries it as a bound a wallet enforces on sight.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -77,34 +107,62 @@ A merchant asks for less than its intermediary may. The rule has two homes: this
 
 ### What a merchant does with what it is shown {#gf-what-a-merchant-does-with-what-it-is-shown}
 
-Mobile Verifier sets every `IntentToRetain` to `false` because it keeps no attribute value, only its transaction record, and the citizen's screen says so. A certificate cannot say what a merchant does afterward, so the agreement does. A merchant that has to keep a value, by law or for its business, needs the consent screen that says "kept", which only a Relying Party's own application can raise. Such a business is therefore served as a Relying Party and not as a merchant.
+Mobile Verifier sets every `IntentToRetain` to `false` because it keeps no
+attribute value, only its transaction record, and the citizen's screen says so.
+A certificate cannot say what a merchant does afterward, so the agreement does.
 
-This Framework does not decide who is the personal data controller under [UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi][ref-uu-27-2022]; the law decides that. What this section settles is that inside IDCTF the intermediary answers for the merchant, whatever the merchant's standing under the law.
+A merchant that has to keep a value, by law or for its business, needs the
+consent screen that says "kept", which only a Relying Party's own application
+can raise.
+
+A merchant's online check runs through its RP Intermediary's Verifier Core, and
+the record its Mobile Verifier writes for that check is kept and deleted on the
+terms the Technical Specifications set for any verifier. The RP Intermediary
+answers for it, because the merchant is not an accredited party with a legal
+duty of its own.
+
+This Framework does not decide who is the personal data controller under
+[UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi][ref-uu-27-2022]; the law
+decides that.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-198 }**REQ-GF-198** A merchant MUST use what Mobile Verifier shows only for the purpose of the category under which the request was made.
-- [](){ #req-gf-199 }**REQ-GF-199** A merchant MUST NOT copy, photograph, transcribe or otherwise record an attribute value Mobile Verifier shows, into any system, on paper or on another device.
+- [](){ #req-gf-199 }**REQ-GF-199** A merchant MUST NOT copy, photograph, transcribe, or otherwise record an attribute value Mobile Verifier shows, into any system, on paper, or on another device.
 - [](){ #req-gf-200 }**REQ-GF-200** A merchant MUST NOT keep an attribute value once the transaction it was shown for has ended.
 - [](){ #req-gf-201 }**REQ-GF-201** A merchant MUST NOT run Mobile Verifier on a device it has modified to capture the screen or the data, or alongside software that does.
 - [](){ #req-gf-202 }**REQ-GF-202** A merchant that has to keep an attribute value beyond the transaction MUST NOT serve that need as a merchant.
-- [](){ #req-gf-203 }**REQ-GF-203** A merchant MUST tell its RP Intermediary of the loss, theft or misuse of a Mobile Verifier device within the period its agreement sets, which is no longer than the period the Governance Profile sets as `intervals.merchant_withdrawal`, listed in [Intervals][ts-02-intervals].
-- [](){ #req-gf-204 }**REQ-GF-204** An RP Intermediary MUST write [REQ-GF-198][req-gf-198] to [REQ-GF-203][req-gf-203] into every merchant agreement.
+- [](){ #req-gf-203 }**REQ-GF-203** A merchant MUST tell its RP Intermediary of the loss, theft, or misuse of a Mobile Verifier device within the period its agreement sets, which is no longer than the period the Governance Profile sets as `intervals.merchant_withdrawal`, listed in [Intervals][ts-02-intervals].
+- [](){ #req-gf-293 }**REQ-GF-293** An RP Intermediary MUST keep and delete the verification record and consent receipt a merchant's Mobile Verifier writes for an online check as [REQ-TS-5-11-099][req-ts-5-11-099] requires.
+- [](){ #req-gf-204 }**REQ-GF-204** An RP Intermediary MUST write [REQ-GF-198][req-gf-198] to [REQ-GF-203][req-gf-203] and [REQ-GF-293][req-gf-293] into every merchant agreement.
 - [](){ #req-gf-205 }**REQ-GF-205** An RP Intermediary MUST publish a contact through which a citizen can report a merchant it registered.
 
 </div>
 
 ### Withdrawing a merchant {#gf-withdrawing-a-merchant}
 
-A merchant's place in the system is its Verifier Device Certificates, so withdrawing a merchant means withdrawing them, as [withdrawing a merchant's certificate][merchant-certificate-withdrawal] shows. The clock runs from the moment the intermediary learns of a ground and not from the first refused request, because one refusal can be a misconfigured template. What keeps knowledge from being put off is the duty to look at the refusals in the relay record.
+A merchant's place in the system is its Verifier Device Certificates, so
+withdrawing a merchant means withdrawing them, as
+[withdrawing a merchant's certificate][merchant-certificate-withdrawal] shows.
+The clock runs from the moment the RP Intermediary learns of a ground and not
+from the first refused request, because one refusal can be a misconfigured
+template. Looking at the refusals in the relay record before each list is
+published keeps knowledge from being put off.
 
-The Governance Profile sets the period as `intervals.merchant_withdrawal` ([Intervals][ts-02-intervals]). The end-to-end exposure at an offline wallet adds the tolerance for the certificate revocation list, so the intermediary's share is the part it controls.
+The Governance Profile sets the period as `intervals.merchant_withdrawal`
+([Intervals][ts-02-intervals]). That one member times two clocks that run one
+after the other: the merchant's report of a lost, stolen, or misused device,
+and the RP Intermediary's own time to the certificate revocation list. If the
+merchant and the RP Intermediary each use all of their period, the withdrawal
+falls at twice that period. The end-to-end exposure at an offline wallet adds
+the tolerance for the list on top, and the RP Intermediary's share is the part
+it controls.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-206 }**REQ-GF-206** An RP Intermediary MUST withdraw every Verifier Device Certificate of a merchant that asks for an attribute beyond its categories.
 - [](){ #req-gf-207 }**REQ-GF-207** An RP Intermediary MUST withdraw every Verifier Device Certificate of a merchant that breaches its agreement.
-- [](){ #req-gf-208 }**REQ-GF-208** An RP Intermediary MUST withdraw every Verifier Device Certificate of a merchant that loses its NIB or BKN institution code or ceases business.
+- [](){ #req-gf-208 }**REQ-GF-208** An RP Intermediary MUST withdraw every Verifier Device Certificate of a merchant that loses its NIB or BKN institution code, or ceases business.
 - [](){ #req-gf-209 }**REQ-GF-209** An RP Intermediary MUST withdraw every Verifier Device Certificate of a merchant when the Root Authority orders it.
 - [](){ #req-gf-210 }**REQ-GF-210** An RP Intermediary MUST have each withdrawn certificate on a published certificate revocation list within the period the Governance Profile sets as `intervals.merchant_withdrawal`, counted from the moment it learns of the ground.
 - [](){ #req-gf-211 }**REQ-GF-211** An RP Intermediary MUST examine the refused requests in its relay record at least as often as the Governance Profile's `intervals.crl_publication` ([Intervals][ts-02-intervals]) to decide whether any of them is a ground under this section.
@@ -114,9 +172,21 @@ The Governance Profile sets the period as `intervals.merchant_withdrawal` ([Inte
 
 ### The relay record and transport logs {#gf-relay-record}
 
-When a merchant's check goes online, Verifier Core relays it and writes the record [the relay record fields][tbl-ts-3-01-relay-record] list. [REQ-TS-3-01-112][req-ts-3-01-112] allows no other value. A billing field would be the first value not taken from the signed request: the merchant instance, the time and the outcome already let the intermediary count checks per merchant per period. Proximity checks never pass through the relay, so the intermediary bills those by device or by subscription.
+When a merchant's check goes online, Verifier Core relays it and writes the
+record [the relay record fields][tbl-ts-3-01-relay-record] list.
+[REQ-TS-3-01-112][req-ts-3-01-112] allows no other value. A billing field would
+be the first value not taken from the signed request: the merchant instance, the
+time, and the outcome already let the RP Intermediary count checks per merchant
+per period. Proximity checks never pass through the relay, so the
+RP Intermediary bills those by device or by subscription.
 
-The record holds no citizen identifier, but the wallet's network address would link two transactions to one wallet, which [REQ-TS-3-01-098][req-ts-3-01-098] forbids. The address is written by whatever ends the connection in front of Verifier Core, often a hosting or firewall provider, and a Module requirement cannot reach that provider. An organizational duty can, through the intermediary's contract with it. How long the relay keeps the record is the Governance Profile's `lifetimes.relay_record` ([Lifetimes][ts-02-lifetimes]).
+The record holds no citizen identifier, but the wallet's network address would
+link two transactions to one wallet, which [REQ-TS-3-01-098][req-ts-3-01-098]
+forbids. The address is written by whatever ends the connection in front of
+Verifier Core, often a hosting or firewall provider, and a Module requirement
+cannot reach that provider. An organizational duty can, through the
+RP Intermediary's contract with it. How long the relay keeps the record is the
+Governance Profile's `lifetimes.relay_record` ([Lifetimes][ts-02-lifetimes]).
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -129,13 +199,17 @@ The record holds no citizen identifier, but the wallet's network address would l
 
 ### The merchant inventory {#gf-merchant-inventory}
 
-The Root Authority can see who acts under an intermediary's name only if the intermediary keeps the list. The inventory is the merchant's place in the intermediary's tenant, which the Root Authority may ask for at any time. The Root Authority names the period in which it wants the answer, because that is a decision and not a technical value. An entry outlives the merchant's last certificate for the period the Governance Profile sets as `lifetimes.dispute_period` ([Lifetimes][ts-02-lifetimes]), so a later complaint still finds it.
+The Root Authority can see who acts under an RP Intermediary's name only if the
+RP Intermediary keeps the list. The Root Authority names the period in which it
+wants the answer, because that is a decision and not a technical value. An entry
+outlives the merchant's last certificate so that a later complaint still finds
+it.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-gf-217 }**REQ-GF-217** An RP Intermediary MUST keep an inventory of every merchant it registered.
 - [](){ #req-gf-218 }**REQ-GF-218** An RP Intermediary MUST record in each inventory entry the merchant's legal name, its NIB or BKN institution code, the person answerable, its categories and scope, each device with the serial number and status of its certificate, and the dates of registration and withdrawal.
 - [](){ #req-gf-219 }**REQ-GF-219** An RP Intermediary MUST hand the inventory to the Root Authority on request, within the period the request names.
-- [](){ #req-gf-220 }**REQ-GF-220** An RP Intermediary MUST keep an inventory entry for the period the Governance Profile sets as `lifetimes.dispute_period`, counted from the day the merchant's last certificate expired or was withdrawn.
+- [](){ #req-gf-220 }**REQ-GF-220** An RP Intermediary MUST keep an inventory entry for the period the Governance Profile sets as `lifetimes.dispute_period` ([Lifetimes][ts-02-lifetimes]), counted from the day the merchant's last certificate expired or was withdrawn.
 
 </div>

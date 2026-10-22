@@ -1,6 +1,6 @@
 ---
 title: "[TS-2-01] Enrolling a wallet installation and attesting its key"
-description: How a Mobile Wallet installation enrolls with its Wallet Backend Service, the platform evidence each of its two keys is checked against on Android and iOS, the record the backend keeps, what a request for a Key Attestation proves, and when an installation is revoked.
+description: How a Mobile Wallet installation enrolls with its Wallet Backend Service, the platform evidence each of its two keys is checked against on Android and iOS, the record Wallet Backend Service keeps, what a request for a Key Attestation proves, and when an installation is revoked.
 ---
 
 <!-- Sumber: Arsitektur Ekosistem Identitas Digital v0.2, §3.4, §7.6, §9.2; Bentuk Data Attestation §1; Rincian Module dan Operasi §6, §8; tracks/0085, tracks/0133, tracks/0149, tracks/0273; debt/0155, debt/0156 -->
@@ -18,20 +18,24 @@ obtains afterward rests on that record.
 </p>
 
 Every sentence on this page binds Mobile Wallet, which enrolls and asks, and
-Wallet Backend Service, which checks, records and attests, and an Assessment
-Body tests them against it in the version the Governance Profile puts in
-force. The key words and the identifier `REQ-TS-2-01-nnn` follow
+Wallet Backend Service, which checks, records, and attests, and an
+Assessment Body tests them against it in the version the Governance Profile puts
+in force. The key words and the identifier `REQ-TS-2-01-nnn` follow
 [Common provisions](common-provisions.md).
 
 ## Who runs this and what it needs {#ts-2-01-who-runs-this-and-what-it-needs}
 
-This specification fixes what an enrollment carries and what Wallet Backend
-Service checks before it records an installation; what a request for a Key
-Attestation carries and what it checks before it issues one; the record it
-keeps for each installation; and when an installation is revoked.
+This specification fixes:
+
+- What an enrollment carries and what Wallet Backend Service checks before it
+  records an installation.
+- What a request for a Key Attestation carries and what Wallet Backend Service
+  checks before it issues one.
+- The record Wallet Backend Service keeps for each installation.
+- When an installation is revoked.
 
 It fixes what each message proves and leaves how the message travels. The
-transport, the endpoints and the encoding between a Mobile Wallet and its own
+transport, the endpoints, and the encoding between a Mobile Wallet and its own
 Wallet Backend Service belong to the Wallet Provider, as
 [the interface table][tbl-interfaces-and-standards] sets out, because no other
 party ever reads them. What an Assessment Body tests is the outcome: it hands
@@ -42,27 +46,36 @@ Its conformance targets are Mobile Wallet, which enrolls its installation and
 asks for each attestation, and Wallet Backend Service, which checks the
 evidence, keeps the record, and issues or refuses.
 
-It leaves to other documents: the Key Attestation itself, its claims, its
-signature, how it is carried and what an issuer checks, which
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-holds; the form of the device identifier, which
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-holds; the identity provider's own interface, which belongs to whoever runs it;
-which evaluations count and the mapping from an assurance level to the
-resistance values an issuer announces, which the Governance Profile holds; [who decides to revoke an installation on grounds other than the two this page names][gf-revoking-an-installation], and [how long a record is kept][gf-retention], which the
-Governance Framework holds; and the encrypted backup and the push
-notifications Wallet Backend Service also runs, which no other party reads.
+It leaves to other documents:
+
+- The Key Attestation itself, its claims, its signature, how it is carried, and
+  what an issuer checks, which
+  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  holds.
+- The form of the device identifier, which
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  holds.
+- The identity provider's own interface, which belongs to whoever runs it.
+- Which evaluations count and the mapping from an assurance level to the
+  resistance values an issuer announces, which the Governance Profile holds.
+- [Who decides to revoke an installation on grounds other than the two this page names][gf-revoking-an-installation]
+  and [how long a record is kept][gf-retention], which the Governance Framework
+  holds.
+- The encrypted backup and the push notifications Wallet Backend Service also
+  runs, which no other party reads.
 
 Before the first enrollment, each target holds what the rules below assume:
 
-- **Wallet Backend Service** holds a client registration at the identity
-  provider the Wallet Provider chose; the identity of the official Mobile
-  Wallet build, its Android package name and signing certificate digest and
-  its iOS App ID; the roots [Accepted roots][ts-2-01-accepted-roots] names;
-  for each device model and key storage component it vouches for, the
-  evaluation the resistance values rest on; and the Key Attestation key
-  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-  fixes.
+- **Wallet Backend Service** holds:
+    - A client registration at the identity provider the Wallet Provider chose.
+    - The identity of the official Mobile Wallet build: its Android package
+      name and signing certificate digest, and its iOS App ID.
+    - The roots [Accepted roots][ts-2-01-accepted-roots] names.
+    - For each device model and key storage component it vouches for, the
+      evaluation the resistance values rest on.
+    - The Key Attestation key
+      [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+      fixes.
 - **Mobile Wallet** is the official build, running on an Android device with
   a hardware-backed keystore or on an iOS device with the Secure Enclave and
   App Attest.
@@ -77,10 +90,10 @@ Before the first enrollment, each target holds what the rules below assume:
 ## What enrollment does {#ts-2-01-what-enrollment-does}
 
 At the citizen's first login to the wallet, Mobile Wallet creates two keys in
-the device's secure hardware: the [device key][the-device-key], which
-identifies the installation to its own backend and nothing else, and the
-[credential key][the-credential-key], which every credential the
-installation receives is bound to. The two are never the same key, so the key
+the device's secure hardware. The [device key][the-device-key] identifies the
+installation to its own Wallet Backend Service and nothing else; every
+credential the installation receives is bound to the
+[credential key][the-credential-key]. The two are never the same key, so the key
 that identifies the installation never appears in a presentation. Enrollment is the one
 moment Wallet Backend Service sees both public keys together, checks the
 platform's evidence for each, and ties them to an account at the identity
@@ -95,18 +108,14 @@ enrollment.
 
 The two platforms differ in what they attest. Android attests any key its
 keystore generates, so both keys arrive with their own certificate chain.
-Apple attests only the App Attest key, so on iOS that key is the device key,
-and the credential key is a separate Secure Enclave key whose thumbprint the
-App Attest attestation commits to. What vouches for the iOS credential key is
-therefore the official build that made it, which App Attest proves is the
-one running, rather than the chip.
+Apple attests only the App Attest key, and
+[Evidence on iOS][ts-2-01-evidence-on-ios] sets out what then vouches for the
+credential key.
 
 After enrollment, the installation asks for a Key Attestation once for each
 credential request, and Wallet Backend Service vouches for the credential key
-it recorded and no other. An installation is revoked when its account
-enrolls a new one, as in [device migration][device-migration], or when the
-citizen reports the device lost. A revoked installation obtains no further
-attestation, which is all that cuts it off: nothing is published.
+it recorded and no other. When an installation is revoked, and what that cuts
+off, is in [Revoking an installation][ts-2-01-revoking-an-installation].
 
 What an installation can report is bounded by the evaluation of its key
 storage. A component reaches high only through the evaluation
@@ -117,11 +126,13 @@ type at `high`.
 ## An enrollment and a request, as exchanged {#ts-2-01-an-enrollment-and-a-request-as-exchanged}
 
 The values below are an illustration: the Wallet Provider, the identity
-provider, the installations and the keys are invented, and no wallet has
-enrolled. Every field is exact. The Android installation's credential key is
-the key the [Key Attestation][ts-5-08-key-attestations-as-issued] of TS-5-08
-attests, and its request carries that attestation's nonce, so the two pages
-show one installation. The certificate chains themselves are signed by
+provider, the installations, and the keys are invented, and no wallet has
+enrolled. Every field is exact.
+
+The Android installation's credential key is the key the
+[Key Attestation][ts-5-08-key-attestations-as-issued] of TS-5-08 attests,
+and its request carries that attestation's nonce, so the two pages show one
+installation. The certificate chains themselves are signed by
 Google's and Apple's roots, which an illustration does not imitate, so the
 evidence appears as Wallet Backend Service reads it once the chain is checked
 and the structure decoded. The device key's signature and the App Attest
@@ -491,7 +502,7 @@ An enrollment runs in six steps.
 - [](){ #req-ts-2-01-005 }**REQ-TS-2-01-005** Wallet Backend Service MUST refuse an enrollment whose challenge is older than the lifetime the Governance Profile sets.
 - [](){ #req-ts-2-01-006 }**REQ-TS-2-01-006** Mobile Wallet MUST use one challenge for every piece of evidence in one enrollment.
 - [](){ #req-ts-2-01-007 }**REQ-TS-2-01-007** Mobile Wallet MUST send every item [the table of enrollment contents][tbl-ts-2-01-enrollment] marks present for its platform.
-- [](){ #req-ts-2-01-008 }**REQ-TS-2-01-008** Wallet Backend Service MUST refuse an enrollment that lacks an item that table marks present for its platform.
+- [](){ #req-ts-2-01-008 }**REQ-TS-2-01-008** Wallet Backend Service MUST refuse an enrollment that lacks an item [the table of enrollment contents][tbl-ts-2-01-enrollment] marks present for its platform.
 - [](){ #req-ts-2-01-009 }**REQ-TS-2-01-009** Wallet Backend Service MUST NOT record an installation before every check of this specification has passed for it.
 
 </div>
@@ -500,7 +511,7 @@ An enrollment runs in six steps.
 
 The ID Token establishes an account, not who the citizen is: identity
 proofing happens at issuance and is rooted in the Identity Issuer. The
-account is what lets the Wallet Provider recognize the same citizen on a new
+account lets the Wallet Provider recognize the same citizen on a new
 device and revoke the old installation.
 
 <div class="ekdn-reqs" markdown="1">
@@ -515,9 +526,7 @@ device and revoke the old installation.
 
 ## The enrollment binding {#ts-2-01-the-enrollment-binding}
 
-The enrollment binding string is the challenge, a period, and the
-[RFC 7638][ref-rfc7638] thumbprint of the credential key computed with
-SHA-256 and encoded in base64url. Its hash is the SHA-256 of the string's
+The hash of the enrollment binding string is the SHA-256 of the string's
 UTF-8 octets. On Android the integrity verdict carries the hash as its
 `requestHash`; on iOS the App Attest attestation is made over it as its
 `clientDataHash`. The challenge itself is the `attestationChallenge` of both
@@ -534,9 +543,9 @@ the key exists.
 
 ## Evidence on Android {#ts-2-01-evidence-on-android}
 
-Mobile Wallet generates both keys in the Android keystore as P-256 signing
-keys with the challenge as their attestation challenge and with the device
-properties included, so that each certificate chain says where its key sits,
+Mobile Wallet generates both keys in the Android Keystore as P-256 signing
+keys, with the challenge as their attestation challenge and the device
+properties included. Each certificate chain then says where its key sits,
 which application holds it, on which device model, and in which boot state.
 The credential key is bound to the citizen's authentication; the device key
 is not, because it signs requests the citizen does not see.
@@ -574,22 +583,25 @@ Wallet Backend Service checks the evidence in five steps.
 - [](){ #req-ts-2-01-032 }**REQ-TS-2-01-032** Wallet Backend Service MUST refuse an integrity verdict whose `appRecognitionVerdict` is not `PLAY_RECOGNIZED` or whose package name and certificate digest are not the official build's.
 - [](){ #req-ts-2-01-033 }**REQ-TS-2-01-033** Wallet Backend Service MUST refuse an integrity verdict whose `deviceRecognitionVerdict` does not hold the value the Governance Profile requires for the device's Android version.
 - [](){ #req-ts-2-01-034 }**REQ-TS-2-01-034** Wallet Backend Service MUST refuse an integrity verdict whose `timestampMillis` lies further from the moment it reads it than the window the Governance Profile sets.
+- [](){ #req-ts-2-01-080 }**REQ-TS-2-01-080** Wallet Backend Service MUST refuse an integrity verdict from a device whose Android version is below the lowest the Governance Profile names a required value for.
 
 </div>
 
 ## Evidence on iOS {#ts-2-01-evidence-on-ios}
 
-On iOS the device key is the App Attest key: the Secure Enclave generates it,
-Apple attests it, and it signs only App Attest assertions, which is all the
-device key does. The credential key is a separate P-256 key in the Secure
-Enclave, because the App Attest key cannot sign a JSON Web Signature or a
-`COSE_Sign1`. Apple attests no key but the App Attest key, so the evidence
-for the credential key is the App Attest attestation whose `clientDataHash`
-is the hash of the enrollment binding, which carries the credential key's
-thumbprint. That attestation is the *attestation platform* of the iOS
-credential key: it shows that the official build produced the key, and the
-build, which an Assessment Body has tested, fixes where the key sits and
-what releases it.
+On iOS the device key is the App Attest key: the Secure Enclave generates
+it, Apple attests it, and it signs only App Attest assertions, which is all
+the device key does.
+
+The credential key is a separate P-256 key in the Secure Enclave, because
+the App Attest key cannot sign a JSON Web Signature or a `COSE_Sign1`. Apple
+attests no key but the App Attest key, so the evidence for the credential key
+is the App Attest attestation whose `clientDataHash` is the hash of the
+enrollment binding, which carries the credential key's thumbprint.
+
+That attestation is the *attestation platform* of the iOS credential key: it
+shows that the official build produced the key. That build, which an
+Assessment Body has tested, fixes where the key sits and what releases it.
 
 Wallet Backend Service checks the attestation object as
 [App Attest][ref-app-attest] defines it, in five steps.
@@ -625,10 +637,11 @@ Wallet Backend Service checks the attestation object as
 
 Google publishes the roots of Android Key Attestation at
 `https://android.googleapis.com/attestation/root`. Since 1 February 2026 it
-signs new chains under an ECDSA P-384 root while the older RSA root stays
-valid, so a device enrolled before that date and one enrolled after it
-present chains to different roots. Apple publishes one root for App Attest.
-A root is identified by the SHA-256 fingerprint of its certificate.
+signs new chains under an Elliptic Curve Digital Signature Algorithm (ECDSA)
+P-384 root while the older RSA root stays valid, so a device enrolled before
+that date and one enrolled after it present chains to different roots. Apple
+publishes one root for App Attest. A root is identified by the SHA-256
+fingerprint of its certificate.
 
 [](){ #tbl-ts-2-01-accepted-roots }
 
@@ -644,13 +657,13 @@ A root is identified by the SHA-256 fingerprint of its certificate.
 
 A root joins the table through a minor version of this specification. A root
 leaves it when its owner withdraws it from the address it publishes roots at,
-or from the date the Governance Profile names for it, whichever comes first.
+or on the date the Governance Profile names for it, whichever comes first.
 An installation enrolled under a root that has left keeps its record; only a
 new enrollment needs a root in the table.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-2-01-045 }**REQ-TS-2-01-045** Wallet Backend Service MUST accept an Android chain that ends at either Android root of [the table of accepted roots][tbl-ts-2-01-accepted-roots].
+- [](){ #req-ts-2-01-045 }**REQ-TS-2-01-045** Wallet Backend Service MUST accept an Android chain that ends at either Android root of [the table of accepted roots][tbl-ts-2-01-accepted-roots], unless [REQ-TS-2-01-047][req-ts-2-01-047] applies.
 - [](){ #req-ts-2-01-046 }**REQ-TS-2-01-046** Wallet Backend Service MUST identify a root by the SHA-256 fingerprint of its certificate.
 - [](){ #req-ts-2-01-047 }**REQ-TS-2-01-047** Wallet Backend Service MUST refuse a chain that ends at a root its owner has withdrawn or whose date in the Governance Profile has passed.
 - [](){ #req-ts-2-01-048 }**REQ-TS-2-01-048** Wallet Backend Service MUST refresh its copy of Google's attestation revocation list within the time its `Cache-Control` header allows.
@@ -660,8 +673,11 @@ new enrollment needs a root in the table.
 ## The installation record {#ts-2-01-the-installation-record}
 
 Wallet Backend Service keeps one record for each installation it has
-enrolled. The record is what every later Key Attestation is read from: the
-credential key it names, and the resistance values established for it.
+enrolled. Every later Key Attestation is read from it: the credential key
+it names, and the resistance values established for it. The
+encrypted backup the same service runs is outside this specification: it holds
+ciphertext the citizen alone holds the key to, so it records none of what
+[REQ-TS-2-01-054][req-ts-2-01-054] names.
 
 <figure markdown="1" class="ekdn-table">
 
@@ -783,8 +799,6 @@ installation.
 
 ## Security considerations {#ts-2-01-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **Evidence from two sessions put together.** An attacker could pair the
   attestation of a genuine device with a key it controls.
   [REQ-TS-2-01-006][req-ts-2-01-006] keeps one challenge across the
@@ -798,7 +812,7 @@ Each threat below is answered by the requirement named with it.
   a software key on Android, and [REQ-TS-2-01-044][req-ts-2-01-044] makes
   the iOS credential key rest on the build that App Attest shows running.
 - **A repackaged or modified application.**
-  [REQ-TS-2-01-025][req-ts-2-01-025], [REQ-TS-2-01-032][req-ts-2-01-032] and
+  [REQ-TS-2-01-025][req-ts-2-01-025], [REQ-TS-2-01-032][req-ts-2-01-032], and
   [REQ-TS-2-01-041][req-ts-2-01-041] tie every key to the official build.
 - **A rooted device or an unlocked bootloader.**
   [REQ-TS-2-01-026][req-ts-2-01-026] and [REQ-TS-2-01-033][req-ts-2-01-033]
@@ -807,7 +821,7 @@ Each threat below is answered by the requirement named with it.
 - **A flaw in the official iOS build.** The iOS credential key's storage is
   vouched for by the build rather than by the chip, so a build that made the
   key outside the Secure Enclave would be believed.
-  [REQ-TS-2-01-036][req-ts-2-01-036] is what an Assessment Body tests in the
+  An Assessment Body tests [REQ-TS-2-01-036][req-ts-2-01-036] in the
   build, and [REQ-TS-2-01-042][req-ts-2-01-042] refuses a development build.
 - **A replayed request for an attestation.** On iOS
   [REQ-TS-2-01-067][req-ts-2-01-067] refuses a counter seen before. On
@@ -831,8 +845,8 @@ Each threat below is answered by the requirement named with it.
 
 Wallet Backend Service learns the account, the device model, the two public
 keys, and the moments the installation enrolled and asked for an
-attestation. It does not learn which issuer a request was for, because a
-nonce names nobody, nor which credential followed, nor any verifier. The
+attestation. It does not learn which issuer a request was for, nor which
+credential followed, nor any verifier: a nonce names nobody. The
 device key never appears in a presentation, so the installation's identifier
 does not reach a verifier.
 
@@ -850,6 +864,6 @@ does not reach a verifier.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

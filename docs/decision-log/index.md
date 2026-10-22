@@ -10,7 +10,7 @@ description: "IDCTF-DL: every settled decision, numbered, with the status that s
 <p class="ekdn-lead" markdown="span">
 <code>IDCTF-DL</code>. Every decision the ecosystem has settled, numbered so the
 other documents can cite it, with a status that says whether it is permanent,
-temporary, or still open. Kept by the architecture committee.
+temporary, or still open. Kept by the Root Authority.
 </p>
 
 <p class="ekdn-soon">(soon)</p>

@@ -25,33 +25,50 @@ the identifier `REQ-TS-5-02-nnn` follow [Common provisions](common-provisions.md
 ## Who runs this and what it needs {#ts-5-02-who-runs-this-and-what-it-needs}
 
 This specification is a profile of [`did:webvh`][ref-did-webvh] version 1.0
-for the identifiers of IDCTF. It fixes the form of the identifier, the
-parameters of every log entry, the keys that sign the log and the keys the
-DID Document publishes, how the entity rotates a key and publishes its log,
-and the rules a reader applies when it resolves an identifier. Entity
-means a party that holds a `did:webvh`: every accredited registration, and
-Trust Authority.
+for the identifiers of IDCTF. It fixes:
 
-Its conformance targets are the three Modules that maintain an entity's
-log through their Key Manager Component, Issuer Core, Verifier Core, and
-Wallet Backend Service; Trust Authority, which maintains its own log; and
-the four Modules that resolve identifiers, Issuer Core, Verifier Core,
-Mobile Wallet, and Mobile Verifier, which meet the reader requirements
-through Trust SDK where the library performs the check.
+- The form of the identifier.
+- The parameters of every log entry.
+- The keys that sign the log and the keys the DID Document publishes.
+- How the entity rotates a key and publishes its log.
+- The rules a reader applies when it resolves an identifier.
 
-It leaves to other documents: what DID Service checks before it witnesses
-an entry, the proof it returns, and the copy it serves, which
-[Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md) holds; the door through which an entity
-submits an entry, `POST /entities/me/keys` on Trust Authority, with its
-proof of possession and its `keyStorage` evidence, which [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) holds; which witness keys and which revoked keys a
-reader accepts, which [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md) holds; the
-rotation schedule of each key and the tolerance limit of a cached log,
-which the Governance Profile holds; the certificates an entity's keys may also carry,
-which [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md) holds; and the form of every
-`did:key` a log or a proof names, the holder's `did:key`, and the device
-identifier, which
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-holds.
+Entity means a party that holds a `did:webvh`: every accredited registration, and
+the Root Authority, whose log Trust Authority maintains.
+
+Its conformance targets are:
+
+- Issuer Core, Verifier Core, and Wallet Backend Service, the three
+  Modules that maintain an entity's log through their Key Manager
+  Component.
+- Trust Authority, which maintains its own log.
+- Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier, the four
+  Modules that resolve identifiers, which meet the reader requirements
+  through Trust SDK where the library performs the check.
+
+It leaves to other documents:
+
+- What DID Service checks before it witnesses an entry, the proof it
+  returns, and the copy it serves, which
+  [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
+  holds.
+- The door through which an entity submits an entry,
+  `POST /entities/me/keys` on Trust Authority, with its proof of possession
+  and its `keyStorage` evidence, which
+  [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+  holds.
+- Which witness keys and which revoked keys a reader accepts, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- The rotation schedule of each key and the tolerance limit of a cached
+  log, which the Governance Profile holds.
+- The certificates an entity's keys may also carry, which
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  holds.
+- The form of every `did:key` a log or a proof names, the holder's
+  `did:key`, and the device identifier, which
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  holds.
 
 Before the first exchange, each target holds what the rules below assume:
 
@@ -77,56 +94,60 @@ Before the first exchange, each target holds what the rules below assume:
 An entity's identifier proves one thing: that a signature belongs to the
 entity that claims it. Whether the entity is accredited, and what it may do,
 are answered by the trusted list and the Authority Statement, as
-[three questions, three answers][three-questions-three-answers] sets out,
-and a DID absent from the trusted list is refused however well its log
-verifies. [Entities: did:webvh][entities-didwebvh] says why the method was
+[three questions, three answers][three-questions-three-answers] sets out. A DID
+absent from the trusted list is refused however well its log verifies. [Entities: did:webvh][entities-didwebvh] says why the method was
 chosen and [the DID Document][did-document] says where the log lives, who
 reads it, and that DID Service witnesses and does not publish.
 
-`did:webvh` publishes the whole history of a DID as a log, one entry per
-version of the DID Document, each entry chained to the one before by a hash,
-signed by the entity's update key, and countersigned by a witness. The SCID
-inside the DID is a hash of the first entry, so the identifier binds the
-history without depending on the domain that serves it. Pre-rotation commits each entry to the hash of the next
-update key, so a stolen key cannot rotate to a key of the thief's choosing.
-[The update key][the-update-key] explains the three properties and
-[how an entity rotates a key][how-an-entity-rotates-a-key] shows the path a
-new entry takes: the entity submits it to Trust Authority, Trust Authority
-hands it to DID Service, DID Service returns the witness proof, and the
-entity publishes the entry on its own domain. What DID Service checks and
-serves is in [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md); this specification fixes the
-artifact.
+`did:webvh` publishes the whole history of a DID as a log, one entry per version
+of the DID Document, each entry chained to the one before by a hash, signed by
+the entity's update key, and countersigned by a witness. The SCID inside the DID
+is a hash of the first entry, so the identifier binds the history without
+depending on the domain that serves it. Pre-rotation commits each entry to the
+hash of the next update key, so a stolen key cannot rotate to a key of the
+thief's choosing. [The update key][the-update-key] explains the three
+properties and [how an entity rotates a key][how-an-entity-rotates-a-key]
+shows the path a new entry takes.
 
 ## The log as published {#ts-5-02-the-log-as-published}
 
-Below is an issuer's log of two entries, as its domain serves it, and the
-witness file beside it. It shows every option this profile admits: the
-first entry with `method`, `scid`, `portable` and the full `witness` and
-`watchers`; a second entry that rotates both the update key and a
-transaction key, with the old `issuance-jose` key kept in
-`verificationMethod` and gone from `assertionMethod`, and that takes the
-second witness key beside the first while Trust Authority rotates its
-witness key; both issuer purposes; and the witness file carrying one proof
-per published entry. The times match
-[the trusted list payload][ts-5-01-trusted-list-payload], where the first witness key is
-`granted` from 1 January 2026 and `withdrawn` from 1 October 2026 and the
-second is `granted` from 1 September 2026. The keys of a
-Relying Party and of a Wallet Provider follow
-[the table of keys by role][tbl-ts-5-02-keys-by-role] in the same shape,
-and carry no `keyAgreement` entry, because the key a wallet encrypts a
-presentation to is not published in the DID Document.
-
-The log is an illustration: the issuer, its domain and its keys are
+The log is an illustration: the issuer, its domain, and its keys are
 invented, and no registration has been accredited. Every field is exact.
-The self-certifying identifier, both entry hashes and the pre-rotation
+The self-certifying identifier, both entry hashes, and the pre-rotation
 hash were computed with the algorithms of
 [did:webvh][ref-did-webvh], every proof is a real `eddsa-jcs-2022`
 signature, and the whole log passes the method's Read steps, so an
-implementation can replay it and get the same values. Its identifier is the
-one [the trusted list][ts-5-01-trusted-list-payload] carries
-for that issuer, and the witness proof is the one
-[Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
-returns.
+implementation can replay it and get the same values.
+
+The log and the witness file beside it show every option this profile
+admits:
+
+- The first entry, with `method`, `scid`, `portable`, and the full
+  `witness` and `watchers`.
+- A second entry that rotates both the update key and a transaction key,
+  with the old `issuance-jose` key kept in `verificationMethod` and gone
+  from `assertionMethod`.
+- The second witness key beside the first in that entry, while Trust Authority
+  rotates its witness key.
+- Both issuer purposes.
+- The witness file, carrying the latest proof per witness.
+
+The log agrees with the other pages on three points:
+
+- The identifier is the one [the trusted list][ts-5-01-trusted-list-payload]
+  carries for that issuer.
+- The times match [the trusted list payload][ts-5-01-trusted-list-payload],
+  where the first witness key is `granted` from 1 January 2026 and
+  `withdrawn` from 1 October 2026 and the second is `granted` from
+  1 September 2026.
+- The witness proof is the one
+  [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
+  returns.
+
+The keys of a Relying Party and of a Wallet Provider follow
+[the table of keys by role][tbl-ts-5-02-keys-by-role] in the same shape,
+and carry no `keyAgreement` entry, because the key a wallet encrypts a
+presentation to is not published in the DID Document.
 
 ``` { .json title="did.jsonl, served at https://dukcapil.go.id/.well-known/did.jsonl" data-format="JSONL" }
 {"versionId": "1-QmVKY1B6GfgWufkmEJ8NWR83QbYUjgcFrx1VJaFrqLrsje", "versionTime": "2026-02-01T00:00:00Z", "parameters": {"method": "did:webvh:1.0", "scid": "QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4", "updateKeys": ["z6MkhDXZtBHLUKK27G1d5s5CN4J6ekJwBhRrfmkBKMKD5DVX"], "nextKeyHashes": ["QmVC43PqjprVjnkqf8nEKScSwBE8BvJqrfhBW23BBaMj7s"], "witness": {"threshold": 1, "witnesses": [{"id": "did:key:z6MkrGRs1p2FjsQsxJtKwmaUotzGtjmjcvM7uKcnXU7ffLKe"}]}, "watchers": ["https://did.trust.go.id"], "portable": false}, "state": {"@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/multikey/v1"], "id": "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id", "verificationMethod": [{"id": "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id#issuance-jose-1", "type": "Multikey", "controller": "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id", "publicKeyMultibase": "zDnaeWSwJDrKLraHe5w4vA39xFW2TnZaDDNEGGWSyHYSC9Nfp"}, {"id": "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id#status-list-1", "type": "Multikey", "controller": "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id", "publicKeyMultibase": "zDnaeamPEKdV4VYmsDaPr9f3LyENGRFTwHRpoNvRLyi2gznvD"}], "assertionMethod": ["did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id#issuance-jose-1", "did:webvh:QmcEVT2iJSrss5hgwiMFsMUxKkRozgFF458RcggT4MF2L4:dukcapil.go.id#status-list-1"]}, "proof": [{"type": "DataIntegrityProof", "cryptosuite": "eddsa-jcs-2022", "verificationMethod": "did:key:z6MkhDXZtBHLUKK27G1d5s5CN4J6ekJwBhRrfmkBKMKD5DVX#z6MkhDXZtBHLUKK27G1d5s5CN4J6ekJwBhRrfmkBKMKD5DVX", "proofPurpose": "assertionMethod", "proofValue": "z67gL2PpK1JnCw3C5MNyX9xxEqGb628bSe6AT1PnED54jbryYqAGw4VXMZDaY1GhqXbMGPXfybXAAnb811UmeEbah"}]}
@@ -155,16 +176,19 @@ The second entry is signed with the key the first entry announced in
 after that. Its witness proof is from the first witness key, because a
 change to the witness list takes effect only after the entry that makes it
 is published; from the third entry on, either key may witness, until the
-first is withdrawn. The witness file holds one proof, on the second entry,
+first is withdrawn.
+
+The witness file holds one proof, on the second entry,
 because a proof on a later entry vouches for every earlier one and the
-entity removed the older proof, as the method allows. The `issuance-jose-1`
-key stays in `verificationMethod`, so a reader checking a credential it
+entity removed the older proof, as the method allows.
+
+The `issuance-jose-1` key stays in `verificationMethod`, so a reader checking a credential it
 signed before 15 September 2026 still finds it in the first version, and it
 is absent from `assertionMethod` of the second, so it signs nothing new.
 Staying in the document settles where the key is published, not whether a
 signature it made is accepted: the log cannot tell a retired key from a
-revoked one, and the trusted list names this one revoked from 16 October
-2026, which makes a reader refuse it whatever date the signature claims,
+revoked one. The trusted list names this one revoked from 16 October 2026,
+which makes a reader refuse it whatever date the signature claims,
 [REQ-TS-5-01-075][req-ts-5-01-075].
 
 ## The identifier {#ts-5-02-the-identifier}
@@ -188,8 +212,8 @@ path segment becoming one segment of the path. The witness file sits beside
 the log, as `did-witness.json` in place of `did.jsonl`. One legal body that
 holds several registrations gives each its own identifier; whether that is
 a subdomain or a path under one domain is the body's choice, and
-[one entry per registration][ts-5-01-one-entry-per-registration] is what
-tells them apart on the trusted list.
+[one entry per registration][ts-5-01-one-entry-per-registration] tells them
+apart on the trusted list.
 
 ## The log {#ts-5-02-the-log}
 
@@ -233,18 +257,18 @@ each one in the order the method lists them.
 
 </div>
 
-One update key, one next key, and a threshold of one are what the
-architecture describes: an entity holds one key that maintains its
-identifier and each entry announces the hash of the next one, as
-[the update key][the-update-key] sets out, and the witness is a single
-Module, as [Trust Infrastructure is not a role][trust-infrastructure-is-not-a-role]
-sets out. The witness list holds two keys only while Trust Authority rotates
-its witness key, as [the witness key][the-witness-key] describes. A DID is
-never deactivated: a withdrawn registration is answered by the trusted
-list, and its log stays resolvable so that what it signed while accredited
-still verifies. `ttl` stays at the method's default because a reader
-refreshes its copy through the trust cache sync and not on a timer the
-entity sets.
+One update key, one next key, and a threshold of one follow the
+architecture: an entity holds one key that maintains its identifier and each
+entry announces the hash of the next one, as
+[the update key][the-update-key] sets out. The witness is a single Module, as
+[Trust Infrastructure is not a role][trust-infrastructure-is-not-a-role] sets
+out, and the witness list holds two keys only while Trust Authority rotates
+its witness key, as [the witness key][the-witness-key] describes.
+
+A DID is never deactivated: a withdrawn registration is answered by the trusted list, and its
+log stays resolvable so that what it signed while accredited still verifies.
+`ttl` stays at the method's default because a reader refreshes its copy through
+the trust cache sync and not on a timer the entity sets.
 
 ## The DID Document {#ts-5-02-the-did-document}
 
@@ -293,13 +317,9 @@ Verifier Issuing CA key appear in no DID Document, are in
 the certificate travels with what they sign. The key the wallet encrypts the
 presentation to travels in the Request Object, as
 [Verifying a credential online via OpenID4VP](verifying-a-credential-online-via-openid4vp.md)
-fixes, and is not in the DID Document. The update key signs nothing a
-reader ever sees and is published in `updateKeys` alone. A retired key
-stays in `verificationMethod` so that a signature it made still verifies,
-and leaves `assertionMethod` so that it can sign nothing new, as
-[what happens to the old key][what-happens-to-the-old-key] sets out; which
-keys were valid when is read from the log's versions, and a key revoked
-early is named by the trusted list, never by the DID Document.
+fixes, and is not in the DID Document. Which keys were valid when is read
+from the log's versions, and a key revoked early is named by the
+trusted list, never by the DID Document.
 
 ## Rotation {#ts-5-02-rotation}
 
@@ -320,16 +340,14 @@ later one.
 A rotation is a new log entry. It rotates a transaction key by adding a
 verification method and moving the relationship to it, or the update key by
 carrying in `updateKeys` the key whose hash the previous entry announced, or
-both at once. Because pre-rotation is always active, every entry after the
-first is signed with the key it carries, the one committed to one entry
-earlier, which is the method's rule for a log with pre-rotation on. The entry takes the path
+both at once. The entry takes the path
 [how an entity rotates a key][how-an-entity-rotates-a-key] shows, through
 Trust Authority, and counts only once DID Service has witnessed it.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-02-031 }**REQ-TS-5-02-031** The holder of a log MUST generate every key it publishes itself: an entity in its Key Manager Component, in the driver it uses, and Trust Authority in its HSM.
-- [](){ #req-ts-5-02-032 }**REQ-TS-5-02-032** The holder of a log MUST NOT publish a key generated outside the place the previous requirement names.
+- [](){ #req-ts-5-02-032 }**REQ-TS-5-02-032** The holder of a log MUST NOT publish a key generated outside the place [REQ-TS-5-02-031][req-ts-5-02-031] names.
 - [](){ #req-ts-5-02-033 }**REQ-TS-5-02-033** The holder of a log MUST submit every new entry to Trust Authority, signed with the update key that entry carries, before publishing it.
 - [](){ #req-ts-5-02-034 }**REQ-TS-5-02-034** The holder of a log MUST NOT publish an entry that carries no witness proof.
 - [](){ #req-ts-5-02-035 }**REQ-TS-5-02-035** An entry that rotates the update key MUST carry in `updateKeys` the key whose hash the previous entry's `nextKeyHashes` holds.
@@ -343,10 +361,12 @@ Trust Authority, and counts only once DID Service has witnessed it.
 
 </div>
 
-The last two rules are what [why nobody can rotate quietly][why-nobody-can-rotate-quietly]
-rests on: an entry that was never witnessed is an entry every reader
-refuses, and DID Service keeps no queue, so the entity's Key Manager holds
-the entry until the witness answers. An emergency rotation after a key
+[REQ-TS-5-02-041][req-ts-5-02-041] and [REQ-TS-5-02-042][req-ts-5-02-042] keep
+the witness requirement in force while DID Service is down, which is what
+[why nobody can rotate quietly][why-nobody-can-rotate-quietly] sets out.
+Every reader refuses an entry that was never witnessed, and DID Service keeps no
+queue. The entity's Key Manager therefore holds the entry until the witness
+answers. An emergency rotation after a key
 compromise runs the same path the same day, as
 [entity key revocation][entity-key-revocation] sets out.
 
@@ -367,11 +387,11 @@ compromise runs the same path the same day, as
 </div>
 
 Nothing of the log is published on the central content delivery network
-(CDN). The entity's domain is the source every reader fetches, and DID
-Service's copy is read only when that domain cannot be reached, as
+(CDN), as
 [the DID Document is not on the central CDN][the-did-document-is-not-on-the-central-cdn]
 explains. The order of the two files is the method's: a reader that finds
-an entry without its proof refuses it, so the proof has to be there first.
+an entry without its proof refuses it, so [REQ-TS-5-02-046][req-ts-5-02-046]
+has the proof published first.
 
 ## Resolving {#ts-5-02-resolving}
 
@@ -384,23 +404,21 @@ read, inside one.
 2. It replays each log from the first entry, verifying the chain, each
    proof, pre-rotation, and the witness proofs, and stores the DID Document
    versions it resolved.
-3. On a read, it takes the key from the stored version in force at the time
-   the signed object states, checks the relationship, checks the trusted
-   list for a revoked key, and verifies the signature.
+3. On a read, it takes the key from the stored version in force at the time the
+   signed object states, checks the relationship, checks the trusted list for a
+   revoked key, and verifies the signature.
 4. It never fetches a log in between.
 
-A reader in this section is any of the four Modules that resolve an
-entity's identifier: Issuer Core, Verifier Core, Mobile Wallet, and Mobile
-Verifier, each through Trust SDK. A reader resolves from a cached copy of
-the log, filled by the trust cache sync, and never fetches a log during a
-transaction.
+A reader in this section is any of the four Modules that resolve an entity's
+identifier: Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier, each
+through Trust SDK.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-02-052 }**REQ-TS-5-02-052** A reader MUST resolve a log by every step of the method's Read operation, for every entry.
 - [](){ #req-ts-5-02-053 }**REQ-TS-5-02-053** A reader MUST NOT skip a check on an intermediate entry.
 - [](){ #req-ts-5-02-054 }**REQ-TS-5-02-054** A reader MUST accept a witness proof only as [REQ-TS-5-01-077][req-ts-5-01-077] allows.
-- [](){ #req-ts-5-02-055 }**REQ-TS-5-02-055** A reader MUST refuse an entry that carries no accepted witness proof.
+- [](){ #req-ts-5-02-055 }**REQ-TS-5-02-055** A reader MUST refuse an entry that carries no accepted witness proof on itself or on a later published entry.
 - [](){ #req-ts-5-02-056 }**REQ-TS-5-02-056** A reader MUST refuse a log whose parameters differ from [the table of parameters][tbl-ts-5-02-parameters].
 - [](){ #req-ts-5-02-057 }**REQ-TS-5-02-057** A reader MUST fetch every log it holds through the trust cache sync, from the entity's domain first and from DID Service's Resolver endpoint only when the domain cannot be reached or answers with an error.
 - [](){ #req-ts-5-02-058 }**REQ-TS-5-02-058** A reader MUST verify a copy fetched from DID Service exactly as one fetched from the entity's domain.
@@ -417,27 +435,28 @@ transaction.
 
 </div>
 
-Verifying against the version in force at signing time is what lets a
-retired key go on vouching for what it signed: the key stays in
-`verificationMethod` and left `assertionMethod` only in a later version.
-A signed object states its time in its own format, `iat` in a JSON Web
-Token (JWT) or the `created` of a Data Integrity proof, and the format
-specifications name it for each; an mdoc is verified through its
-certificate and never against a DID Document. A key revoked early
-is refused whatever time the object claims, because a thief can backdate,
-as [what happens to the old key][what-happens-to-the-old-key] sets out.
-Which checks run in which flow is in [flows per use case](../architecture-framework/high-level-architecture/flows-per-use-case.md);
-the [trust cache sync][trust-cache-sync] is where the fetch and the
-fallback happen, and a counterpart whose log the cache lacks is also absent
-from the cached trusted list, so it is refused until the next sync.
+Verifying against the version in force at signing time lets a retired key go
+on vouching for what it signed. A signed object states its time in its own
+format, `iat` in a JSON Web Token (JWT) or the `created` of a Data Integrity
+proof, and the format specifications name it for each; an mdoc is verified
+through its certificate and never against a DID Document.
+
+A key revoked early is refused whatever time the object claims, because a
+thief can backdate, as
+[what happens to the old key][what-happens-to-the-old-key] sets out.
+
+Which checks run in which flow is in
+[flows per use case](../architecture-framework/high-level-architecture/flows-per-use-case.md),
+and the [trust cache sync][trust-cache-sync] is where the fetch and the
+fallback happen.
 
 ## Trust Authority's own identifier {#ts-5-02-trust-authoritys-own-identifier}
 
 Trust Authority holds a `did:webvh` of its own, maintained by the same
 rules, so that the Accreditation Credential and the Use Statement it signs
-carry an issuer a reader can resolve. Its witness is its own witness key,
-which proves nothing about it; what anchors it is its SCID, which every
-reader carries from build time, as
+carry an issuer a reader can resolve. Its witness is its own witness key, which
+proves nothing about it. Its SCID anchors it instead, and every reader carries
+that from build time, as
 [Trust Authority's own keys][trust-authoritys-own-keys] sets out.
 
 <div class="ekdn-reqs" markdown="1">
@@ -452,14 +471,12 @@ reader carries from build time, as
 
 ## Security considerations {#ts-5-02-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A rewritten history.** An entry once published cannot be altered
   without breaking the hash chain, and no entry counts without the witness,
   [REQ-TS-5-02-045][req-ts-5-02-045] and [REQ-TS-5-02-054][req-ts-5-02-054], so an
   entity that controls its own web server still cannot rewrite its past
   unnoticed. The copy DID Service keeps, [REQ-TS-4-01-017][req-ts-4-01-017],
-  and its monitoring, [REQ-TS-4-01-018][req-ts-4-01-018], are what detects the
+  and its monitoring, [REQ-TS-4-01-018][req-ts-4-01-018], detect the
   attempt.
 - **A stolen update key.** Pre-rotation is always on,
   [REQ-TS-5-02-013][req-ts-5-02-013], so a thief cannot rotate to a key of
@@ -498,6 +515,6 @@ holder's identifier is not a `did:webvh`; what it exposes is in
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

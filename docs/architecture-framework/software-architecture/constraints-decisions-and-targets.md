@@ -9,8 +9,7 @@ description: The rules every implementation is held to and why, the software dec
 
 The other chapters say what IDCTF is made of. This page says what an
 implementation of it is held to. A reviewer judges a vendor's work against the
-constraints below, and breaking one is an architectural defect rather than a
-matter of taste. The decisions, the storage split, and the scaling strategy
+constraints below, and breaking one is an architectural defect. The decisions, the storage split, and the scaling strategy
 carry those constraints into code, and the quality targets say how the result
 is measured.
 
@@ -88,7 +87,7 @@ that it does not.
 | Decision | Described in |
 |---|---|
 | Every server Module uses the same layers: Controller, then Domain, then Repository or Provider | [Layers inside a Module](layers-inside-a-module.md) |
-| A Module reaches Trust Infrastructure only through Trust SDK | [Trust SDK][sa-trust-sdk] |
+| A Module that verifies a published trust artifact does so only through Trust SDK | [Trust SDK][sa-trust-sdk] |
 | No console has a database connection | The paths between Modules |
 | Sessions and nonces live in a shared Redis, not in process memory | [The stack][the-stack] |
 | Trusted artifacts are static files behind a content delivery network | [Trusted list and cache][trusted-list-and-cache] |
@@ -113,19 +112,20 @@ lives.
 
 The table that matters most is `issuance_record` in Issuer Core. It holds no
 claim, no whole credential, and no plain Population Identification Number
-(NIK). What it does hold is enough to find which credentials have to be
+(NIK). It holds enough to find which credentials have to be
 revoked when a signing key leaks: the key that signed each one, and where its
 status sits in the status list. Its columns are listed under
 [Issuer Core][sa-issuer-core].
 
 [Retention][gf-retention] is set by the Governance Framework, not left to each
-institution. An `issuance_record` and its status list are kept at least as
-long as the longest-lived credential plus a dispute period, because a leaked
-key cannot be handled without them. A diploma never expires, so its archive
-never closes: each signed copy's record is kept until that copy's technical
-validity ends plus the dispute period, and renewal writes the next one. A `verification_record` is kept as long as the Relying
-Party's legal duty requires, usually far shorter. Sessions and nonces last
-minutes.
+institution. An `issuance_record` and its status list are kept at least as long
+as the longest-lived credential plus a dispute period, because a leaked key
+cannot be handled without them. A diploma never expires, so its archive never
+closes: each signed copy's record is kept until that copy's technical validity
+ends plus the dispute period, and renewal writes the next one. A
+`verification_record` is kept for the period the Governance Profile sets, and
+longer only where a law binding the Relying Party requires it. Sessions and
+nonces last minutes.
 
 ## Scale and resilience {#scale-and-resilience}
 
@@ -140,9 +140,9 @@ minutes.
 
 </figure>
 
-Every cache in IDCTF is a requirement for resilience and privacy. It is what
-lets verification run while Trust Infrastructure is down, and what keeps a
-citizen's pattern of use from reaching Trust Infrastructure at all. Each cache
+Every cache in IDCTF is a requirement for resilience and privacy. It lets
+verification run while Trust Infrastructure is down, and it keeps a citizen's
+pattern of use from reaching Trust Infrastructure at all. Each cache
 adds jitter to its refresh, so that caches expiring together do not all hit
 the source in the same moment.
 
@@ -161,10 +161,8 @@ This is the order `did:webvh` sets, where the controller collects the witness
 proofs and publishes only once it holds them, and it is why the metric of
 entries waiting for the witness is counted at the entity.
 
-An outage longer than the same day that
-[entity key revocation][entity-key-revocation] gives the rotation delays the
-rotation, and nothing goes around the witness. No entry is published without a
-witness proof, and no other key witnesses in its place. The compromised key
+[Entity key revocation][entity-key-revocation] gives the rotation the same day.
+An outage longer than that delays it, and nothing goes around the witness. The compromised key
 stays revoked from the first hour, the entity's other keys keep working, and
 the delay goes into the post-mortem the entity files at the end of the
 incident.
@@ -190,7 +188,7 @@ incident.
 | Module API | Semantic versioning. A breaking change takes a major version and a transition period |
 | Trust SDK | Backward compatible for at least two major versions |
 | Trusted list | Carries a version field, so a move to a new LoTE format does not force every verifier to update at once |
-| Time | Every Module runs on UTC, synchronized by NTP. The daily `exp` of a Key Attestation, a short-lived `nonce`, the validity of a Verifier Device Certificate, and `StatusStartingTime` in the trusted list all depend on clocks that agree |
+| Time | Every Module runs on UTC, synchronized by NTP. The one-day ceiling on a Key Attestation's `exp`, a short-lived `nonce`, the validity of a Verifier Device Certificate, and `StatusStartingTime` in the trusted list all depend on clocks that agree |
 
 </figure>
 
@@ -211,6 +209,6 @@ incident.
 
 </figure>
 
-The first target depends on the tolerance limits the Governance Profile
-sets, one per cached artifact, and [the trust path][the-trust-path] states
-what each of them bounds.
+The target for verification while Trust Infrastructure is down depends on
+the tolerance limits the Governance Profile sets, one per cached artifact,
+and [the trust path][the-trust-path] states what each of them bounds.

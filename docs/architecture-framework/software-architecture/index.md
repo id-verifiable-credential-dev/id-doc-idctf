@@ -14,9 +14,8 @@ not do, and what it runs on.
 </p>
 
 The chapter works at the last of the three tiers the
-[Services](../high-level-architecture/services.md) page defines.
-A Service groups Modules, and a Module groups Components; here the unit is the
-Component. A layer is not a fourth tier. It names what a Component is
+[Services](../high-level-architecture/services.md) page defines: the Component.
+A layer is not a fourth tier. It names what a Component is
 responsible for, and one rule orders the layers: each calls only the layer
 beneath it, never upward and never skipping one.
 

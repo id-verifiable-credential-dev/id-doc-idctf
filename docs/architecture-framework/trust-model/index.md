@@ -14,15 +14,12 @@ chapter is how each of those is established, by whom, through which artifact,
 and for how long an answer stays good.
 </p>
 
-The previous chapters named the parties, the Modules, and the artifacts that
-pass between them. This one puts them to work on a single job: letting a
-wallet or a verifier that has never met the other side decide, from material
-it already holds, whether to proceed. Two things carry that decision and
-neither stands in for the other. A Decentralized Identifier (DID) Document
-proves that a signature belongs to the entity that claims it; Trust Registry
+A wallet or a verifier that has never met the other side must decide, from
+material it already holds, whether to proceed. A Decentralized Identifier (DID)
+Document proves that a signature belongs to the entity that claims it; Trust Registry
 proves that the entity is allowed to have made it. Everything in the chapter
 is one or the other of those two proofs, or a statement one party signs about
-another because that other is not in the registry at all.
+another because that other is not in Trust Registry at all.
 
 ## What the trust model covers and what it leaves out {#trust-model-scope}
 
@@ -39,7 +36,7 @@ and how the check runs online and in proximity. The chain codes are those of
 | Established | By | Through | Online | In proximity |
 |---|---|---|---|---|
 | The issuer's identity and its authority to issue this type | Trust Registry and DID Service | Trusted list, Authority Statement, DID Document | E1 to E3 | The next row instead |
-| The issuer's signing certificate for an mdoc | The certificate authority at Trust Authority | Document Signer Certificate chained to the Issuer Root CA, the VICAL, the CRL | E4 | E4 |
+| The issuer's signing certificate for an mdoc | The certificate authority at Trust Authority | Document Signer Certificate chained to the Issuer Root CA, the VICAL, the CRL | Not applicable: an mdoc is read in proximity alone | E4 |
 | The Relying Party's identity and the attributes it may request | Trust Registry, for an accredited Relying Party; the RP Intermediary, itself on the trusted list, for a merchant | `did:webvh` plus the trusted list for a Relying Party and an RP Intermediary; the Verifier Device Certificate for a merchant; the Use Statement for the use in hand | T5, in Mobile Wallet | Verifier Device Certificate chained to the Verifier Root CA; the Use Statement in `requestInfo` |
 | The wallet installation and the storage of its credential key | The Wallet Provider | Key Attestation, demanded at every issuance | Checked by Issuer Core at issuance | Not checked; issuance is always online |
 | The credential's current validity | The issuer itself | Status list | Read from cache, on a short TTL | Read from cache, up to the tolerance limit |
@@ -51,17 +48,15 @@ Three things sit outside this trust model, each because somebody else is
 answerable for it.
 
 - **Whether the contents of a credential are true.** The trust model proves
-  who signed a credential and that the signature holds. Whether the claims
-  inside it are correct is the business of the source system the issuer
-  copied them from, which the ecosystem depends on and does not govern.
+  who signed a credential and that the signature holds; the claims inside it
+  are the business of the source system the issuer copied them from, which the ecosystem depends on and does not govern.
 - **Whether a Relying Party's business system trusts its own Verifier Core.** That
-  is an internal matter of the Relying Party, settled inside its own systems
-  once the Verifier Core has handed over a result.
+  is an internal matter of the Relying Party, once the Verifier Core has handed
+  over a result.
 - **Who the citizen is at the identity provider behind a Mobile Wallet.**
   That sign-in belongs to the Wallet Provider that chose the provider, and it
   establishes an account, not a person. The trust model takes the
-  authenticated session as given; what it checks is the wallet and its
-  credential key, not the person at the identity provider.
+  authenticated session as given and checks the wallet and its credential key.
 
 ## Chapter contents {#tm-chapter-contents}
 

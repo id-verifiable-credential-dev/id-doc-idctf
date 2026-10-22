@@ -25,34 +25,45 @@ and the identifier `REQ-TS-5-08-nnn` follow
 
 ## Who runs this and what it needs {#ts-5-08-who-runs-this-and-what-it-needs}
 
-This specification fixes the Key Attestation: the claims it carries, which key
-it covers, what its resistance values mean, the signature the Wallet Provider
-puts on it, how long it is good for, how it reaches an issuer inside a
-credential request, and what Issuer Core checks before it acts on one.
+This specification fixes the Key Attestation:
+
+- The claims it carries.
+- Which key it covers.
+- What its resistance values mean.
+- The signature the Wallet Provider puts on it.
+- How long it is good for.
+- How it reaches an issuer inside a credential request.
+- What Issuer Core checks before it acts on one.
 
 Its conformance targets are Wallet Backend Service, which decides whether to
 issue one and signs it; Mobile Wallet, which asks for one and carries it; and
 Issuer Core, which validates one at every issuance.
 
-It leaves to other documents: the request a wallet sends its own backend to
-enroll an installation and to obtain an attestation, which is internal to a
-Wallet Provider and which
-[Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
-holds; the credential request as a whole, its
-authorization, and the metadata an issuer publishes, which
-[Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
-holds, this page fixing only the proof
-object that carries the attestation and the checks an issuer runs on it; which storage a credential type demands,
-which the Credential Rulebook of that type holds through `min_assurance`; the
-mapping from an assurance level to the resistance values an issuer announces,
-which the Governance Profile holds; the form of the identifiers a device and a
-holder are known by, which
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-holds; the keys of a Wallet Provider and the log they live in, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; and the entry that says a Wallet Provider is accredited, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds.
+It leaves to other documents:
+
+- The request a wallet sends its own Wallet Backend Service to enroll an
+  installation and to obtain an attestation, which is internal to a
+  Wallet Provider and which
+  [Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
+  holds.
+- The credential request as a whole, its authorization, and the metadata an
+  issuer publishes, which
+  [Issuing a credential via OpenID4VCI](issuing-a-credential-via-openid4vci.md)
+  holds, this page fixing only the proof object that carries the attestation
+  and the checks an issuer runs on it.
+- Which storage a credential type demands, which the Credential Rulebook of
+  that type holds through `min_assurance`.
+- The mapping from an assurance level to the resistance values an issuer
+  announces, which the Governance Profile holds.
+- The form of the identifiers a device and a holder are known by, which
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  holds.
+- The keys of a Wallet Provider and the log they live in, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- The entry that says a Wallet Provider is accredited, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
 
 Before the first issuance, each target holds what the rules below assume:
 
@@ -70,7 +81,7 @@ Before the first issuance, each target holds what the rules below assume:
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-08-001 }**REQ-TS-5-08-001** Wallet Backend Service MUST meet every requirement on this page that names Wallet Backend Service, and every requirement on what Wallet Backend Service writes: the Key Attestation, with its header, its claims and its signature.
+- [](){ #req-ts-5-08-001 }**REQ-TS-5-08-001** Wallet Backend Service MUST meet every requirement on this page that names Wallet Backend Service, and every requirement on what Wallet Backend Service writes: the Key Attestation, with its header, its claims, and its signature.
 - [](){ #req-ts-5-08-002 }**REQ-TS-5-08-002** Mobile Wallet MUST meet every requirement on this page that names Mobile Wallet, and every requirement on what Mobile Wallet writes: the `jwt` proof it builds.
 - [](){ #req-ts-5-08-003 }**REQ-TS-5-08-003** Issuer Core MUST meet every requirement on this page that names Issuer Core.
 
@@ -80,29 +91,29 @@ Before the first issuance, each target holds what the rules below assume:
 
 A Key Attestation answers one question an issuer has before it signs anything:
 is the key this credential will be bound to held where the Wallet Provider says
-it is held, and is this installation still one the provider stands behind. It
+it is held, and is this installation still one the Wallet Provider stands behind. It
 says nothing about the citizen, nothing about the credential, and nothing about
 what the data in that credential will be.
 
 The evidence behind it stays with the Wallet Provider. A wallet shows its
-backend an attestation platform, the chain the chip or the operating system
-issues for a key it generated, and the backend checks that chain and its own
-record of the installation. An issuer never sees the chain: it reads one
-artifact in one format, and the work of turning a platform's evidence into that
-artifact is the Wallet Provider's, as
+Wallet Backend Service an attestation platform, the chain the chip or the
+operating system issues for a key it generated, and Wallet Backend Service
+checks that chain and its own record of the installation. An issuer never sees
+the chain: it reads one artifact in one format, as
 [two assurance levels](../architecture-framework/trust-model/two-assurance-levels.md)
 sets out.
 
-On iOS, where the platform attests no key but the App Attest key, the
-attestation platform of the credential key is the App Attest attestation that
-commits to the key's thumbprint, and the official build it shows running
-stands behind where the key sits and what releases it, as
+On iOS the platform attests no key but the App Attest key. The
+attestation platform of the credential key is therefore the App Attest
+attestation that commits to the key's thumbprint. The official build it shows
+running stands behind where the key sits and what releases it, as
 [Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
 fixes.
 
-Every issuance demands one, whatever the credential type. What the Credential
-Rulebook of a type sets through `min_assurance` is the storage the attestation
-has to report, not whether an attestation is asked for.
+Every issuance demands one, whatever the credential type,
+[REQ-TS-5-08-059][req-ts-5-08-059]. What the Credential Rulebook of a type
+sets through `min_assurance` is the storage the attestation reports,
+[REQ-TS-5-08-028][req-ts-5-08-028], not whether an attestation is asked for.
 
 An attestation is never revoked. It expires a day after it was issued at the
 latest, and an installation the Wallet Provider has disowned obtains no
@@ -115,14 +126,17 @@ otherwise.
 ## Key Attestations as issued {#ts-5-08-key-attestations-as-issued}
 
 The attestation below is an illustration: the Wallet Provider, the issuer, the
-installation and the keys are invented, and no wallet has enrolled. Every field
+installation, and the keys are invented, and no wallet has enrolled. Every field
 is exact. It was signed with the Key Attestation key of the Wallet Provider DID
-its `iss` names, and the signature verifies. The Wallet Provider is the one
-[the trusted list][ts-5-01-trusted-list-payload] carries, with
-the same DID, and the key it attests is the credential key whose holder
-identifier
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-publishes.
+its `iss` names, and the signature verifies.
+
+The attestation agrees with the other examples on two points:
+
+- The Wallet Provider is the one
+  [the trusted list][ts-5-01-trusted-list-payload] carries, with the same DID.
+- The key it attests is the credential key whose holder identifier
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  publishes.
 
 ``` { .text title="A Key Attestation, in compact serialization" data-format="JWT" }
 eyJ0eXAiOiJrZXktYXR0ZXN0YXRpb24rand0IiwiYWxnIjoiRVMyNTYiLCJraWQiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQja2V5LWF0dGVzdGF0aW9uLTEifQ.eyJpc3MiOiJkaWQ6d2Vidmg6UW1lVFcxMzRxalVDNkVLWFU2SkwzZFZSZ2QzZlltVXBNYm9vRURva1NwRkVBSDpkb21wZXQuY28uaWQiLCJhdHRlc3RlZF9rZXlzIjpbeyJrdHkiOiJFQyIsImNydiI6IlAtMjU2IiwieCI6IjNDT2h4T2VPeHBCT2pVSmdxV1NBVTBRQUFZYVlndWdQVkpfMlgycUdka2MiLCJ5IjoiMms5ODg1NHBCNzd1ZGRSdmU4TzRrZzVuSVBUN0VqRWdwYmVLcVdMdU1FRSJ9XSwia2V5X3N0b3JhZ2UiOlsiaXNvXzE4MDQ1X2hpZ2giXSwidXNlcl9hdXRoZW50aWNhdGlvbiI6WyJpc29fMTgwNDVfbW9kZXJhdGUiXSwiY2VydGlmaWNhdGlvbiI6Imh0dHBzOi8vZG9tcGV0LmNvLmlkL2NlcnRpZmljYXRpb24vc2UtMjAyNi1hIiwibm9uY2UiOiJrUTh2WjJtSDdyVDEiLCJpYXQiOjE3OTIyMTY4MDAsImV4cCI6MTc5MjMwMzIwMH0.BRkIkIMHv2WPNC4VfRpDPDF7pIKl2TYfdevTxxJH4kBB4FBaLvfYd0JRbwDd76u_l7uMQ-7mtlI-sbkksgvvDA
@@ -162,16 +176,17 @@ Its header and its claims, decoded:
 }
 ```
 
-The same attestation inside the header of a key proof, which is the second of
+The same attestation appears inside the header of a key proof, the second of
 the two ways it reaches an issuer. The proof goes to the issuer of the Kartu
-ASN, a type whose Rulebook sets `substantial`, because an issuer at `high`
+ASN, a type whose Rulebook sets `substantial`: an issuer at `high`
 accepts the `attestation` proof type alone, as
 [the mapping][tbl-min-assurance-mapping] sets out. The wallet obtained its
 access token through anonymous access to the token endpoint in the
 Pre-Authorized Code flow, so the proof carries no `iss`, as
 [REQ-TS-5-08-074][req-ts-5-08-074] allows. The proof is signed by the
 credential key the attestation covers, and `key_attestation` carries the
-attestation above unchanged:
+attestation of
+[Key Attestations as issued][ts-5-08-key-attestations-as-issued] unchanged:
 
 ``` { .text title="A key proof carrying the attestation in its header" data-format="JWT" }
 eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVDIiwiY3J2IjoiUC0yNTYiLCJ4IjoiM0NPaHhPZU94cEJPalVKZ3FXU0FVMFFBQVlhWWd1Z1BWSl8yWDJxR2RrYyIsInkiOiIyazk4ODU0cEI3N3VkZFJ2ZThPNGtnNW5JUFQ3RWpFZ3BiZUtxV0x1TUVFIn0sImtleV9hdHRlc3RhdGlvbiI6ImV5SjBlWEFpT2lKclpYa3RZWFIwWlhOMFlYUnBiMjRyYW5kMElpd2lZV3huSWpvaVJWTXlOVFlpTENKcmFXUWlPaUprYVdRNmQyVmlkbWc2VVcxbFZGY3hNelJ4YWxWRE5rVkxXRlUyU2t3elpGWlNaMlF6WmxsdFZYQk5ZbTl2UlVSdmExTndSa1ZCU0Rwa2IyMXdaWFF1WTI4dWFXUWphMlY1TFdGMGRHVnpkR0YwYVc5dUxURWlmUS5leUpwYzNNaU9pSmthV1E2ZDJWaWRtZzZVVzFsVkZjeE16UnhhbFZETmtWTFdGVTJTa3d6WkZaU1oyUXpabGx0VlhCTlltOXZSVVJ2YTFOd1JrVkJTRHBrYjIxd1pYUXVZMjh1YVdRaUxDSmhkSFJsYzNSbFpGOXJaWGx6SWpwYmV5SnJkSGtpT2lKRlF5SXNJbU55ZGlJNklsQXRNalUySWl3aWVDSTZJak5EVDJoNFQyVlBlSEJDVDJwVlNtZHhWMU5CVlRCUlFVRlpZVmxuZFdkUVZrcGZNbGd5Y1Vka2EyTWlMQ0o1SWpvaU1tczVPRGcxTkhCQ056ZDFaR1JTZG1VNFR6UnJaelZ1U1ZCVU4wVnFSV2R3WW1WTGNWZE1kVTFGUlNKOVhTd2lhMlY1WDNOMGIzSmhaMlVpT2xzaWFYTnZYekU0TURRMVgyaHBaMmdpWFN3aWRYTmxjbDloZFhSb1pXNTBhV05oZEdsdmJpSTZXeUpwYzI5Zk1UZ3dORFZmYlc5a1pYSmhkR1VpWFN3aVkyVnlkR2xtYVdOaGRHbHZiaUk2SW1oMGRIQnpPaTh2Wkc5dGNHVjBMbU52TG1sa0wyTmxjblJwWm1sallYUnBiMjR2YzJVdE1qQXlOaTFoSWl3aWJtOXVZMlVpT2lKclVUaDJXakp0U0RkeVZERWlMQ0pwWVhRaU9qRTNPVEl5TVRZNE1EQXNJbVY0Y0NJNk1UYzVNak13TXpJd01IMC5CUmtJa0lNSHYyV1BOQzRWZlJwRFBERjdwSUtsMlRZZmRldlR4eEpINGtCQjRGQmFMdmZZZDBKUmJ3RGQ3NnVfbDd1TVEtN210bEktc2Jra3NndnZEQSJ9.eyJhdWQiOiJodHRwczovL2lzc3Vlci5ia24uZ28uaWQiLCJpYXQiOjE3OTIyMTY4MDUsIm5vbmNlIjoia1E4dloybUg3clQxIn0.KedVy6MjilzJ8yHTA70rs9lgrrVJDp2SwSv6_IH9GsMSBImEwU7HfkfVuBAXWCizv2CeL-8cJ4-63DcYzdnrEg
@@ -199,9 +214,8 @@ eyJ0eXAiOiJvcGVuaWQ0dmNpLXByb29mK2p3dCIsImFsZyI6IkVTMjU2IiwiandrIjp7Imt0eSI6IkVD
 }
 ```
 
-The same attestation as the `attestation` proof type, which is the form an
-issuer that accepts only that type receives, shown as the `proofs` member of
-the credential request it travels in:
+The same attestation travels as the `attestation` proof type, in the `proofs`
+member of the credential request:
 
 ``` { .json title="The attestation as the proof itself, abbreviated" data-format="JSON" }
 {
@@ -226,7 +240,7 @@ serialization as [RFC 7515][ref-rfc7515] defines it, over a claims set as
 
 | Claim | Type | Presence | What it carries |
 |---|---|---|---|
-| `iss` | string | Present | The `did:webvh` of the Wallet Provider whose backend issued the attestation |
+| `iss` | string | Present | The `did:webvh` of the Wallet Provider whose Wallet Backend Service issued the attestation |
 | `attested_keys` | array of objects | Present | The installation's credential key, as a JSON Web Key |
 | `key_storage` | array of strings | Present | The attack resistance of the storage that key sits in |
 | `user_authentication` | array of strings | Present | The attack resistance of the user authentication that releases it |
@@ -251,7 +265,7 @@ serialization as [RFC 7515][ref-rfc7515] defines it, over a claims set as
 - [](){ #req-ts-5-08-013 }**REQ-TS-5-08-013** Issuer Core MUST refuse an attestation whose `typ` is not `key-attestation+jwt`.
 - [](){ #req-ts-5-08-078 }**REQ-TS-5-08-078** *Withdrawn: [REQ-TS-01-014][req-ts-01-014] covers it.*
 - [](){ #req-ts-5-08-014 }**REQ-TS-5-08-014** Issuer Core MUST ignore a claim [the table of claims][tbl-ts-5-08-claims] does not list.
-- [](){ #req-ts-5-08-079 }**REQ-TS-5-08-079** Issuer Core MUST NOT refuse an attestation for carrying a claim that table does not list.
+- [](){ #req-ts-5-08-079 }**REQ-TS-5-08-079** Issuer Core MUST NOT refuse an attestation for carrying a claim [the table of claims][tbl-ts-5-08-claims] does not list.
 
 </div>
 
@@ -262,9 +276,8 @@ is bound to that key, so an attestation covers exactly one key. The batch form
 Appendix D.1 allows, one attestation over many keys from the same storage, has
 no instance here.
 
-The key is written as a JSON Web Key with its public coordinates and nothing
-else: no `kid`, no `use`, no private material. The holder identifier an issuer
-binds the credential to is the `did:key` of that same key, as
+The holder identifier an issuer binds the credential to is the `did:key` of
+that credential key, as
 [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
 fixes.
 
@@ -296,42 +309,40 @@ the credential type, and it announces that per credential configuration in
 `key_attestations_required`, which the Governance Profile maps from
 `min_assurance`, as
 [the mapping of assurance to key storage][tbl-min-assurance-mapping] sets out.
-An attestation that reports less than the issuer announced is refused, and the
-wallet learns it from the refusal.
+Issuer Core refuses an attestation that reports less than the issuer
+announced, and the wallet learns it from the refusal.
 
-A value is a claim about an evaluation, not about a brand. A certification
-covers the scope it names, and a certification of key storage says nothing
-about the path by which a citizen authenticates to it. The two values are
-therefore established separately, and each is established per key storage
-component and per device model rather than per platform. An evaluation
-reaches high when it is a [Common Criteria][ref-iso-15408-3] certification
-that includes `AVA_VAN.5` and whose target of evaluation includes the secure
-element in which the credential key is generated and held, together with the
-cryptographic library that operates on the key, as a secure element or an
-embedded Universal Integrated Circuit Card (eUICC) holding the key can show.
-The key management software that runs on that secure element (on Android,
-KeyMint) need not be inside the target of evaluation, provided the Key
-Attestation of the platform shows that the key was generated and is held
-inside the secure element (on Android, `attestationSecurityLevel` and
-`keyMintSecurityLevel` both `StrongBox`). A key in a trusted execution
-environment or in a phone's general key store does not reach high. The
-attestation above reports such a secure element and user authentication at moderate,
-which meets `high` in [the mapping][tbl-min-assurance-mapping], because the
-mapping asks moderate of user authentication at every level from
-`substantial` up.
+What a value rests on is set by
+[REQ-TS-5-08-081][req-ts-5-08-081] to [REQ-TS-5-08-091][req-ts-5-08-091], and
+[two assurance levels][two-assurance-levels] gives the reasoning behind
+them. An embedded Universal Integrated Circuit Card (eUICC) holding the key
+can show what an evaluation at high asks for; a key in a trusted execution
+environment or in a phone's general keystore cannot. The key management
+software that runs on the secure element (on Android, KeyMint) need not be
+inside the target of evaluation, provided the attestation platform
+shows that the key was generated and is held inside the secure element (on
+Android, `attestationSecurityLevel` and `keyMintSecurityLevel` both
+`StrongBox`).
+
+The attestation of
+[Key Attestations as issued][ts-5-08-key-attestations-as-issued] reports such a
+secure element and user authentication at moderate, which meets `high` in
+[the mapping][tbl-min-assurance-mapping], because the mapping asks moderate of
+user authentication at every level from `substantial` up.
 
 Which evaluations count is the Governance Profile's to say. Its
 `recognized_evaluation_schemes` list names the certification schemes whose
 certificates are accepted. An Assessment Body checks each evaluation, and the
 device models the Wallet Provider maps to it, when the Wallet Provider files it
-with Trust Authority, and the Root Authority decides on its report, so that an
+with Trust Authority. The Root Authority decides on its report, so an
 issuer reading `certification` finds an evaluation already checked.
 
 <div class="ekdn-reqs" markdown="1">
 
 - [](){ #req-ts-5-08-081 }**REQ-TS-5-08-081** Wallet Backend Service MUST report `iso_18045_high` for a resistance only where an evaluation under a scheme the `recognized_evaluation_schemes` list of the [Governance Profile][ts-02-closed-lists] names covers the component that provides that resistance and reaches the attack potential [ISO/IEC 18045][ref-iso-18045] calls high.
 - [](){ #req-ts-5-08-087 }**REQ-TS-5-08-087** Wallet Backend Service MUST NOT treat an evaluation as reaching high unless it is a [Common Criteria][ref-iso-15408-3] certification that includes `AVA_VAN.5` and whose target of evaluation includes the component that provides the resistance.
-- [](){ #req-ts-5-08-091 }**REQ-TS-5-08-091** Wallet Backend Service MUST treat the secure element in which the key is generated and held, together with the cryptographic library that operates on the key, as the component that provides the key storage resistance, and MUST NOT require the key management software that runs on that secure element to be inside the target of evaluation where the Key Attestation shows the key generated and held inside that secure element.
+- [](){ #req-ts-5-08-091 }**REQ-TS-5-08-091** Wallet Backend Service MUST treat the secure element in which the key is generated and held, together with the cryptographic library that operates on the key, as the component that provides the key storage resistance.
+- [](){ #req-ts-5-08-092 }**REQ-TS-5-08-092** Wallet Backend Service MUST NOT require the key management software that runs on that secure element to be inside the target of evaluation, where the attestation platform shows the key generated and held inside that secure element.
 - [](){ #req-ts-5-08-088 }**REQ-TS-5-08-088** Wallet Backend Service MUST NOT treat an evaluation as reaching high unless its certificate was issued under a scheme the `recognized_evaluation_schemes` list of the Governance Profile names.
 - [](){ #req-ts-5-08-089 }**REQ-TS-5-08-089** Wallet Backend Service MUST NOT treat an evaluation as reaching high unless a laboratory that the scheme which issued the certificate licenses or accredits carried it out.
 - [](){ #req-ts-5-08-090 }**REQ-TS-5-08-090** Wallet Backend Service MUST NOT put in `certification` the address of an evaluation it has not filed with Trust Authority as [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md) requires.
@@ -342,7 +353,7 @@ issuer reading `certification` finds an evaluation already checked.
 - [](){ #req-ts-5-08-086 }**REQ-TS-5-08-086** Issuer Core MUST refuse an attestation that reports a value above `iso_18045_enhanced-basic` and carries no `certification`.
 - [](){ #req-ts-5-08-022 }**REQ-TS-5-08-022** `key_storage` MUST be a non-empty array of values Appendix D.2 of [OpenID4VCI][ref-openid4vci] defines.
 - [](){ #req-ts-5-08-023 }**REQ-TS-5-08-023** `user_authentication` MUST be a non-empty array of values Appendix D.2 of [OpenID4VCI][ref-openid4vci] defines.
-- [](){ #req-ts-5-08-024 }**REQ-TS-5-08-024** Wallet Backend Service MUST report in `key_storage` the resistance of the storage the attested key actually sits in, as the attestation platform of that key establishes it, or, for an iOS credential key, as the official build the attestation platform shows running establishes it.
+- [](){ #req-ts-5-08-024 }**REQ-TS-5-08-024** Wallet Backend Service MUST report in `key_storage` the resistance of the storage the attested key sits in, as the attestation platform of that key establishes it, or, for an iOS credential key, as the official build the attestation platform shows running establishes it.
 - [](){ #req-ts-5-08-025 }**REQ-TS-5-08-025** Wallet Backend Service MUST report in `user_authentication` the resistance of the authentication that releases the attested key.
 - [](){ #req-ts-5-08-026 }**REQ-TS-5-08-026** Wallet Backend Service MUST NOT report a resistance that neither the attestation platform nor, for an iOS credential key, the official build it shows running establishes.
 - [](){ #req-ts-5-08-027 }**REQ-TS-5-08-027** Wallet Backend Service MUST be able to show, for each resistance value it reports, the field of the attestation platform it derived that value from, or, for an iOS credential key, the device model and the evaluated build it derived that value from.
@@ -355,12 +366,12 @@ issuer reading `certification` finds an evaluation already checked.
 ## Freshness and lifetime {#ts-5-08-freshness-and-lifetime}
 
 An attestation is minted for one issuance. The wallet asks the issuer for a
-nonce, hands that nonce to its backend, and the backend writes it into the
+nonce, hands that nonce to Wallet Backend Service, which writes it into the
 attestation, so an attestation is bound to the issuer that handed out the nonce
 and cannot be replayed at another one.
 
-A day is the ceiling on how long one lasts, not a schedule, and nothing
-refreshes an attestation on a timer: an attestation is minted inside an
+The lifetime the Governance Profile sets is a ceiling on how long one
+lasts, not a schedule: an attestation is minted inside an
 issuance and spent on it, and a wallet that asks for nothing holds nothing an
 issuer would accept tomorrow.
 
@@ -371,7 +382,7 @@ issuer would accept tomorrow.
 - [](){ #req-ts-5-08-033 }**REQ-TS-5-08-033** Mobile Wallet MUST obtain a new attestation for each credential request.
 - [](){ #req-ts-5-08-034 }**REQ-TS-5-08-034** Mobile Wallet MUST NOT send an attestation to an issuer other than the one whose nonce it carries.
 - [](){ #req-ts-5-08-035 }**REQ-TS-5-08-035** `iat` and `exp` MUST each be a number of seconds since the Unix epoch.
-- [](){ #req-ts-5-08-036 }**REQ-TS-5-08-036** `exp` MUST NOT be later than `iat` plus 86400 seconds.
+- [](){ #req-ts-5-08-036 }**REQ-TS-5-08-036** `exp` MUST NOT be later than `iat` plus the lifetime the Governance Profile sets for a Key Attestation.
 - [](){ #req-ts-5-08-037 }**REQ-TS-5-08-037** Issuer Core MUST refuse an attestation whose `exp` has passed.
 - [](){ #req-ts-5-08-038 }**REQ-TS-5-08-038** Issuer Core MUST refuse an attestation whose `iat` is later than the moment it reads it by more than the clock skew the Governance Profile allows.
 - [](){ #req-ts-5-08-039 }**REQ-TS-5-08-039** Issuer Core MUST refuse an attestation whose `nonce` is not the one it issued for that credential request.
@@ -382,17 +393,16 @@ issuer would accept tomorrow.
 
 ## Signature {#ts-5-08-signature}
 
-Wallet Backend Service signs each attestation with the Key Attestation key, a
-P-256 key published as the `key-attestation` purpose in the Wallet Provider's
-DID Document, as
+Wallet Backend Service signs each attestation with the Key Attestation key,
+as
 [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
 fixes. It is the Wallet Provider's only transaction key, and it carries no
-certificate: what says the provider is accredited is its entry in the trusted
-list, not a chain.
+certificate: what says the Wallet Provider is accredited is its entry in the
+trusted list, not a chain.
 
 A reader finds the key by resolving the DID in `iss` and taking the
 verification method `kid` names. A key the trusted list names as revoked in
-that provider's entry signs nothing, whatever date an attestation carries.
+that Wallet Provider's entry signs nothing, whatever date an attestation carries.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -409,13 +419,12 @@ that provider's entry signs nothing, whatever date an attestation carries.
 
 ## Carrying it to an issuer {#ts-5-08-carrying-it-to-an-issuer}
 
-The attestation travels in the credential request, with the key it attests, and
-nowhere else. It is not client authentication and it is sent neither at the
-pushed authorization request nor at the token endpoint.
+The attestation travels in the credential request, with the key it attests.
+It is not client authentication.
 
 [OpenID4VCI][ref-openid4vci] admits two carriers and the ecosystem uses both.
 The `attestation` proof type of Appendix F.3 sends the attestation as the proof
-itself, which is what an issuer that accepts only that proof type receives. The
+itself, which an issuer that accepts only that proof type receives. The
 `jwt` proof type of Appendix F.1 sends an ordinary key proof signed by the
 credential key, with the attestation in its `key_attestation` header, which
 adds a separate proof of possession of the key.
@@ -443,8 +452,8 @@ from its own cached copies: none of them contacts the Wallet Provider.
 
 1. Read the attestation out of the credential request, from the proof itself or
    from the `key_attestation` header of the proof.
-2. Check that `typ` is `key-attestation+jwt` and that `alg` is one it
-   announced.
+2. Check that `typ` is `key-attestation+jwt` and that `alg` is one the
+   Governance Profile allows for a Key Attestation key.
 3. Look `iss` up in the cached trusted list and confirm it is a Wallet Provider
    whose entry reads `granted`.
 4. Resolve the DID in `iss`, take the verification method `kid` names, and
@@ -474,16 +483,16 @@ from its own cached copies: none of them contacts the Wallet Provider.
 
 ## What it does not carry {#ts-5-08-what-it-does-not-carry}
 
-An attestation names no installation and no device. The thumbprint of the
-device key identifies an installation to its own backend and goes no further,
-so an issuer that reads a thousand attestations from one provider cannot tell
-whether they came from one device or a thousand.
-
-It carries no status reference, because nothing revokes it.
+An attestation names no installation and no device: the thumbprint of the
+device key identifies an installation to its own Wallet Backend Service and goes
+no further. What an issuer can group is the attested key itself: every attestation of one
+installation carries that installation's single credential key, which
+[Privacy considerations][ts-5-08-privacy-considerations] records as the one
+correlation the design keeps.
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-08-066 }**REQ-TS-5-08-066** A Key Attestation MUST NOT carry an identifier of the wallet installation or of its device.
+- [](){ #req-ts-5-08-066 }**REQ-TS-5-08-066** A Key Attestation MUST NOT carry an identifier of the wallet installation, or any identifier of the hardware it runs on.
 - [](){ #req-ts-5-08-067 }**REQ-TS-5-08-067** A Key Attestation MUST NOT carry a `status` claim.
 - [](){ #req-ts-5-08-068 }**REQ-TS-5-08-068** A Key Attestation MUST carry `certification` where it reports a value above `iso_18045_enhanced-basic` for either resistance.
 - [](){ #req-ts-5-08-069 }**REQ-TS-5-08-069** A Key Attestation MUST NOT carry personal data, an attribute of the citizen, or a list of the credentials the installation holds.
@@ -494,8 +503,6 @@ It carries no status reference, because nothing revokes it.
 
 ## Security considerations {#ts-5-08-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **An attestation replayed at another issuer.** A valid attestation is a
   reusable pass for a day unless it is bound to one exchange.
   [REQ-TS-5-08-031][req-ts-5-08-031] binds it to the nonce the issuer handed
@@ -504,25 +511,26 @@ Each threat below is answered by the requirement named with it.
   twice.
 - **A credential bound to a key nobody attested.** A wallet could attest one
   key and prove possession of another. [REQ-TS-5-08-061][req-ts-5-08-061] and
-  [REQ-TS-5-08-062][req-ts-5-08-062] tie the proof key, the attested key and
+  [REQ-TS-5-08-062][req-ts-5-08-062] tie the proof key, the attested key, and
   the key the credential is bound to together.
 - **A forged attestation.** [REQ-TS-5-08-046][req-ts-5-08-046] to
   [REQ-TS-5-08-049][req-ts-5-08-049] make an issuer resolve the signing key in
-  the provider's own DID Document, refuse a revoked key, and refuse a provider
-  the trusted list does not carry at `granted`.
+  the Wallet Provider's own DID Document, refuse a revoked key, and refuse a
+  Wallet Provider the trusted list does not carry at `granted`.
 - **A disowned installation that goes on being issued to.**
-  [REQ-TS-5-08-019][req-ts-5-08-019] stops the next attestation at the backend
-  and [REQ-TS-5-08-036][req-ts-5-08-036] caps how long the last one lasts, so
-  the window is a day and nothing has to be distributed to close it.
-- **An over-reported resistance value.** A provider that claims
+  [REQ-TS-5-08-019][req-ts-5-08-019] stops the next attestation at
+  Wallet Backend Service and [REQ-TS-5-08-036][req-ts-5-08-036] caps how long
+  the last one lasts, so the window is a day and nothing has to be
+  distributed to close it.
+- **An over-reported resistance value.** A Wallet Provider that claims
   `iso_18045_high` for a software keystore sells an assurance it does not have.
   [REQ-TS-5-08-024][req-ts-5-08-024] and [REQ-TS-5-08-026][req-ts-5-08-026]
   tie the value to the platform's own evidence, and
-  [REQ-TS-5-08-027][req-ts-5-08-027] makes the derivation public, which is what
-  an Assessment Body tests.
+  [REQ-TS-5-08-027][req-ts-5-08-027] makes the derivation public, which an
+  Assessment Body tests.
 - **A stolen Key Attestation key.** Its holder can attest any key as sitting in
   a secure element until the trusted list names the key revoked.
-  [REQ-TS-5-08-048][req-ts-5-08-048] is what ends that, and the attestation's
+  [REQ-TS-5-08-048][req-ts-5-08-048] ends that, and the attestation's
   own daily expiry limits what was minted before it.
 
 ## Privacy considerations {#ts-5-08-privacy-considerations}
@@ -530,7 +538,7 @@ Each threat below is answered by the requirement named with it.
 The Wallet Provider learns that an installation asked for an attestation, and
 nothing about the issuer or the credential that follows: a nonce is an opaque
 string and names nobody.
-The issuer learns a public key, two resistance values and which provider
+The issuer learns a public key, two resistance values, and which Wallet Provider
 vouched for them, and nothing that identifies the device.
 [REQ-TS-5-08-063][req-ts-5-08-063] keeps the two apart at issuance time, so
 neither can watch the other's side of the exchange.
@@ -555,6 +563,6 @@ is where it is recorded.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

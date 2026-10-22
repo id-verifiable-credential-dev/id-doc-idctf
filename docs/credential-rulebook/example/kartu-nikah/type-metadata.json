@@ -195,38 +195,6 @@
         }
       ],
       "svg_id": "provinsi"
-    },
-    {
-      "path": [
-        "credentialSubject",
-        "foto_suami"
-      ],
-      "display": [
-        {
-          "locale": "id",
-          "label": "Foto Suami"
-        },
-        {
-          "locale": "en",
-          "label": "Husband's Photo"
-        }
-      ]
-    },
-    {
-      "path": [
-        "credentialSubject",
-        "foto_istri"
-      ],
-      "display": [
-        {
-          "locale": "id",
-          "label": "Foto Istri"
-        },
-        {
-          "locale": "en",
-          "label": "Wife's Photo"
-        }
-      ]
     }
   ]
 }

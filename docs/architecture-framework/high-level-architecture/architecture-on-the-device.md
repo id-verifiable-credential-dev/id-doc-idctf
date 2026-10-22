@@ -13,13 +13,7 @@ element beside them, all on a device the ecosystem does not own.
 
 ## The four parts {#the-four-parts}
 
-In Mobile Wallet, the interface part is the View layer: Consent UI, Trust
-Display, Credential Renderer, and App Lock. The protocol part under it holds
-the four Clients, Issuance Client, Presentation Client, Attestation Client,
-and Auth Client, with Credential Codec and the Trust SDK beneath them. The Credential Store sits alongside, encrypted with
-SQLCipher. The secure element, StrongBox on Android or the Secure Enclave on
-iOS, holds the device key and the single credential key that binds every
-credential the wallet carries. The component-by-component breakdown of both applications is in
+The component-by-component breakdown of both applications is in
 [Mobile Wallet][sa-mobile-wallet] and [Mobile Verifier][sa-mobile-verifier].
 
 [](){ #fig-architecture-on-the-device }
@@ -29,36 +23,48 @@ credential the wallet carries. The component-by-component breakdown of both appl
   <figcaption><span class="ekdn-fignum"></span> The four parts on the device, their connections, and their external counterparties.</figcaption>
 </figure>
 
+- **The interface part is the View layer.** In Mobile Wallet it holds
+  Consent UI, Trust Display, Credential Renderer, and App Lock.
+- **The protocol part under it holds the four Clients.** Issuance Client,
+  Presentation Client, Attestation Client, and Auth Client, with
+  Credential Codec and the Trust SDK beneath them.
+- **The Credential Store sits alongside**, encrypted with SQLCipher.
+- **The secure element holds the keys.** StrongBox on Android or the
+  Secure Enclave on iOS, with the device key and the single credential key that
+  binds every credential the wallet carries, beside one
+  Demonstrating Proof of Possession (DPoP) key for each issuer the wallet has
+  dealt with.
+
 - **Solid arrows are protocols the device speaks with a party outside the
-  Wallet Provider.** OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0 from
-  Issuer Core, OpenID for Verifiable Presentations (OpenID4VP) 1.0 and ISO/IEC 18013-5:2021 to verifiers, and OpenID Connect Core 1.0 from
-  the identity provider. Which of them the Governance Profile sets is in
+  Wallet Provider.** OpenID for Verifiable Credential Issuance (OpenID4VCI) 1.0
+  from Issuer Core, OpenID for Verifiable Presentations (OpenID4VP) 1.0 and
+  ISO/IEC 18013-5:2021 to verifiers, and OpenID Connect Core 1.0 from the
+  identity provider. Which of them the Governance Profile sets is in
   [the interface table][tbl-interfaces-and-standards].
 - **Dashed arrows are reads from cache or interfaces inside the device or the
-  Wallet Provider.** The storage interface to Credential Store, the Keystore
-  Manager interface to the secure element, the cache feed from Trust Registry,
-  and the proprietary protocol to Wallet Backend Service.
+  Wallet Provider.** The storage interface to Credential Store, the
+  Keystore Manager interface to the secure element, the cache feed from Trust
+  Registry, and the proprietary protocol to Wallet Backend Service.
 - **The protocol part does not import the interface part.** The dependency runs
   strictly inward from the UI, keeping the protocol part extractable as a
   standalone SDK.
 
-[The architecture on the device][fig-architecture-on-the-device] shows the four
-parts and the counterparties they talk to. The citizen touches only the interface
-part. Everything that leaves the device leaves through the protocol part, which
-is also the only part that reaches the secure element, through a Keystore
-Manager, and the Credential Store. What that one part talks to falls into four
-kinds.
+The citizen touches only the interface part. Everything that leaves the device
+leaves through the protocol part, which is also the only part that reaches the
+Credential Store and, through a Keystore Manager, the secure element. What
+that one part talks to falls into four kinds.
 
 1. The transaction itself, which reaches three counterparties. The identity
-   provider authenticates the citizen over [OpenID Connect][ref-openid-core]. Issuer Core delivers a
-   credential over [OpenID4VCI][ref-openid4vci]. The verifier side receives a presentation in two
-   forms: Verifier Core over [OpenID4VP][ref-openid4vp], and Mobile Verifier, at a merchant or
-   at a Relying Party's counter, over OpenID4VP online, relayed by the RP
-   Intermediary's Verifier Core for a merchant, and over [ISO/IEC 18013-5][ref-iso-18013-5]
-   in proximity.
-2. The application's own backing. Wallet Backend Service carries Key
-   Attestation, device binding, recovery, and push notification, and no issuer
-   or verifier is party to any of it.
+   provider authenticates the citizen over [OpenID Connect][ref-openid-core].
+   Issuer Core delivers a credential over [OpenID4VCI][ref-openid4vci]. The
+   verifier side receives a presentation in two forms: Verifier Core over
+   [OpenID4VP][ref-openid4vp], and Mobile Verifier, at a merchant or at a
+   Relying Party's counter, over OpenID4VP online, relayed by the
+   RP Intermediary's Verifier Core for a merchant, and over
+   [ISO/IEC 18013-5][ref-iso-18013-5] in proximity.
+2. The application's own backing. Wallet Backend Service carries
+   Key Attestation, device binding, recovery, and push notification, and no
+   issuer or verifier is party to any of it.
 3. A read-only feed. Trust Registry supplies the trusted list and the
    Credential Rulebook, both of which
    the application reads from its local cache
@@ -78,19 +84,18 @@ sets][which-interfaces-the-governance-profile-sets].
 ## The protocol part does not import the interface part {#the-protocol-part-does-not-import-the-interface-part}
 
 The dependency runs one way. The protocol part must not import anything from
-the interface part, which is what lets it be pulled out as a standalone SDK.
+the interface part, which lets it be pulled out as a standalone SDK.
 
-That is the reason the rule exists. The ecosystem takes many Wallet Providers,
+The ecosystem takes many Wallet Providers,
 each publishing a Mobile Wallet of its own, and every one of them has to get the
 same protocols right against the same issuers and verifiers. A shared protocol
-part is how a second Wallet Provider starts from a proven implementation instead of a
-specification, and this one-way dependency is what keeps that extraction
-affordable.
+part is how a second Wallet Provider starts from a proven implementation
+instead of a specification.
 
 ## Where the two applications differ {#where-the-two-applications-differ}
 
-Both applications have the layout above, and one part of it behaves identically
-in each: the Trust SDK reads from a local cache on both, so neither application
+Both applications have [the same four parts][the-four-parts], and one part of
+them behaves identically in each: the Trust SDK reads from a local cache on both, so neither application
 queries Trust Registry while a citizen waits.
 
 The differences are elsewhere. They come down to who vouches for the
@@ -105,8 +110,8 @@ plays, what it stores, and how its user signs in.
 | | Mobile Wallet | Mobile Verifier |
 |---|---|---|
 | Backed by | Wallet Backend Service (Wallet Provider) | Verifier Core (the RP Intermediary for a merchant's device, the Relying Party for its own counter device) |
-| What vouches for the device | Key Attestation, daily | Verifier Device Certificate, limited lifetime plus a CRL |
-| Keys in the secure element | Device key, plus one credential key for all credentials | Device key |
+| What vouches for the device | Key Attestation, one per issuance, a day at most | Verifier Device Certificate, limited lifetime plus a CRL |
+| Keys in the secure element | Device key, one credential key for all credentials, one DPoP key per issuer | Device key; on iOS, the App Attest key beside it |
 | Side of a presentation | Presents, as holder | Requests, as a [Relying Party Instance][relying-party-instance]; as verifier in proximity |
 | Storage | Encrypted Credential Store | On-device Activity Repository |
 | User login | The identity provider of that Mobile Wallet | Merchant account at the RP Intermediary, or a staff account at the Relying Party |
@@ -140,23 +145,21 @@ interface runs on.
 
 </figure>
 
-The two partial rows are where the ecosystem stops short on purpose. On each of
-them the artifact is specified and the protocol carrying it is not. What a Key
-Attestation or a Verifier Device Certificate looks like has to be fixed, because
-another party verifies it: an issuer reads the attestation a wallet sends, and a
-wallet reads the certificate a Mobile Verifier presents. The rest stays with
-the party that runs it: how a Wallet Provider enrolls and recovers its own
-installations, and how a Verifier Core provisions the devices it answers for.
-Nobody outside that party ever sees those messages. What a wallet's messages
-have to prove is fixed all the same, because every Key Attestation rests on
-it: [Enrolling a wallet installation and attesting its key](../../technical-specifications/enrolling-a-wallet-installation-and-attesting-its-key.md)
-binds the evidence an enrollment and a request carry and the checks Wallet
-Backend Service runs, and leaves the transport, the endpoints and the
-encoding to the Wallet Provider. The same holds for a reader device:
+The two partial rows are where the ecosystem stops short: on each of
+them the artifact is specified and the protocol carrying it is not. What a
+Key Attestation or a Verifier Device Certificate looks like has to be fixed,
+because another party verifies it: an issuer reads the attestation a wallet
+sends, and a wallet reads the certificate a Mobile Verifier presents. The rest
+stays with the party that runs it: how a Wallet Provider enrolls and recovers
+its own installations, and how a Verifier Core provisions the devices it answers
+for. Nobody outside that party ever sees those messages.
+
+What each message has to prove is bound all the same, by
+[Enrolling a wallet installation and attesting its key](../../technical-specifications/enrolling-a-wallet-installation-and-attesting-its-key.md)
+for a wallet installation and by
 [Issuing and validating the X.509 certificates and the VICAL](../../technical-specifications/issuing-and-validating-the-x509-certificates-and-the-vical.md)
-binds the evidence a reader device's activation and renewal carry and the
-checks Verifier Core runs, and leaves the transport to whoever runs Verifier
-Core.
+for a reader device. Each binds the evidence and the checks, and leaves the
+transport to the party that runs it.
 
 The last two rows are fixed somewhere else entirely. The identity provider's
 interface belongs to whoever runs it, and OpenID Connect is the one thing the

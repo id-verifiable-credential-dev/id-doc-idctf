@@ -24,56 +24,83 @@ words and the identifier `REQ-TS-01-nnn` follow
 ## Who runs this and what it needs {#ts-01-who-runs-this-and-what-it-needs}
 
 This specification binds every JSON Web Signature (JWS) the ecosystem signs
-with a key named by a DID. Under `did:webvh`, a key of the signer's DID
-Document, these are the issuer-signed JSON Web Token (JWT) of an
-SD-JWT-based Verifiable Credential (SD-JWT VC) draft -13, the signed metadata
-of a credential issuer, the Status List Token, the Accreditation Credential, the Authority Statement, the Use Statement, the Key
-Attestation, and the Request Object of a presentation request. Under
-`did:key`, a key that is its own identifier, it is the trusted list and the
-Governance Profile. The
-specification applies alongside the specification of each of those formats,
-which names the key the format is signed with and the time the token states
-it was made.
+with a key named by a DID:
 
-Its conformance targets are three. A *signer* is every Module that signs one of
-those tokens: Issuer Core, Verifier Core, Wallet Backend Service, and Trust
-Authority. A *reader* is every Module that verifies one:
-Issuer Core, Verifier Core, Mobile Wallet, and Mobile Verifier, each through
-Trust SDK, and for the Governance Profile every reader
-[Publishing and reading the Governance Profile](publishing-and-reading-the-governance-profile.md)
-names. Issuer Core is the third, for the one requirement that names it
-alone: how it signs an SD-JWT VC.
+- Under `did:webvh`, a key of the signer's DID Document:
+    - The issuer-signed JSON Web Token (JWT) of an SD-JWT-based Verifiable
+      Credential (SD-JWT VC) draft -13.
+    - The signed metadata of a credential issuer.
+    - The Status List Token.
+    - The Accreditation Credential.
+    - The Authority Statement.
+    - The Use Statement.
+    - The Key Attestation.
+    - The Request Object of a presentation request.
+- Under `did:key`, a key that is its own identifier:
+    - The trusted list.
+    - The Governance Profile.
 
-It leaves to other specifications: the profile of a `did:webvh`, its log,
-its DID Document, and the rules by which a reader resolves it, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; how a `did:key` is encoded and decoded, which
-[Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
-holds; the proofs on a log entry and the witness proofs, which are Data
-Integrity proofs and not JWS, and name their `did:key` in their own
-`verificationMethod`; the mdoc, which is verified through its certificate,
-as
-[Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
-sets out; the Data Integrity proof of an `ldp_vc` credential; the key
-proof of a holder, which
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
-holds; and the proof of possession of a key a log entry publishes, a
-request at Trust Authority's entity endpoint with its countersignature, and
-the binding of a registration's first entry, which name a key no published DID Document or
-trusted list carries yet, or the update key, or are keyed by a registration
-code, and which
-[Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
-and [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
-check. A Request Object a merchant device signs under `x509_hash` names its
-key by certificate and is not in scope.
+The specification applies alongside the specification of each of those
+formats, which names the key the format is signed with and the time the token
+states it was made.
 
-Before the first token, a signer under `did:webvh` holds its key in its Key
-Manager and has published it in its DID Document under the purpose the
-format names, and a signer under `did:key` holds a key the trusted list
-names in the service the format requires, or, for the Governance Profile, a
-key an edition names in `signers`. A reader holds a verified copy of
-every log and of the trusted list, filled by the
-[trust cache sync][trust-cache-sync].
+Its conformance targets are three:
+
+- A *signer*, every Module that signs one of those tokens: Issuer Core,
+  Verifier Core, Wallet Backend Service, and Trust Authority.
+- A *reader*, every Module that verifies one: Issuer Core, Verifier Core,
+  Mobile Wallet, and Mobile Verifier, each through Trust SDK, and for the
+  Governance Profile every reader
+  [Publishing and reading the Governance Profile](publishing-and-reading-the-governance-profile.md)
+  names.
+- Issuer Core, for the one requirement that names it alone: how it signs an
+  SD-JWT VC.
+
+It leaves to other specifications:
+
+- The profile of a `did:webvh`, its log, its DID Document, and the rules by
+  which a reader resolves it, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- How a `did:key` is encoded and decoded, which
+  [Deriving a did:key and a device identifier](deriving-a-did-key-and-a-device-identifier.md)
+  holds.
+- The proofs on a log entry and the witness proofs, which are Data Integrity
+  proofs and not JWS, and name their `did:key` in their own
+  `verificationMethod`.
+- The mdoc, which is verified through its certificate, as
+  [Issuing and validating the X.509 certificates and the VICAL](issuing-and-validating-the-x509-certificates-and-the-vical.md)
+  sets out.
+- The Data Integrity proof of an `ldp_vc` credential.
+- The key proof of a holder, which
+  [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  holds.
+- The proof of possession of a key a log entry publishes, a request at
+  Trust Authority's entity endpoint with its countersignature, and the binding
+  of a registration's first entry, which name a key no published DID Document or
+  trusted list carries yet, or the update key, or are keyed by a registration
+  code, and which
+  [Witnessing a log entry and serving its copy](witnessing-a-log-entry-and-serving-its-copy.md)
+  and
+  [Onboarding an entity and registering its keys](onboarding-an-entity-and-registering-its-keys.md)
+  check.
+
+A Request Object a merchant device signs under `x509_hash` names its key by
+certificate and is not in scope.
+
+Before the first token, each conformance target holds what the rules below
+assume:
+
+- **A signer under `did:webvh`** holds:
+    - Its key, in its Key Manager or, for Trust Authority, in the hardware
+      security module its Certificate Authority Component drives.
+    - That key, published in its DID Document under the purpose the format
+      names.
+- **A signer under `did:key`** holds a key the trusted list names in the
+  service the format requires or, for the Governance Profile, a key an
+  edition names in `signers`.
+- **A reader** holds a verified copy of every log and of the trusted list,
+  filled by the [trust cache sync][trust-cache-sync].
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -86,12 +113,11 @@ every log and of the trusted list, filled by the
 ## What a reader learns from the header {#ts-01-overview}
 
 A token names its key in `kid`, as a DID or a DID URL. The method of that
-DID tells the reader where the key is. Under `did:webvh`, the reader looks
-the key up in the DID Document version it already holds. Under `did:key`,
-the key is inside the identifier, and the reader decodes it. In both cases
-the reader needs nothing else: no certificate travels in the header, no key
-is fetched during a transaction, and no metadata document is asked for.
-What a DID never gives on its own is authority: a `did:webvh` key signs for
+DID tells the reader where the key is, as
+[Finding the key][ts-01-finding-the-key] sets out, and nothing is fetched
+during a transaction.
+
+A DID gives no authority on its own: a `did:webvh` key signs for
 its entity only when the DID Document lists it for the right purpose, and a
 `did:key` signs only when the trusted list names it for that job.
 
@@ -148,11 +174,11 @@ publishes it, carries no signer claim and names its key in `kid` alone:
 {"alg":"ES256","kid":"did:key:zDnaeSCzChDqLTnobz1iquKetDC1piuwydzo3jkpiEHNwtX7q"}
 ```
 
-The value after `did:key:z` decodes to the multicodec header of a P-256
-public key followed by the 33-byte compressed key, which is the key the
-signature is checked with. The key is authorized because the Root
-Authority's entry in a list the reader already verified names that same
-`did:key` in a trusted list signer service at status `granted`:
+The value after `did:key:z` decodes to the multicodec header of a P-256 public
+key followed by the 33-byte compressed key, which is the key the signature is
+checked with. The key is authorized because the Root Authority's entry in a list
+the reader already verified names that same `did:key` in a trusted list signer
+service at status `granted`:
 
 ``` { .json title="Trusted list signer service that names the key" data-format="JSON" }
 {
@@ -173,11 +199,8 @@ Authority's entry in a list the reader already verified names that same
 
 ## The signature and its algorithm {#ts-01-the-signature-and-its-algorithm}
 
-A token in scope is signed with a digital signature algorithm, named in the
-header beside the key. The signature covers the encoded header and the
-encoded payload, and nothing else. These rules hold for every format in
-scope, so a format specification names the key purpose and the algorithms
-that purpose admits and leaves the rest to this page.
+A format specification names the key purpose and the algorithms that purpose
+admits, and leaves the rest to this page.
 
 <div class="ekdn-reqs" markdown="1">
 
@@ -294,16 +317,16 @@ A reader finds the key in its cached copy of the signer's log.
 
 ### Under did:key {#ts-01-finding-under-did-key}
 
-A reader decodes the key from `kid` and accepts it only where the trusted
-list gives it the job.
+A reader decodes the key from `kid` and accepts it only where the trusted list
+gives it the job.
 
 1. It decodes the `did:key` in `kid` locally, as
    [Encoding][ts-5-03-encoding] sets out.
 2. It checks that the format specification allows a `did:key` signer for
-   this token, and that the key is one that specification accepts: for the
-   trusted list, the key the reader carries from build time or a key a list
-   it already verified names in a trusted list signer service at status
-   `granted`, as [REQ-TS-5-01-067][req-ts-5-01-067] requires.
+   this token. For the trusted list, the key must be the one the reader
+   carries from build time, or one that a list it already verified names in a
+   trusted list signer service at status `granted`, as
+   [REQ-TS-5-01-067][req-ts-5-01-067] requires.
 3. It verifies the signature with that key.
 
 <div class="ekdn-reqs" markdown="1">
@@ -317,7 +340,7 @@ list gives it the job.
 
 ## The issuer signature mechanism of SD-JWT VC {#ts-01-the-issuer-signature-mechanism-of-sd-jwt-vc}
 
-[SD-JWT VC draft -13][ref-i-d-ietf-oauth-sd-jwt-vc] section 3.5 has a
+[SD-JWT VC][ref-i-d-ietf-oauth-sd-jwt-vc] section 3.5 has a
 recipient find the issuer's key through an issuer signature mechanism that
 its policy permits, and rejects the credential when it cannot. The draft
 defines two, JWT VC Issuer Metadata for an `https` `iss` and X.509
@@ -340,29 +363,27 @@ permits.
 certificate name the issuer instead. Here no certificate travels, so `iss`
 is the only place the issuer is named. A wallet or verifier from outside
 the ecosystem that permits only the two mechanisms of the draft cannot find
-the key of an IDCTF credential; recognition of another ecosystem has to
-carry this mechanism.
+the key of an IDCTF credential, so recognition of another ecosystem works
+only if it carries this mechanism.
 
 ## Security considerations {#ts-01-security-considerations}
-
-Each threat below is answered by the requirement named with it.
 
 - **A token that names one signer and another signer's key.** Without the
   check that `kid` names the signer's own DID, a reader that trusts the
   first signer would accept a signature made by the second,
   [REQ-TS-01-007][req-ts-01-007] and [REQ-TS-01-017][req-ts-01-017].
 - **A key published for one job used for another.** A stolen status list
-  key cannot sign a credential, because the key has to be of the purpose the
-  format names, [REQ-TS-01-009][req-ts-01-009] and
-  [REQ-TS-01-022][req-ts-01-022].
+  key cannot sign a credential, because [REQ-TS-01-009][req-ts-01-009] and
+  [REQ-TS-01-022][req-ts-01-022] require a key of the purpose the format
+  names.
 - **A key withdrawn early, or a backdated token.** The key comes from the
   DID Document version in force at signing time, which keeps a retired key
-  valid for what it signed, and a key the trusted list names as revoked is
+  valid for what it signed. A key the trusted list names as revoked is
   refused whatever time the token claims,
   [REQ-TS-01-019][req-ts-01-019] and [REQ-TS-01-023][req-ts-01-023].
 - **A second place to find a key.** A certificate or a raw key in the
   header would let a token bypass the trusted list,
-  [REQ-TS-01-004][req-ts-01-004], [REQ-TS-01-014][req-ts-01-014] and
+  [REQ-TS-01-004][req-ts-01-004], [REQ-TS-01-014][req-ts-01-014], and
   [REQ-TS-01-015][req-ts-01-015].
 - **A `did:key` anyone can make.** A `did:key` proves which key signed and
   nothing more; its authority comes only from the trusted list, so a reader
@@ -371,7 +392,7 @@ Each threat below is answered by the requirement named with it.
 - **A resolver that hands over a different key.** The reader decodes a
   `did:key` itself and resolves a `did:webvh` from its own cache, never over
   the network during a transaction, [REQ-TS-01-018][req-ts-01-018],
-  [REQ-TS-01-024][req-ts-01-024], [REQ-TS-01-031][req-ts-01-031] and
+  [REQ-TS-01-024][req-ts-01-024], [REQ-TS-01-031][req-ts-01-031], and
   [REQ-TS-01-032][req-ts-01-032].
 
 ## Privacy considerations {#ts-01-privacy-considerations}
@@ -386,6 +407,6 @@ where, or to whom its credential was presented.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

@@ -14,7 +14,7 @@
     { "name": "tanggal_lahir", "minimization": "normal" },
     { "name": "usia_di_atas_17", "minimization": "open", "derived_from": "tanggal_lahir" },
     { "name": "jenis_kelamin", "minimization": "normal" },
-    { "name": "golongan_darah", "minimization": "restricted" },
+    { "name": "golongan_darah", "minimization": "restricted", "absent_value": "-" },
     { "name": "alamat", "minimization": "normal" },
     { "name": "rt_rw", "minimization": "normal" },
     { "name": "kelurahan_desa", "minimization": "normal" },

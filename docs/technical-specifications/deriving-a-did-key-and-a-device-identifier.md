@@ -10,45 +10,56 @@ description: How every did:key in the ecosystem is formed and decoded, where eac
 # Deriving a did:key and a device identifier {#ts-5-03-deriving-a-did-key-and-a-device-identifier}
 
 <p class="ekdn-lead" markdown="span">
-A `did:key` is a public key written as an identifier, with nothing to host
-and nothing to resolve. The ecosystem uses it for the holder, for Trust
-Authority's witness and signing keys, and for any key the trusted list has
-to name. A device is identified by a hash of its key instead, so that the
-key itself never travels.
+A `did:key` is a public key written as an identifier, with nothing to host and
+nothing to resolve. The ecosystem uses it for the holder, for Trust Authority's
+witness and signing keys, and for any key the trusted list names. A device is
+identified by a hash of its key instead, so the key itself is never the
+name.
 </p>
 
 Every sentence on this page binds every Module that writes or decodes a
-`did:key`, and the four that hold or vouch for a device, and an Assessment
-Body tests them against it in the version the Governance Profile puts in
-force. The key words and the identifier `REQ-TS-5-03-nnn` follow
+`did:key`, and the four that hold or vouch for a device, and an Assessment Body
+tests them against it in the version the Governance Profile puts in force. The
+key words and the identifier `REQ-TS-5-03-nnn` follow
 [Common provisions](common-provisions.md).
 
 ## Who runs this and what it needs {#ts-5-03-who-runs-this-and-what-it-needs}
 
-This specification fixes how a `did:key` is formed and decoded wherever the
-ecosystem uses one, which keys are written that way, how Mobile Wallet
-derives the holder's identifier from its credential key, and how a wallet
-installation or a verifier device is identified to the party that vouches
-for it.
+This specification fixes the `did:key` and the device identifier:
 
-Its conformance targets are every Module that writes a `did:key` or decodes
-one, which today means Trust Registry and Decentralized Identifier (DID)
-Service in Trust Infrastructure, the holders of a `did:webvh` log, and the
-four Modules that read trust artifacts through Trust SDK; and, for the
-holder and device identifiers, Mobile Wallet, Wallet Backend Service,
-Verifier Core, and Mobile Verifier.
+- How a `did:key` is formed and decoded wherever the ecosystem uses one.
+- Which keys are written that way.
+- How Mobile Wallet derives the holder's identifier from its credential key.
+- How a wallet installation or a verifier device is identified to the party
+  that vouches for it.
 
-It leaves to other documents: the `did:webvh` log in which a `did:key`
-names the update key and the witness, which
-[Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
-holds; the trusted list services that carry a `did:key`, which
-[Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
-holds; where the holder's identifier appears inside a credential and a
-presentation, which [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
-and [Building and verifying a presentation](building-and-verifying-a-presentation.md)
-hold; and the messages in which a device sends its identifier, which the
-[Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md) and
-[Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md) hold.
+Its conformance targets are:
+
+- Every Module that writes a `did:key` or decodes one, which today means
+  Trust Registry and Decentralized Identifier (DID) Service in Trust
+  Infrastructure, the holders of a `did:webvh` log, and the four Modules
+  that read trust artifacts through Trust SDK.
+- For the holder and device identifiers, Mobile Wallet, Wallet Backend
+  Service, Verifier Core, and Mobile Verifier.
+
+It leaves to other documents:
+
+- The `did:webvh` log in which a `did:key` names the update key and the
+  witness, which
+  [Publishing and resolving a did:webvh identifier](publishing-and-resolving-a-did-webvh-identifier.md)
+  holds.
+- The trusted list services that carry a `did:key`, which
+  [Publishing and reading the trusted list](publishing-and-reading-the-trusted-list.md)
+  holds.
+- Where the holder's identifier appears inside a credential and a
+  presentation, which
+  [Issuing a credential in SD-JWT VC, mdoc, and `ldp_vc`](issuing-a-credential-in-sd-jwt-vc-mdoc-and-ldp-vc.md)
+  and [Building and verifying a presentation](building-and-verifying-a-presentation.md)
+  hold.
+- The messages in which a device sends its identifier, which
+  [Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
+  and [Issuing and reading a Key Attestation](issuing-and-reading-a-key-attestation.md)
+  hold.
 
 Before the first exchange, each target holds what the rules below assume:
 Mobile Wallet holds a credential key and a device key in its secure
@@ -68,31 +79,22 @@ with.
 
 [`did:key`][ref-did-key] v0.9 derives the whole identifier from one public key:
 the key bytes, prefixed with the code of their type, encoded in base58btc
-behind the `z` of Multibase. Nothing is hosted, nothing is resolved, and
-whoever holds the key can write the identifier. That is why the holder uses
-it, as [holder: one did:key per wallet installation][holder-one-didkey-per-wallet-installation]
-explains, and why the trusted list names Trust Authority's witness and
-signing keys that way, as [the witness key][the-witness-key] explains. It
-proves nothing on its own: a `did:key` says which key, never whose, and
-the trusted list is what says whose.
-
-A device is not identified by a `did:key`. It is known to the party that
-vouches for it by the thumbprint of its device key, a hash over the key's
-own fields, so that the identifier is safe to carry in a request or write
-to a log, as [devices][devices] explains.
+behind the `z` of Multibase. Whoever holds the key can write the identifier.
+A `did:key` says which key, never whose, and the trusted list says whose.
 
 ## The did:key as written {#ts-5-03-the-did-key-as-written}
 
-Below are the three forms a `did:key` takes in the ecosystem: a holder's
-identifier from a P-256 credential key, Trust Authority's witness key from
-an Ed25519 key, and the DID URL that names the one verification method of
-a `did:key`, as a proof's `verificationMethod` and a witness `id` use it.
 The keys are invented and no wallet has enrolled, but the three strings are
 exact: each was produced by the encoding below from a real key of the named
-type, and the witness key is the one
-[the log as published][ts-5-02-the-log-as-published] names in `witness` and
-[the trusted list][ts-5-01-trusted-list-payload] carries as
-Trust Authority's first witness.
+type. The strings are:
+
+- A holder's identifier from a P-256 credential key.
+- Trust Authority's witness key from an Ed25519 key, the one
+  [the log as published][ts-5-02-the-log-as-published] names in `witness` and
+  [the trusted list][ts-5-01-trusted-list-payload] carries as Trust Authority's
+  first witness.
+- The DID URL that names the one verification method of a `did:key`, as a
+  proof's `verificationMethod` and a witness `id` use it.
 
 ``` { .text title="Three did:key identifiers and one DID URL" data-format="DID" }
 did:key:zDnaexUcd7ETfUxHRrCKpKq7tYbfJCH1AWNN5WDppWYj2RS7Q
@@ -124,7 +126,7 @@ other type appears in a `did:key` here.
 - [](){ #req-ts-5-03-005 }**REQ-TS-5-03-005** The key inside a `did:key` MUST be a P-256 key or an Ed25519 key, encoded as [the table of key types][tbl-ts-5-03-key-types] gives.
 - [](){ #req-ts-5-03-006 }**REQ-TS-5-03-006** A DID URL that names the verification method of a `did:key` MUST be the identifier followed by `#` and the same Multibase value, byte for byte.
 - [](){ #req-ts-5-03-007 }**REQ-TS-5-03-007** A Module MUST decode a `did:key` locally, from the key inside it.
-- [](){ #req-ts-5-03-008 }**REQ-TS-5-03-008** A Module MUST NOT resolve a `did:key` over the network or look it up in any key store.
+- [](){ #req-ts-5-03-008 }**REQ-TS-5-03-008** A Module MUST NOT resolve a `did:key` over the network or look it up in any keystore.
 - [](){ #req-ts-5-03-009 }**REQ-TS-5-03-009** A Module MUST reject a `did:key` whose key type is neither of the two, or a DID URL whose fragment differs from its body.
 - [](){ #req-ts-5-03-010 }**REQ-TS-5-03-010** A Module that compares two keys MUST compare their `did:key` strings after encoding each the same way.
 
@@ -161,13 +163,14 @@ a `did:key`, and the specification that fixes that place.
 
 </div>
 
-The credential key is also written where the table does not reach, in the
-form each credential format's own standard fixes for holder binding: an
-SD-JWT-based Verifiable Credential (SD-JWT VC) carries it as a JSON Web Key in `cnf.jwk`, as
-[SD-JWT VC draft -13][ref-i-d-ietf-oauth-sd-jwt-vc] defines, and an mdoc as a
-CBOR Object Signing and Encryption (COSE) key in `deviceKeyInfo.deviceKey` of
-the Mobile Security Object, as [ISO/IEC 18013-5:2021][ref-iso-18013-5]
-defines. Neither place holds an
+The credential key is also written where
+[the table of uses][tbl-ts-5-03-uses] does not reach, in the form each
+credential format's own standard fixes for holder binding. An
+SD-JWT-based Verifiable Credential (SD-JWT VC) carries it as a JSON Web Key in
+`cnf.jwk`, as [SD-JWT VC draft -13][ref-i-d-ietf-oauth-sd-jwt-vc] defines. An
+mdoc carries it as a CBOR Object Signing and Encryption (COSE) key in
+`deviceKeyInfo.deviceKey` of the Mobile Security Object, as
+[ISO/IEC 18013-5:2021][ref-iso-18013-5] defines. Neither place holds an
 identifier, so neither takes a `did:key`; all three forms carry the same key.
 
 ## The holder identifier {#ts-5-03-the-holder-identifier}
@@ -189,19 +192,22 @@ is accepted there.
 
 ## The device identifier {#ts-5-03-the-device-identifier}
 
-A wallet installation and a verifier device each hold a device key in the
-secure element, beside the credential key on a wallet, and each is known to
-the party that vouches for it by the [RFC 7638][ref-rfc7638] thumbprint of
-that key: Wallet Backend Service for a wallet, Verifier Core for a Mobile
-Verifier, as [devices][devices] sets out.
+A wallet installation and a verifier device each hold a device key in the secure
+element, beside the credential key on a wallet. Each is known to the party that
+vouches for it by the [RFC 7638][ref-rfc7638] thumbprint of that key:
+Wallet Backend Service for a wallet, Verifier Core for a Mobile Verifier, as
+[devices][devices] sets out.
 
-Below is the device key of the Android wallet installation that
-[Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
-enrolls, written as a JSON Web Key. The second part is the canonical
-JSON the thumbprint hashes: the members `crv`, `kty`, `x` and `y` in
-lexicographic order, without whitespace. The third is the SHA-256 hash of
-that string, base64url encoded, which is the `installation` that
-[the installation record][ts-2-01-the-installation-record] carries.
+The three parts are:
+
+- The device key of the Android wallet installation that
+  [Enrolling a wallet installation and attesting its key](enrolling-a-wallet-installation-and-attesting-its-key.md)
+  enrolls, written as a JSON Web Key.
+- The canonical JSON the thumbprint hashes: the members `crv`, `kty`, `x`,
+  and `y` in lexicographic order, without whitespace.
+- The SHA-256 hash of that string, base64url encoded, which is the
+  `installation` that [the installation record][ts-2-01-the-installation-record]
+  carries.
 
 ``` { .text title="A device key and its device identifier" data-format="JWK" }
 {
@@ -218,7 +224,7 @@ KrCmnBrdPMJHuRg9i5S0mWRagm8mkS-fJrdlvaKLfII
 
 <div class="ekdn-reqs" markdown="1">
 
-- [](){ #req-ts-5-03-015 }**REQ-TS-5-03-015** Mobile Wallet and Mobile Verifier MUST identify their installation to the party that vouches for it by the [RFC 7638][ref-rfc7638] thumbprint of the device key, computed with SHA-256.
+- [](){ #req-ts-5-03-015 }**REQ-TS-5-03-015** Mobile Wallet MUST identify its installation, and Mobile Verifier its device, to the party that vouches for it by the [RFC 7638][ref-rfc7638] thumbprint of the device key, computed with SHA-256.
 - [](){ #req-ts-5-03-016 }**REQ-TS-5-03-016** Mobile Wallet and Mobile Verifier MUST NOT send the device key itself as an identifier.
 - [](){ #req-ts-5-03-017 }**REQ-TS-5-03-017** Wallet Backend Service and Verifier Core MUST compute the identifier of a device the same way, from the public key the device enrolled with.
 
@@ -226,16 +232,14 @@ KrCmnBrdPMJHuRg9i5S0mWRagm8mkS-fJrdlvaKLfII
 
 ## Security considerations {#ts-5-03-security-considerations}
 
-Each threat below is answered by the requirement named with it.
-
 - **A key that is not whose it claims.** A `did:key` proves possession of
   nothing and belongs to nobody; what makes a witness key or a signing key
   trusted is the trusted list naming it, and what makes a holder's key
   bound is the credential's holder binding. This specification fixes only
   the form, and [REQ-TS-5-03-008][req-ts-5-03-008] keeps a Module from
   treating a `did:key` as something it can look up.
-- **A proof that names one key and signs with another.** The fragment
-  has to equal the body, [REQ-TS-5-03-009][req-ts-5-03-009].
+- **A proof that names one key and signs with another.** A Module rejects
+  a fragment that differs from the body, [REQ-TS-5-03-009][req-ts-5-03-009].
 - **A key of an unexpected type.** Only P-256 and Ed25519 are decoded,
   [REQ-TS-5-03-005][req-ts-5-03-005] and [REQ-TS-5-03-009][req-ts-5-03-009],
   so a Module never verifies against a curve the ecosystem did not choose.
@@ -258,6 +262,6 @@ and in no presentation.
 
 | Version | Date | Change |
 |---|---|---|
-| 1.0 draft | 19 October 2026 | First draft |
+| 1.0 draft | 21 October 2026 | First draft |
 
 </figure>

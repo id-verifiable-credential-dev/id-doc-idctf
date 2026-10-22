@@ -15,32 +15,33 @@ question.
 </p>
 
 Something is a role only if the Root Authority can accredit it, register it,
-or recognize it. The holder is the one exception: the test does not reach a
-person, and the holder is a role because the ecosystem exists to serve them.
+recognize it, or approve the credential type it proposes; the test and its two
+exceptions are set out in [Role map](role-map.md).
+
 Counting the holder, there are eight roles. Three of
 them govern: they decide who may take part and what they may then do, and they
-never touch a citizen's transaction. Five sit on the path a credential
-travels, and one of those five, the holder, is held by a person rather than an
-institution. Two kinds of box are drawn beside them without being roles at
+never touch a citizen's transaction. Five answer for what stands on the path a
+credential travels, and one of those five, the holder, is a person. Two kinds
+of box are drawn beside them without being roles at
 all: four external systems the ecosystem depends on and does not govern, and
 the wallet on the citizen's phone, drawn because every credential passes
 through it.
 
-The verifying side is one role and not three. An RP Intermediary and a
-merchant are subtypes of Relying Party rather than roles of their own: a
-merchant fails the role test, since the Root Authority neither accredits,
-registers, nor recognizes it, and an intermediary is accredited as a Relying
-Party and nothing further.
+The verifying side is one role and not three. An RP Intermediary and a merchant
+are subtypes of Relying Party rather than roles of their own: a merchant fails
+the role test, since the Root Authority neither accredits, registers, nor
+recognizes it, and an RP Intermediary is accredited as a Relying Party and
+nothing further.
 
-Three questions separate the three pages of this chapter, and mixing them
-causes most of the confusion about this ecosystem. *What is this party
-responsible for* is the role. *What may it issue or request* is the scope of
-its accreditation. *Does it answer for itself, or does someone answer for it*
-is the difference between a party the Root Authority accredited directly and a
-merchant somebody else answers for. A single bank can be a Relying Party, an RP
-Intermediary for the merchants it acquires, and an Attribute Issuer for its
-account credentials. That is two roles rather than three, because the second
-is a subtype of the first, and holding both at once is no contradiction.
+Three questions separate the three pages of this chapter, and they are easily
+mixed. *What is this party responsible for*
+is the role. *What may it issue or request* is the scope of its accreditation.
+*Does it answer for itself, or does someone answer for it* is the difference
+between a party the Root Authority accredited directly and a merchant somebody
+else answers for. A single bank can be a Relying Party, an RP Intermediary for
+the merchants it acquires, and an Attribute Issuer for its account credentials.
+That is two roles rather than three, because the second is a subtype of the
+first, and holding both at once is no contradiction.
 
 The Services that group these responsibilities, and the software that
 implements them, are described in
